@@ -1,0 +1,7 @@
+{
+  "Object": "lib/libopenjpeg.so",
+  "Lang": "C",
+  "TotalSymbols": "127",
+  "PublicABI": "1",
+  "Version": "1.7"
+}

@@ -1,0 +1,8 @@
+{
+  "Affected": "19.3",
+  "Added": 6,
+  "Removed": 1,
+  "TotalProblems": 113,
+  "Object1": "lib/libopenjpeg.so",
+  "Object2": "lib/libopenjpeg.so"
+}

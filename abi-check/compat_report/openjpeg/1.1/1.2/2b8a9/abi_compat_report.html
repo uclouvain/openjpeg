@@ -1,0 +1,1603 @@
+<!-- verdict:incompatible;affected:19.3;added:6;removed:1;type_problems_high:8;type_problems_medium:28;type_problems_low:73;interface_problems_high:0;interface_problems_medium:4;interface_problems_low:0;changed_constants:0;tool_version:1.99.21 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="libopenjpeg, binary compatibility, API, report" />
+<meta name="description" content="Binary compatibility report for the libopenjpeg object between 1.1 and 1.2 versions on x86_64" />
+<title>libopenjpeg: 1.1 to 1.2 binary compatibility report</title>
+<style type="text/css">
+body {
+    font-family:Arial, sans-serif;
+    background-color:White;
+    color:Black;
+}
+hr {
+    color:Black;
+    background-color:Black;
+    height:1px;
+    border:0;
+}
+h1 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.625em;
+}
+h2 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.25em;
+    white-space:nowrap;
+}
+span.section {
+    font-weight:bold;
+    cursor:pointer;
+    color:#003E69;
+    white-space:nowrap;
+    margin-left:5px;
+}
+span.new_sign {
+    font-weight:bold;
+    margin-left:26px;
+    color:#003E69;
+}
+span.new_sign_lbl {
+    margin-left:28px;
+    font-size:0.875em;
+    color:Black;
+}
+span:hover.section {
+    color:#336699;
+}
+span.sect_aff {
+    cursor:pointer;
+    margin-left:7px;
+    padding-left:15px;
+    font-size:0.875em;
+    color:#cc3300;
+}
+span.sect_info {
+    cursor:pointer;
+    margin-left:7px;
+    padding-left:15px;
+    font-size:0.875em;
+    color:Black;
+}
+span.ext {
+    font-weight:100;
+}
+span.h_name {
+    color:#cc3300;
+    font-size:0.875em;
+    font-weight:bold;
+}
+div.h_list, div.lib_list {
+    font-size:0.94em;
+    padding-left:5px;
+}
+span.ns {
+    color:#408080;
+    font-size:0.94em;
+}
+span.lib_name {
+    color:Green;
+    font-size:0.875em;
+    font-weight:bold;
+}
+span.iname {
+    font-weight:bold;
+    color:#003E69;
+    margin-left:5px;
+}
+span.iname_b {
+    font-weight:bold;
+    font-size:1.1em;
+}
+span.iname_a {
+    color:#333333;
+    font-weight:bold;
+    font-size:0.94em;
+}
+span.sym_p {
+    font-weight:normal;
+    white-space:normal;
+}
+div.affect {
+    padding-left:15px;
+    padding-bottom:10px;
+    font-size:0.87em;
+    font-style:italic;
+    line-height:0.75em;
+}
+div.affected {
+    padding-left:30px;
+    padding-top:10px;
+}
+table.ptable {
+    border-collapse:collapse;
+    border:1px outset black;
+    line-height:1em;
+    margin-left:15px;
+    margin-top:3px;
+    margin-bottom:3px;
+    width:900px;
+    
+}
+table.ptable td {
+    border:1px solid gray;
+    padding: 3px;
+    font-size:0.875em;
+    text-align:left;
+    vertical-align:top;
+}
+table.vtable {
+    border-collapse:collapse;
+    border:1px outset black;
+    line-height:16px;
+    margin-left:30px;
+    margin-top:10px;
+}
+table.vtable td {
+    border:1px solid gray;
+    word-wrap:break-word;
+    padding: 3px;
+    font-size:0.875em;
+    max-width:450px;
+    vertical-align:top;
+}
+table.ptable th, table.vtable th {
+    background-color:#eeeeee;
+    font-weight:bold;
+    color:#333333;
+    font-family:Verdana, Arial;
+    font-size:0.81em;
+    border:1px solid gray;
+    text-align:center;
+    vertical-align:top;
+    white-space:nowrap;
+    padding: 3px;
+}
+table.summary {
+    border-collapse:collapse;
+    border:1px outset black;
+}
+table.summary th {
+    background-color:#eeeeee;
+    font-weight:100;
+    text-align:left;
+    font-size:0.94em;
+    white-space:nowrap;
+    border:1px inset gray;
+    padding: 3px;
+}
+table.summary td {
+    text-align:right;
+    white-space:nowrap;
+    border:1px inset gray;
+    padding: 3px 5px 3px 10px;
+}
+span.mangled {
+    padding-left:15px;
+    font-size:0.875em;
+    cursor:text;
+    color:#444444;
+}
+span.sym_ver {
+    color:#333333;
+    white-space:nowrap;
+    font-family:"DejaVu Sans Mono", Monospace;
+}
+span.attr {
+    color:#333333;
+    font-weight:100;
+}
+span.color_p {
+    font-style:italic;
+    color:Brown;
+}
+span.p {
+    font-style:italic;
+}
+span.fp {
+    font-style:italic;
+    background-color:#DCDCDC;
+}
+span.ttype {
+    font-weight:100;
+}
+span.nowrap {
+    white-space:nowrap;
+}
+span.value {
+    white-space:nowrap;
+    font-weight:bold;
+}
+.passed {
+    background-color:#CCFFCC;
+}
+.warning {
+    background-color:#F4F4AF;
+}
+.failed {
+    background-color:#FFCCCC;
+}
+.new {
+    background-color:#C6DEFF;
+}
+.compatible {
+    background-color:#CCFFCC;
+}
+.almost_compatible {
+    background-color:#FFDAA3;
+}
+.incompatible {
+    background-color:#FFCCCC;
+}
+.gray {
+    background-color:#DCDCDC;
+}
+.top_ref {
+    font-size:0.69em;
+}
+.footer {
+    font-size:0.75em;
+}
+</style>
+<script type="text/javascript" language="JavaScript">
+<!--
+function showContent(header, id)
+{
+    e = document.getElementById(id);
+    if(e.style.display == 'none')
+    {
+        e.style.display = 'block';
+        e.style.visibility = 'visible';
+        header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi,"[&minus;]");
+    }
+    else
+    {
+        e.style.display = 'none';
+        e.style.visibility = 'hidden';
+        header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi,"[+]");
+    }
+}
+-->
+</script>
+</head>
+
+<body>
+<div><a name='Top'></a>
+<h1>Binary compatibility report for the <span style='color:Blue;'>libopenjpeg.so</span> object between <span style='color:Red;'>1.1</span> and <span style='color:Red;'>1.2</span> versions on <span style='color:Blue;'>x86_64</span></h1>
+
+<h2>Test Info</h2><hr/>
+<table class='summary'>
+<tr><th>Module Name</th><td>libopenjpeg</td></tr>
+<tr><th>Version #1</th><td>1.1</td></tr>
+<tr><th>Version #2</th><td>1.2</td></tr>
+<tr><th>CPU Type</th><td>x86_64</td></tr>
+<tr><th>GCC Version</th><td>4.9.2</td></tr>
+</table>
+<h2>Test Results</h2><hr/>
+<table class='summary'><tr><th>Total Header Files</th><td><a href='#Headers' style='color:Blue;'>18</a></td></tr>
+<tr><th>Total Source Files</th><td><a href='#Sources' style='color:Blue;'>18</a></td></tr>
+<tr><th>Total Objects</th><td><a href='#Libs' style='color:Blue;'>1</a></td></tr>
+<tr><th>Total Symbols / Types</th><td>127 / 177</td></tr>
+<tr><th>Compatibility</th>
+<td class='almost_compatible'>80.7%</td>
+</tr>
+</table>
+<h2>Problem Summary</h2><hr/>
+<table class='summary'><tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr><tr><th>Added Symbols</th><td>-</td><td class='new'><a href='#Added' style='color:Blue;'>6</a></td></tr>
+<tr><th>Removed Symbols</th><td>High</td><td class='failed'><a href='#Removed' style='color:Blue;'>1</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td class='failed'><a href='#Type_Problems_High' style='color:Blue;'>8</a></td></tr>
+<tr><td>Medium</td><td class='failed'><a href='#Type_Problems_Medium' style='color:Blue;'>28</a></td></tr>
+<tr><td>Low</td><td class='warning'><a href='#Type_Problems_Low' style='color:Blue;'>73</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Symbols</th><td>High</td><td>0</td></tr>
+<tr><td>Medium</td><td class='failed'><a href='#Symbol_Problems_Medium' style='color:Blue;'>4</a></td></tr>
+<tr><td>Low</td><td>0</td></tr>
+<tr><th>Problems with<br/>Constants</th><td>Low</td><td>0</td></tr>
+</table>
+
+<a name='Added'></a><h2>Added Symbols <span class='new'>&nbsp;6&nbsp;</span></h2><hr/>
+<span class='h_name'>j2k.h</span>, <span class='lib_name'>libopenjpeg.so</span><br/>
+<span class="iname">j2k_convert_progression_order&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_PROG_ORDER <span class='color_p'>prg_order</span> )</span></span></span><br/>
+<br/>
+<span class='h_name'>jp2.h</span>, <span class='lib_name'>libopenjpeg.so</span><br/>
+<span class="iname">jp2_read_jp2h&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_jp2_t* <span class='color_p'>jp2</span>,</span> <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span> )</span></span></span><br/>
+<span class="iname">jp2_write_jp2h&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_jp2_t* <span class='color_p'>jp2</span>,</span> <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span> )</span></span></span><br/>
+<br/>
+<span class='h_name'>pi.h</span>, <span class='lib_name'>libopenjpeg.so</span><br/>
+<span class="iname">pi_create_decode&#160;<span class='sym_p'>(&#160;opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>opj_cp_t* <span class='color_p'>cp</span>,</span> <span class='nowrap'>int <span class='color_p'>tileno</span> )</span></span></span><br/>
+<span class="iname">pi_create_encode&#160;<span class='sym_p'>(&#160;opj_pi_iterator_t* <span class='color_p'>pi</span>, <span class='nowrap'>opj_cp_t* <span class='color_p'>cp</span>,</span> <span class='nowrap'>int <span class='color_p'>tileno</span>,</span> <span class='nowrap'>int <span class='color_p'>pino</span>,</span> <span class='nowrap'>int <span class='color_p'>tpnum</span>,</span> <span class='nowrap'>int <span class='color_p'>tppos</span> )</span></span></span><br/>
+<span class="iname">pi_initialise_encode&#160;<span class='sym_p'>(&#160;opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>opj_cp_t* <span class='color_p'>cp</span>,</span> <span class='nowrap'>int <span class='color_p'>tileno</span>,</span> <span class='nowrap'>J2K_T2_MODE <span class='color_p'>t2_mode</span> )</span></span></span><br/>
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Removed'></a><a name='Withdrawn'></a><h2>Removed Symbols <span class='failed'>&nbsp;1&nbsp;</span></h2><hr/>
+<span class='h_name'>pi.h</span>, <span class='lib_name'>libopenjpeg.so</span><br/>
+<span class="iname">pi_create&#160;<span class='sym_p'>(&#160;opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>opj_cp_t* <span class='color_p'>cp</span>,</span> <span class='nowrap'>int <span class='color_p'>tileno</span> )</span></span></span><br/>
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='High_Risk_Problems'></a><a name='Type_Problems_High'></a>
+<h2>Problems with Data Types, High Severity <span class='failed'>&nbsp;8&nbsp;</span></h2><hr/>
+<span class='h_name'>t1.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_1')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_t1 <span class='failed'>&nbsp;8&nbsp;</span></span>
+<br/>
+<div id="c_1" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>lut_ctxno_mag</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>lut_ctxno_sc</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>lut_ctxno_zc</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>lut_nmsedec_ref</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Field <b>lut_nmsedec_ref0</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Field <b>lut_nmsedec_sig</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Field <b>lut_nmsedec_sig0</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>8</th>
+<td>Field <b>lut_spb</b> has been removed from the middle position of this structural type.</td>
+<td>1) Previous accesses of applications to the removed field will be incorrect.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_2')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_2" style="display:none;">
+<div class='affected'><span class='iname_a'>t1_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_decode_cblks&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span>,</span> <span class='nowrap'>opj_tcd_tile_t* <i>tile</i>,</span> <span class='nowrap'>opj_tcp_t* <i>tcp</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_encode_cblks&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span>,</span> <span class='nowrap'>opj_tcd_tile_t* <i>tile</i>,</span> <span class='nowrap'>opj_tcp_t* <i>tcp</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Medium_Risk_Problems'></a><a name='Type_Problems_Medium'></a>
+<h2>Problems with Data Types, Medium Severity <span class='failed'>&nbsp;28&nbsp;</span></h2><hr/>
+<span class='h_name'>j2k.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_3')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_cp <span class='failed'>&nbsp;7&nbsp;</span></span>
+<br/>
+<div id="c_3" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>cinema</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>img_size</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>limit_decoding</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>max_comp_size</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Field <b>rsiz</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Field <b>tp_on</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Field <b>tp_pos</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_4')">
+[+] affected symbols: 36 (28.3%)</span>
+<div id="c_4" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp&#39; in return value (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp&#39; in return value (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k.cp&#39; in return value (pointer) has base type &#39;struct opj_cp&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_5')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_j2k <span class='failed'>&nbsp;3&nbsp;</span></span>
+<br/>
+<div id="c_5" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>cur_totnum_tp</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>tlm_start</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>tp_num</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_6')">
+[+] affected symbols: 17 (13.4%)</span>
+<div id="c_6" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k&#39; in return value (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_7')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_tcp <span class='failed'>&nbsp;1&nbsp;</span></span>
+<br/>
+<div id="c_7" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Size of field <b>pocs</b> has been changed from <b>1024</b> bytes to <b>4736</b> bytes.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Previous accesses of applications and library functions to this field and fields at higher positions of the structure definition may be broken.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_8')">
+[+] affected symbols: 38 (29.9%)</span>
+<div id="c_8" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps&#39; in return value (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps&#39; in return value (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k.cp.tcps&#39; in return value (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>openjpeg.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_9')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_cparameters <span class='failed'>&nbsp;1&nbsp;</span></span>
+<br/>
+<div id="c_9" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Size of field <b>POC</b> has been changed from <b>1024</b> bytes to <b>4736</b> bytes.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Previous accesses of applications and library functions to this field and fields at higher positions of the structure definition may be broken.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_10')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_10" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <i>j2k</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+<span class='iname_a'>jp2_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_jp2_t* <i>jp2</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+<span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_11')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_poc <span class='failed'>&nbsp;7&nbsp;</span></span>
+<br/>
+<div id="c_11" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>layno0</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>precno0</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>precno1</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>prg1</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Type of field <b>progorder</b> has been changed from <span class='nowrap'><b>char[4]</b> (<b>4</b> bytes)</span> to <span class='nowrap'><b>char[5]</b> (<b>5</b> bytes)</span>.</td>
+<td>1) This field may be incorrectly initialized or accessed by applications.<br/>2) Size of the inclusive type has been changed.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>The relative position of field <b>progorder</b> has been changed from <b>7</b> to <b>6</b>.</td>
+<td>Applications will access incorrect memory when attempting to access this field.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>The relative position of field <b>tile</b> has been changed from <b>6</b> to <b>7</b>.</td>
+<td>Applications will access incorrect memory when attempting to access this field.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_12')">
+[+] affected symbols: 41 (32.3%)</span>
+<div id="c_12" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps.pocs&#39; in return value (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps.pocs&#39; in return value (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <i>j2k</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;parameters.POC&#39; in 2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k.cp.tcps.pocs&#39; in return value (pointer) has base type &#39;struct opj_poc&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>pi.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_13')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_pi_iterator <span class='failed'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_13" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>tp_on</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Size of field <b>poc</b> has been changed from <b>32</b> bytes to <b>148</b> bytes.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Previous accesses of applications and library functions to this field and fields at higher positions of the structure definition may be broken.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_14')">
+[+] affected symbols: 2 (1.6%)</span>
+<div id="c_14" style="display:none;">
+<div class='affected'><span class='iname_a'>pi_destroy&#160;<span class='sym_p'>(&#160;opj_pi_iterator_t* <span class='fp'>pi</span>, <span class='nowrap'>opj_cp_t* <i>cp</i>,</span> <span class='nowrap'>int <i>tileno</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;pi&#39; (pointer) has base type &#39;struct opj_pi_iterator&#39;.</div>
+<span class='iname_a'>pi_next&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_pi_iterator_t* <span class='fp'>pi</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;pi&#39; (pointer) has base type &#39;struct opj_pi_iterator&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>t1.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_15')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_t1 <span class='failed'>&nbsp;4&nbsp;</span></span>
+<br/>
+<div id="c_15" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Type of field <b>data</b> has been changed from <span class='nowrap'><b>int[1024]</b> (<b>4096</b> bytes)</span> to <span class='nowrap'><b>int*</b> (<b>8</b> bytes)</span>.</td>
+<td>This field may be incorrectly initialized or accessed by applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Type of field <b>flags</b> has been changed from <span class='nowrap'><b>int[1026]</b> (<b>4104</b> bytes)</span> to <span class='nowrap'><b>flag_t*</b> (<b>8</b> bytes)</span>.</td>
+<td>1) This field may be incorrectly initialized or accessed by applications.<br/>2) Size of the inclusive type has been changed.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>The pointer level of field <b>data</b> has been increased from <b>0</b> to <b>1</b>.</td>
+<td>The library functions may try to access unallocated memory by the dereferencing of old field value and therefore cause a crash of applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>The pointer level of field <b>flags</b> has been increased from <b>0</b> to <b>1</b>.</td>
+<td>The library functions may try to access unallocated memory by the dereferencing of old field value and therefore cause a crash of applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_16')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_16" style="display:none;">
+<div class='affected'><span class='iname_a'>t1_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_decode_cblks&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span>,</span> <span class='nowrap'>opj_tcd_tile_t* <i>tile</i>,</span> <span class='nowrap'>opj_tcp_t* <i>tcp</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_encode_cblks&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span>,</span> <span class='nowrap'>opj_tcd_tile_t* <i>tile</i>,</span> <span class='nowrap'>opj_tcp_t* <i>tcp</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>tcd.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_17')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_tcd <span class='failed'>&nbsp;3&nbsp;</span></span>
+<br/>
+<div id="c_17" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>cur_pino</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>cur_tp_num</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>tp_pos</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_18')">
+[+] affected symbols: 14 (11%)</span>
+<div id="c_18" style="display:none;">
+<div class='affected'><span class='iname_a'>tcd_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_decode_tile&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>unsigned char* <i>src</i>,</span> <span class='nowrap'>int <i>len</i>,</span> <span class='nowrap'>int <i>tileno</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_dump&#160;<span class='sym_p'>(&#160;<span class='nowrap'>FILE* <i>fd</i>,</span> <span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>opj_tcd_image_t* <i>img</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_encode_tile&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>int <i>tileno</i>,</span> <span class='nowrap'>unsigned char* <i>dest</i>,</span> <span class='nowrap'>int <i>len</i>,</span> <span class='nowrap'>opj_image_info_t* <i>image_info</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_free_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_free_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_init_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>opj_cp_t* <i>cp</i>,</span> <span class='nowrap'>int <i>curtileno</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_makelayer&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>int <i>layno</i>,</span> <span class='nowrap'>double <i>thresh</i>,</span> <span class='nowrap'>int <i>final</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_makelayer_fixed&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>int <i>layno</i>,</span> <span class='nowrap'>int <i>final</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Symbol_Problems_Medium'></a><a name='Interface_Problems_Medium'></a>
+<h2>Problems with Symbols, Medium Severity <span class='failed'>&nbsp;4&nbsp;</span></h2><hr/>
+<span class='h_name'>t2.h</span>, <span class='lib_name'>libopenjpeg.so</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_19')">
+<span class='ext'>[+]</span> t2_encode_packets&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t2_t* <span class='color_p'>t2</span>,</span> <span class='nowrap'>int <span class='color_p'>tileno</span>,</span> opj_tcd_tile_t* <span class='color_p'>tile</span>, <span class='nowrap'>int <span class='color_p'>maxlayers</span>,</span> unsigned char* <span class='color_p'>dest</span>, <span class='nowrap'>int <span class='color_p'>len</span>,</span> <span class='nowrap'>opj_image_info_t* <span class='color_p'>image_info</span> )</span></span> <span class='failed'>&nbsp;4&nbsp;</span></span>
+<br/>
+<div id="c_19" style="display:none;">
+
+
+<span class='new_sign_lbl'>changed to:</span>
+<br/>
+<span class='new_sign'>t2_encode_packets&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t2_t* <span class='color_p'>t2</span>,</span> <span class='nowrap'>int <span class='color_p'>tileno</span>,</span> opj_tcd_tile_t* <span class='color_p'>tile</span>, <span class='nowrap'>int <span class='color_p'>maxlayers</span>,</span> unsigned char* <span class='color_p'>dest</span>, <span class='nowrap'>int <span class='color_p'>len</span>,</span> opj_image_info_t* <span class='color_p'>image_info</span>, <span class='nowrap'>int <span class='color_p'>tpnum</span>,</span> <span class='nowrap'>int <span class='color_p'>tppos</span>,</span> <span class='nowrap'>int <span class='color_p'>pino</span>,</span> <span class='nowrap'>J2K_T2_MODE <span class='color_p'>t2_mode</span> )</span></span></span><br/>
+<table class='ptable'>
+<tr>
+<th width='2%'></th>
+<th width='47%'>Change</th>
+<th>Effect</th>
+</tr>
+<tr>
+<th>1</th>
+<td>Parameter <b>pino</b> of type <b>int</b> has been added to the calling stack.</td>
+<td>This parameter will not be initialized by old clients.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Parameter <b>t2_mode</b> of type <b>J2K_T2_MODE</b> has been added to the calling stack.</td>
+<td>This parameter will not be initialized by old clients.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Parameter <b>tpnum</b> of type <b>int</b> has been added to the calling stack.</td>
+<td>This parameter will not be initialized by old clients.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Parameter <b>tppos</b> of type <b>int</b> has been added to the calling stack.</td>
+<td>This parameter will not be initialized by old clients.</td>
+</tr>
+</table>
+<br/>
+</div>
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Low_Risk_Problems'></a><a name='Type_Problems_Low'></a>
+<h2>Problems with Data Types, Low Severity <span class='warning'>&nbsp;73&nbsp;</span></h2><hr/>
+<span class='h_name'>j2k.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_20')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_cp <span class='warning'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_20" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Size of this type has been changed from <b>120</b> bytes to <b>152</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>tp_flag</b> has been added to this type.</td>
+<td>This field will not be initialized by old clients.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_21')">
+[+] affected symbols: 36 (28.3%)</span>
+<div id="c_21" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp&#39; in return value (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp&#39; in return value (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_cp&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k.cp&#39; in return value (pointer) has base type &#39;struct opj_cp&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_22')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_j2k <span class='warning'>&nbsp;3&nbsp;</span></span>
+<br/>
+<div id="c_22" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Size of this type has been changed from <b>96</b> bytes to <b>120</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>cur_tp_num</b> has been added to this type.</td>
+<td>This field will not be initialized by old clients.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>totnum_tp</b> has been added to this type.</td>
+<td>This field will not be initialized by old clients.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_23')">
+[+] affected symbols: 17 (13.4%)</span>
+<div id="c_23" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k&#39; in return value (pointer) has base type &#39;struct opj_j2k&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_24')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_tcp <span class='warning'>&nbsp;1&nbsp;</span></span>
+<br/>
+<div id="c_24" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Size of this type has been changed from <b>1896</b> bytes to <b>5608</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_25')">
+[+] affected symbols: 38 (29.9%)</span>
+<div id="c_25" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps&#39; in return value (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps&#39; in return value (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k.cp.tcps&#39; in return value (pointer) has base type &#39;struct opj_tcp&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>openjpeg.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_26')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_cinfo <span class='warning'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_26" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>mj2_handle</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Size of this type has been changed from <b>40</b> bytes to <b>48</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_27')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_27" style="display:none;">
+<div class='affected'><span class='iname_a'>opj_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <i>format</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_cinfo&#39;.</div>
+<span class='iname_a'>opj_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <span class='fp'>cinfo</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;cinfo&#39; (pointer) has base type &#39;struct opj_cinfo&#39;.</div>
+<span class='iname_a'>opj_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <span class='fp'>cinfo</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;cinfo&#39; (pointer) has base type &#39;struct opj_cinfo&#39;.</div>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <span class='fp'>cinfo</span>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;cinfo&#39; (pointer) has base type &#39;struct opj_cinfo&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_28')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_common_struct <span class='warning'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_28" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>mj2_handle</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Size of this type has been changed from <b>40</b> bytes to <b>48</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_29')">
+[+] affected symbols: 53 (41.7%)</span>
+<div id="c_29" style="display:none;">
+<div class='affected'><span class='iname_a'>cio_getbp&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='fp'>cio</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 1st parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>cio_numbytesleft&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='fp'>cio</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 1st parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>cio_read&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='fp'>cio</span>,</span> <span class='nowrap'>int <i>n</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 1st parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>cio_seek&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='fp'>cio</span>,</span> <span class='nowrap'>int <i>pos</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 1st parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>cio_skip&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='fp'>cio</span>,</span> <span class='nowrap'>int <i>n</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 1st parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>cio_tell&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='fp'>cio</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 1st parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>cio_write&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='fp'>cio</span>,</span> <span class='nowrap'>unsigned int <i>v</i>,</span> <span class='nowrap'>int <i>n</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 1st parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <span class='fp'>cinfo</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;cinfo&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <span class='fp'>cinfo</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;cinfo&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <i>j2k</i>,</span> <span class='nowrap'>opj_cio_t* <span class='fp'>cio</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;cio.cinfo&#39; in 2nd parameter &#39;cio&#39; (pointer) has base type &#39;struct opj_common_struct&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_30')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_cparameters <span class='warning'>&nbsp;20&nbsp;</span></span>
+<br/>
+<div id="c_30" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>cp_cinema</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>cp_rsiz</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>jpwl_epc_on</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>jpwl_hprot_MH</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Field <b>jpwl_hprot_TPH</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Field <b>jpwl_hprot_TPH_tileno</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Field <b>jpwl_pprot</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>8</th>
+<td>Field <b>jpwl_pprot_packno</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Field <b>jpwl_pprot_tileno</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>10</th>
+<td>Field <b>jpwl_sens_MH</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Field <b>jpwl_sens_TPH</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>12</th>
+<td>Field <b>jpwl_sens_TPH_tileno</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>13</th>
+<td>Field <b>jpwl_sens_addr</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>14</th>
+<td>Field <b>jpwl_sens_range</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>15</th>
+<td>Field <b>jpwl_sens_size</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>16</th>
+<td>Field <b>max_comp_size</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>17</th>
+<td>Field <b>tp_flag</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>18</th>
+<td>Field <b>tp_on</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>19</th>
+<td>Size of this type has been changed from <b>14504</b> bytes to <b>18704</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+<tr>
+<th>20</th>
+<td>Field <b>tcp_mct</b> has been added to this type.</td>
+<td>This field will not be initialized by old clients.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_31')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_31" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <i>j2k</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+<span class='iname_a'>jp2_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_jp2_t* <i>jp2</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+<span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_32')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_dinfo <span class='warning'>&nbsp;2&nbsp;</span></span>
+<br/>
+<div id="c_32" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>mj2_handle</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Size of this type has been changed from <b>40</b> bytes to <b>48</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_33')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_33" style="display:none;">
+<div class='affected'><span class='iname_a'>opj_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <i>format</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_dinfo&#39;.</div>
+<span class='iname_a'>opj_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <span class='fp'>dinfo</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;dinfo&#39; (pointer) has base type &#39;struct opj_dinfo&#39;.</div>
+<span class='iname_a'>opj_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <span class='fp'>dinfo</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;dinfo&#39; (pointer) has base type &#39;struct opj_dinfo&#39;.</div>
+<span class='iname_a'>opj_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <span class='fp'>dinfo</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;dinfo&#39; (pointer) has base type &#39;struct opj_dinfo&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_34')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_dparameters <span class='warning'>&nbsp;5&nbsp;</span></span>
+<br/>
+<div id="c_34" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>cp_limit_decoding</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>jpwl_correct</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>jpwl_exp_comps</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>jpwl_max_tiles</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Size of this type has been changed from <b>8208</b> bytes to <b>8224</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_35')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_35" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <i>j2k</i>,</span> <span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
+<span class='iname_a'>jp2_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_jp2_t* <i>jp2</i>,</span> <span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
+<span class='iname_a'>opj_set_default_decoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
+<span class='iname_a'>opj_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <i>dinfo</i>,</span> <span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<span class="section" onclick="javascript:showContent(this, 'c_36')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_poc <span class='warning'>&nbsp;25&nbsp;</span></span>
+<br/>
+<div id="c_36" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>compE</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>compS</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>comp_t</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>dx</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Field <b>dy</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Field <b>layE</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Field <b>layS</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>8</th>
+<td>Field <b>lay_t</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Field <b>prcE</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>10</th>
+<td>Field <b>prcS</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Field <b>prc_t</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>12</th>
+<td>Field <b>resE</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>13</th>
+<td>Field <b>resS</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>14</th>
+<td>Field <b>res_t</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>15</th>
+<td>Field <b>tx0</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>16</th>
+<td>Field <b>tx0_t</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>17</th>
+<td>Field <b>tx1</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>18</th>
+<td>Field <b>txE</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>19</th>
+<td>Field <b>txS</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>20</th>
+<td>Field <b>ty0</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>21</th>
+<td>Field <b>ty0_t</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>22</th>
+<td>Field <b>ty1</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>23</th>
+<td>Field <b>tyE</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>24</th>
+<td>Field <b>tyS</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>25</th>
+<td>Size of this type has been changed from <b>32</b> bytes to <b>148</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_37')">
+[+] affected symbols: 41 (32.3%)</span>
+<div id="c_37" style="display:none;">
+<div class='affected'><span class='iname_a'>j2k_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps.pocs&#39; in return value (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.cp.tcps.pocs&#39; in return value (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_decode_jpt_stream&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_destroy_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_destroy_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <span class='fp'>j2k</span>,</span> <span class='nowrap'>opj_dparameters_t* <i>parameters</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;j2k.cp.tcps.pocs&#39; in 1st parameter &#39;j2k&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>j2k_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_j2k_t* <i>j2k</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;parameters.POC&#39; in 2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
+<span class='iname_a'>jp2_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.j2k.cp.tcps.pocs&#39; in return value (pointer) has base type &#39;struct opj_poc&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>pi.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_38')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_pi_iterator <span class='warning'>&nbsp;1&nbsp;</span></span>
+<br/>
+<div id="c_38" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Size of this type has been changed from <b>120</b> bytes to <b>248</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_39')">
+[+] affected symbols: 2 (1.6%)</span>
+<div id="c_39" style="display:none;">
+<div class='affected'><span class='iname_a'>pi_destroy&#160;<span class='sym_p'>(&#160;opj_pi_iterator_t* <span class='fp'>pi</span>, <span class='nowrap'>opj_cp_t* <i>cp</i>,</span> <span class='nowrap'>int <i>tileno</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;pi&#39; (pointer) has base type &#39;struct opj_pi_iterator&#39;.</div>
+<span class='iname_a'>pi_next&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_pi_iterator_t* <span class='fp'>pi</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;pi&#39; (pointer) has base type &#39;struct opj_pi_iterator&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>t1.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_40')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_t1 <span class='warning'>&nbsp;6&nbsp;</span></span>
+<br/>
+<div id="c_40" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>datasize</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>flags_stride</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>flagssize</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>h</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Field <b>w</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Size of this type has been changed from <b>8429608</b> bytes to <b>64</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_41')">
+[+] affected symbols: 4 (3.1%)</span>
+<div id="c_41" style="display:none;">
+<div class='affected'><span class='iname_a'>t1_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_decode_cblks&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span>,</span> <span class='nowrap'>opj_tcd_tile_t* <i>tile</i>,</span> <span class='nowrap'>opj_tcp_t* <i>tcp</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+<span class='iname_a'>t1_encode_cblks&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_t1_t* <span class='fp'>t1</span>,</span> <span class='nowrap'>opj_tcd_tile_t* <i>tile</i>,</span> <span class='nowrap'>opj_tcp_t* <i>tcp</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;t1&#39; (pointer) has base type &#39;struct opj_t1&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<span class='h_name'>tcd.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_42')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_tcd <span class='warning'>&nbsp;4&nbsp;</span></span>
+<br/>
+<div id="c_42" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>encoding_time</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Size of this type has been changed from <b>56</b> bytes to <b>88</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Field <b>cur_totnum_tp</b> has been added to this type.</td>
+<td>This field will not be initialized by old clients.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Field <b>tp_num</b> has been added to this type.</td>
+<td>This field will not be initialized by old clients.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_43')">
+[+] affected symbols: 14 (11%)</span>
+<div id="c_43" style="display:none;">
+<div class='affected'><span class='iname_a'>tcd_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_common_ptr <i>cinfo</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_decode_tile&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>unsigned char* <i>src</i>,</span> <span class='nowrap'>int <i>len</i>,</span> <span class='nowrap'>int <i>tileno</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_dump&#160;<span class='sym_p'>(&#160;<span class='nowrap'>FILE* <i>fd</i>,</span> <span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>opj_tcd_image_t* <i>img</i> )</span></span></span><br/>
+<div class='affect'>2nd parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_encode_tile&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>int <i>tileno</i>,</span> <span class='nowrap'>unsigned char* <i>dest</i>,</span> <span class='nowrap'>int <i>len</i>,</span> <span class='nowrap'>opj_image_info_t* <i>image_info</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_free_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_free_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_init_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>opj_image_t* <i>image</i>,</span> <span class='nowrap'>opj_cp_t* <i>cp</i>,</span> <span class='nowrap'>int <i>curtileno</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_makelayer&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>int <i>layno</i>,</span> <span class='nowrap'>double <i>thresh</i>,</span> <span class='nowrap'>int <i>final</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+<span class='iname_a'>tcd_makelayer_fixed&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_tcd_t* <span class='fp'>tcd</span>,</span> <span class='nowrap'>int <i>layno</i>,</span> <span class='nowrap'>int <i>final</i> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;tcd&#39; (pointer) has base type &#39;struct opj_tcd&#39;.</div>
+ <b>...</b>
+<br/>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Headers'></a><h2>Header Files <span class='gray'>&nbsp;18&nbsp;</span></h2><hr/>
+<div class='h_list'>
+bio.h<br/>
+cio.h<br/>
+dwt.h<br/>
+event.h<br/>
+image.h<br/>
+j2k.h<br/>
+j2k_lib.h<br/>
+jp2.h<br/>
+jpt.h<br/>
+mct.h<br/>
+mqc.h<br/>
+openjpeg.h<br/>
+pi.h<br/>
+raw.h<br/>
+t1.h<br/>
+t2.h<br/>
+tcd.h<br/>
+tgt.h<br/>
+</div>
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Sources'></a><h2>Source Files <span class='gray'>&nbsp;18&nbsp;</span></h2><hr/>
+<div class='h_list'>
+bio.c<br/>
+cio.c<br/>
+dwt.c<br/>
+event.c<br/>
+image.c<br/>
+j2k.c<br/>
+j2k_lib.c<br/>
+jp2.c<br/>
+jpt.c<br/>
+mct.c<br/>
+mqc.c<br/>
+openjpeg.c<br/>
+pi.c<br/>
+raw.c<br/>
+t1.c<br/>
+t2.c<br/>
+tcd.c<br/>
+tgt.c<br/>
+</div>
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Libs'></a><h2>Objects <span class='gray'>&nbsp;1&nbsp;</span></h2><hr/>
+<div class='lib_list'>
+libopenjpeg.so<br/>
+</div>
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+</div>
+<br/><br/><br/>
+<hr/>
+<div class='footer' align='right'><i>Generated by <a href='http://lvc.github.io/abi-compliance-checker/'>ABI Compliance Checker</a> 1.99.21 &#160;</i>
+</div>
+<br/>
+
+</body></html>
