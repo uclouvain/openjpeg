@@ -1,15 +1,13 @@
-<!-- verdict:compatible;affected:0;added:0;removed:0;type_problems_high:0;type_problems_medium:0;type_problems_low:0;interface_problems_high:0;interface_problems_medium:0;interface_problems_low:0;changed_constants:0;tool_version:1.99.15 -->
+<!-- verdict:compatible;affected:0;added:0;removed:0;type_problems_high:0;type_problems_medium:0;type_problems_low:0;interface_problems_high:0;interface_problems_medium:0;interface_problems_low:0;changed_constants:0;tool_version:1.99.21 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="keywords" content="libopenjp2, binary compatibility, API, report" />
-    <meta name="description" content="Binary compatibility report for the libopenjp2 object between 2.0 and 2.0.1 versions on x86_64" />
-    <title>
-        libopenjp2: 2.0 to 2.0.1 binary compatibility report
-    </title>
-    <style type="text/css">
-    body {
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="libopenjp2, binary compatibility, API, report" />
+<meta name="description" content="Binary compatibility report for the libopenjp2 object between 2.0 and 2.0.1 versions on x86_64" />
+<title>libopenjp2: 2.0 to 2.0.1 binary compatibility report</title>
+<style type="text/css">
+body {
     font-family:Arial, sans-serif;
     background-color:White;
     color:Black;
@@ -51,21 +49,21 @@ span.new_sign_lbl {
 span:hover.section {
     color:#336699;
 }
-span.section_affected {
+span.sect_aff {
     cursor:pointer;
     margin-left:7px;
     padding-left:15px;
     font-size:0.875em;
     color:#cc3300;
 }
-span.section_info {
+span.sect_info {
     cursor:pointer;
     margin-left:7px;
     padding-left:15px;
     font-size:0.875em;
     color:Black;
 }
-span.extendable {
+span.ext {
     font-weight:100;
 }
 span.h_name {
@@ -129,6 +127,8 @@ table.ptable td {
     border:1px solid gray;
     padding: 3px;
     font-size:0.875em;
+    text-align:left;
+    vertical-align:top;
 }
 table.vtable {
     border-collapse:collapse;
@@ -195,13 +195,12 @@ span.color_p {
     font-style:italic;
     color:Brown;
 }
-span.param {
+span.p {
     font-style:italic;
 }
-span.focus_p {
+span.fp {
     font-style:italic;
-    /* color:Red; */
-    background-color:#FFCCCC;
+    background-color:#DCDCDC;
 }
 span.ttype {
     font-weight:100;
@@ -213,17 +212,29 @@ span.value {
     white-space:nowrap;
     font-weight:bold;
 }
-td.passed {
+.passed {
     background-color:#CCFFCC;
 }
-td.warning {
+.warning {
     background-color:#F4F4AF;
 }
-td.failed {
+.failed {
     background-color:#FFCCCC;
 }
-td.new {
+.new {
     background-color:#C6DEFF;
+}
+.compatible {
+    background-color:#CCFFCC;
+}
+.almost_compatible {
+    background-color:#FFDAA3;
+}
+.incompatible {
+    background-color:#FFCCCC;
+}
+.gray {
+    background-color:#DCDCDC;
 }
 .top_ref {
     font-size:0.69em;
@@ -231,11 +242,10 @@ td.new {
 .footer {
     font-size:0.75em;
 }
-
-    </style>
-    <script type="text/javascript" language="JavaScript">
-    <!--
-    function showContent(header, id)
+</style>
+<script type="text/javascript" language="JavaScript">
+<!--
+function showContent(header, id)
 {
     e = document.getElementById(id);
     if(e.style.display == 'none')
@@ -251,9 +261,10 @@ td.new {
         header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi,"[+]");
     }
 }
-    -->
-    </script>
-    </head>
+-->
+</script>
+</head>
+
 <body>
 <div><a name='Top'></a>
 <h1>Binary compatibility report for the <span style='color:Blue;'>libopenjp2.so</span> object between <span style='color:Red;'>2.0</span> and <span style='color:Red;'>2.0.1</span> versions on <span style='color:Blue;'>x86_64</span></h1>
@@ -271,7 +282,9 @@ td.new {
 <tr><th>Total Source Files</th><td><a href='#Sources' style='color:Blue;'>3</a></td></tr>
 <tr><th>Total Objects</th><td><a href='#Libs' style='color:Blue;'>1</a></td></tr>
 <tr><th>Total Symbols / Types</th><td>43 / 107</td></tr>
-<tr><th>Verdict</th><td><span style='color:Green;'><b>Compatible</b></span></td></tr>
+<tr><th>Compatibility</th>
+<td class='compatible'>100%</td>
+</tr>
 </table>
 <h2>Problem Summary</h2><hr/>
 <table class='summary'><tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr><tr><th>Added Symbols</th><td>-</td><td>0</td></tr>
@@ -285,26 +298,29 @@ td.new {
 <tr><th>Problems with<br/>Constants</th><td>Low</td><td>0</td></tr>
 </table>
 
-<a name='Headers'></a><h2>Header Files (2)</h2><hr/>
+<a name='Headers'></a><h2>Header Files <span class='gray'>&nbsp;2&nbsp;</span></h2><hr/>
 <div class='h_list'>
 openjpeg.h<br/>
 opj_stdint.h<br/>
 </div>
 <br/><a class='top_ref' href='#Top'>to the top</a><br/>
-<a name='Sources'></a><h2>Source Files (3)</h2><hr/>
+<a name='Sources'></a><h2>Source Files <span class='gray'>&nbsp;3&nbsp;</span></h2><hr/>
 <div class='h_list'>
 cio.c<br/>
 image.c<br/>
 openjpeg.c<br/>
 </div>
 <br/><a class='top_ref' href='#Top'>to the top</a><br/>
-<a name='Libs'></a><h2>Objects (1)</h2><hr/>
+<a name='Libs'></a><h2>Objects <span class='gray'>&nbsp;1&nbsp;</span></h2><hr/>
 <div class='lib_list'>
 libopenjp2.so.2.0.0<br/>
 </div>
 <br/><a class='top_ref' href='#Top'>to the top</a><br/>
 </div>
 <br/><br/><br/>
-<hr/><div class='footer' align='right'><i>Generated on Sun Jun 19 23:35:51 2016 by <a href='http://lvc.github.io/abi-compliance-checker/'>ABI Compliance Checker</a> 1.99.15 &#160;</i></div><br/>
+<hr/>
+<div class='footer' align='right'><i>Generated by <a href='http://lvc.github.io/abi-compliance-checker/'>ABI Compliance Checker</a> 1.99.21 &#160;</i>
+</div>
+<br/>
 
 </body></html>

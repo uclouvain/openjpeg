@@ -1,9 +1,12 @@
 {
-  "BC": "96.5",
+  "BC": "91.9",
   "Added": 0,
   "Removed": 0,
+  "TotalProblems": 20,
   "ObjectsAdded": 0,
   "ObjectsRemoved": 0,
+  "ObjectsAddedSymbols": 0,
+  "ObjectsRemovedSymbols": 0,
   "ChangedSoname": 0,
   "TotalObjects": 1
 }

@@ -1,15 +1,13 @@
-<!-- verdict:incompatible;affected:64.3;added:31;removed:9;type_problems_high:0;type_problems_medium:9;type_problems_low:95;interface_problems_high:10;interface_problems_medium:5;interface_problems_low:16;changed_constants:0;type_changes_other:1;tool_version:1.99.15 -->
+<!-- verdict:incompatible;affected:64.3;added:31;removed:9;type_problems_high:0;type_problems_medium:9;type_problems_low:95;interface_problems_high:10;interface_problems_medium:5;interface_problems_low:16;changed_constants:0;type_changes_other:1;tool_version:1.99.21 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="keywords" content="libopenjpeg, binary compatibility, API, report" />
-    <meta name="description" content="Binary compatibility report for the libopenjpeg object between 1.5.2 and 2.0 versions on x86_64" />
-    <title>
-        libopenjpeg: 1.5.2 to 2.0 binary compatibility report
-    </title>
-    <style type="text/css">
-    body {
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="libopenjpeg, binary compatibility, API, report" />
+<meta name="description" content="Binary compatibility report for the libopenjpeg object between 1.5.2 and 2.0 versions on x86_64" />
+<title>libopenjpeg: 1.5.2 to 2.0 binary compatibility report</title>
+<style type="text/css">
+body {
     font-family:Arial, sans-serif;
     background-color:White;
     color:Black;
@@ -51,21 +49,21 @@ span.new_sign_lbl {
 span:hover.section {
     color:#336699;
 }
-span.section_affected {
+span.sect_aff {
     cursor:pointer;
     margin-left:7px;
     padding-left:15px;
     font-size:0.875em;
     color:#cc3300;
 }
-span.section_info {
+span.sect_info {
     cursor:pointer;
     margin-left:7px;
     padding-left:15px;
     font-size:0.875em;
     color:Black;
 }
-span.extendable {
+span.ext {
     font-weight:100;
 }
 span.h_name {
@@ -129,6 +127,8 @@ table.ptable td {
     border:1px solid gray;
     padding: 3px;
     font-size:0.875em;
+    text-align:left;
+    vertical-align:top;
 }
 table.vtable {
     border-collapse:collapse;
@@ -195,13 +195,12 @@ span.color_p {
     font-style:italic;
     color:Brown;
 }
-span.param {
+span.p {
     font-style:italic;
 }
-span.focus_p {
+span.fp {
     font-style:italic;
-    /* color:Red; */
-    background-color:#FFCCCC;
+    background-color:#DCDCDC;
 }
 span.ttype {
     font-weight:100;
@@ -213,17 +212,29 @@ span.value {
     white-space:nowrap;
     font-weight:bold;
 }
-td.passed {
+.passed {
     background-color:#CCFFCC;
 }
-td.warning {
+.warning {
     background-color:#F4F4AF;
 }
-td.failed {
+.failed {
     background-color:#FFCCCC;
 }
-td.new {
+.new {
     background-color:#C6DEFF;
+}
+.compatible {
+    background-color:#CCFFCC;
+}
+.almost_compatible {
+    background-color:#FFDAA3;
+}
+.incompatible {
+    background-color:#FFCCCC;
+}
+.gray {
+    background-color:#DCDCDC;
 }
 .top_ref {
     font-size:0.69em;
@@ -231,11 +242,10 @@ td.new {
 .footer {
     font-size:0.75em;
 }
-
-    </style>
-    <script type="text/javascript" language="JavaScript">
-    <!--
-    function showContent(header, id)
+</style>
+<script type="text/javascript" language="JavaScript">
+<!--
+function showContent(header, id)
 {
     e = document.getElementById(id);
     if(e.style.display == 'none')
@@ -251,9 +261,10 @@ td.new {
         header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi,"[+]");
     }
 }
-    -->
-    </script>
-    </head>
+-->
+</script>
+</head>
+
 <body>
 <div><a name='Top'></a>
 <h1>Binary compatibility report between <span style='color:Blue;'>libopenjpeg.so.1.5.2</span> (<span style='color:Red;'>1.5.2</span>) and <span style='color:Blue;'>libopenjp2.so.2.0.0</span> (<span style='color:Red;'>2.0</span>) objects on <span style='color:Blue;'>x86_64</span></h1>
@@ -271,7 +282,9 @@ td.new {
 <tr><th>Total Source Files</th><td><a href='#Sources' style='color:Blue;'>4</a></td></tr>
 <tr><th>Total Objects</th><td><a href='#Libs' style='color:Blue;'>1</a></td></tr>
 <tr><th>Total Symbols / Types</th><td>21 / 54</td></tr>
-<tr><th>Verdict</th><td><span style='color:Red;'><b>Incompatible<br/>(64.3%)</b></span></td></tr>
+<tr><th>Compatibility</th>
+<td class='incompatible'>35.7%</td>
+</tr>
 </table>
 <h2>Problem Summary</h2><hr/>
 <table class='summary'><tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr><tr><th>Added Symbols</th><td>-</td><td class='new'><a href='#Added' style='color:Blue;'>31</a></td></tr>
@@ -286,7 +299,7 @@ td.new {
 <tr><th>Other Changes<br/>in Data Types</th><td>-</td><td class='passed'><a href='#Other_Changes_In_Types' style='color:Blue;'>1</a></td></tr>
 </table>
 
-<a name='Added'></a><h2>Added Symbols (31)</h2><hr/>
+<a name='Added'></a><h2>Added Symbols <span class='new'>&nbsp;31&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span>, <span class='lib_name'>libopenjp2.so.2.0.0</span><br/>
 <span class="iname">opj_decode_tile_data&#160;<span class='sym_p'>(&#160;opj_codec_t* <span class='color_p'>p_codec</span>, OPJ_UINT32 <span class='color_p'>p_tile_index</span>, OPJ_BYTE* <span class='color_p'>p_data</span>, OPJ_UINT32 <span class='color_p'>p_data_size</span>, <span class='nowrap'>opj_stream_t* <span class='color_p'>p_stream</span> )</span></span></span><br/>
 <span class="iname">opj_destroy_codec&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_codec_t* <span class='color_p'>p_codec</span> )</span></span></span><br/>
@@ -321,7 +334,7 @@ td.new {
 <span class="iname">opj_write_tile&#160;<span class='sym_p'>(&#160;opj_codec_t* <span class='color_p'>p_codec</span>, OPJ_UINT32 <span class='color_p'>p_tile_index</span>, OPJ_BYTE* <span class='color_p'>p_data</span>, OPJ_UINT32 <span class='color_p'>p_data_size</span>, <span class='nowrap'>opj_stream_t* <span class='color_p'>p_stream</span> )</span></span></span><br/>
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
-<a name='Removed'></a><a name='Withdrawn'></a><h2>Removed Symbols (9)</h2><hr/>
+<a name='Removed'></a><a name='Withdrawn'></a><h2>Removed Symbols <span class='failed'>&nbsp;9&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span>, <span class='lib_name'>libopenjpeg.so.1.5.2</span><br/>
 <span class="iname">cio_seek&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> <span class='nowrap'>int <span class='color_p'>pos</span> )</span></span></span><br/>
 <span class="iname">cio_tell&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span> )</span></span></span><br/>
@@ -335,10 +348,10 @@ td.new {
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='High_Risk_Problems'></a><a name='Symbol_Problems_High'></a><a name='Interface_Problems_High'></a>
-<h2>Problems with Symbols, High Severity (10)</h2><hr/>
+<h2>Problems with Symbols, High Severity <span class='failed'>&nbsp;10&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span>, <span class='lib_name'>libopenjpeg.so.1.5.2</span><br/>
 <span class="section" onclick="javascript:showContent(this, 'c_1')">
-<span class='extendable'>[+]</span> opj_decode&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span> )</span></span> (3)</span>
+<span class='ext'>[+]</span> opj_decode&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span> )</span></span> <span class='failed'>&nbsp;3&nbsp;</span></span>
 <br/>
 <div id="c_1" style="display:none;">
 
@@ -354,24 +367,24 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Parameter <b>p_codec</b> of type <b>opj_codec_t*</b> has been added to the calling stack at the middle position.</td>
-<td align='left' valign='top'>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
+<td>Parameter <b>p_codec</b> of type <b>opj_codec_t*</b> has been added to the calling stack at the middle position.</td>
+<td>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Parameter <b>p_stream</b> of type <b>opj_stream_t*</b> has been added to the calling stack at the middle position.</td>
-<td align='left' valign='top'>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
+<td>Parameter <b>p_stream</b> of type <b>opj_stream_t*</b> has been added to the calling stack at the middle position.</td>
+<td>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'><b>1st</b> middle parameter <b>dinfo</b> has been removed from the calling stack.</td>
-<td align='left' valign='top'>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
+<td><b>1st</b> middle parameter <b>dinfo</b> has been removed from the calling stack.</td>
+<td>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_2')">
-<span class='extendable'>[+]</span> opj_destroy_cstr_info&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_codestream_info_t* <span class='color_p'>cstr_info</span> )</span></span> (1)</span>
+<span class='ext'>[+]</span> opj_destroy_cstr_info&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_codestream_info_t* <span class='color_p'>cstr_info</span> )</span></span> <span class='failed'>&nbsp;1&nbsp;</span></span>
 <br/>
 <div id="c_2" style="display:none;">
 
@@ -387,14 +400,14 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>The pointer level of <b>1st</b> parameter <b>cstr_info</b> has been increased from <b>1</b> to <b>2</b>.</td>
-<td align='left' valign='top'>The library function may try to access unallocated memory by the dereferencing of old parameter value and therefore cause a crash of applications.</td>
+<td>The pointer level of <b>1st</b> parameter <b>cstr_info</b> has been increased from <b>1</b> to <b>2</b>.</td>
+<td>The library function may try to access unallocated memory by the dereferencing of old parameter value and therefore cause a crash of applications.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_3')">
-<span class='extendable'>[+]</span> opj_encode&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>char* <span class='color_p'>index</span> )</span></span> (4)</span>
+<span class='ext'>[+]</span> opj_encode&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>char* <span class='color_p'>index</span> )</span></span> <span class='failed'>&nbsp;4&nbsp;</span></span>
 <br/>
 <div id="c_3" style="display:none;">
 
@@ -410,29 +423,29 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Parameter <b>p_info</b> of type <b>opj_codec_t*</b> has been added to the calling stack at the middle position.</td>
-<td align='left' valign='top'>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
+<td>Parameter <b>p_info</b> of type <b>opj_codec_t*</b> has been added to the calling stack at the middle position.</td>
+<td>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Parameter <b>p_stream</b> of type <b>opj_stream_t*</b> has been added to the calling stack at the middle position.</td>
-<td align='left' valign='top'>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
+<td>Parameter <b>p_stream</b> of type <b>opj_stream_t*</b> has been added to the calling stack at the middle position.</td>
+<td>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'><b>1st</b> middle parameter <b>cinfo</b> has been removed from the calling stack.</td>
-<td align='left' valign='top'>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
+<td><b>1st</b> middle parameter <b>cinfo</b> has been removed from the calling stack.</td>
+<td>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'><b>2nd</b> middle parameter <b>cio</b> has been removed from the calling stack.</td>
-<td align='left' valign='top'>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
+<td><b>2nd</b> middle parameter <b>cio</b> has been removed from the calling stack.</td>
+<td>Layout of parameter's stack has been changed and therefore parameters at higher positions in the stack may be incorrectly initialized by applications.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_4')">
-<span class='extendable'>[+]</span> opj_setup_decoder&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_dparameters_t* <span class='color_p'>parameters</span> )</span></span> (1)</span>
+<span class='ext'>[+]</span> opj_setup_decoder&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_dparameters_t* <span class='color_p'>parameters</span> )</span></span> <span class='failed'>&nbsp;1&nbsp;</span></span>
 <br/>
 <div id="c_4" style="display:none;">
 
@@ -448,14 +461,14 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>The pointer level of <b>1st</b> parameter <b>dinfo</b> has been increased from <b>1</b> to <b>2</b>.</td>
-<td align='left' valign='top'>The library function may try to access unallocated memory by the dereferencing of old parameter value and therefore cause a crash of applications.</td>
+<td>The pointer level of <b>1st</b> parameter <b>dinfo</b> has been increased from <b>1</b> to <b>2</b>.</td>
+<td>The library function may try to access unallocated memory by the dereferencing of old parameter value and therefore cause a crash of applications.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_5')">
-<span class='extendable'>[+]</span> opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, opj_cparameters_t* <span class='color_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='color_p'>image</span> )</span></span> (1)</span>
+<span class='ext'>[+]</span> opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, opj_cparameters_t* <span class='color_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='color_p'>image</span> )</span></span> <span class='failed'>&nbsp;1&nbsp;</span></span>
 <br/>
 <div id="c_5" style="display:none;">
 
@@ -471,8 +484,8 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>The pointer level of <b>1st</b> parameter <b>cinfo</b> has been increased from <b>1</b> to <b>2</b>.</td>
-<td align='left' valign='top'>The library function may try to access unallocated memory by the dereferencing of old parameter value and therefore cause a crash of applications.</td>
+<td>The pointer level of <b>1st</b> parameter <b>cinfo</b> has been increased from <b>1</b> to <b>2</b>.</td>
+<td>The library function may try to access unallocated memory by the dereferencing of old parameter value and therefore cause a crash of applications.</td>
 </tr>
 </table>
 <br/>
@@ -480,66 +493,66 @@ td.new {
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='Medium_Risk_Problems'></a><a name='Type_Problems_Medium'></a>
-<h2>Problems with Data Types, Medium Severity (9)</h2><hr/>
+<h2>Problems with Data Types, Medium Severity <span class='failed'>&nbsp;9&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span><br/>
 <span class="section" onclick="javascript:showContent(this, 'c_6')">
-<span class='extendable'>[+]</span> <span class='ttype'>struct</span> opj_dparameters (9)</span>
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_dparameters <span class='failed'>&nbsp;9&nbsp;</span></span>
 <br/>
 <div id="c_6" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Field <b>DA_x0</b> has been added at the middle position of this structural type.</td>
-<td align='left' valign='top'>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+<td>Field <b>DA_x0</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Field <b>DA_x1</b> has been added at the middle position of this structural type.</td>
-<td align='left' valign='top'>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+<td>Field <b>DA_x1</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Field <b>DA_y0</b> has been added at the middle position of this structural type.</td>
-<td align='left' valign='top'>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+<td>Field <b>DA_y0</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Field <b>m_verbose</b> has been added at the middle position of this structural type.</td>
-<td align='left' valign='top'>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+<td>Field <b>m_verbose</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Field <b>nb_tile_to_decode</b> has been added at the middle position of this structural type.</td>
-<td align='left' valign='top'>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+<td>Field <b>nb_tile_to_decode</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
 </tr>
 <tr>
 <th>6</th>
-<td align='left' valign='top'>Field <b>tile_index</b> has been added at the middle position of this structural type.</td>
-<td align='left' valign='top'>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
+<td>Field <b>tile_index</b> has been added at the middle position of this structural type.</td>
+<td>1) Size of the inclusive type has been changed.<br/>2) Layout of structure fields has been changed and therefore fields at higher positions of the structure definition may be incorrectly accessed by applications.</td>
 </tr>
 <tr>
 <th>7</th>
-<td align='left' valign='top'>The relative position of field <b>jpwl_correct</b> has been changed from <b>6</b> to <b>7</b>.</td>
-<td align='left' valign='top'>Applications will access incorrect memory when attempting to access this field.</td>
+<td>The relative position of field <b>jpwl_correct</b> has been changed from <b>6</b> to <b>7</b>.</td>
+<td>Applications will access incorrect memory when attempting to access this field.</td>
 </tr>
 <tr>
 <th>8</th>
-<td align='left' valign='top'>The relative position of field <b>jpwl_exp_comps</b> has been changed from <b>7</b> to <b>8</b>.</td>
-<td align='left' valign='top'>Applications will access incorrect memory when attempting to access this field.</td>
+<td>The relative position of field <b>jpwl_exp_comps</b> has been changed from <b>7</b> to <b>8</b>.</td>
+<td>Applications will access incorrect memory when attempting to access this field.</td>
 </tr>
 <tr>
 <th>9</th>
-<td align='left' valign='top'>The relative position of field <b>jpwl_max_tiles</b> has been changed from <b>8</b> to <b>9</b>.</td>
-<td align='left' valign='top'>Applications will access incorrect memory when attempting to access this field.</td>
+<td>The relative position of field <b>jpwl_max_tiles</b> has been changed from <b>8</b> to <b>9</b>.</td>
+<td>Applications will access incorrect memory when attempting to access this field.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_7')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_7')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_7" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_decoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_decoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
-<span class='iname_a'>opj_setup_decoder&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='param'>dinfo</span>, <span class='nowrap'>opj_dparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <i>dinfo</i>,</span> <span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
 </div>
 </div>
@@ -548,10 +561,10 @@ td.new {
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='Symbol_Problems_Medium'></a><a name='Interface_Problems_Medium'></a>
-<h2>Problems with Symbols, Medium Severity (5)</h2><hr/>
+<h2>Problems with Symbols, Medium Severity <span class='failed'>&nbsp;5&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span>, <span class='lib_name'>libopenjpeg.so.1.5.2</span><br/>
 <span class="section" onclick="javascript:showContent(this, 'c_8')">
-<span class='extendable'>[+]</span> opj_decode&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span> )</span></span> (3)</span>
+<span class='ext'>[+]</span> opj_decode&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span> )</span></span> <span class='failed'>&nbsp;3&nbsp;</span></span>
 <br/>
 <div id="c_8" style="display:none;">
 
@@ -567,24 +580,24 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Parameter <b>p_image</b> of type <b>opj_image_t*</b> has been added to the calling stack.</td>
-<td align='left' valign='top'>This parameter will not be initialized by old clients.</td>
+<td>Parameter <b>p_image</b> of type <b>opj_image_t*</b> has been added to the calling stack.</td>
+<td>This parameter will not be initialized by old clients.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>The pointer level of return value has been decreased from <b>1</b> to <b>0</b>.</td>
-<td align='left' valign='top'>Applications may try to access unallocated memory by the dereferencing of new return value and therefore cause a crash.</td>
+<td>The pointer level of return value has been decreased from <b>1</b> to <b>0</b>.</td>
+<td>Applications may try to access unallocated memory by the dereferencing of new return value and therefore cause a crash.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of return value has been changed from <span class='nowrap'><b>opj_image_t*</b> (<b>8</b> bytes)</span> to <span class='nowrap'><b>OPJ_BOOL</b> (<b>4</b> bytes)</span>.</td>
-<td align='left' valign='top'>Applications will obtain a different return value and execution may change.</td>
+<td>Type of return value has been changed from <span class='nowrap'><b>opj_image_t*</b> (<b>8</b> bytes)</span> to <span class='nowrap'><b>OPJ_BOOL</b> (<b>4</b> bytes)</span>.</td>
+<td>Applications will obtain a different return value and execution may change.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_9')">
-<span class='extendable'>[+]</span> opj_encode&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>char* <span class='color_p'>index</span> )</span></span> (2)</span>
+<span class='ext'>[+]</span> opj_encode&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>char* <span class='color_p'>index</span> )</span></span> <span class='failed'>&nbsp;2&nbsp;</span></span>
 <br/>
 <div id="c_9" style="display:none;">
 
@@ -600,13 +613,13 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'><b>3rd</b> parameter <b>image</b> has been removed from the calling stack.</td>
-<td align='left' valign='top'>This parameter will be ignored by the function.</td>
+<td><b>3rd</b> parameter <b>image</b> has been removed from the calling stack.</td>
+<td>This parameter will be ignored by the function.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'><b>4th</b> parameter <b>index</b> has been removed from the calling stack.</td>
-<td align='left' valign='top'>This parameter will be ignored by the function.</td>
+<td><b>4th</b> parameter <b>index</b> has been removed from the calling stack.</td>
+<td>This parameter will be ignored by the function.</td>
 </tr>
 </table>
 <br/>
@@ -614,680 +627,680 @@ td.new {
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='Low_Risk_Problems'></a><a name='Type_Problems_Low'></a>
-<h2>Problems with Data Types, Low Severity (95)</h2><hr/>
+<h2>Problems with Data Types, Low Severity <span class='warning'>&nbsp;95&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span><br/>
 <span class="section" onclick="javascript:showContent(this, 'c_10')">
-<span class='extendable'>[+]</span> <span class='ttype'>enum</span> CINEMA_MODE (4)</span>
+<span class='ext'>[+]</span> <span class='ttype'>enum</span> CINEMA_MODE <span class='warning'>&nbsp;4&nbsp;</span></span>
 <br/>
 <div id="c_10" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Name of member with value <b>0</b> has been changed from <b>OFF</b> to <b>OPJ_OFF</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>0</b> has been changed from <b>OFF</b> to <b>OPJ_OFF</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Name of member with value <b>1</b> has been changed from <b>CINEMA2K_24</b> to <b>OPJ_CINEMA2K_24</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>1</b> has been changed from <b>CINEMA2K_24</b> to <b>OPJ_CINEMA2K_24</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Name of member with value <b>2</b> has been changed from <b>CINEMA2K_48</b> to <b>OPJ_CINEMA2K_48</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>2</b> has been changed from <b>CINEMA2K_48</b> to <b>OPJ_CINEMA2K_48</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Name of member with value <b>3</b> has been changed from <b>CINEMA4K_24</b> to <b>OPJ_CINEMA4K_24</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>3</b> has been changed from <b>CINEMA4K_24</b> to <b>OPJ_CINEMA4K_24</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_11')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_11')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_11" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;enum CINEMA_MODE&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='focus_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='param'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
 <div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;enum CINEMA_MODE&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_12')">
-<span class='extendable'>[+]</span> <span class='ttype'>enum</span> CODEC_FORMAT (4)</span>
+<span class='ext'>[+]</span> <span class='ttype'>enum</span> CODEC_FORMAT <span class='warning'>&nbsp;4&nbsp;</span></span>
 <br/>
 <div id="c_12" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Name of member with value <b>0</b> has been changed from <b>CODEC_J2K</b> to <b>OPJ_CODEC_J2K</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>0</b> has been changed from <b>CODEC_J2K</b> to <b>OPJ_CODEC_J2K</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Name of member with value <b>-1</b> has been changed from <b>CODEC_UNKNOWN</b> to <b>OPJ_CODEC_UNKNOWN</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>1</b> has been changed from <b>CODEC_JPT</b> to <b>OPJ_CODEC_JPT</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Name of member with value <b>1</b> has been changed from <b>CODEC_JPT</b> to <b>OPJ_CODEC_JPT</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>18446744073709551615</b> has been changed from <b>CODEC_UNKNOWN</b> to <b>OPJ_CODEC_UNKNOWN</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Name of member with value <b>2</b> has been changed from <b>CODEC_JP2</b> to <b>OPJ_CODEC_JP2</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>2</b> has been changed from <b>CODEC_JP2</b> to <b>OPJ_CODEC_JP2</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_13')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_13')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_13" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='focus_p'>format</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='fp'>format</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;format&#39; has base type &#39;enum CODEC_FORMAT&#39;.</div>
-<span class='iname_a'>opj_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='focus_p'>format</span> )</span></span></span><br/>
+<span class='iname_a'>opj_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='fp'>format</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;format&#39; has base type &#39;enum CODEC_FORMAT&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_14')">
-<span class='extendable'>[+]</span> <span class='ttype'>enum</span> COLOR_SPACE (5)</span>
+<span class='ext'>[+]</span> <span class='ttype'>enum</span> COLOR_SPACE <span class='warning'>&nbsp;5&nbsp;</span></span>
 <br/>
 <div id="c_14" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Name of member with value <b>0</b> has been changed from <b>CLRSPC_UNSPECIFIED</b> to <b>OPJ_CLRSPC_UNSPECIFIED</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>0</b> has been changed from <b>CLRSPC_UNSPECIFIED</b> to <b>OPJ_CLRSPC_UNSPECIFIED</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Name of member with value <b>-1</b> has been changed from <b>CLRSPC_UNKNOWN</b> to <b>OPJ_CLRSPC_UNKNOWN</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>1</b> has been changed from <b>CLRSPC_SRGB</b> to <b>OPJ_CLRSPC_SRGB</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Name of member with value <b>1</b> has been changed from <b>CLRSPC_SRGB</b> to <b>OPJ_CLRSPC_SRGB</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>18446744073709551615</b> has been changed from <b>CLRSPC_UNKNOWN</b> to <b>OPJ_CLRSPC_UNKNOWN</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Name of member with value <b>2</b> has been changed from <b>CLRSPC_GRAY</b> to <b>OPJ_CLRSPC_GRAY</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>2</b> has been changed from <b>CLRSPC_GRAY</b> to <b>OPJ_CLRSPC_GRAY</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Name of member with value <b>3</b> has been changed from <b>CLRSPC_SYCC</b> to <b>OPJ_CLRSPC_SYCC</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>3</b> has been changed from <b>CLRSPC_SYCC</b> to <b>OPJ_CLRSPC_SYCC</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_15')">
-[+] affected symbols (3)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_15')">
+[+] affected symbols: 3 (14.3%)</span>
 <div id="c_15" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <span class='param'>numcmpts</span>,</span> opj_image_cmptparm_t* <span class='param'>cmptparms</span>, <span class='nowrap'>OPJ_COLOR_SPACE <span class='focus_p'>clrspc</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <i>numcmpts</i>,</span> <span class='nowrap'>opj_image_cmptparm_t* <i>cmptparms</i>,</span> <span class='nowrap'>OPJ_COLOR_SPACE <span class='fp'>clrspc</span> )</span></span></span><br/>
 <div class='affect'>3rd parameter &#39;clrspc&#39; has base type &#39;enum COLOR_SPACE&#39;.</div>
-<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='focus_p'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;image&#39; (pointer) has base type &#39;enum COLOR_SPACE&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='param'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='focus_p'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
 <div class='affect'>3rd parameter &#39;image&#39; (pointer) has base type &#39;enum COLOR_SPACE&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_16')">
-<span class='extendable'>[+]</span> <span class='ttype'>enum</span> PROG_ORDER (6)</span>
+<span class='ext'>[+]</span> <span class='ttype'>enum</span> PROG_ORDER <span class='warning'>&nbsp;6&nbsp;</span></span>
 <br/>
 <div id="c_16" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Name of member with value <b>0</b> has been changed from <b>LRCP</b> to <b>OPJ_LRCP</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>0</b> has been changed from <b>LRCP</b> to <b>OPJ_LRCP</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Name of member with value <b>-1</b> has been changed from <b>PROG_UNKNOWN</b> to <b>OPJ_PROG_UNKNOWN</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>1</b> has been changed from <b>RLCP</b> to <b>OPJ_RLCP</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Name of member with value <b>1</b> has been changed from <b>RLCP</b> to <b>OPJ_RLCP</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>18446744073709551615</b> has been changed from <b>PROG_UNKNOWN</b> to <b>OPJ_PROG_UNKNOWN</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Name of member with value <b>2</b> has been changed from <b>RPCL</b> to <b>OPJ_RPCL</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>2</b> has been changed from <b>RPCL</b> to <b>OPJ_RPCL</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Name of member with value <b>3</b> has been changed from <b>PCRL</b> to <b>OPJ_PCRL</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>3</b> has been changed from <b>PCRL</b> to <b>OPJ_PCRL</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>6</th>
-<td align='left' valign='top'>Name of member with value <b>4</b> has been changed from <b>CPRL</b> to <b>OPJ_CPRL</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>4</b> has been changed from <b>CPRL</b> to <b>OPJ_CPRL</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_17')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_17')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_17" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>Field &#39;parameters.POC&#39; in 1st parameter &#39;parameters&#39; (pointer) has base type &#39;enum PROG_ORDER&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='focus_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='param'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
 <div class='affect'>Field &#39;parameters.POC&#39; in 2nd parameter &#39;parameters&#39; (pointer) has base type &#39;enum PROG_ORDER&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_18')">
-<span class='extendable'>[+]</span> <span class='ttype'>enum</span> RSIZ_CAPABILITIES (3)</span>
+<span class='ext'>[+]</span> <span class='ttype'>enum</span> RSIZ_CAPABILITIES <span class='warning'>&nbsp;3&nbsp;</span></span>
 <br/>
 <div id="c_18" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Name of member with value <b>0</b> has been changed from <b>STD_RSIZ</b> to <b>OPJ_STD_RSIZ</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>0</b> has been changed from <b>STD_RSIZ</b> to <b>OPJ_STD_RSIZ</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Name of member with value <b>3</b> has been changed from <b>CINEMA2K</b> to <b>OPJ_CINEMA2K</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>3</b> has been changed from <b>CINEMA2K</b> to <b>OPJ_CINEMA2K</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Name of member with value <b>4</b> has been changed from <b>CINEMA4K</b> to <b>OPJ_CINEMA4K</b>.</td>
-<td align='left' valign='top'>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
+<td>Name of member with value <b>4</b> has been changed from <b>CINEMA4K</b> to <b>OPJ_CINEMA4K</b>.</td>
+<td>Applications may execute a wrong branch of code in the library and therefore change the behavior.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_19')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_19')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_19" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;enum RSIZ_CAPABILITIES&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='focus_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='param'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
 <div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;enum RSIZ_CAPABILITIES&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_20')">
-<span class='extendable'>[+]</span> <span class='ttype'>struct</span> opj_cparameters (6)</span>
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_cparameters <span class='warning'>&nbsp;6&nbsp;</span></span>
 <br/>
 <div id="c_20" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Field <b>mct_data</b> has been added to this type.</td>
-<td align='left' valign='top'>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+<td>Field <b>mct_data</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Size of this type has been changed from <b>18704</b> bytes to <b>18712</b> bytes.</td>
-<td align='left' valign='top'>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+<td>Size of this type has been changed from <b>18704</b> bytes to <b>18712</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of field <b>jpip_on</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>jpip_on</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Type of field <b>jpwl_epc_on</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>jpwl_epc_on</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Type of field <b>numpocs</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>numpocs</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>6</th>
-<td align='left' valign='top'>Type of field <b>tile_size_on</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>tile_size_on</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_21')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_21')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_21" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='focus_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='param'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
 <div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_cparameters&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_22')">
-<span class='extendable'>[+]</span> <span class='ttype'>struct</span> opj_dparameters (5)</span>
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_dparameters <span class='warning'>&nbsp;5&nbsp;</span></span>
 <br/>
 <div id="c_22" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Size of this type has been changed from <b>8228</b> bytes to <b>8252</b> bytes.</td>
-<td align='left' valign='top'>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+<td>Size of this type has been changed from <b>8228</b> bytes to <b>8252</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Type of field <b>cp_layer</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>cp_layer</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of field <b>cp_reduce</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>cp_reduce</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Type of field <b>jpwl_correct</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>jpwl_correct</b> has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Field <b>cp_limit_decoding</b> has been renamed to <b>DA_y1</b>.</td>
-<td align='left' valign='top'>Renaming of a field in data type may indicate a change in the semantic meaning of the field.</td>
+<td>Field <b>cp_limit_decoding</b> has been renamed to <b>DA_y1</b>.</td>
+<td>Renaming of a field in data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_23')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_23')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_23" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_decoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_decoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
-<span class='iname_a'>opj_setup_decoder&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='param'>dinfo</span>, <span class='nowrap'>opj_dparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_decoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <i>dinfo</i>,</span> <span class='nowrap'>opj_dparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_dparameters&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_24')">
-<span class='extendable'>[+]</span> <span class='ttype'>struct</span> opj_image (7)</span>
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_image <span class='warning'>&nbsp;7&nbsp;</span></span>
 <br/>
 <div id="c_24" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Type of field <b>icc_profile_buf</b> has been changed from <span class='value'>unsigned char*</span> to <b>OPJ_BYTE*</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>icc_profile_buf</b> has been changed from <span class='value'>unsigned char*</span> to <b>OPJ_BYTE*</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Type of field <b>icc_profile_len</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>icc_profile_len</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of field <b>numcomps</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>numcomps</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Type of field <b>x0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>x0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Type of field <b>x1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>x1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>6</th>
-<td align='left' valign='top'>Type of field <b>y0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>y0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>7</th>
-<td align='left' valign='top'>Type of field <b>y1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>y1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_25')">
-[+] affected symbols (3)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_25')">
+[+] affected symbols: 3 (14.3%)</span>
 <div id="c_25" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <span class='param'>numcmpts</span>,</span> opj_image_cmptparm_t* <span class='param'>cmptparms</span>, <span class='nowrap'>OPJ_COLOR_SPACE <span class='param'>clrspc</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <i>numcmpts</i>,</span> <span class='nowrap'>opj_image_cmptparm_t* <i>cmptparms</i>,</span> <span class='nowrap'>OPJ_COLOR_SPACE <i>clrspc</i> )</span></span></span><br/>
 <div class='affect'>Return value (pointer) has base type &#39;struct opj_image&#39;.</div>
-<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='focus_p'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
 <div class='affect'>1st parameter &#39;image&#39; (pointer) has base type &#39;struct opj_image&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='param'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='focus_p'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
 <div class='affect'>3rd parameter &#39;image&#39; (pointer) has base type &#39;struct opj_image&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_26')">
-<span class='extendable'>[+]</span> <span class='ttype'>struct</span> opj_image_comp (12)</span>
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_image_comp <span class='warning'>&nbsp;12&nbsp;</span></span>
 <br/>
 <div id="c_26" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Type of field <b>bpp</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>bpp</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Type of field <b>data</b> has been changed from <b>int*</b> to <b>OPJ_INT32*</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>data</b> has been changed from <b>int*</b> to <b>OPJ_INT32*</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of field <b>dx</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>dx</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Type of field <b>dy</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>dy</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Type of field <b>factor</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>factor</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>6</th>
-<td align='left' valign='top'>Type of field <b>h</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>h</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>7</th>
-<td align='left' valign='top'>Type of field <b>prec</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>prec</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>8</th>
-<td align='left' valign='top'>Type of field <b>resno_decoded</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>resno_decoded</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>9</th>
-<td align='left' valign='top'>Type of field <b>sgnd</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>sgnd</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>10</th>
-<td align='left' valign='top'>Type of field <b>w</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>w</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>11</th>
-<td align='left' valign='top'>Type of field <b>x0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>x0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>12</th>
-<td align='left' valign='top'>Type of field <b>y0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>y0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_27')">
-[+] affected symbols (3)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_27')">
+[+] affected symbols: 3 (14.3%)</span>
 <div id="c_27" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <span class='param'>numcmpts</span>,</span> opj_image_cmptparm_t* <span class='param'>cmptparms</span>, <span class='nowrap'>OPJ_COLOR_SPACE <span class='param'>clrspc</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <i>numcmpts</i>,</span> <span class='nowrap'>opj_image_cmptparm_t* <i>cmptparms</i>,</span> <span class='nowrap'>OPJ_COLOR_SPACE <i>clrspc</i> )</span></span></span><br/>
 <div class='affect'>Field &#39;retval.comps&#39; in return value (pointer) has base type &#39;struct opj_image_comp&#39;.</div>
-<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='focus_p'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
 <div class='affect'>Field &#39;image.comps&#39; in 1st parameter &#39;image&#39; (pointer) has base type &#39;struct opj_image_comp&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='param'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='focus_p'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
 <div class='affect'>Field &#39;image.comps&#39; in 3rd parameter &#39;image&#39; (pointer) has base type &#39;struct opj_image_comp&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_28')">
-<span class='extendable'>[+]</span> <span class='ttype'>struct</span> opj_image_comptparm (9)</span>
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_image_comptparm <span class='warning'>&nbsp;9&nbsp;</span></span>
 <br/>
 <div id="c_28" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Type of field <b>bpp</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>bpp</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Type of field <b>dx</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>dx</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of field <b>dy</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>dy</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Type of field <b>h</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>h</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Type of field <b>prec</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>prec</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>6</th>
-<td align='left' valign='top'>Type of field <b>sgnd</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>sgnd</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>7</th>
-<td align='left' valign='top'>Type of field <b>w</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>w</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>8</th>
-<td align='left' valign='top'>Type of field <b>x0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>x0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>9</th>
-<td align='left' valign='top'>Type of field <b>y0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>y0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_29')">
-[+] affected symbols (1)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_29')">
+[+] affected symbols: 1 (4.8%)</span>
 <div id="c_29" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <span class='param'>numcmpts</span>,</span> opj_image_cmptparm_t* <span class='focus_p'>cmptparms</span>, <span class='nowrap'>OPJ_COLOR_SPACE <span class='param'>clrspc</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <i>numcmpts</i>,</span> opj_image_cmptparm_t* <span class='fp'>cmptparms</span>, <span class='nowrap'>OPJ_COLOR_SPACE <i>clrspc</i> )</span></span></span><br/>
 <div class='affect'>2nd parameter &#39;cmptparms&#39; (pointer) has base type &#39;struct opj_image_comptparm&#39;.</div>
 </div>
 </div>
 <br/><br/></div>
 
 <span class="section" onclick="javascript:showContent(this, 'c_30')">
-<span class='extendable'>[+]</span> <span class='ttype'>struct</span> opj_poc (34)</span>
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_poc <span class='warning'>&nbsp;34&nbsp;</span></span>
 <br/>
 <div id="c_30" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>Type of field <b>compE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>compE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>Type of field <b>compS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>compS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of field <b>comp_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>comp_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Type of field <b>compno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>compno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>5</th>
-<td align='left' valign='top'>Type of field <b>compno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>compno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>6</th>
-<td align='left' valign='top'>Type of field <b>dx</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>dx</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>7</th>
-<td align='left' valign='top'>Type of field <b>dy</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>dy</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>8</th>
-<td align='left' valign='top'>Type of field <b>layE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>layE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>9</th>
-<td align='left' valign='top'>Type of field <b>layS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>layS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>10</th>
-<td align='left' valign='top'>Type of field <b>lay_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>lay_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>11</th>
-<td align='left' valign='top'>Type of field <b>layno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>layno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>12</th>
-<td align='left' valign='top'>Type of field <b>layno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>layno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>13</th>
-<td align='left' valign='top'>Type of field <b>prcE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>prcE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>14</th>
-<td align='left' valign='top'>Type of field <b>prcS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>prcS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>15</th>
-<td align='left' valign='top'>Type of field <b>prc_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>prc_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>16</th>
-<td align='left' valign='top'>Type of field <b>precno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>precno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>17</th>
-<td align='left' valign='top'>Type of field <b>precno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>precno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>18</th>
-<td align='left' valign='top'>Type of field <b>progorder</b> has been changed from <b>char[5]</b> to <b>OPJ_CHAR[5]</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>progorder</b> has been changed from <b>char[5]</b> to <b>OPJ_CHAR[5]</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>19</th>
-<td align='left' valign='top'>Type of field <b>resE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>resE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>20</th>
-<td align='left' valign='top'>Type of field <b>resS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>resS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>21</th>
-<td align='left' valign='top'>Type of field <b>res_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>res_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>22</th>
-<td align='left' valign='top'>Type of field <b>resno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>resno0</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>23</th>
-<td align='left' valign='top'>Type of field <b>resno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>resno1</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>24</th>
-<td align='left' valign='top'>Type of field <b>tile</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>tile</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>25</th>
-<td align='left' valign='top'>Type of field <b>tx0</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>tx0</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>26</th>
-<td align='left' valign='top'>Type of field <b>tx0_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>tx0_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>27</th>
-<td align='left' valign='top'>Type of field <b>tx1</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>tx1</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>28</th>
-<td align='left' valign='top'>Type of field <b>txE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>txE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>29</th>
-<td align='left' valign='top'>Type of field <b>txS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>txS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>30</th>
-<td align='left' valign='top'>Type of field <b>ty0</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>ty0</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>31</th>
-<td align='left' valign='top'>Type of field <b>ty0_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>ty0_t</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>32</th>
-<td align='left' valign='top'>Type of field <b>ty1</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>ty1</b> has been changed from <b>int</b> to <b>OPJ_INT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>33</th>
-<td align='left' valign='top'>Type of field <b>tyE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>tyE</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 <tr>
 <th>34</th>
-<td align='left' valign='top'>Type of field <b>tyS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
+<td>Type of field <b>tyS</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of the field data type may indicate a change in the semantic meaning of the field.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_31')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_31')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_31" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>Field &#39;parameters.POC&#39; in 1st parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='focus_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='param'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
 <div class='affect'>Field &#39;parameters.POC&#39; in 2nd parameter &#39;parameters&#39; (pointer) has base type &#39;struct opj_poc&#39;.</div>
 </div>
 </div>
@@ -1296,10 +1309,10 @@ td.new {
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='Symbol_Problems_Low'></a><a name='Interface_Problems_Low'></a>
-<h2>Problems with Symbols, Low Severity (16)</h2><hr/>
+<h2>Problems with Symbols, Low Severity <span class='warning'>&nbsp;16&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span>, <span class='lib_name'>libopenjpeg.so.1.5.2</span><br/>
 <span class="section" onclick="javascript:showContent(this, 'c_32')">
-<span class='extendable'>[+]</span> opj_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='color_p'>format</span> )</span></span> (3)</span>
+<span class='ext'>[+]</span> opj_create_compress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='color_p'>format</span> )</span></span> <span class='warning'>&nbsp;3&nbsp;</span></span>
 <br/>
 <div id="c_32" style="display:none;">
 
@@ -1315,24 +1328,24 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'><b>1st</b> parameter <b>format</b> has been renamed to <b>p_format</b>.</td>
-<td align='left' valign='top'>Renaming of a parameter may indicate a change in its semantic meaning.</td>
+<td><b>1st</b> parameter <b>format</b> has been renamed to <b>p_format</b>.</td>
+<td>Renaming of a parameter may indicate a change in its semantic meaning.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>The pointer level of return value has been increased from <b>1</b> to <b>2</b>.</td>
-<td align='left' valign='top'>Applications will treat the return value as the lower-dimension array and will not read all elements. This may change the behavior of applications.</td>
+<td>The pointer level of return value has been increased from <b>1</b> to <b>2</b>.</td>
+<td>Applications will treat the return value as the lower-dimension array and will not read all elements. This may change the behavior of applications.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of return value has been changed from <b>opj_cinfo_t*</b> to <b>opj_codec_t*</b>.</td>
-<td align='left' valign='top'>Replacement of return type may indicate a change in its semantic meaning.</td>
+<td>Type of return value has been changed from <b>opj_cinfo_t*</b> to <b>opj_codec_t*</b>.</td>
+<td>Replacement of return type may indicate a change in its semantic meaning.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_33')">
-<span class='extendable'>[+]</span> opj_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='color_p'>format</span> )</span></span> (3)</span>
+<span class='ext'>[+]</span> opj_create_decompress&#160;<span class='sym_p'>(&#160;<span class='nowrap'>OPJ_CODEC_FORMAT <span class='color_p'>format</span> )</span></span> <span class='warning'>&nbsp;3&nbsp;</span></span>
 <br/>
 <div id="c_33" style="display:none;">
 
@@ -1348,24 +1361,24 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'><b>1st</b> parameter <b>format</b> has been renamed to <b>p_format</b>.</td>
-<td align='left' valign='top'>Renaming of a parameter may indicate a change in its semantic meaning.</td>
+<td><b>1st</b> parameter <b>format</b> has been renamed to <b>p_format</b>.</td>
+<td>Renaming of a parameter may indicate a change in its semantic meaning.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'>The pointer level of return value has been increased from <b>1</b> to <b>2</b>.</td>
-<td align='left' valign='top'>Applications will treat the return value as the lower-dimension array and will not read all elements. This may change the behavior of applications.</td>
+<td>The pointer level of return value has been increased from <b>1</b> to <b>2</b>.</td>
+<td>Applications will treat the return value as the lower-dimension array and will not read all elements. This may change the behavior of applications.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of return value has been changed from <b>opj_dinfo_t*</b> to <b>opj_codec_t*</b>.</td>
-<td align='left' valign='top'>Replacement of return type may indicate a change in its semantic meaning.</td>
+<td>Type of return value has been changed from <b>opj_dinfo_t*</b> to <b>opj_codec_t*</b>.</td>
+<td>Replacement of return type may indicate a change in its semantic meaning.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_34')">
-<span class='extendable'>[+]</span> opj_destroy_cstr_info&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_codestream_info_t* <span class='color_p'>cstr_info</span> )</span></span> (1)</span>
+<span class='ext'>[+]</span> opj_destroy_cstr_info&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_codestream_info_t* <span class='color_p'>cstr_info</span> )</span></span> <span class='warning'>&nbsp;1&nbsp;</span></span>
 <br/>
 <div id="c_34" style="display:none;">
 
@@ -1381,14 +1394,14 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Type of <b>1st</b> parameter <b>cstr_info</b> has been changed from <b>opj_codestream_info_t*</b> to <b>opj_codestream_info_v2_t**</b>.</td>
-<td align='left' valign='top'>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
+<td>Type of <b>1st</b> parameter <b>cstr_info</b> has been changed from <b>opj_codestream_info_t*</b> to <b>opj_codestream_info_v2_t**</b>.</td>
+<td>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_35')">
-<span class='extendable'>[+]</span> opj_encode&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>char* <span class='color_p'>index</span> )</span></span> (1)</span>
+<span class='ext'>[+]</span> opj_encode&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>char* <span class='color_p'>index</span> )</span></span> <span class='warning'>&nbsp;1&nbsp;</span></span>
 <br/>
 <div id="c_35" style="display:none;">
 
@@ -1400,14 +1413,14 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Type of return value has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
-<td align='left' valign='top'>Replacement of return type may indicate a change in its semantic meaning.</td>
+<td>Type of return value has been changed from <b>opj_bool</b> to <b>OPJ_BOOL</b>.</td>
+<td>Replacement of return type may indicate a change in its semantic meaning.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_36')">
-<span class='extendable'>[+]</span> opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <span class='color_p'>numcmpts</span>,</span> opj_image_cmptparm_t* <span class='color_p'>cmptparms</span>, <span class='nowrap'>OPJ_COLOR_SPACE <span class='color_p'>clrspc</span> )</span></span> (1)</span>
+<span class='ext'>[+]</span> opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <span class='color_p'>numcmpts</span>,</span> opj_image_cmptparm_t* <span class='color_p'>cmptparms</span>, <span class='nowrap'>OPJ_COLOR_SPACE <span class='color_p'>clrspc</span> )</span></span> <span class='warning'>&nbsp;1&nbsp;</span></span>
 <br/>
 <div id="c_36" style="display:none;">
 
@@ -1423,14 +1436,14 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Type of <b>1st</b> parameter <b>numcmpts</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
-<td align='left' valign='top'>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
+<td>Type of <b>1st</b> parameter <b>numcmpts</b> has been changed from <b>int</b> to <b>OPJ_UINT32</b>.</td>
+<td>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_37')">
-<span class='extendable'>[+]</span> opj_setup_decoder&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_dparameters_t* <span class='color_p'>parameters</span> )</span></span> (3)</span>
+<span class='ext'>[+]</span> opj_setup_decoder&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_dparameters_t* <span class='color_p'>parameters</span> )</span></span> <span class='warning'>&nbsp;3&nbsp;</span></span>
 <br/>
 <div id="c_37" style="display:none;">
 
@@ -1446,24 +1459,24 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Type of <b>1st</b> parameter <b>dinfo</b> has been changed from <b>opj_dinfo_t*</b> to <b>opj_codec_t*</b>.</td>
-<td align='left' valign='top'>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
+<td>Type of <b>1st</b> parameter <b>dinfo</b> has been changed from <b>opj_dinfo_t*</b> to <b>opj_codec_t*</b>.</td>
+<td>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'><b>1st</b> parameter <b>dinfo</b> has been renamed to <b>p_codec</b>.</td>
-<td align='left' valign='top'>Renaming of a parameter may indicate a change in its semantic meaning.</td>
+<td><b>1st</b> parameter <b>dinfo</b> has been renamed to <b>p_codec</b>.</td>
+<td>Renaming of a parameter may indicate a change in its semantic meaning.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'>Type of return value has been changed from <b>void</b> to <span class='nowrap'><b>OPJ_BOOL</b> (<b>4</b> bytes)</span>.</td>
-<td align='left' valign='top'>Replacement of return type may indicate a change in its semantic meaning.</td>
+<td>Type of return value has been changed from <b>void</b> to <span class='nowrap'><b>OPJ_BOOL</b> (<b>4</b> bytes)</span>.</td>
+<td>Replacement of return type may indicate a change in its semantic meaning.</td>
 </tr>
 </table>
 <br/>
 </div>
 <span class="section" onclick="javascript:showContent(this, 'c_38')">
-<span class='extendable'>[+]</span> opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, opj_cparameters_t* <span class='color_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='color_p'>image</span> )</span></span> (4)</span>
+<span class='ext'>[+]</span> opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, opj_cparameters_t* <span class='color_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='color_p'>image</span> )</span></span> <span class='warning'>&nbsp;4&nbsp;</span></span>
 <br/>
 <div id="c_38" style="display:none;">
 
@@ -1479,23 +1492,23 @@ td.new {
 </tr>
 <tr>
 <th>1</th>
-<td align='left' valign='top'>Type of <b>1st</b> parameter <b>cinfo</b> has been changed from <b>opj_cinfo_t*</b> to <b>opj_codec_t*</b>.</td>
-<td align='left' valign='top'>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
+<td>Type of <b>1st</b> parameter <b>cinfo</b> has been changed from <b>opj_cinfo_t*</b> to <b>opj_codec_t*</b>.</td>
+<td>Replacement of parameter data type may indicate a change in its semantic meaning.</td>
 </tr>
 <tr>
 <th>2</th>
-<td align='left' valign='top'><b>1st</b> parameter <b>cinfo</b> has been renamed to <b>p_codec</b>.</td>
-<td align='left' valign='top'>Renaming of a parameter may indicate a change in its semantic meaning.</td>
+<td><b>1st</b> parameter <b>cinfo</b> has been renamed to <b>p_codec</b>.</td>
+<td>Renaming of a parameter may indicate a change in its semantic meaning.</td>
 </tr>
 <tr>
 <th>3</th>
-<td align='left' valign='top'><b>3rd</b> parameter <b>image</b> has been renamed to <b>p_image</b>.</td>
-<td align='left' valign='top'>Renaming of a parameter may indicate a change in its semantic meaning.</td>
+<td><b>3rd</b> parameter <b>image</b> has been renamed to <b>p_image</b>.</td>
+<td>Renaming of a parameter may indicate a change in its semantic meaning.</td>
 </tr>
 <tr>
 <th>4</th>
-<td align='left' valign='top'>Type of return value has been changed from <b>void</b> to <span class='nowrap'><b>OPJ_BOOL</b> (<b>4</b> bytes)</span>.</td>
-<td align='left' valign='top'>Replacement of return type may indicate a change in its semantic meaning.</td>
+<td>Type of return value has been changed from <b>void</b> to <span class='nowrap'><b>OPJ_BOOL</b> (<b>4</b> bytes)</span>.</td>
+<td>Replacement of return type may indicate a change in its semantic meaning.</td>
 </tr>
 </table>
 <br/>
@@ -1503,26 +1516,26 @@ td.new {
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='Other_Changes'></a><a name='Other_Changes_In_Types'></a>
-<h2>Other Changes in Data Types (1)</h2><hr/>
+<h2>Other Changes in Data Types <span class='passed'>&nbsp;1&nbsp;</span></h2><hr/>
 <span class='h_name'>openjpeg.h</span><br/>
 <span class="section" onclick="javascript:showContent(this, 'c_39')">
-<span class='extendable'>[+]</span> <span class='ttype'>enum</span> RSIZ_CAPABILITIES (1)</span>
+<span class='ext'>[+]</span> <span class='ttype'>enum</span> RSIZ_CAPABILITIES <span class='passed'>&nbsp;1&nbsp;</span></span>
 <br/>
 <div id="c_39" style="display:none;">
 <table class='ptable'><tr>
 <th width='2%'></th><th width='47%'>Change</th>
 <th>Effect</th></tr><tr>
 <th>1</th>
-<td align='left' valign='top'>The member <b>OPJ_MCT</b> with value <b>33024</b> has been added.</td>
-<td align='left' valign='top'>No effect.</td>
+<td>The member <b>OPJ_MCT</b> with value <b>33024</b> has been added.</td>
+<td>No effect.</td>
 </tr>
 </table>
-<span class="section_affected" onclick="javascript:showContent(this, 'c_40')">
-[+] affected symbols (2)</span>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_40')">
+[+] affected symbols: 2 (9.5%)</span>
 <div id="c_40" style="display:none;">
-<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='focus_p'>parameters</span> )</span></span></span><br/>
+<div class='affected'><span class='iname_a'>opj_set_default_encoder_parameters&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cparameters_t* <span class='fp'>parameters</span> )</span></span></span><br/>
 <div class='affect'>Field &#39;parameters.cp_rsiz&#39; in 1st parameter &#39;parameters&#39; (pointer) has base type &#39;enum RSIZ_CAPABILITIES&#39;.</div>
-<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='param'>cinfo</span>, opj_cparameters_t* <span class='focus_p'>parameters</span>, <span class='nowrap'>opj_image_t* <span class='param'>image</span> )</span></span></span><br/>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> opj_cparameters_t* <span class='fp'>parameters</span>, <span class='nowrap'>opj_image_t* <i>image</i> )</span></span></span><br/>
 <div class='affect'>Field &#39;parameters.cp_rsiz&#39; in 2nd parameter &#39;parameters&#39; (pointer) has base type &#39;enum RSIZ_CAPABILITIES&#39;.</div>
 </div>
 </div>
@@ -1530,12 +1543,12 @@ td.new {
 
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
-<a name='Headers'></a><h2>Header Files (1)</h2><hr/>
+<a name='Headers'></a><h2>Header Files <span class='gray'>&nbsp;1&nbsp;</span></h2><hr/>
 <div class='h_list'>
 openjpeg.h<br/>
 </div>
 <br/><a class='top_ref' href='#Top'>to the top</a><br/>
-<a name='Sources'></a><h2>Source Files (4)</h2><hr/>
+<a name='Sources'></a><h2>Source Files <span class='gray'>&nbsp;4&nbsp;</span></h2><hr/>
 <div class='h_list'>
 cio.c<br/>
 event.c<br/>
@@ -1543,13 +1556,16 @@ image.c<br/>
 openjpeg.c<br/>
 </div>
 <br/><a class='top_ref' href='#Top'>to the top</a><br/>
-<a name='Libs'></a><h2>Objects (1)</h2><hr/>
+<a name='Libs'></a><h2>Objects <span class='gray'>&nbsp;1&nbsp;</span></h2><hr/>
 <div class='lib_list'>
 libopenjpeg.so.1.5.2<br/>
 </div>
 <br/><a class='top_ref' href='#Top'>to the top</a><br/>
 </div>
 <br/><br/><br/>
-<hr/><div class='footer' align='right'><i>Generated on Sun Jun 19 23:35:51 2016 by <a href='http://lvc.github.io/abi-compliance-checker/'>ABI Compliance Checker</a> 1.99.15 &#160;</i></div><br/>
+<hr/>
+<div class='footer' align='right'><i>Generated by <a href='http://lvc.github.io/abi-compliance-checker/'>ABI Compliance Checker</a> 1.99.21 &#160;</i>
+</div>
+<br/>
 
 </body></html>

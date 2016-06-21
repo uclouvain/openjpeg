@@ -18,7 +18,476 @@
 <table width='100%' cellpadding='0' cellspacing='0'><tr><td><table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
 <br/>
 <br/>
-<h1>Headers diff: <span class='version'>2.0.1</span> vs <span class='version'>2.1</span></h1><br/><br/><br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
+<h1>Headers diff: <span class='version'>2.0.1</span> vs <span class='version'>2.1</span></h1><br/><br/> 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (2.0.1)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (2.1)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l1" /><small>skipping to change at</small><em> line 175</em></th><th> </th><th><a name="part-r1" /><small>skipping to change at</small><em> line 175</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_IMG_INFO           1       /**&lt; Basic image information provide
+d to the user */</td><td> </td><td class="right">#define OPJ_IMG_INFO           1       /**&lt; Basic image information provide
+d to the user */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_MH_INFO                2       /**&lt; Codestream information 
+based only on the main header */</td><td> </td><td class="right">#define OPJ_J2K_MH_INFO                2       /**&lt; Codestream information 
+based only on the main header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_TH_INFO                4       /**&lt; Tile information based 
+on the current tile header */</td><td> </td><td class="right">#define OPJ_J2K_TH_INFO                4       /**&lt; Tile information based 
+on the current tile header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_TCH_INFO       8       /**&lt; Tile/Component information of a
+ll tiles */</td><td> </td><td class="right">#define OPJ_J2K_TCH_INFO       8       /**&lt; Tile/Component information of a
+ll tiles */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_MH_IND         16      /**&lt; Codestream index based only on 
+the main header */</td><td> </td><td class="right">#define OPJ_J2K_MH_IND         16      /**&lt; Codestream index based only on 
+the main header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_TH_IND         32      /**&lt; Tile index based on the current
+ tile */</td><td> </td><td class="right">#define OPJ_J2K_TH_IND         32      /**&lt; Tile index based on the current
+ tile */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*FIXME #define OPJ_J2K_CSTR_IND       48*/    /**&lt;  */</td><td> </td><td class="right">/*FIXME #define OPJ_J2K_CSTR_IND       48*/    /**&lt;  */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_JP2_INFO           128     /**&lt; JP2 file information */</td><td> </td><td class="right">#define OPJ_JP2_INFO           128     /**&lt; JP2 file information */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_JP2_IND                    256     /**&lt; JP2 file index */</td><td> </td><td class="right">#define OPJ_JP2_IND                    256     /**&lt; JP2 file index */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/**</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * JPEG 2000 Profiles, see Table A.10 from 15444-1 (updated in various AMD)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * These values help chosing the RSIZ value for the J2K codestream.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * The RSIZ value triggers various encoding options, as detailed in Table A</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">.10.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * If OPJ_PROFILE_PART2 is chosen, it has to be combined with one or more e</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">xtensions</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * described hereunder.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *   Example: rsiz = OPJ_PROFILE_PART2 | OPJ_EXTENSION_MCT;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * For broadcast profiles, the OPJ_PROFILE value has to be combined with th</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">e targeted</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * mainlevel (3-0 LSB, value between 0 and 11):</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *   Example: rsiz = OPJ_PROFILE_BC_MULTI | 0x0005; (here mainlevel 5)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * For IMF profiles, the OPJ_PROFILE value has to be combined with the targ</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">eted mainlevel</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * (3-0 LSB, value between 0 and 11) and sublevel (7-4 LSB, value between 0</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> and 9):</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *   Example: rsiz = OPJ_PROFILE_IMF_2K | 0x0040 | 0x0005; (here main 5 and</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> sublevel 4)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_NONE        0x0000 /** no profile, conform to 15444-1 *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_0           0x0001 /** Profile 0 as described in 15444-</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">1,Table A.45 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_1           0x0002 /** Profile 1 as described in 15444-</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">1,Table A.45 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_PART2       0x8000 /** At least 1 extension defined in </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">15444-2 (Part-2) */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_CINEMA_2K   0x0003 /** 2K cinema profile defined in 154</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">44-1 AMD1 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_CINEMA_4K   0x0004 /** 4K cinema profile defined in 154</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">44-1 AMD1 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_CINEMA_S2K  0x0005 /** Scalable 2K cinema profile defin</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ed in 15444-1 AMD2 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_CINEMA_S4K  0x0006 /** Scalable 4K cinema profile defin</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ed in 15444-1 AMD2 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_CINEMA_LTS  0x0007 /** Long term storage cinema profile</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> defined in 15444-1 AMD2 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_BC_SINGLE   0x0100 /** Single Tile Broadcast profile de</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">fined in 15444-1 AMD3 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_BC_MULTI    0x0200 /** Multi Tile Broadcast profile def</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ined in 15444-1 AMD3 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_BC_MULTI_R  0x0300 /** Multi Tile Reversible Broadcast </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">profile defined in 15444-1 AMD3 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_IMF_2K      0x0400 /** 2K Single Tile Lossy IMF profile</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> defined in 15444-1 AMD 8 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_IMF_4K      0x0401 /** 4K Single Tile Lossy IMF profile</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> defined in 15444-1 AMD 8 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_IMF_8K      0x0402 /** 8K Single Tile Lossy IMF profile</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> defined in 15444-1 AMD 8 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_IMF_2K_R    0x0403 /** 2K Single/Multi Tile Reversible </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">IMF profile defined in 15444-1 AMD 8 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_IMF_4K_R    0x0800 /** 4K Single/Multi Tile Reversible </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">IMF profile defined in 15444-1 AMD 8 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_PROFILE_IMF_8K_R    0x0801  /** 8K Single/Multi Tile Reversible</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> IMF profile defined in 15444-1 AMD 8 */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/**</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * JPEG 2000 Part-2 extensions</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_EXTENSION_NONE      0x0000 /** No Part-2 extension */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_EXTENSION_MCT       0x0100  /** Custom MCT support */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/**</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * JPEG 2000 profile macros</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IS_CINEMA(v)     (((v) &gt;= OPJ_PROFILE_CINEMA_2K)&amp;&amp;((v) &lt;= OPJ_P</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ROFILE_CINEMA_S4K))</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IS_STORAGE(v)    ((v) == OPJ_PROFILE_CINEMA_LTS)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IS_BROADCAST(v)  (((v) &gt;= OPJ_PROFILE_BC_SINGLE)&amp;&amp;((v) &lt;= ((OPJ</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">_PROFILE_BC_MULTI_R) | (0x000b))))</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IS_IMF(v)        (((v) &gt;= OPJ_PROFILE_IMF_2K)&amp;&amp;((v) &lt;= ((OPJ_PR</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">OFILE_IMF_8K_R) | (0x009b))))</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IS_PART2(v)      ((v) &amp; OPJ_PROFILE_PART2)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/**</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * JPEG 2000 codestream and component size limits in cinema profiles</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_CINEMA_24_CS     1302083           /** Maximum codestream lengt</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">h for 24fps */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_CINEMA_48_CS     651041     /** Maximum codestream length for 4</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">8fps */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_CINEMA_24_COMP   1041666    /** Maximum size per color componen</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">t for 2K &amp; 4K @ 24fps */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_CINEMA_48_COMP   520833            /** Maximum size per color c</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">omponent for 2K @ 48fps */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   enum definitions</td><td> </td><td class="right">   enum definitions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0002" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">                                                                           </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0003" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * DEPRECATED: use RSIZ, OPJ_PROFILE_* and OPJ_EXTENSION_* instead</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Rsiz Capabilities</td><td> </td><td class="right"> * Rsiz Capabilities</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum RSIZ_CAPABILITIES {</td><td> </td><td class="right">typedef enum RSIZ_CAPABILITIES {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0004" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_STD_RSIZ = 0,               /** Standard JPEG2000 profile*/</td><td> </td><td class="rblock">    OPJ_STD_RSIZ = 0,          /** Standard JPEG2000 profile*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CINEMA2K = 3,               /** Profile name for a 2K image*/</td><td> </td><td class="rblock">    OPJ_CINEMA2K = 3,          /** Profile name for a 2K image*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CINEMA4K = 4,               /** Profile name for a 4K image*/</td><td> </td><td class="rblock">    OPJ_CINEMA4K = 4,          /** Profile name for a 4K image*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_MCT = 0x8100</td><td> </td><td class="rblock">    OPJ_MCT = 0x8100</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_RSIZ_CAPABILITIES;</td><td> </td><td class="right">} OPJ_RSIZ_CAPABILITIES;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0005" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * DEPRECATED: use RSIZ, OPJ_PROFILE_* and OPJ_EXTENSION_* instead</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Digital cinema operation mode</td><td> </td><td class="right"> * Digital cinema operation mode</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum CINEMA_MODE {</td><td> </td><td class="right">typedef enum CINEMA_MODE {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0006" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_OFF = 0,                    /** Not Digital Cinema*/</td><td> </td><td class="rblock">    OPJ_OFF = 0,                       /** Not Digital Cinema*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CINEMA2K_24 = 1,    /** 2K Digital Cinema at 24 fps*/</td><td> </td><td class="rblock">    OPJ_CINEMA2K_24 = 1,       /** 2K Digital Cinema at 24 fps*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CINEMA2K_48 = 2,    /** 2K Digital Cinema at 48 fps*/</td><td> </td><td class="rblock">    OPJ_CINEMA2K_48 = 2,       /** 2K Digital Cinema at 48 fps*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CINEMA4K_24 = 3             /** 4K Digital Cinema at 24 fps*/</td><td> </td><td class="rblock">    OPJ_CINEMA4K_24 = 3                /** 4K Digital Cinema at 24 fps*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">}OPJ_CINEMA_MODE;</td><td> </td><td class="right">}OPJ_CINEMA_MODE;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Progression order</td><td> </td><td class="right"> * Progression order</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum PROG_ORDER {</td><td> </td><td class="right">typedef enum PROG_ORDER {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_PROG_UNKNOWN = -1,  /**&lt; place-holder */</td><td> </td><td class="right">       OPJ_PROG_UNKNOWN = -1,  /**&lt; place-holder */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_LRCP = 0,                   /**&lt; layer-resolution-component-prec
+inct order */</td><td> </td><td class="right">       OPJ_LRCP = 0,                   /**&lt; layer-resolution-component-prec
+inct order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_RLCP = 1,                   /**&lt; resolution-layer-component-prec
+inct order */</td><td> </td><td class="right">       OPJ_RLCP = 1,                   /**&lt; resolution-layer-component-prec
+inct order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_RPCL = 2,                   /**&lt; resolution-precinct-component-l
+ayer order */</td><td> </td><td class="right">       OPJ_RPCL = 2,                   /**&lt; resolution-precinct-component-l
+ayer order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_PCRL = 3,                   /**&lt; precinct-component-resolution-l
+ayer order */</td><td> </td><td class="right">       OPJ_PCRL = 3,                   /**&lt; precinct-component-resolution-l
+ayer order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CPRL = 4                    /**&lt; component-precinct-resolution-l
+ayer order */</td><td> </td><td class="right">       OPJ_CPRL = 4                    /**&lt; component-precinct-resolution-l
+ayer order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_PROG_ORDER;</td><td> </td><td class="right">} OPJ_PROG_ORDER;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Supported image color spaces</td><td> </td><td class="right"> * Supported image color spaces</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum COLOR_SPACE {</td><td> </td><td class="right">typedef enum COLOR_SPACE {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0007" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CLRSPC_UNKNOWN = -1,        /**&lt; not supported by the library */</td><td> </td><td class="rblock">    OPJ_CLRSPC_UNKNOWN = -1,   /**&lt; not supported by the library */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CLRSPC_UNSPECIFIED = 0,     /**&lt; not specified in the codestream</td><td> </td><td class="rblock">    OPJ_CLRSPC_UNSPECIFIED = 0,        /**&lt; not specified in the codestream</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> */</td><td> </td><td class="rblock"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CLRSPC_SRGB = 1,            /**&lt; sRGB */</td><td> </td><td class="rblock">    OPJ_CLRSPC_SRGB = 1,               /**&lt; sRGB */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CLRSPC_GRAY = 2,            /**&lt; grayscale */</td><td> </td><td class="rblock">    OPJ_CLRSPC_GRAY = 2,               /**&lt; grayscale */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CLRSPC_SYCC = <span class="delete">3</span>             /**&lt; YUV */</td><td> </td><td class="rblock">    OPJ_CLRSPC_SYCC = <span class="insert">3,</span>               /**&lt; YUV <span class="insert">*/</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    OPJ_CLRSPC_EYCC = 4,        /**&lt; e-YCC */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    OPJ_CLRSPC_CMYK = 5         /**&lt; CMYK</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_COLOR_SPACE;</td><td> </td><td class="right">} OPJ_COLOR_SPACE;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Supported codec</td><td> </td><td class="right"> * Supported codec</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum CODEC_FORMAT {</td><td> </td><td class="right">typedef enum CODEC_FORMAT {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_UNKNOWN = -1, /**&lt; place-holder */</td><td> </td><td class="right">       OPJ_CODEC_UNKNOWN = -1, /**&lt; place-holder */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_J2K  = 0,             /**&lt; JPEG-2000 codestream : read/wri
+te */</td><td> </td><td class="right">       OPJ_CODEC_J2K  = 0,             /**&lt; JPEG-2000 codestream : read/wri
+te */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_JPT  = 1,             /**&lt; JPT-stream (JPEG 2000, JPIP) : 
+read only */</td><td> </td><td class="right">       OPJ_CODEC_JPT  = 1,             /**&lt; JPT-stream (JPEG 2000, JPIP) : 
+read only */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0008" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CODEC_JP2  = <span class="delete">2</span>              /**&lt; <span class="delete">JPEG-2000</span> file format : <span class="delete">read/wr</span></td><td> </td><td class="rblock">    OPJ_CODEC_JP2  = <span class="insert">2,</span>                /**&lt; <span class="insert">JP2</span> file format : <span class="insert">read/write */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">ite</span> */</td><td> </td><td class="rblock"><span class="insert">    OPJ_CODEC_JPP  = 3,                /**&lt; JPP-stream (JPEG 2000, JPIP) : </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">to be coded */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    OPJ_CODEC_JPX  = 4         /**&lt; JPX file format (JPEG 2000 Part-2) : to</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> be coded</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_CODEC_FORMAT;</td><td> </td><td class="right">} OPJ_CODEC_FORMAT;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   event manager typedef definitions</td><td> </td><td class="right">   event manager typedef definitions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Callback function prototype for events</td><td> </td><td class="right"> * Callback function prototype for events</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 315</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 378</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** csty : coding style */</td><td> </td><td class="right">       /** csty : coding style */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int csty;</td><td> </td><td class="right">       int csty;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** progression order (default OPJ_LRCP) */</td><td> </td><td class="right">       /** progression order (default OPJ_LRCP) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_PROG_ORDER prog_order;</td><td> </td><td class="right">       OPJ_PROG_ORDER prog_order;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** progression order changes */</td><td> </td><td class="right">       /** progression order changes */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       opj_poc_t POC[32];</td><td> </td><td class="right">       opj_poc_t POC[32];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** number of progression order changes (POC), default to 0 */</td><td> </td><td class="right">       /** number of progression order changes (POC), default to 0 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_UINT32 numpocs;</td><td> </td><td class="right">       OPJ_UINT32 numpocs;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** number of layers */</td><td> </td><td class="right">       /** number of layers */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int tcp_numlayers;</td><td> </td><td class="right">       int tcp_numlayers;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0009" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">    <span class="delete">   /** rates of layers</span> */</td><td> </td><td class="rblock">    <span class="insert">/** rates of layers - might be subsequently limited by the max_cs_size 
+field</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       float tcp_rates[100];</td><td> </td><td class="right">       float tcp_rates[100];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** different psnr for successive layers */</td><td> </td><td class="right">       /** different psnr for successive layers */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       float tcp_distoratio[100];</td><td> </td><td class="right">       float tcp_distoratio[100];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** number of resolutions */</td><td> </td><td class="right">       /** number of resolutions */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int numresolution;</td><td> </td><td class="right">       int numresolution;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** initial code block width, default to 64 */</td><td> </td><td class="right">       /** initial code block width, default to 64 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cblockw_init;</td><td> </td><td class="right">       int cblockw_init;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** initial code block height, default to 64 */</td><td> </td><td class="right">       /** initial code block height, default to 64 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cblockh_init;</td><td> </td><td class="right">       int cblockh_init;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** mode switch (cblk_style) */</td><td> </td><td class="right">       /** mode switch (cblk_style) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l3" /><small>skipping to change at</small><em> line 396</em></th><th> </th><th><a name="part-r3" /><small>skipping to change at</small><em> line 459</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_sens_range;</td><td> </td><td class="right">       int jpwl_sens_range;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** sensitivity method for MH (-1=no,0-7) */</td><td> </td><td class="right">       /** sensitivity method for MH (-1=no,0-7) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_sens_MH;</td><td> </td><td class="right">       int jpwl_sens_MH;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** tile number of sensitivity specification (&gt;=0) */</td><td> </td><td class="right">       /** tile number of sensitivity specification (&gt;=0) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_sens_TPH_tileno[JPWL_MAX_NO_TILESPECS];</td><td> </td><td class="right">       int jpwl_sens_TPH_tileno[JPWL_MAX_NO_TILESPECS];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** sensitivity methods for TPHs (-1=no,0-7) */</td><td> </td><td class="right">       /** sensitivity methods for TPHs (-1=no,0-7) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_sens_TPH[JPWL_MAX_NO_TILESPECS];</td><td> </td><td class="right">       int jpwl_sens_TPH[JPWL_MAX_NO_TILESPECS];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /*@}*/</td><td> </td><td class="right">       /*@}*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* &lt;&lt;UniPG */</td><td> </td><td class="right">/* &lt;&lt;UniPG */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0010" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       /** Digital Cinema compliance 0-not compliant, <span class="delete">1-compliant*/</span></td><td> </td><td class="rblock">    /**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CINEMA_MODE cp_cinema;</td><td> </td><td class="rblock">     <span class="insert">* DEPRECATED: use RSIZ, OPJ_PROFILE_* and MAX_COMP_SIZE instead</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       /** Maximum <span class="delete">rate</span> for each component. If == 0, component size <span class="delete">limitat</span></td><td> </td><td class="rblock"><span class="insert">     *</span> Digital Cinema compliance 0-not compliant, <span class="insert">1-compliant</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">ion</span> is not considered */</td><td> </td><td class="rblock"><span class="insert">     * */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">    OPJ_CINEMA_MODE cp_cinema;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">    /**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">     <span class="insert">*</span> Maximum <span class="insert">size (in bytes)</span> for each component.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">     <span class="insert">*</span> If == 0, component size <span class="insert">limitation</span> is not considered</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">     <span class="insert">*</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int max_comp_size;</td><td> </td><td class="right">       int max_comp_size;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0011" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       /** Profile <span class="delete">name*/</span></td><td> </td><td class="rblock">    /**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_RSIZ_CAPABILITIES cp_rsiz;</td><td> </td><td class="rblock">     <span class="insert">* DEPRECATED: use RSIZ, OPJ_PROFILE_* and OPJ_EXTENSION_* instead</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     *</span> Profile <span class="insert">name</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">    OPJ_RSIZ_CAPABILITIES cp_rsiz;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Tile part generation*/</td><td> </td><td class="right">       /** Tile part generation*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tp_on;</td><td> </td><td class="right">       char tp_on;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Flag for Tile part generation*/</td><td> </td><td class="right">       /** Flag for Tile part generation*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tp_flag;</td><td> </td><td class="right">       char tp_flag;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** MCT (multiple component transform) */</td><td> </td><td class="right">       /** MCT (multiple component transform) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tcp_mct;</td><td> </td><td class="right">       char tcp_mct;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Enable JPIP indexing*/</td><td> </td><td class="right">       /** Enable JPIP indexing*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_BOOL jpip_on;</td><td> </td><td class="right">       OPJ_BOOL jpip_on;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Naive implementation of MCT restricted to a single reversible ar
+ray based</td><td> </td><td class="right">       /** Naive implementation of MCT restricted to a single reversible ar
+ray based</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        encoding without offset concerning all the components. */</td><td> </td><td class="right">        encoding without offset concerning all the components. */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       void * mct_data;</td><td> </td><td class="right">       void * mct_data;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0012" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">    <span class="insert">/**</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * Maximum size (in bytes) for the whole codestream.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * If == 0, codestream size limitation is not considered</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * If it does not comply with tcp_rates, max_cs_size prevails</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * and a warning is issued.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    int max_cs_size;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    /** RSIZ value</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">        To be used to combine OPJ_PROFILE_*, OPJ_EXTENSION_* and (sub)level</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">s values. */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    OPJ_UINT16 rsiz;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_cparameters_t;</td><td> </td><td class="right">} opj_cparameters_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG     0x0001</td><td> </td><td class="right">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG     0x0001</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Decompression parameters</td><td> </td><td class="right"> * Decompression parameters</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_dparameters {</td><td> </td><td class="right">typedef struct opj_dparameters {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /**</td><td> </td><td class="right">       /**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       Set the number of highest resolution levels to be discarded.</td><td> </td><td class="right">       Set the number of highest resolution levels to be discarded.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l4" /><small>skipping to change at</small><em> line 522</em></th><th> </th><th><a name="part-r4" /><small>skipping to change at</small><em> line 604</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Callback function prototype for skip function</td><td> </td><td class="right"> * Callback function prototype for skip function</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef OPJ_OFF_T (* opj_stream_skip_fn) (OPJ_OFF_T p_nb_bytes, void * p_us
+er_data) ;</td><td> </td><td class="right">typedef OPJ_OFF_T (* opj_stream_skip_fn) (OPJ_OFF_T p_nb_bytes, void * p_us
+er_data) ;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Callback function prototype for seek function</td><td> </td><td class="right"> * Callback function prototype for seek function</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef OPJ_BOOL (* opj_stream_seek_fn) (OPJ_OFF_T p_nb_bytes, void * p_use
+r_data) ;</td><td> </td><td class="right">typedef OPJ_BOOL (* opj_stream_seek_fn) (OPJ_OFF_T p_nb_bytes, void * p_use
+r_data) ;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0013" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* Callback function prototype for free user data function</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">typedef void (* opj_stream_free_user_data_fn) (void * p_user_data) ;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/*</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * JPEG2000 Stream.</td><td> </td><td class="right"> * JPEG2000 Stream.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef void * opj_stream_t;</td><td> </td><td class="right">typedef void * opj_stream_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   image typedef definitions</td><td> </td><td class="right">   image typedef definitions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l5" /><small>skipping to change at</small><em> line 560</em></th><th> </th><th><a name="part-r5" /><small>skipping to change at</small><em> line 647</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** image depth in bits */</td><td> </td><td class="right">       /** image depth in bits */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_UINT32 bpp;</td><td> </td><td class="right">       OPJ_UINT32 bpp;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** signed (1) / unsigned (0) */</td><td> </td><td class="right">       /** signed (1) / unsigned (0) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_UINT32 sgnd;</td><td> </td><td class="right">       OPJ_UINT32 sgnd;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** number of decoded resolution */</td><td> </td><td class="right">       /** number of decoded resolution */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_UINT32 resno_decoded;</td><td> </td><td class="right">       OPJ_UINT32 resno_decoded;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** number of division by 2 of the out image compared to the origina
+l size of image */</td><td> </td><td class="right">       /** number of division by 2 of the out image compared to the origina
+l size of image */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_UINT32 factor;</td><td> </td><td class="right">       OPJ_UINT32 factor;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** image component data */</td><td> </td><td class="right">       /** image component data */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_INT32 *data;</td><td> </td><td class="right">       OPJ_INT32 *data;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0014" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">  <span class="insert">/** alpha channel */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">  OPJ_UINT16 alpha;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_image_comp_t;</td><td> </td><td class="right">} opj_image_comp_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Defines image data and characteristics</td><td> </td><td class="right"> * Defines image data and characteristics</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_image {</td><td> </td><td class="right">typedef struct opj_image {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** XOsiz: horizontal offset from the origin of the reference grid t
+o the left side of the image area */</td><td> </td><td class="right">       /** XOsiz: horizontal offset from the origin of the reference grid t
+o the left side of the image area */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_UINT32 x0;</td><td> </td><td class="right">       OPJ_UINT32 x0;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** YOsiz: vertical offset from the origin of the reference grid to 
+the top side of the image area */</td><td> </td><td class="right">       /** YOsiz: vertical offset from the origin of the reference grid to 
+the top side of the image area */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_UINT32 y0;</td><td> </td><td class="right">       OPJ_UINT32 y0;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l6" /><small>skipping to change at</small><em> line 1054</em></th><th> </th><th><a name="part-r6" /><small>skipping to change at</small><em> line 1143</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Sets the given function to be used as a seek function, the stream is the
+n seekable.</td><td> </td><td class="right"> * Sets the given function to be used as a seek function, the stream is the
+n seekable.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param              p_stream        the stream to modify</td><td> </td><td class="right"> * @param              p_stream        the stream to modify</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param              p_function      the function to use a skip function.</td><td> </td><td class="right"> * @param              p_function      the function to use a skip function.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stre
+am, opj_stream_seek_fn p_function);</td><td> </td><td class="right">OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stre
+am, opj_stream_seek_fn p_function);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Sets the given data to be used as a user data for the stream.</td><td> </td><td class="right"> * Sets the given data to be used as a user data for the stream.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param              p_stream        the stream to modify</td><td> </td><td class="right"> * @param              p_stream        the stream to modify</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param              p_data          the data to set.</td><td> </td><td class="right"> * @param              p_data          the data to set.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0015" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @param              p_function      the function to free p_data when opj
+_stream_destroy() is called.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0016" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream,
+ void * p_data);</td><td> </td><td class="rblock">OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream,
+ void * p_data<span class="insert">, opj_stream_free_user_data_fn p_function</span>);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Sets the length of the user data for the stream.</td><td> </td><td class="right"> * Sets the length of the user data for the stream.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param p_stream    the stream to modify</td><td> </td><td class="right"> * @param p_stream    the stream to modify</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param data_length length of the user_data.</td><td> </td><td class="right"> * @param data_length length of the user_data.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_s
+tream, OPJ_UINT64 data_length);</td><td> </td><td class="right">OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_s
+tream, OPJ_UINT64 data_length);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0017" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> * <span class="delete">Helper function.</span></td><td> </td><td class="rblock"> * <span class="insert">Create a</span> stream <span class="insert">from</span> a file <span class="insert">identified with its filename with default pa</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"> * Sets the</span> stream <span class="delete">to be</span> a file <span class="delete">stream. The FILE must have been open previo</span></td><td> </td><td class="rblock"><span class="insert">rameters (helper function)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">usly.</span></td><td> </td><td class="rblock"> * @param <span class="insert">fname             the filename of</span> the file to <span class="insert">stream</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> * @param <span class="delete">p_file</span>            the file <span class="delete">stream</span> to <span class="delete">operate on</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param p_is_read_stream  whether the stream is a read stream (true) or n
+ot (false)</td><td> </td><td class="right"> * @param p_is_read_stream  whether the stream is a read stream (true) or n
+ot (false)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0018" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (<span class="delete">F
+ILE * p_fil</span>e, OPJ_BOOL p_is_read_stream);</td><td> </td><td class="rblock">OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (<span class="insert">c
+onst char *fnam</span>e, OPJ_BOOL p_is_read_stream);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0019" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">/**</td><td> </td><td class="rblock">/** <span class="insert">Create a stream from a file identified with its filename with a specifi</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> <span class="delete">* FIXME DOC</span></td><td> </td><td class="rblock"><span class="insert">c buffer size</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> * @param <span class="delete">p_file</span>            the file <span class="delete">stream</span> to <span class="delete">operate on</span></td><td> </td><td class="rblock"> * @param <span class="insert">fname             the filename of</span> the file to <span class="insert">stream</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param p_buffer_size     size of the chunk used to stream</td><td> </td><td class="right"> * @param p_buffer_size     size of the chunk used to stream</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param p_is_read_stream  whether the stream is a read stream (true) or n
+ot (false)</td><td> </td><td class="right"> * @param p_is_read_stream  whether the stream is a read stream (true) or n
+ot (false)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0020" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream <span class="delete">(FILE * p_</span></td><td> </td><td class="rblock">OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream <span class="insert">(const cha</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">file, OPJ_SIZE_T</span> p_buffer_size, <span class="delete">OPJ_BOOL</span> p_is_read_stream);</td><td> </td><td class="rblock"><span class="insert">r *fname,</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">                                                                     OPJ_SI</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ZE_T</span> p_buffer_size,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                     <span class="insert">OPJ_BO</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">OL</span> p_is_read_stream);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   event manager functions definitions</td><td> </td><td class="right">   event manager functions definitions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Set the info handler use by openjpeg.</td><td> </td><td class="right"> * Set the info handler use by openjpeg.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param p_codec       the codec previously initialise</td><td> </td><td class="right"> * @param p_codec       the codec previously initialise</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param p_callback    the callback function which will be used</td><td> </td><td class="right"> * @param p_callback    the callback function which will be used</td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 20 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>34 lines changed or deleted</i></th><th><i> </i></th><th><i>159 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><br/>
+ 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;opj_config.h (2.0.1)&nbsp;</th><th> </th><th>&nbsp;opj_config.h (2.1)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno" valign="top"></td><td class="left">/* create opj_config.h for CMake */</td><td> </td><td class="right">/* create opj_config.h for CMake */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_HAVE_STDINT_H              1</td><td> </td><td class="right">#define OPJ_HAVE_STDINT_H              1</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/*-------------------------------------------------------------------------</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">-*/</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/* OpenJPEG Versioning                                                     </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/* Version number. */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_VERSION_MAJOR 2</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_VERSION_MINOR 1</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_VERSION_BUILD 0</span></td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 1 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>0 lines changed or deleted</i></th><th><i> </i></th><th><i>0 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
 </td></tr></table>
 </body>
 </html>

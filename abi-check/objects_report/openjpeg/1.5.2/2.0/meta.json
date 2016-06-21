@@ -2,8 +2,11 @@
   "BC": "35.7",
   "Added": 31,
   "Removed": 9,
+  "TotalProblems": 135,
   "ObjectsAdded": 0,
   "ObjectsRemoved": 0,
+  "ObjectsAddedSymbols": 0,
+  "ObjectsRemovedSymbols": 0,
   "ChangedSoname": 1,
   "TotalObjects": 1
 }

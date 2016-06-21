@@ -2735,7 +2735,7 @@ $VAR1 = {
                                                'dwt_getnorm_real' => 1,
                                                'j2k_create_compress' => 1,
                                                'j2k_create_decompress' => 1,
-                                               'j2k_dec_mstab' => -320,
+                                               'j2k_dec_mstab' => '-320',
                                                'j2k_decode' => 1,
                                                'j2k_decode_jpt_stream' => 1,
                                                'j2k_destroy_compress' => 1,
@@ -3675,7 +3675,7 @@ $VAR1 = {
                                       'Memb' => {
                                                   '0' => {
                                                            'name' => 'PROG_UNKNOWN',
-                                                           'value' => '-1'
+                                                           'value' => '18446744073709551615'
                                                          },
                                                   '1' => {
                                                            'name' => 'LRCP',
@@ -3716,7 +3716,7 @@ $VAR1 = {
                                       'Memb' => {
                                                   '0' => {
                                                            'name' => 'CLRSPC_UNKNOWN',
-                                                           'value' => '-1'
+                                                           'value' => '18446744073709551615'
                                                          },
                                                   '1' => {
                                                            'name' => 'CLRSPC_SRGB',
@@ -3749,7 +3749,7 @@ $VAR1 = {
                                       'Memb' => {
                                                   '0' => {
                                                            'name' => 'CODEC_UNKNOWN',
-                                                           'value' => '-1'
+                                                           'value' => '18446744073709551615'
                                                          },
                                                   '1' => {
                                                            'name' => 'CODEC_J2K',

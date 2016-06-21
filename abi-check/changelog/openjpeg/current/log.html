@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 954dad66dea3c5bb1e59187987e77c18f7b593ec
+<pre class='wrap'>commit cdcb77e796f8f06d3838356c0a2931a82b4375be
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-06-21 17:21:08 +0200
+
+    Automatic upload of ABI report (ctd)
+
+commit 954dad66dea3c5bb1e59187987e77c18f7b593ec
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-06-21 16:46:38 +0200
 
@@ -788,29 +794,12 @@ Date:   2015-10-29 09:12:03 +0100
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 0ae66e891a92b999774704ac3f4d074bd49d9e9a
-Merge: f080ab8 9f78c68
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-10-30 22:50:06 +0100
 
     Merge pull request #647 from stweil/master
     
     Fix typo in comments
-
-commit 9f78c6895318be2906c93cc25e68dd1c09a1c6fe
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2015-10-23 20:26:08 +0100
-
-    Fix typo in comments
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit f080ab8ce022f06e47c96ea444b00df7c2204814
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-21 20:53:22 +0200
-
-    Merge pull request #638 from stweil/master
-    
-    Fix format strings and unneeded assignment
 
 commit e975ca2832ecb012c1bd768c5d971eeb6032cbc4
 Merge: 80be580 b06bed7
@@ -851,6 +840,15 @@ Date:   2015-10-21 00:09:04 +0200
     Generic aligned malloc implementation update.
     
     Update #642
+
+commit eaf55b677c53d76a11d2b860034337afdf8d8817
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2015-10-20 13:02:51 +0200
+
+    Generic aligned malloc implementation.
+    
+    Used for platforms where none of posix_memalign(), memalign() and
+    _aligned_malloc() is available.
 
 ...</pre></div>
 

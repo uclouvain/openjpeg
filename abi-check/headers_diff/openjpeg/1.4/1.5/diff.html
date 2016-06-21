@@ -18,7 +18,436 @@
 <table width='100%' cellpadding='0' cellspacing='0'><tr><td><table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
 <br/>
 <br/>
-<h1>Headers diff: <span class='version'>1.4</span> vs <span class='version'>1.5</span></h1><br/><br/><br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
+<h1>Headers diff: <span class='version'>1.4</span> vs <span class='version'>1.5</span></h1><br/><br/> 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (1.4)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (1.5)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno" valign="top"></td><td class="left"> /*</td><td> </td><td class="right"> /*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, U
+niversite catholique de Louvain (UCL), Belgium</td><td> </td><td class="right"> * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, U
+niversite catholique de Louvain (UCL), Belgium</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2002-2007, Professor Benoit Macq</td><td> </td><td class="right"> * Copyright (c) 2002-2007, Professor Benoit Macq</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2001-2003, David Janssens</td><td> </td><td class="right"> * Copyright (c) 2001-2003, David Janssens</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2002-2003, Yannick Verschueren</td><td> </td><td class="right"> * Copyright (c) 2002-2003, Yannick Verschueren</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe</td><td> </td><td class="right"> * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2005, Herve Drolon, FreeImage Team</td><td> </td><td class="right"> * Copyright (c) 2005, Herve Drolon, FreeImage Team</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2006-2007, Parvatha Elangovan</td><td> </td><td class="right"> * Copyright (c) 2006-2007, Parvatha Elangovan</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * Copyright (c) 2010-2011, Kaori Hagihara</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * All rights reserved.</td><td> </td><td class="right"> * All rights reserved.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Redistribution and use in source and binary forms, with or without</td><td> </td><td class="right"> * Redistribution and use in source and binary forms, with or without</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * modification, are permitted provided that the following conditions</td><td> </td><td class="right"> * modification, are permitted provided that the following conditions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * are met:</td><td> </td><td class="right"> * are met:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * 1. Redistributions of source code must retain the above copyright</td><td> </td><td class="right"> * 1. Redistributions of source code must retain the above copyright</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *    notice, this list of conditions and the following disclaimer.</td><td> </td><td class="right"> *    notice, this list of conditions and the following disclaimer.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * 2. Redistributions in binary form must reproduce the above copyright</td><td> </td><td class="right"> * 2. Redistributions in binary form must reproduce the above copyright</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *    notice, this list of conditions and the following disclaimer in the</td><td> </td><td class="right"> *    notice, this list of conditions and the following disclaimer in the</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *    documentation and/or other materials provided with the distribution.</td><td> </td><td class="right"> *    documentation and/or other materials provided with the distribution.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 61</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 62</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API functions as being imported from a DLL, wheras this DLL sees symbol
+s</td><td> </td><td class="right">OPJ_API functions as being imported from a DLL, wheras this DLL sees symbol
+s</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">defined with this macro as being exported.</td><td> </td><td class="right">defined with this macro as being exported.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#if defined(OPJ_EXPORTS) || defined(DLL_EXPORT)</td><td> </td><td class="right">#if defined(OPJ_EXPORTS) || defined(DLL_EXPORT)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_API __declspec(dllexport)</td><td> </td><td class="right">#define OPJ_API __declspec(dllexport)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#else</td><td> </td><td class="right">#else</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_API __declspec(dllimport)</td><td> </td><td class="right">#define OPJ_API __declspec(dllimport)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif /* OPJ_EXPORTS */</td><td> </td><td class="right">#endif /* OPJ_EXPORTS */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif /* !OPJ_STATIC || !_WIN32 */</td><td> </td><td class="right">#endif /* !OPJ_STATIC || !_WIN32 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0002" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#ifndef __cplusplus</span></td><td> </td><td class="rblock"><span class="insert">typedef</span> int <span class="insert">opj_bool;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#if defined(HAVE_STDBOOL_H)</span></td><td> </td><td class="rblock">#define <span class="insert">OPJ_TRUE</span> 1</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/*</span></td><td> </td><td class="rblock">#define <span class="insert">OPJ_FALSE</span> 0</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">The C language implementation does correctly provide the standard header</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">file "stdbool.h".</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"> */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#include &lt;stdbool.h&gt;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#else</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/*</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">The C language implementation does not provide the standard header file</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">"stdbool.h" as required by ISO/IEC 9899:1999.  Try to compensate for this</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">braindamage below.</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">*/</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#if !defined(bool)</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define        bool</span>    int</td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#if !defined(true)</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">#define <span class="delete">true</span>   1</td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#if !defined(false)</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">#define        <span class="delete">false</span>   0</td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif /* __cplusplus */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0003" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/* Avoid compile-time warning because parameter is not used */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_ARG_NOT_USED(x) (void)(x)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   Useful constant definitions</td><td> </td><td class="right">   Useful constant definitions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_PATH_LEN 4096 /**&lt; Maximum allowed size for filenames */</td><td> </td><td class="right">#define OPJ_PATH_LEN 4096 /**&lt; Maximum allowed size for filenames */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define J2K_MAXRLVLS 33                                        /**&lt; Number 
+of maximum resolution level authorized */</td><td> </td><td class="right">#define J2K_MAXRLVLS 33                                        /**&lt; Number 
+of maximum resolution level authorized */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)        /**&lt; Number of maximum sub-b
+and linked to number of resolution level */</td><td> </td><td class="right">#define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)        /**&lt; Number of maximum sub-b
+and linked to number of resolution level */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l3" /><small>skipping to change at</small><em> line 160</em></th><th> </th><th><a name="part-r3" /><small>skipping to change at</small><em> line 142</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       CLRSPC_SRGB = 1,                /**&lt; sRGB */</td><td> </td><td class="right">       CLRSPC_SRGB = 1,                /**&lt; sRGB */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       CLRSPC_GRAY = 2,                /**&lt; grayscale */</td><td> </td><td class="right">       CLRSPC_GRAY = 2,                /**&lt; grayscale */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       CLRSPC_SYCC = 3                 /**&lt; YUV */</td><td> </td><td class="right">       CLRSPC_SYCC = 3                 /**&lt; YUV */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_COLOR_SPACE;</td><td> </td><td class="right">} OPJ_COLOR_SPACE;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Supported codec</td><td> </td><td class="right">Supported codec</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum CODEC_FORMAT {</td><td> </td><td class="right">typedef enum CODEC_FORMAT {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       CODEC_UNKNOWN = -1,     /**&lt; place-holder */</td><td> </td><td class="right">       CODEC_UNKNOWN = -1,     /**&lt; place-holder */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0004" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       CODEC_J2K = 0,          /**&lt; JPEG-2000 codestream : read/write */</td><td> </td><td class="rblock">       CODEC_J2K  = 0,         /**&lt; JPEG-2000 codestream : read/write */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       CODEC_JPT = 1,          /**&lt; JPT-stream (JPEG 2000, JPIP) : read onl</td><td> </td><td class="rblock">       CODEC_JPT  = 1,         /**&lt; JPT-stream (JPEG 2000, JPIP) : read onl</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">y */</td><td> </td><td class="rblock">y */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       CODEC_JP2 = 2           /**&lt; JPEG-2000 file format : read/write */</td><td> </td><td class="rblock">       CODEC_JP2  = 2          /**&lt; JPEG-2000 file format : read/write */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_CODEC_FORMAT;</td><td> </td><td class="right">} OPJ_CODEC_FORMAT;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Limit decoding to certain portions of the codestream.</td><td> </td><td class="right">Limit decoding to certain portions of the codestream.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum LIMIT_DECODING {</td><td> </td><td class="right">typedef enum LIMIT_DECODING {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       NO_LIMITATION = 0,                                /**&lt; No limitation
+ for the decoding. The entire codestream will de decoded */</td><td> </td><td class="right">       NO_LIMITATION = 0,                                /**&lt; No limitation
+ for the decoding. The entire codestream will de decoded */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       LIMIT_TO_MAIN_HEADER = 1,               /**&lt; The decoding is limited
+ to the Main Header */</td><td> </td><td class="right">       LIMIT_TO_MAIN_HEADER = 1,               /**&lt; The decoding is limited
+ to the Main Header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       DECODE_ALL_BUT_PACKETS = 2      /**&lt; Decode everything except the JP
+EG 2000 packets */</td><td> </td><td class="right">       DECODE_ALL_BUT_PACKETS = 2      /**&lt; Decode everything except the JP
+EG 2000 packets */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_LIMIT_DECODING;</td><td> </td><td class="right">} OPJ_LIMIT_DECODING;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l4" /><small>skipping to change at</small><em> line 244</em></th><th> </th><th><a name="part-r4" /><small>skipping to change at</small><em> line 226</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int txS,txE,tyS,tyE,dx,dy;</td><td> </td><td class="right">       int txS,txE,tyS,tyE,dx,dy;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Temporary values for Tile parts, initialised in pi_create_encode
+ */</td><td> </td><td class="right">       /** Temporary values for Tile parts, initialised in pi_create_encode
+ */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int lay_t, res_t, comp_t, prc_t,tx0_t,ty0_t;</td><td> </td><td class="right">       int lay_t, res_t, comp_t, prc_t,tx0_t,ty0_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_poc_t;</td><td> </td><td class="right">} opj_poc_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Compression parameters</td><td> </td><td class="right">Compression parameters</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_cparameters {</td><td> </td><td class="right">typedef struct opj_cparameters {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** size of tile: tile_size_on = false (not in argument) or = true (
+in argument) */</td><td> </td><td class="right">       /** size of tile: tile_size_on = false (not in argument) or = true (
+in argument) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0005" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       bool tile_size_on;</td><td> </td><td class="rblock">       <span class="insert">opj_</span>bool tile_size_on;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** XTOsiz */</td><td> </td><td class="right">       /** XTOsiz */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cp_tx0;</td><td> </td><td class="right">       int cp_tx0;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** YTOsiz */</td><td> </td><td class="right">       /** YTOsiz */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cp_ty0;</td><td> </td><td class="right">       int cp_ty0;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** XTsiz */</td><td> </td><td class="right">       /** XTsiz */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cp_tdx;</td><td> </td><td class="right">       int cp_tdx;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** YTsiz */</td><td> </td><td class="right">       /** YTsiz */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cp_tdy;</td><td> </td><td class="right">       int cp_tdy;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** allocation by rate/distortion */</td><td> </td><td class="right">       /** allocation by rate/distortion */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cp_disto_alloc;</td><td> </td><td class="right">       int cp_disto_alloc;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l5" /><small>skipping to change at</small><em> line 326</em></th><th> </th><th><a name="part-r5" /><small>skipping to change at</small><em> line 308</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** input file format 0: PGX, 1: PxM, 2: BMP 3:TIF*/</td><td> </td><td class="right">       /** input file format 0: PGX, 1: PxM, 2: BMP 3:TIF*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int decod_format;</td><td> </td><td class="right">       int decod_format;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** output file format 0: J2K, 1: JP2, 2: JPT */</td><td> </td><td class="right">       /** output file format 0: J2K, 1: JP2, 2: JPT */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cod_format;</td><td> </td><td class="right">       int cod_format;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /*@}*/</td><td> </td><td class="right">       /*@}*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* UniPG&gt;&gt; */</td><td> </td><td class="right">/* UniPG&gt;&gt; */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /**@name JPWL encoding parameters */</td><td> </td><td class="right">       /**@name JPWL encoding parameters */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /*@{*/</td><td> </td><td class="right">       /*@{*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** enables writing of EPC in MH, thus activating JPWL */</td><td> </td><td class="right">       /** enables writing of EPC in MH, thus activating JPWL */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0006" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       bool jpwl_epc_on;</td><td> </td><td class="rblock">       <span class="insert">opj_</span>bool jpwl_epc_on;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** error protection method for MH (0,1,16,32,37-128) */</td><td> </td><td class="right">       /** error protection method for MH (0,1,16,32,37-128) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_hprot_MH;</td><td> </td><td class="right">       int jpwl_hprot_MH;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** tile number of header protection specification (&gt;=0) */</td><td> </td><td class="right">       /** tile number of header protection specification (&gt;=0) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_hprot_TPH_tileno[JPWL_MAX_NO_TILESPECS];</td><td> </td><td class="right">       int jpwl_hprot_TPH_tileno[JPWL_MAX_NO_TILESPECS];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** error protection methods for TPHs (0,1,16,32,37-128) */</td><td> </td><td class="right">       /** error protection methods for TPHs (0,1,16,32,37-128) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_hprot_TPH[JPWL_MAX_NO_TILESPECS];</td><td> </td><td class="right">       int jpwl_hprot_TPH[JPWL_MAX_NO_TILESPECS];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** tile number of packet protection specification (&gt;=0) */</td><td> </td><td class="right">       /** tile number of packet protection specification (&gt;=0) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_pprot_tileno[JPWL_MAX_NO_PACKSPECS];</td><td> </td><td class="right">       int jpwl_pprot_tileno[JPWL_MAX_NO_PACKSPECS];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** packet number of packet protection specification (&gt;=0) */</td><td> </td><td class="right">       /** packet number of packet protection specification (&gt;=0) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_pprot_packno[JPWL_MAX_NO_PACKSPECS];</td><td> </td><td class="right">       int jpwl_pprot_packno[JPWL_MAX_NO_PACKSPECS];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l6" /><small>skipping to change at</small><em> line 366</em></th><th> </th><th><a name="part-r6" /><small>skipping to change at</small><em> line 348</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Maximum rate for each component. If == 0, component size limitat
+ion is not considered */</td><td> </td><td class="right">       /** Maximum rate for each component. If == 0, component size limitat
+ion is not considered */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int max_comp_size;</td><td> </td><td class="right">       int max_comp_size;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Profile name*/</td><td> </td><td class="right">       /** Profile name*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_RSIZ_CAPABILITIES cp_rsiz;</td><td> </td><td class="right">       OPJ_RSIZ_CAPABILITIES cp_rsiz;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Tile part generation*/</td><td> </td><td class="right">       /** Tile part generation*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tp_on;</td><td> </td><td class="right">       char tp_on;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Flag for Tile part generation*/</td><td> </td><td class="right">       /** Flag for Tile part generation*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tp_flag;</td><td> </td><td class="right">       char tp_flag;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** MCT (multiple component transform) */</td><td> </td><td class="right">       /** MCT (multiple component transform) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tcp_mct;</td><td> </td><td class="right">       char tcp_mct;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0007" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">       <span class="insert">/** Enable JPIP indexing*/</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       opj_bool jpip_on;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_cparameters_t;</td><td> </td><td class="right">} opj_cparameters_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0008" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG     0x0001</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Decompression parameters</td><td> </td><td class="right">Decompression parameters</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_dparameters {</td><td> </td><td class="right">typedef struct opj_dparameters {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /**</td><td> </td><td class="right">       /**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       Set the number of highest resolution levels to be discarded.</td><td> </td><td class="right">       Set the number of highest resolution levels to be discarded.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       The image resolution is effectively divided by 2 to the power of the
+ number of discarded levels.</td><td> </td><td class="right">       The image resolution is effectively divided by 2 to the power of the
+ number of discarded levels.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       The reduce factor is limited by the smallest total number of decompo
+sition levels among tiles.</td><td> </td><td class="right">       The reduce factor is limited by the smallest total number of decompo
+sition levels among tiles.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       if != 0, then original dimension divided by 2^(reduce);</td><td> </td><td class="right">       if != 0, then original dimension divided by 2^(reduce);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       if == 0 or not used, image is decoded to the full resolution</td><td> </td><td class="right">       if == 0 or not used, image is decoded to the full resolution</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l7" /><small>skipping to change at</small><em> line 404</em></th><th> </th><th><a name="part-r7" /><small>skipping to change at</small><em> line 390</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** input file format 0: J2K, 1: JP2, 2: JPT */</td><td> </td><td class="right">       /** input file format 0: J2K, 1: JP2, 2: JPT */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int decod_format;</td><td> </td><td class="right">       int decod_format;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** output file format 0: PGX, 1: PxM, 2: BMP */</td><td> </td><td class="right">       /** output file format 0: PGX, 1: PxM, 2: BMP */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int cod_format;</td><td> </td><td class="right">       int cod_format;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /*@}*/</td><td> </td><td class="right">       /*@}*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* UniPG&gt;&gt; */</td><td> </td><td class="right">/* UniPG&gt;&gt; */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /**@name JPWL decoding parameters */</td><td> </td><td class="right">       /**@name JPWL decoding parameters */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /*@{*/</td><td> </td><td class="right">       /*@{*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** activates the JPWL correction capabilities */</td><td> </td><td class="right">       /** activates the JPWL correction capabilities */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0009" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       bool jpwl_correct;</td><td> </td><td class="rblock">       <span class="insert">opj_</span>bool jpwl_correct;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** expected number of components */</td><td> </td><td class="right">       /** expected number of components */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_exp_comps;</td><td> </td><td class="right">       int jpwl_exp_comps;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** maximum number of tiles */</td><td> </td><td class="right">       /** maximum number of tiles */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int jpwl_max_tiles;</td><td> </td><td class="right">       int jpwl_max_tiles;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /*@}*/</td><td> </td><td class="right">       /*@}*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* &lt;&lt;UniPG */</td><td> </td><td class="right">/* &lt;&lt;UniPG */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /**</td><td> </td><td class="right">       /**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       Specify whether the decoding should be done on the entire codestream
+, or be limited to the main header</td><td> </td><td class="right">       Specify whether the decoding should be done on the entire codestream
+, or be limited to the main header</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       Limiting the decoding to the main header makes it possible to extrac
+t the characteristics of the codestream</td><td> </td><td class="right">       Limiting the decoding to the main header makes it possible to extrac
+t the characteristics of the codestream</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       if == NO_LIMITATION, the entire codestream is decoded;</td><td> </td><td class="right">       if == NO_LIMITATION, the entire codestream is decoded;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       if == LIMIT_TO_MAIN_HEADER, only the main header is decoded;</td><td> </td><td class="right">       if == LIMIT_TO_MAIN_HEADER, only the main header is decoded;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       */</td><td> </td><td class="right">       */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_LIMIT_DECODING cp_limit_decoding;</td><td> </td><td class="right">       OPJ_LIMIT_DECODING cp_limit_decoding;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0010" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       unsigned int flags;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_dparameters_t;</td><td> </td><td class="right">} opj_dparameters_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/** Common fields between JPEG-2000 compression and decompression master st
+ructs. */</td><td> </td><td class="right">/** Common fields between JPEG-2000 compression and decompression master st
+ructs. */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define opj_common_fields \</td><td> </td><td class="right">#define opj_common_fields \</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       opj_event_mgr_t *event_mgr;     /**&lt; pointer to the event manager */
+\</td><td> </td><td class="right">       opj_event_mgr_t *event_mgr;     /**&lt; pointer to the event manager */
+\</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       void * client_data;                     /**&lt; Available for use by ap
+plication */\</td><td> </td><td class="right">       void * client_data;                     /**&lt; Available for use by ap
+plication */\</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0011" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       <span class="delete">bool is_decompressor;    </span>       /**&lt; So common code can tell which i
+s which */\</td><td> </td><td class="rblock">       <span class="insert">opj_bool is_decompressor;</span>       /**&lt; So common code can tell which i
+s which */\</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_FORMAT codec_format;  /**&lt; selected codec */\</td><td> </td><td class="right">       OPJ_CODEC_FORMAT codec_format;  /**&lt; selected codec */\</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       void *j2k_handle;                       /**&lt; pointer to the J2K code
+c */\</td><td> </td><td class="right">       void *j2k_handle;                       /**&lt; pointer to the J2K code
+c */\</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       void *jp2_handle;                       /**&lt; pointer to the JP2 code
+c */\</td><td> </td><td class="right">       void *jp2_handle;                       /**&lt; pointer to the JP2 code
+c */\</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       void *mj2_handle                        /**&lt; pointer to the MJ2 code
+c */</td><td> </td><td class="right">       void *mj2_handle                        /**&lt; pointer to the MJ2 code
+c */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* Routines that are to be used by both halves of the library are declared</td><td> </td><td class="right">/* Routines that are to be used by both halves of the library are declared</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * to receive a pointer to this structure.  There are no actual instances o
+f</td><td> </td><td class="right"> * to receive a pointer to this structure.  There are no actual instances o
+f</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * opj_common_struct_t, only of opj_cinfo_t and opj_dinfo_t.</td><td> </td><td class="right"> * opj_common_struct_t, only of opj_cinfo_t and opj_dinfo_t.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_common_struct {</td><td> </td><td class="right">typedef struct opj_common_struct {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l8" /><small>skipping to change at</small><em> line 605</em></th><th> </th><th><a name="part-r8" /><small>skipping to change at</small><em> line 592</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** packet start position (including SOP marker if it exists) */</td><td> </td><td class="right">       /** packet start position (including SOP marker if it exists) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int start_pos;</td><td> </td><td class="right">       int start_pos;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** end of packet header position (including EPH marker if it exists
+)*/</td><td> </td><td class="right">       /** end of packet header position (including EPH marker if it exists
+)*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int end_ph_pos;</td><td> </td><td class="right">       int end_ph_pos;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** packet end position */</td><td> </td><td class="right">       /** packet end position */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int end_pos;</td><td> </td><td class="right">       int end_pos;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** packet distorsion */</td><td> </td><td class="right">       /** packet distorsion */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       double disto;</td><td> </td><td class="right">       double disto;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_packet_info_t;</td><td> </td><td class="right">} opj_packet_info_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0012" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/* UniPG&gt;&gt; */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/**</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">Marker structure</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">*/</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">typedef struct opj_marker_info_t {</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       /** marker type */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       unsigned short int type;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       /** position in codestream */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       int pos;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       /** length, marker val included */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       int len;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">} opj_marker_info_t;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/* &lt;&lt;UniPG */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Index structure : Information concerning tile-parts</td><td> </td><td class="right">Index structure : Information concerning tile-parts</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_tp_info {</td><td> </td><td class="right">typedef struct opj_tp_info {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** start position of tile part */</td><td> </td><td class="right">       /** start position of tile part */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int tp_start_pos;</td><td> </td><td class="right">       int tp_start_pos;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** end position of tile part header */</td><td> </td><td class="right">       /** end position of tile part header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int tp_end_header;</td><td> </td><td class="right">       int tp_end_header;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** end position of tile part */</td><td> </td><td class="right">       /** end position of tile part */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int tp_end_pos;</td><td> </td><td class="right">       int tp_end_pos;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l9" /><small>skipping to change at</small><em> line 649</em></th><th> </th><th><a name="part-r9" /><small>skipping to change at</small><em> line 650</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** precinct size (in power of 2), in X for each resolution level */</td><td> </td><td class="right">       /** precinct size (in power of 2), in X for each resolution level */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int pdx[33];</td><td> </td><td class="right">       int pdx[33];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** precinct size (in power of 2), in Y for each resolution level */</td><td> </td><td class="right">       /** precinct size (in power of 2), in Y for each resolution level */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int pdy[33];</td><td> </td><td class="right">       int pdy[33];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** information concerning packets inside tile */</td><td> </td><td class="right">       /** information concerning packets inside tile */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       opj_packet_info_t *packet;</td><td> </td><td class="right">       opj_packet_info_t *packet;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** add fixed_quality */</td><td> </td><td class="right">       /** add fixed_quality */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int numpix;</td><td> </td><td class="right">       int numpix;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** add fixed_quality */</td><td> </td><td class="right">       /** add fixed_quality */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       double distotile;</td><td> </td><td class="right">       double distotile;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0013" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">       <span class="insert">/** number of markers */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       int marknum;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       /** list of markers */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       opj_marker_info_t *marker;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       /** actual size of markers array */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       int maxmarknum;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** number of tile parts */</td><td> </td><td class="right">       /** number of tile parts */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int num_tps;</td><td> </td><td class="right">       int num_tps;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** information concerning tile parts */</td><td> </td><td class="right">       /** information concerning tile parts */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       opj_tp_info_t *tp;</td><td> </td><td class="right">       opj_tp_info_t *tp;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_tile_info_t;</td><td> </td><td class="right">} opj_tile_info_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0014" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* UniPG&gt;&gt; */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/**</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">Marker structure</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">*/</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">typedef struct opj_marker_info_t {</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">       /** marker type */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">       unsigned short int type;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">       /** position in codestream */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">       int pos;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">       /** length, marker val included */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">       int len;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">} opj_marker_info_t;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* &lt;&lt;UniPG */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">                                                                           </td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Index structure of the codestream</td><td> </td><td class="right">Index structure of the codestream</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_codestream_info {</td><td> </td><td class="right">typedef struct opj_codestream_info {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** maximum distortion reduction on the whole image (add for Marcela
+) */</td><td> </td><td class="right">       /** maximum distortion reduction on the whole image (add for Marcela
+) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       double D_max;</td><td> </td><td class="right">       double D_max;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** packet number */</td><td> </td><td class="right">       /** packet number */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int packno;</td><td> </td><td class="right">       int packno;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** writing the packet in the index with t2_encode_packets */</td><td> </td><td class="right">       /** writing the packet in the index with t2_encode_packets */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       int index_write;</td><td> </td><td class="right">       int index_write;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l10" /><small>skipping to change at</small><em> line 886</em></th><th> </th><th><a name="part-r10" /><small>skipping to change at</small><em> line 879</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameter
+s_t *parameters);</td><td> </td><td class="right">OPJ_API void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameter
+s_t *parameters);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Setup the encoder parameters using the current image and using user paramet
+ers.</td><td> </td><td class="right">Setup the encoder parameters using the current image and using user paramet
+ers.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param cinfo Compressor handle</td><td> </td><td class="right">@param cinfo Compressor handle</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param parameters Compression parameters</td><td> </td><td class="right">@param parameters Compression parameters</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param image Input filled image</td><td> </td><td class="right">@param image Input filled image</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparame
+ters_t *parameters, opj_image_t *image);</td><td> </td><td class="right">OPJ_API void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparame
+ters_t *parameters, opj_image_t *image);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Encode an image into a JPEG-2000 codestream</td><td> </td><td class="right">Encode an image into a JPEG-2000 codestream</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0015" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">@param cinfo compressor handle</td><td> </td><td class="rblock"><span class="insert">3</span>@param cinfo compressor handle</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param cio Output buffer stream</td><td> </td><td class="right">@param cio Output buffer stream</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param image Image to encode</td><td> </td><td class="right">@param image Image to encode</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param index Depreacted -&gt; Set to NULL. To extract index, used opj_encode_w
+ci()</td><td> </td><td class="right">@param index Depreacted -&gt; Set to NULL. To extract index, used opj_encode_w
+ci()</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@return Returns true if successful, returns false otherwise</td><td> </td><td class="right">@return Returns true if successful, returns false otherwise</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0016" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">OPJ_API <span class="delete">bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, op
+</span>j_image_t *image, char *index);</td><td> </td><td class="rblock">OPJ_API <span class="insert">opj_bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio
+, op</span>j_image_t *image, char *index);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Encode an image into a JPEG-2000 codestream and extract the codestream info
+rmation</td><td> </td><td class="right">Encode an image into a JPEG-2000 codestream and extract the codestream info
+rmation</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param cinfo compressor handle</td><td> </td><td class="right">@param cinfo compressor handle</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param cio Output buffer stream</td><td> </td><td class="right">@param cio Output buffer stream</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param image Image to encode</td><td> </td><td class="right">@param image Image to encode</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param cstr_info Codestream information structure if needed afterwards, NUL
+L otherwise</td><td> </td><td class="right">@param cstr_info Codestream information structure if needed afterwards, NUL
+L otherwise</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@return Returns true if successful, returns false otherwise</td><td> </td><td class="right">@return Returns true if successful, returns false otherwise</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0017" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">OPJ_API <span class="delete">bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_
+</span>t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);</td><td> </td><td class="rblock">OPJ_API <span class="insert">opj_bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_
+cio_</span>t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Destroy Codestream information after compression or decompression</td><td> </td><td class="right">Destroy Codestream information after compression or decompression</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">@param cstr_info Codestream information structure</td><td> </td><td class="right">@param cstr_info Codestream information structure</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr
+_info);</td><td> </td><td class="right">OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr
+_info);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#ifdef __cplusplus</td><td> </td><td class="right">#ifdef __cplusplus</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">}</td><td> </td><td class="right">}</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif</td><td> </td><td class="right">#endif</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 17 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>49 lines changed or deleted</i></th><th><i> </i></th><th><i>42 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
 </td></tr></table>
 </body>
 </html>

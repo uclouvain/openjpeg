@@ -1,5 +1,5 @@
 $VAR1 = {
-          'ABI_DUMPER_VERSION' => '0.99.13',
+          'ABI_DUMPER_VERSION' => '0.99.15',
           'ABI_DUMP_VERSION' => '3.2',
           'Arch' => 'x86_64',
           'GccVersion' => '4.9.2',
@@ -1034,16 +1034,16 @@ $VAR1 = {
                                                     'j2k_dump_image_header' => 1,
                                                     'j2k_get_cstr_index' => 1,
                                                     'j2k_get_cstr_info' => 1,
-                                                    'j2k_mct_read_functions_to_float' => -32,
-                                                    'j2k_mct_read_functions_to_int32' => -32,
-                                                    'j2k_mct_write_functions_from_float' => -32,
-                                                    'j2k_memory_marker_handler_tab' => -336,
-                                                    'j2k_prog_order_list' => -72,
+                                                    'j2k_mct_read_functions_to_float' => '-32',
+                                                    'j2k_mct_read_functions_to_int32' => '-32',
+                                                    'j2k_mct_write_functions_from_float' => '-32',
+                                                    'j2k_memory_marker_handler_tab' => '-336',
+                                                    'j2k_prog_order_list' => '-72',
                                                     'jp2_dump' => 1,
                                                     'jp2_get_cstr_index' => 1,
                                                     'jp2_get_cstr_info' => 1,
-                                                    'jp2_header' => -48,
-                                                    'jp2_img_header' => -96,
+                                                    'jp2_header' => '-48',
+                                                    'jp2_img_header' => '-96',
                                                     'opj_bio_create' => 1,
                                                     'opj_bio_destroy' => 1,
                                                     'opj_bio_flush' => 1,
@@ -1320,7 +1320,7 @@ $VAR1 = {
                                         'Memb' => {
                                                     '0' => {
                                                              'name' => 'OPJ_CODEC_UNKNOWN',
-                                                             'value' => '-1'
+                                                             'value' => '18446744073709551615'
                                                            },
                                                     '1' => {
                                                              'name' => 'OPJ_CODEC_J2K',
@@ -1548,6 +1548,7 @@ $VAR1 = {
                                                         }
                                                },
                                      'Name' => 'struct _IO_FILE',
+                                     'PrivateABI' => 1,
                                      'Size' => '216',
                                      'Type' => 'Struct'
                                    },
@@ -1639,7 +1640,7 @@ $VAR1 = {
                                        'Memb' => {
                                                    '0' => {
                                                             'name' => 'OPJ_PROG_UNKNOWN',
-                                                            'value' => '-1'
+                                                            'value' => '18446744073709551615'
                                                           },
                                                    '1' => {
                                                             'name' => 'OPJ_LRCP',
@@ -1680,7 +1681,7 @@ $VAR1 = {
                                        'Memb' => {
                                                    '0' => {
                                                             'name' => 'OPJ_CLRSPC_UNKNOWN',
-                                                            'value' => '-1'
+                                                            'value' => '18446744073709551615'
                                                           },
                                                    '1' => {
                                                             'name' => 'OPJ_CLRSPC_UNSPECIFIED',
@@ -3260,6 +3261,7 @@ $VAR1 = {
                                                         }
                                                },
                                      'Name' => 'struct _IO_marker',
+                                     'PrivateABI' => 1,
                                      'Size' => '24',
                                      'Type' => 'Struct'
                                    },
