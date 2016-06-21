@@ -1,0 +1,453 @@
+<!-- verdict:incompatible;affected:18.2;added:3;removed:4;type_problems_high:0;type_problems_medium:0;type_problems_low:3;interface_problems_high:0;interface_problems_medium:0;interface_problems_low:0;changed_constants:0;type_changes_other:1;tool_version:1.99.21 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="libopenjpeg, binary compatibility, API, report" />
+<meta name="description" content="Binary compatibility report for the libopenjpeg object between 1.2 and 1.4 versions on x86_64" />
+<title>libopenjpeg: 1.2 to 1.4 binary compatibility report</title>
+<style type="text/css">
+body {
+    font-family:Arial, sans-serif;
+    background-color:White;
+    color:Black;
+}
+hr {
+    color:Black;
+    background-color:Black;
+    height:1px;
+    border:0;
+}
+h1 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.625em;
+}
+h2 {
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-size:1.25em;
+    white-space:nowrap;
+}
+span.section {
+    font-weight:bold;
+    cursor:pointer;
+    color:#003E69;
+    white-space:nowrap;
+    margin-left:5px;
+}
+span.new_sign {
+    font-weight:bold;
+    margin-left:26px;
+    color:#003E69;
+}
+span.new_sign_lbl {
+    margin-left:28px;
+    font-size:0.875em;
+    color:Black;
+}
+span:hover.section {
+    color:#336699;
+}
+span.sect_aff {
+    cursor:pointer;
+    margin-left:7px;
+    padding-left:15px;
+    font-size:0.875em;
+    color:#cc3300;
+}
+span.sect_info {
+    cursor:pointer;
+    margin-left:7px;
+    padding-left:15px;
+    font-size:0.875em;
+    color:Black;
+}
+span.ext {
+    font-weight:100;
+}
+span.h_name {
+    color:#cc3300;
+    font-size:0.875em;
+    font-weight:bold;
+}
+div.h_list, div.lib_list {
+    font-size:0.94em;
+    padding-left:5px;
+}
+span.ns {
+    color:#408080;
+    font-size:0.94em;
+}
+span.lib_name {
+    color:Green;
+    font-size:0.875em;
+    font-weight:bold;
+}
+span.iname {
+    font-weight:bold;
+    color:#003E69;
+    margin-left:5px;
+}
+span.iname_b {
+    font-weight:bold;
+    font-size:1.1em;
+}
+span.iname_a {
+    color:#333333;
+    font-weight:bold;
+    font-size:0.94em;
+}
+span.sym_p {
+    font-weight:normal;
+    white-space:normal;
+}
+div.affect {
+    padding-left:15px;
+    padding-bottom:10px;
+    font-size:0.87em;
+    font-style:italic;
+    line-height:0.75em;
+}
+div.affected {
+    padding-left:30px;
+    padding-top:10px;
+}
+table.ptable {
+    border-collapse:collapse;
+    border:1px outset black;
+    line-height:1em;
+    margin-left:15px;
+    margin-top:3px;
+    margin-bottom:3px;
+    width:900px;
+    
+}
+table.ptable td {
+    border:1px solid gray;
+    padding: 3px;
+    font-size:0.875em;
+    text-align:left;
+    vertical-align:top;
+}
+table.vtable {
+    border-collapse:collapse;
+    border:1px outset black;
+    line-height:16px;
+    margin-left:30px;
+    margin-top:10px;
+}
+table.vtable td {
+    border:1px solid gray;
+    word-wrap:break-word;
+    padding: 3px;
+    font-size:0.875em;
+    max-width:450px;
+    vertical-align:top;
+}
+table.ptable th, table.vtable th {
+    background-color:#eeeeee;
+    font-weight:bold;
+    color:#333333;
+    font-family:Verdana, Arial;
+    font-size:0.81em;
+    border:1px solid gray;
+    text-align:center;
+    vertical-align:top;
+    white-space:nowrap;
+    padding: 3px;
+}
+table.summary {
+    border-collapse:collapse;
+    border:1px outset black;
+}
+table.summary th {
+    background-color:#eeeeee;
+    font-weight:100;
+    text-align:left;
+    font-size:0.94em;
+    white-space:nowrap;
+    border:1px inset gray;
+    padding: 3px;
+}
+table.summary td {
+    text-align:right;
+    white-space:nowrap;
+    border:1px inset gray;
+    padding: 3px 5px 3px 10px;
+}
+span.mangled {
+    padding-left:15px;
+    font-size:0.875em;
+    cursor:text;
+    color:#444444;
+}
+span.sym_ver {
+    color:#333333;
+    white-space:nowrap;
+    font-family:"DejaVu Sans Mono", Monospace;
+}
+span.attr {
+    color:#333333;
+    font-weight:100;
+}
+span.color_p {
+    font-style:italic;
+    color:Brown;
+}
+span.p {
+    font-style:italic;
+}
+span.fp {
+    font-style:italic;
+    background-color:#DCDCDC;
+}
+span.ttype {
+    font-weight:100;
+}
+span.nowrap {
+    white-space:nowrap;
+}
+span.value {
+    white-space:nowrap;
+    font-weight:bold;
+}
+.passed {
+    background-color:#CCFFCC;
+}
+.warning {
+    background-color:#F4F4AF;
+}
+.failed {
+    background-color:#FFCCCC;
+}
+.new {
+    background-color:#C6DEFF;
+}
+.compatible {
+    background-color:#CCFFCC;
+}
+.almost_compatible {
+    background-color:#FFDAA3;
+}
+.incompatible {
+    background-color:#FFCCCC;
+}
+.gray {
+    background-color:#DCDCDC;
+}
+.top_ref {
+    font-size:0.69em;
+}
+.footer {
+    font-size:0.75em;
+}
+</style>
+<script type="text/javascript" language="JavaScript">
+<!--
+function showContent(header, id)
+{
+    e = document.getElementById(id);
+    if(e.style.display == 'none')
+    {
+        e.style.display = 'block';
+        e.style.visibility = 'visible';
+        header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi,"[&minus;]");
+    }
+    else
+    {
+        e.style.display = 'none';
+        e.style.visibility = 'hidden';
+        header.innerHTML = header.innerHTML.replace(/\[[^0-9 ]\]/gi,"[+]");
+    }
+}
+-->
+</script>
+</head>
+
+<body>
+<div><a name='Top'></a>
+<h1>Binary compatibility report for the <span style='color:Blue;'>libopenjpeg.so</span> object between <span style='color:Red;'>1.2</span> and <span style='color:Red;'>1.4</span> versions on <span style='color:Blue;'>x86_64</span></h1>
+
+<h2>Test Info</h2><hr/>
+<table class='summary'>
+<tr><th>Module Name</th><td>libopenjpeg</td></tr>
+<tr><th>Version #1</th><td>1.2</td></tr>
+<tr><th>Version #2</th><td>1.4</td></tr>
+<tr><th>CPU Type</th><td>x86_64</td></tr>
+<tr><th>GCC Version</th><td>4.9.2</td></tr>
+</table>
+<h2>Test Results</h2><hr/>
+<table class='summary'><tr><th>Total Header Files</th><td><a href='#Headers' style='color:Blue;'>18</a></td></tr>
+<tr><th>Total Source Files</th><td><a href='#Sources' style='color:Blue;'>18</a></td></tr>
+<tr><th>Total Objects</th><td><a href='#Libs' style='color:Blue;'>1</a></td></tr>
+<tr><th>Total Symbols / Types</th><td>22 / 64</td></tr>
+<tr><th>Compatibility</th>
+<td class='almost_compatible'>81.8%</td>
+</tr>
+</table>
+<h2>Problem Summary</h2><hr/>
+<table class='summary'><tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr><tr><th>Added Symbols</th><td>-</td><td class='new'><a href='#Added' style='color:Blue;'>3</a></td></tr>
+<tr><th>Removed Symbols</th><td>High</td><td class='failed'><a href='#Removed' style='color:Blue;'>4</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td>0</td></tr>
+<tr><td>Medium</td><td>0</td></tr>
+<tr><td>Low</td><td class='warning'><a href='#Type_Problems_Low' style='color:Blue;'>3</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Symbols</th><td>High</td><td>0</td></tr>
+<tr><td>Medium</td><td>0</td></tr>
+<tr><td>Low</td><td>0</td></tr>
+<tr><th>Problems with<br/>Constants</th><td>Low</td><td>0</td></tr>
+<tr><th>Other Changes<br/>in Data Types</th><td>-</td><td class='passed'><a href='#Other_Changes_In_Types' style='color:Blue;'>1</a></td></tr>
+</table>
+
+<a name='Added'></a><h2>Added Symbols <span class='new'>&nbsp;3&nbsp;</span></h2><hr/>
+<span class='h_name'>openjpeg.h</span>, <span class='lib_name'>libopenjpeg.so.1.4.0</span><br/>
+<span class="iname">opj_decode_with_info&#160;<span class='sym_p'>(&#160;opj_dinfo_t* <span class='color_p'>dinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> <span class='nowrap'>opj_codestream_info_t* <span class='color_p'>cstr_info</span> )</span></span></span><br/>
+<span class="iname">opj_destroy_cstr_info&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_codestream_info_t* <span class='color_p'>cstr_info</span> )</span></span></span><br/>
+<span class="iname">opj_encode_with_info&#160;<span class='sym_p'>(&#160;opj_cinfo_t* <span class='color_p'>cinfo</span>, <span class='nowrap'>opj_cio_t* <span class='color_p'>cio</span>,</span> opj_image_t* <span class='color_p'>image</span>, <span class='nowrap'>opj_codestream_info_t* <span class='color_p'>cstr_info</span> )</span></span></span><br/>
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Removed'></a><a name='Withdrawn'></a><h2>Removed Symbols <span class='failed'>&nbsp;4&nbsp;</span></h2><hr/>
+<span class='h_name'>j2k_lib.h</span>, <span class='lib_name'>libopenjpeg.so</span><br/>
+<span class="iname">opj_free&#160;<span class='sym_p'>(&#160;<span class='nowrap'>void* <span class='color_p'>memblock</span> )</span></span></span><br/>
+<span class="iname">opj_malloc&#160;<span class='sym_p'>(&#160;<span class='nowrap'>size_t <span class='color_p'>size</span> )</span></span></span><br/>
+<span class="iname">opj_realloc&#160;<span class='sym_p'>(&#160;<span class='nowrap'>void* <span class='color_p'>memblock</span>,</span> <span class='nowrap'>size_t <span class='color_p'>size</span> )</span></span></span><br/>
+<br/>
+<span class='h_name'>mqc.h</span>, <span class='lib_name'>libopenjpeg.so</span><br/>
+<span class="iname">mqc_setcurctx&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_mqc_t* <span class='color_p'>mqc</span>,</span> <span class='nowrap'>int <span class='color_p'>ctxno</span> )</span></span></span><br/>
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Low_Risk_Problems'></a><a name='Type_Problems_Low'></a>
+<h2>Problems with Data Types, Low Severity <span class='warning'>&nbsp;3&nbsp;</span></h2><hr/>
+<span class='h_name'>openjpeg.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_1')">
+<span class='ext'>[+]</span> <span class='ttype'>struct</span> opj_image <span class='warning'>&nbsp;3&nbsp;</span></span>
+<br/>
+<div id="c_1" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>Field <b>icc_profile_buf</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Field <b>icc_profile_len</b> has been added to this type.</td>
+<td>1) This field will not be initialized by old clients.<br/>2) Size of the inclusive type has been changed.<br/><b>NOTE</b>: this field should be accessed only from the new library functions, otherwise it may result in crash or incorrect behavior of applications.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Size of this type has been changed from <b>32</b> bytes to <b>48</b> bytes.</td>
+<td>The fields or parameters of such data type may be incorrectly initialized or accessed by old client applications.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_2')">
+[+] affected symbols: 5 (22.7%)</span>
+<div id="c_2" style="display:none;">
+<div class='affected'><span class='iname_a'>opj_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <i>dinfo</i>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_image&#39;.</div>
+<span class='iname_a'>opj_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <span class='fp'>image</span>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>3rd parameter &#39;image&#39; (pointer) has base type &#39;struct opj_image&#39;.</div>
+<span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <i>numcmpts</i>,</span> <span class='nowrap'>opj_image_cmptparm_t* <i>cmptparms</i>,</span> <span class='nowrap'>OPJ_COLOR_SPACE <i>clrspc</i> )</span></span></span><br/>
+<div class='affect'>Return value (pointer) has base type &#39;struct opj_image&#39;.</div>
+<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
+<div class='affect'>1st parameter &#39;image&#39; (pointer) has base type &#39;struct opj_image&#39;.</div>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
+<div class='affect'>3rd parameter &#39;image&#39; (pointer) has base type &#39;struct opj_image&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Other_Changes'></a><a name='Other_Changes_In_Types'></a>
+<h2>Other Changes in Data Types <span class='passed'>&nbsp;1&nbsp;</span></h2><hr/>
+<span class='h_name'>openjpeg.h</span><br/>
+<span class="section" onclick="javascript:showContent(this, 'c_3')">
+<span class='ext'>[+]</span> <span class='ttype'>enum</span> COLOR_SPACE <span class='passed'>&nbsp;1&nbsp;</span></span>
+<br/>
+<div id="c_3" style="display:none;">
+<table class='ptable'><tr>
+<th width='2%'></th><th width='47%'>Change</th>
+<th>Effect</th></tr><tr>
+<th>1</th>
+<td>The member <b>CLRSPC_UNSPECIFIED</b> with value <b>0</b> has been added.</td>
+<td>No effect.</td>
+</tr>
+</table>
+<span class="sect_aff" onclick="javascript:showContent(this, 'c_4')">
+[+] affected symbols: 5 (22.7%)</span>
+<div id="c_4" style="display:none;">
+<div class='affected'><span class='iname_a'>opj_decode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_dinfo_t* <i>dinfo</i>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;retval.color_space&#39; in return value (pointer) has base type &#39;enum COLOR_SPACE&#39;.</div>
+<span class='iname_a'>opj_encode&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> <span class='nowrap'>opj_cio_t* <i>cio</i>,</span> <span class='nowrap'>opj_image_t* <span class='fp'>image</span>,</span> <span class='nowrap'>char* <i>index</i> )</span></span></span><br/>
+<div class='affect'>Field &#39;image.color_space&#39; in 3rd parameter &#39;image&#39; (pointer) has base type &#39;enum COLOR_SPACE&#39;.</div>
+<span class='iname_a'>opj_image_create&#160;<span class='sym_p'>(&#160;<span class='nowrap'>int <i>numcmpts</i>,</span> <span class='nowrap'>opj_image_cmptparm_t* <i>cmptparms</i>,</span> <span class='nowrap'>OPJ_COLOR_SPACE <span class='fp'>clrspc</span> )</span></span></span><br/>
+<div class='affect'>3rd parameter &#39;clrspc&#39; has base type &#39;enum COLOR_SPACE&#39;.</div>
+<span class='iname_a'>opj_image_destroy&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;image.color_space&#39; in 1st parameter &#39;image&#39; (pointer) has base type &#39;enum COLOR_SPACE&#39;.</div>
+<span class='iname_a'>opj_setup_encoder&#160;<span class='sym_p'>(&#160;<span class='nowrap'>opj_cinfo_t* <i>cinfo</i>,</span> <span class='nowrap'>opj_cparameters_t* <i>parameters</i>,</span> <span class='nowrap'>opj_image_t* <span class='fp'>image</span> )</span></span></span><br/>
+<div class='affect'>Field &#39;image.color_space&#39; in 3rd parameter &#39;image&#39; (pointer) has base type &#39;enum COLOR_SPACE&#39;.</div>
+</div>
+</div>
+<br/><br/></div>
+
+<br/>
+<a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Headers'></a><h2>Header Files <span class='gray'>&nbsp;18&nbsp;</span></h2><hr/>
+<div class='h_list'>
+bio.h<br/>
+cio.h<br/>
+dwt.h<br/>
+event.h<br/>
+image.h<br/>
+j2k.h<br/>
+j2k_lib.h<br/>
+jp2.h<br/>
+jpt.h<br/>
+mct.h<br/>
+mqc.h<br/>
+openjpeg.h<br/>
+pi.h<br/>
+raw.h<br/>
+t1.h<br/>
+t2.h<br/>
+tcd.h<br/>
+tgt.h<br/>
+</div>
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Sources'></a><h2>Source Files <span class='gray'>&nbsp;18&nbsp;</span></h2><hr/>
+<div class='h_list'>
+bio.c<br/>
+cio.c<br/>
+dwt.c<br/>
+event.c<br/>
+image.c<br/>
+j2k.c<br/>
+j2k_lib.c<br/>
+jp2.c<br/>
+jpt.c<br/>
+mct.c<br/>
+mqc.c<br/>
+openjpeg.c<br/>
+pi.c<br/>
+raw.c<br/>
+t1.c<br/>
+t2.c<br/>
+tcd.c<br/>
+tgt.c<br/>
+</div>
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+<a name='Libs'></a><h2>Objects <span class='gray'>&nbsp;1&nbsp;</span></h2><hr/>
+<div class='lib_list'>
+libopenjpeg.so<br/>
+</div>
+<br/><a class='top_ref' href='#Top'>to the top</a><br/>
+</div>
+<br/><br/><br/>
+<hr/>
+<div class='footer' align='right'><i>Generated by <a href='http://lvc.github.io/abi-compliance-checker/'>ABI Compliance Checker</a> 1.99.21 &#160;</i>
+</div>
+<br/>
+
+</body></html>

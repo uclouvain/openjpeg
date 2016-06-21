@@ -1,12 +1,12 @@
 {
-  "BC": "76.7",
-  "Added": 0,
-  "Removed": 0,
-  "TotalProblems": 13,
+  "BC": "81.8",
+  "Added": 3,
+  "Removed": 4,
+  "TotalProblems": 3,
   "ObjectsAdded": 0,
   "ObjectsRemoved": 0,
   "ObjectsAddedSymbols": 0,
   "ObjectsRemovedSymbols": 0,
-  "ChangedSoname": 0,
+  "ChangedSoname": 1,
   "TotalObjects": 1
 }
