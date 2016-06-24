@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit cb72c08472f2e82387ebdde1792c6b39a25019d5
+<pre class='wrap'>commit e4c74f536461f6af1d4487bf4e8250d60a06f431
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-06-25 01:09:42 +0200
+
+    Correct abi-check.sh for PR (#791)
+
+commit cb72c08472f2e82387ebdde1792c6b39a25019d5
 Author: maddin200 &lt;maddin200@aol.com&gt;
 Date:   2016-06-21 22:13:57 +0200
 
@@ -739,14 +745,6 @@ Date:   2015-11-07 02:04:10 +0100
 
     fix appveyor build
 
-commit fb4be3894e5c7c3a9820509ff2f4626ba19043fc
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-07 01:35:43 +0100
-
-    Fix undefined size jp2 box handling
-    
-    Update #653
-
 commit c37d69b25e2bdd40851b898532b2232cb2b04760
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-11-02 22:28:30 +0100
@@ -784,12 +782,6 @@ Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-11-01 17:08:47 +0100
 
     Fin compiler warnings
-
-commit ce26e523dd2345413ee7990afdf84f2c4f13bc88
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-01 16:56:50 +0100
-
-    Fix compiler warnings
 
 commit e975ca2832ecb012c1bd768c5d971eeb6032cbc4
 Merge: 80be580 b06bed7
@@ -832,6 +824,15 @@ Date:   2015-10-21 00:09:04 +0200
     Update #642
 
 commit eaf55b677c53d76a11d2b860034337afdf8d8817
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2015-10-20 13:02:51 +0200
+
+    Generic aligned malloc implementation.
+    
+    Used for platforms where none of posix_memalign(), memalign() and
+    _aligned_malloc() is available.
+
+commit 0967d6485414e7038d51f11e4e57f7a4bf5b4572
 Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
 Date:   2015-10-20 13:02:51 +0200
 
