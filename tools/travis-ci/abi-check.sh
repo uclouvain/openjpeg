@@ -75,6 +75,7 @@ else
 	# Old versions of openjpeg don't like -fvisibility=hidden...
 	grep -v Configure ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 fi
+mkdir -p src/openjpeg
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
 abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -rebuild openjpeg.json
 abi-tracker -build openjpeg.json
