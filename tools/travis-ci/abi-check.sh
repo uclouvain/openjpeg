@@ -59,12 +59,10 @@ export PATH=${PWD}/tools/abi-tracker/bin:$PATH
 mkdir work
 cd work
 
-# If upload is scheduled, clone the gh-pages branch and work from there
-if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
-	git clone -b $OPJ_UPLOAD_BRANCH --single-branch $OPJ_REPO .
-	cd $OPJ_UPLOAD_DIR
-	rm -rf installed/openjpeg/current/*
-fi
+# Clone the gh-pages branch and work from there
+git clone -b $OPJ_UPLOAD_BRANCH --single-branch $OPJ_REPO .
+cd $OPJ_UPLOAD_DIR
+rm -rf installed/openjpeg/current/*
 
 # Let's create all we need
 grep -v Git ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
@@ -75,7 +73,6 @@ else
 	# Old versions of openjpeg don't like -fvisibility=hidden...
 	grep -v Configure ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 fi
-mkdir -p src/openjpeg
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
 abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -rebuild openjpeg.json
 abi-tracker -build openjpeg.json
