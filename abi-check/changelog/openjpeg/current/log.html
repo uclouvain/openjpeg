@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e4c74f536461f6af1d4487bf4e8250d60a06f431
+<pre class='wrap'>commit 9d5002f8fd2f52521b5303ae391051ef201e9b5c
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-06-26 20:00:37 +0200
+
+    Remove useless diff command in abi-check.sh
+
+commit e4c74f536461f6af1d4487bf4e8250d60a06f431
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-06-25 01:09:42 +0200
 
@@ -739,12 +745,6 @@ Date:   2015-11-07 02:06:22 +0100
 
     Fix missing bracket
 
-commit 601aa38c30258bc7eae1227e00f29a5557953e66
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-07 02:04:10 +0100
-
-    fix appveyor build
-
 commit c37d69b25e2bdd40851b898532b2232cb2b04760
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-11-02 22:28:30 +0100
@@ -758,30 +758,12 @@ Date:   2015-11-02 22:02:53 +0100
     Update cmake for travis ASan build
 
 commit 968085190c47f1d43e4c19b9fe1ad0d6311f8d2c
-Merge: 38ffbbe 93a6145
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-11-02 21:49:25 +0100
 
     Merge pull request #651 from stweil/fix
     
     opj_decompress: Update error message
-
-commit 93a61459cdcf69de75872d28f09d813173e5bf46
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2015-10-30 08:45:10 +0100
-
-    opj_decompress: Update error message
-    
-    The png format is also supported, so add it to the message.
-    Remove also the unneeded blank character before \n.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 38ffbbe42ee36cf2ab402977cfd5dda471355052
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-01 17:08:47 +0100
-
-    Fin compiler warnings
 
 commit e975ca2832ecb012c1bd768c5d971eeb6032cbc4
 Merge: 80be580 b06bed7
@@ -840,6 +822,31 @@ Date:   2015-10-20 13:02:51 +0200
     
     Used for platforms where none of posix_memalign(), memalign() and
     _aligned_malloc() is available.
+
+commit 57996722371d07e9626a36330c3a7a453475d4fd
+Merge: 4831bad a1fc83c
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-19 22:23:54 +0200
+
+    Merge pull request #641 from smuehlst/opj_hp_issue_640
+    
+    Fix HP compiler warning about redeclaration of function
+    Fix #640
+    Fix #243
+
+commit a1fc83cc255ff7697d6ca68ea4e1c42710771756
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2015-10-19 12:14:01 +0200
+
+    Fix HP compiler warning about redeclaration of function (#640)
+    
+    HP compiler warns:
+    cc: "dwt.c", line 798: warning 562: Redeclaration of "opj_v4dwt_decode"
+    with a different storage class specifier: "opj_v4dwt_decode" will have
+    internal linkage.
+    cc: "t2.c", line 1341: warning 562: Redeclaration of "opj_t2_init_seg"
+    with a different storage class specifier: "opj_t2_init_seg" will have
+    internal linkage.
 
 ...</pre></div>
 
