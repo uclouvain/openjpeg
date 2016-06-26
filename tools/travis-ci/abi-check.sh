@@ -96,9 +96,6 @@ if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
 	git config user.name "OpenJPEG Travis CI"
 	git config user.email "info@openjpeg.org"
 
-	# Commit the "changes", i.e. the new version.
-	# The delta will show diffs between new and old versions.
-	git diff > ../diff.patch
 	git add .
 	git commit -m "Update ABI/API compatibility reports after commit ${TRAVIS_COMMIT:-}"
 
