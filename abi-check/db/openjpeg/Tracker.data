@@ -89,7 +89,26 @@ $VAR1 = {
                                                  'TotalSymbolsFiltered' => '43',
                                                  'Version' => '1.7'
                                                }
-                                  }
+                                  },
+                         '2.1.1' => {
+                                      '6ff8d' => {
+                                                   'Lang' => 'C',
+                                                   'Object' => 'lib/libopenjp2.so.2.1.1',
+                                                   'Path' => 'abi_dump/openjpeg/2.1.1/6ff8d/ABI.dump',
+                                                   'TotalSymbols' => '43',
+                                                   'TotalSymbolsFiltered' => '43',
+                                                   'Version' => '1.7'
+                                                 }
+                                    },
+                         'current' => {
+                                        '6ff8d' => {
+                                                     'Lang' => 'C',
+                                                     'Object' => 'lib/libopenjp2.so.2.1.1',
+                                                     'Path' => 'abi_dump/openjpeg/current/6ff8d/ABI.dump',
+                                                     'TotalSymbols' => '43',
+                                                     'Version' => '1.7'
+                                                   }
+                                      }
                        },
           'ABIReport' => {
                            '1.1' => {
@@ -212,6 +231,36 @@ $VAR1 = {
                                                    'TotalObjects' => 1,
                                                    'TotalProblems' => 20
                                                  }
+                                      },
+                           '2.1' => {
+                                      '2.1.1' => {
+                                                   'Added' => 0,
+                                                   'BC' => 100,
+                                                   'ChangedSoname' => 0,
+                                                   'ObjectsAdded' => 0,
+                                                   'ObjectsAddedSymbols' => 0,
+                                                   'ObjectsRemoved' => 0,
+                                                   'ObjectsRemovedSymbols' => 0,
+                                                   'Path' => 'objects_report/openjpeg/2.1/2.1.1/report.html',
+                                                   'Removed' => 0,
+                                                   'TotalObjects' => 1,
+                                                   'TotalProblems' => 0
+                                                 }
+                                    },
+                           '2.1.1' => {
+                                        'current' => {
+                                                       'Added' => 0,
+                                                       'BC' => 100,
+                                                       'ChangedSoname' => 0,
+                                                       'ObjectsAdded' => 0,
+                                                       'ObjectsAddedSymbols' => 0,
+                                                       'ObjectsRemoved' => 0,
+                                                       'ObjectsRemovedSymbols' => 0,
+                                                       'Path' => 'objects_report/openjpeg/2.1.1/current/report.html',
+                                                       'Removed' => 0,
+                                                       'TotalObjects' => 1,
+                                                       'TotalProblems' => 0
+                                                     }
                                       }
                          },
           'ABIReport_D' => {
@@ -318,6 +367,32 @@ $VAR1 = {
                                                                   'TotalProblems' => 20
                                                                 }
                                                    }
+                                        },
+                             '2.1' => {
+                                        '2.1.1' => {
+                                                     'e6eaa' => {
+                                                                  'Added' => 0,
+                                                                  'Affected' => 0,
+                                                                  'Object1' => 'lib/libopenjp2.so.2.1.0',
+                                                                  'Object2' => 'lib/libopenjp2.so.2.1.1',
+                                                                  'Path' => 'compat_report/openjpeg/2.1/2.1.1/e6eaa/abi_compat_report.html',
+                                                                  'Removed' => 0,
+                                                                  'TotalProblems' => 0
+                                                                }
+                                                   }
+                                      },
+                             '2.1.1' => {
+                                          'current' => {
+                                                         '27c2e' => {
+                                                                      'Added' => 0,
+                                                                      'Affected' => 0,
+                                                                      'Object1' => 'lib/libopenjp2.so.2.1.1',
+                                                                      'Object2' => 'lib/libopenjp2.so.2.1.1',
+                                                                      'Path' => 'compat_report/openjpeg/2.1.1/current/27c2e/abi_compat_report.html',
+                                                                      'Removed' => 0,
+                                                                      'TotalProblems' => 0
+                                                                    }
+                                                       }
                                         }
                            },
           'ABIView' => {},
@@ -332,7 +407,8 @@ $VAR1 = {
                            '1.5.2' => 'changelog/openjpeg/1.5.2/log.html',
                            '2.0' => 'changelog/openjpeg/2.0/log.html',
                            '2.0.1' => 'changelog/openjpeg/2.0.1/log.html',
-                           '2.1' => 'changelog/openjpeg/2.1/log.html'
+                           '2.1' => 'changelog/openjpeg/2.1/log.html',
+                           'current' => 'changelog/openjpeg/current/log.html'
                          },
           'Date' => {
                       '1.1' => '2007-01-31 15:09',
@@ -344,7 +420,8 @@ $VAR1 = {
                       '1.5.2' => '2014-03-28 08:20',
                       '2.0' => '2014-03-28 08:13',
                       '2.0.1' => '2014-04-22 07:53',
-                      '2.1' => '2014-04-29 12:58'
+                      '2.1' => '2014-04-29 12:58',
+                      'current' => '2016-07-05 23:53:31'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -395,12 +472,24 @@ $VAR1 = {
                                                      'Path' => 'headers_diff/openjpeg/2.0.1/2.1/diff.html',
                                                      'Total' => 2
                                                    }
+                                        },
+                             '2.1' => {
+                                        '2.1.1' => {
+                                                     'Path' => 'headers_diff/openjpeg/2.1/2.1.1/diff.html',
+                                                     'Total' => 2
+                                                   }
+                                      },
+                             '2.1.1' => {
+                                          'current' => {
+                                                         'Path' => 'headers_diff/openjpeg/2.1.1/current/diff.html',
+                                                         'Total' => 0
+                                                       }
                                         }
                            },
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1467755949',
+          'ScmUpdateTime' => '1467756759',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'
@@ -428,7 +517,13 @@ $VAR1 = {
                                    },
                         '2.1' => {
                                    'lib/libopenjp2.so.2.1.0' => 'libopenjp2.so.7'
-                                 }
+                                 },
+                        '2.1.1' => {
+                                     'lib/libopenjp2.so.2.1.1' => 'libopenjp2.so.7'
+                                   },
+                        'current' => {
+                                       'lib/libopenjp2.so.2.1.1' => 'libopenjp2.so.7'
+                                     }
                       },
           'Sover' => {
                        '1.1' => 'None',
@@ -439,7 +534,9 @@ $VAR1 = {
                        '1.5.2' => '5',
                        '2.0' => '6',
                        '2.0.1' => '7',
-                       '2.1' => '7'
+                       '2.1' => '7',
+                       '2.1.1' => '7',
+                       'current' => '7'
                      },
           'Title' => 'OpenJPEG'
         };
