@@ -1,5 +1,5 @@
-Authors of OpenJPEG
-See also the files THANKS and CHANGES
+# Authors of OpenJPEG
+See also [THANKS](https://github.com/uclouvain/openjpeg/blob/master/THANKS.md)
 
 David Janssens designed and implemented the first version of OpenJPEG.
 Kaori Hagihara designed and implemented the first version of OpenJPIP.
