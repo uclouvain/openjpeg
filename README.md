@@ -52,11 +52,13 @@ The library is developed and maintained by the Image and Signal Processing Group
 
 See [LICENSE][link-license] for license and copyright information.
 
-See [INSTALL](https://github.com/uclouvain/openjpeg/blob/master/INSTALL) for installation procedures.
+See [INSTALL](https://github.com/uclouvain/openjpeg/blob/master/INSTALL.md) for installation procedures.
 
-See [NEWS](https://github.com/uclouvain/openjpeg/blob/master/NEWS) for user visible changes in successive releases.
+See [NEWS](https://github.com/uclouvain/openjpeg/blob/master/NEWS.md) for user visible changes in successive releases.
 
 ## API/ABI
+
+An API/ABI timeline is automatically updated [here][link-api-timeline].
 
 OpenJPEG strives to provide a stable API/ABI for your applications. As such it
 only exposes a limited subset of its functions.  It uses a mechanism of
@@ -77,3 +79,4 @@ API available is the one supported by OpenJPEG.
 [link-msvc-build]: https://ci.appveyor.com/project/detonin/openjpeg/branch/openjpeg-2.1 "Windows Build Status"
 [badge-coverity]: https://scan.coverity.com/projects/6383/badge.svg "Coverity Scan Build Status"
 [link-coverity]: https://scan.coverity.com/projects/uclouvain-openjpeg "Coverity Scan Build Status"
+[link-api-timeline]: http://www.openjpeg.org/abi-check/timeline/openjpeg "OpenJPEG API/ABI timeline"

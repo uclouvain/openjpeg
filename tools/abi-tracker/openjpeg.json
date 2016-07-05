@@ -3,7 +3,7 @@
   "Title":          "OpenJPEG",
   "SourceUrl":      "https://github.com/uclouvain/openjpeg/tags",
   "Git":            "https://github.com/uclouvain/openjpeg.git",
-  "Maintainer":     "Antonin D.",
+  "Maintainer":     "OpenJPEG team",
   "MaintainerUrl":  "http://www.openjpeg.org/",
   "Package":        "version.",
   "Configure":      "-DCMAKE_C_FLAGS='-fvisibility=hidden -g -Og -w -fpermissive'",
@@ -51,7 +51,7 @@
     "Source":         "src/openjpeg/2.0/version.2.0.tar.gz",
     "Changelog":      "NEWS",
     "HeadersDiff":    "On",
-    "PkgDiff":        "On",
+    "PkgDiff":        "Off",
     "ABIView":        "Off",
     "ABIDiff":        "Off",
     "PublicSymbols":  "public_symbols/openjpeg/2.0/list",
@@ -104,18 +104,6 @@
     "ABIDiff":        "Off",
     "PublicSymbols":  "public_symbols/openjpeg/1.4/list",
     "PublicTypes":    "public_types/openjpeg/1.4/list"
-  },
-  {
-    "Number":         "1.3",
-    "Installed":      "installed/openjpeg/1.3",
-    "Source":         "src/openjpeg/1.3/version.1.3.tar.gz",
-    "Changelog":      "ChangeLog",
-    "HeadersDiff":    "On",
-    "PkgDiff":        "Off",
-    "ABIView":        "Off",
-    "ABIDiff":        "Off",
-    "PublicSymbols":  "public_symbols/openjpeg/1.3/list",
-    "PublicTypes":    "public_types/openjpeg/1.3/list"
   },
   {
     "Number":         "1.2",
