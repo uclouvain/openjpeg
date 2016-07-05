@@ -20,7 +20,25 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9d5002f8fd2f52521b5303ae391051ef201e9b5c
+<pre class='wrap'>commit bd96ed835352897c30ecc0f5cff43d0b1399e4e5
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-07-05 16:07:16 +0200
+
+    Update AUTHORS file
+
+commit f4a708ba0fe0ef906209ba608c6059572ff76dcf
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-07-05 16:04:29 +0200
+
+    Update INSTALL, README and THANKS file
+
+commit 2372cb78a01132aa3e9c1f55065355035d031330
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-07-05 15:29:02 +0200
+
+    Upload changelog and convert some files to mardown
+
+commit 9d5002f8fd2f52521b5303ae391051ef201e9b5c
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-06-26 20:00:37 +0200
 
@@ -717,53 +735,12 @@ Date:   2015-11-07 14:50:28 +0100
     Update #655
 
 commit 51cbcd5748cd64832a578dfa30e630fdd79c2775
-Merge: c37d69b f51d52f
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-11-07 14:35:45 +0100
 
     Merge pull request #654 from mayeut/master
     
     Fix undefined size jp2 box handling
-
-commit f51d52f85a54a40ad7e792f2b59473aaf9e1e914
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-07 02:59:38 +0100
-
-    Revert "Check for appveyor update"
-    
-    This reverts commit c414d9c238f404980e6e8b17db652a7fb2635cdf.
-
-commit c414d9c238f404980e6e8b17db652a7fb2635cdf
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-07 02:40:18 +0100
-
-    Check for appveyor update
-
-commit e5ca873ab13a22e0cdabb4f56367b4c223be0b70
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-07 02:06:22 +0100
-
-    Fix missing bracket
-
-commit c37d69b25e2bdd40851b898532b2232cb2b04760
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-02 22:28:30 +0100
-
-    Fix Travis cmake install
-
-commit a77717583e05c127f013a7ab55e7cf5ed5bffccf
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-02 22:02:53 +0100
-
-    Update cmake for travis ASan build
-
-commit 968085190c47f1d43e4c19b9fe1ad0d6311f8d2c
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-02 21:49:25 +0100
-
-    Merge pull request #651 from stweil/fix
-    
-    opj_decompress: Update error message
 
 commit e975ca2832ecb012c1bd768c5d971eeb6032cbc4
 Merge: 80be580 b06bed7
@@ -788,7 +765,6 @@ Date:   2015-10-21 09:01:31 +0200
     Avoid pointer arithmetic with (void *) pointers.
 
 commit 540aa58f6c12224b5762f141fe71a2760e7c7766
-Merge: 0967d64 d48be27
 Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
 Date:   2015-10-21 08:57:45 +0200
 
@@ -814,39 +790,49 @@ Date:   2015-10-20 13:02:51 +0200
     Used for platforms where none of posix_memalign(), memalign() and
     _aligned_malloc() is available.
 
-commit 0967d6485414e7038d51f11e4e57f7a4bf5b4572
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2015-10-20 13:02:51 +0200
+commit 80be580d50c5defd2f4628b9c4ae3dad4e7c6ef0
+Merge: c8d03fe 05b3afd
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-18 03:23:38 +0200
 
-    Generic aligned malloc implementation.
-    
-    Used for platforms where none of posix_memalign(), memalign() and
-    _aligned_malloc() is available.
+    Merge branch 'master' into coc-qcc
 
-commit 57996722371d07e9626a36330c3a7a453475d4fd
-Merge: 4831bad a1fc83c
+commit 05b3afd28f8c3f9551d551c565609062f57f5837
+Merge: b1a8e1a e1122a8
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-19 22:23:54 +0200
+Date:   2015-10-18 03:14:55 +0200
 
-    Merge pull request #641 from smuehlst/opj_hp_issue_640
+    Merge pull request #636 from uclouvain/opj_malloc-625
     
-    Fix HP compiler warning about redeclaration of function
-    Fix #640
-    Fix #243
+    Update allocation functions
+    Fix #625
+    Fix #624
+    Fix #635
 
-commit a1fc83cc255ff7697d6ca68ea4e1c42710771756
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2015-10-19 12:14:01 +0200
+commit e1122a8f5081712147a5b36a7b0c9dd81f11c98d
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-18 02:52:33 +0200
 
-    Fix HP compiler warning about redeclaration of function (#640)
-    
-    HP compiler warns:
-    cc: "dwt.c", line 798: warning 562: Redeclaration of "opj_v4dwt_decode"
-    with a different storage class specifier: "opj_v4dwt_decode" will have
-    internal linkage.
-    cc: "t2.c", line 1341: warning 562: Redeclaration of "opj_t2_init_seg"
-    with a different storage class specifier: "opj_t2_init_seg" will have
-    internal linkage.
+    Cleanup includes
+
+commit b1a8e1adcb7e5ac35320dcfab226e5f68eaf81af
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-15 23:31:42 +0200
+
+    Change link for appveyor
+
+commit c8d03fea9b2d1db0f2000718395a9f01c59a1e2f
+Merge: 3259fe2 6721f8a
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-13 21:57:58 +0200
+
+    Merge branch 'master' into coc-qcc
+
+commit 6721f8a53fec2ad30d15b142968ab9c8e2e6ba1c
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-13 21:37:11 +0200
+
+    Correct unbound variable
 
 ...</pre></div>
 
