@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 4c5a1cc82584e263103fc48c8bd729985199c147
+<pre class='wrap'>commit ed294598eacda0664ec8ebfa843ae242036f21f8
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-07-05 18:10:35 +0200
+
+    Trigger API/ABI update on website
+
+commit fef144283f070e24a0a8f9e86158ec6353e99cf1
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-07-05 16:49:10 +0200
+
+    Update INSTALL.md
+
+commit 4c5a1cc82584e263103fc48c8bd729985199c147
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-07-05 16:40:27 +0200
 
@@ -566,68 +578,12 @@ Date:   2016-01-11 00:23:44 +0100
     Add COC/QCC in main header when needed
 
 commit cb33ff43bb289c8beb94a3cdeac1e53432f30abe
-Merge: 0dd44e7 6a1974d
 Author: Mathieu Malaterre &lt;mathieu.malaterre@gmail.com&gt;
 Date:   2016-01-09 14:53:29 +0100
 
     Merge pull request #690 from rouault/failed_malloc_opj_dwt_encode_procedure
     
     [git/2.1 regression] Fix opj_write_tile() failure when numresolutions=1
-
-commit 6a1974d40d95d857377a1eb5f4db0d9e24d0ad0a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-01-09 14:30:48 +0100
-
-    Add comment explaining bj is not use when l_data_size == 0
-
-commit 87c0d7dc1eee2adf1aa7ae31bdfac078bb114c01
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-01-08 19:38:45 +0100
-
-    [git/2.1 regression] Fix opj_write_tile() failure when numresolutions=1
-    
-    When trying the GDAL OpenJPEG driver against openjpeg current master HEAD,
-    I get failures when trying to create .jp2 files. The driver uses
-    opj_write_tile() and in some tests numresolutions = 1.
-    
-    In openjp2/dwt.c:410, l_data_size = opj_dwt_max_resolution( tilec-&gt;resolutions,tilec-&gt;numresolutions) * (OPJ_UINT32)sizeof(OPJ_INT32);
-    is called and returns l_data_size = 0. Now in git opj_malloc() has a special case
-    for 0 to return a NULL pointer whereas previously it relied on system malloc(),
-    which in my case didn't return NULL.
-    
-    So only test the pointer value if l_data_size != 0. This makes the GDAL
-    autotest suite to pass again.
-
-commit 0dd44e7dba540e69114a24c81e9190786ed32fed
-Merge: a205f70 9cad6bc
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-01-06 23:15:05 +0100
-
-    Merge pull request #687 from stweil/memalign
-    
-    Fix fatal crash on 64 bit Linux
-
-commit 9cad6bc1f68be54189c6db8a7fcef6f994daf891
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-01-06 21:34:59 +0100
-
-    Fix fatal crash on 64 bit Linux
-    
-    By default, OpenJPEG uses the function memalign to allocate aligned
-    memory on Linux systems. That function needs malloc.h which was
-    missing. This results in a compiler warning:
-    
-    openjpeg/src/lib/openjp2/opj_malloc.c:63:3: warning:
-     implicit declaration of function ‘memalign’
-     [-Wimplicit-function-declaration]
-    
-    On hosts where sizeof(int) &lt; sizeof(void *) the return value of memalign
-    will be truncated which results in an invalid pointer.
-    
-    That caused "make test" to produce lots of segmentation faults when
-    running on a 64 bit Linux host.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit c00ee8bff7cd6473021cb6f40199d25898d09250
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
@@ -658,15 +614,7 @@ Date:   2016-01-06 17:37:37 +0100
     
     Update uclouvain/openjpeg#681
 
-commit 83e5e2703ed66bdf4afbefd607263193a2ac1a98
-Merge: 2e4fadf 3a0253f
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-01-06 17:09:14 +0100
-
-    Merge remote-tracking branch 'uclouvain/master'
-
 commit 3a0253f4e2e7210f4bbef8b9b8fc0a62e13daa55
-Merge: 8f99059 99c4f62
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-01-06 17:01:48 +0100
 
@@ -674,96 +622,9 @@ Date:   2016-01-06 17:01:48 +0100
     
     Fix duplicate article in comments
 
-commit 99c4f621bd32ddfec25cb126d4d462642e9d43a6
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-01-06 08:55:29 +0100
-
-    Fix duplicate article in comments
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 2e4fadf330c1039d2181e6ba05c80f1cff6d0947
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-01-03 02:09:04 +0100
-
-    Merge remote-tracking branch 'uclouvain/master'
-
-commit 8f9905936cef1427f9372dd192a054b3c852232a
-Merge: 51efe91 a834ab3
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-12-31 11:45:51 +0100
-
-    Merge pull request #679 from stweil/grammar
-    
-    Fix grammar in comment
-
-commit a834ab305ffb1af465f94f0781743eaf4c13d01c
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2015-11-03 19:16:01 +0100
-
-    Fix grammar in comment
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 51efe91971cce3c8f7e0f381ff15fccfc0388807
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-12-23 20:55:47 +0100
-
-    Merge pull request #665 from jwilk/spelling
-    
-    Fix typos
-
 commit e975ca2832ecb012c1bd768c5d971eeb6032cbc4
-Merge: 80be580 b06bed7
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-10-21 20:45:50 +0200
-
-    Merge branch 'master' into coc-qcc
-
-commit b06bed7b7bcf73a3a282d8206ac526689685ce8d
-Merge: d48be27 b7a1623
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-21 10:10:38 +0200
-
-    Merge pull request #644 from smuehlst/opj_aligned_malloc
-    
-    Avoid pointer arithmetic with (void *) pointers
-
-commit b7a162348de2f1444377e2dca9f3cbf9d770b52d
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2015-10-21 09:01:31 +0200
-
-    Avoid pointer arithmetic with (void *) pointers.
-
-commit d48be27f5aa018d398cf9369b2c664bee4ce6e19
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-21 00:09:04 +0200
-
-    Generic aligned malloc implementation update.
-    
-    Update #642
-
-commit 80be580d50c5defd2f4628b9c4ae3dad4e7c6ef0
-Merge: c8d03fe 05b3afd
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-18 03:23:38 +0200
-
-    Merge branch 'master' into coc-qcc
-
-commit 05b3afd28f8c3f9551d551c565609062f57f5837
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-18 03:14:55 +0200
-
-    Merge pull request #636 from uclouvain/opj_malloc-625
-    
-    Update allocation functions
-    Fix #625
-    Fix #624
-    Fix #635
-
-commit c8d03fea9b2d1db0f2000718395a9f01c59a1e2f
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-13 21:57:58 +0200
 
     Merge branch 'master' into coc-qcc
 
