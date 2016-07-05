@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit bd96ed835352897c30ecc0f5cff43d0b1399e4e5
+<pre class='wrap'>commit 4c5a1cc82584e263103fc48c8bd729985199c147
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-07-05 16:40:27 +0200
+
+    Update AUTHORS.md
+
+commit bd96ed835352897c30ecc0f5cff43d0b1399e4e5
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-07-05 16:07:16 +0200
 
@@ -623,16 +629,6 @@ Date:   2016-01-06 21:34:59 +0100
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
-commit 79b1c4cc85e5d1709cdb831561ba4927ea673514
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-01-06 21:34:59 +0100
-
-    Fix whitespace issues in opj_malloc.c
-    
-    Some lines ended with spaces. Remove them.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
 commit c00ee8bff7cd6473021cb6f40199d25898d09250
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
 Date:   2015-11-01 20:37:19 +0100
@@ -687,7 +683,6 @@ Date:   2016-01-06 08:55:29 +0100
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 2e4fadf330c1039d2181e6ba05c80f1cff6d0947
-Merge: 51cbcd5 8f99059
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-01-03 02:09:04 +0100
 
@@ -711,36 +706,12 @@ Date:   2015-11-03 19:16:01 +0100
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 51efe91971cce3c8f7e0f381ff15fccfc0388807
-Merge: 5d56fb3 4ddc262
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-12-23 20:55:47 +0100
 
     Merge pull request #665 from jwilk/spelling
     
     Fix typos
-
-commit 4ddc2627dd9e3af4b982f4bf51b9f8c35f034bf9
-Author: Jakub Wilk &lt;jwilk@jwilk.net&gt;
-Date:   2015-11-27 21:38:41 +0100
-
-    Fix typos
-
-commit 5d56fb3115f253564db11a76293079d68959bdf5
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-07 14:50:28 +0100
-
-    Add known failures
-    
-    2 more tests failing under AppVayor since nov-6 update
-    Update #655
-
-commit 51cbcd5748cd64832a578dfa30e630fdd79c2775
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-11-07 14:35:45 +0100
-
-    Merge pull request #654 from mayeut/master
-    
-    Fix undefined size jp2 box handling
 
 commit e975ca2832ecb012c1bd768c5d971eeb6032cbc4
 Merge: 80be580 b06bed7
@@ -764,15 +735,6 @@ Date:   2015-10-21 09:01:31 +0200
 
     Avoid pointer arithmetic with (void *) pointers.
 
-commit 540aa58f6c12224b5762f141fe71a2760e7c7766
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2015-10-21 08:57:45 +0200
-
-    Merge branch 'master' into opj_aligned_malloc
-    
-    Conflicts:
-    	src/lib/openjp2/opj_malloc.c
-
 commit d48be27f5aa018d398cf9369b2c664bee4ce6e19
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-10-21 00:09:04 +0200
@@ -780,15 +742,6 @@ Date:   2015-10-21 00:09:04 +0200
     Generic aligned malloc implementation update.
     
     Update #642
-
-commit eaf55b677c53d76a11d2b860034337afdf8d8817
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2015-10-20 13:02:51 +0200
-
-    Generic aligned malloc implementation.
-    
-    Used for platforms where none of posix_memalign(), memalign() and
-    _aligned_malloc() is available.
 
 commit 80be580d50c5defd2f4628b9c4ae3dad4e7c6ef0
 Merge: c8d03fe 05b3afd
@@ -798,7 +751,6 @@ Date:   2015-10-18 03:23:38 +0200
     Merge branch 'master' into coc-qcc
 
 commit 05b3afd28f8c3f9551d551c565609062f57f5837
-Merge: b1a8e1a e1122a8
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-10-18 03:14:55 +0200
 
@@ -809,30 +761,11 @@ Date:   2015-10-18 03:14:55 +0200
     Fix #624
     Fix #635
 
-commit e1122a8f5081712147a5b36a7b0c9dd81f11c98d
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-18 02:52:33 +0200
-
-    Cleanup includes
-
-commit b1a8e1adcb7e5ac35320dcfab226e5f68eaf81af
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-15 23:31:42 +0200
-
-    Change link for appveyor
-
 commit c8d03fea9b2d1db0f2000718395a9f01c59a1e2f
-Merge: 3259fe2 6721f8a
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2015-10-13 21:57:58 +0200
 
     Merge branch 'master' into coc-qcc
-
-commit 6721f8a53fec2ad30d15b142968ab9c8e2e6ba1c
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2015-10-13 21:37:11 +0200
-
-    Correct unbound variable
 
 ...</pre></div>
 
