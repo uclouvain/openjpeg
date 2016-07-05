@@ -14,8 +14,9 @@ if [ "${OPJ_CI_ABI_CHECK:-}" != "1" ]; then
 fi
 
 OPJ_UPLOAD_ABI_REPORT=0
+OPJ_PREVIOUS_VERSION="2.1"
 OPJ_LATEST_VERSION="2.1.1"
-OPJ_LIMIT_ABI_BUILDS="-limit 2"
+OPJ_LIMIT_ABI_BUILDS="-limit 3"
 OPJ_REPO="https://github.com/uclouvain/openjpeg.git"
 OPJ_SSH_REPO=${OPJ_REPO/https:\/\/github.com\//git@github.com:}
 OPJ_UPLOAD_BRANCH="gh-pages"
@@ -81,10 +82,12 @@ EXIT_CODE=0
 
 # Check API
 abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -api -s || EXIT_CODE=1
+abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_PREVIOUS_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -header openjpeg.h -api -s || EXIT_CODE=1
 
 # Check ABI
 if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
 	abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
+	abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_PREVIOUS_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
 else
 	echo "Disable ABI check for now, problems with symbol visibility..."
 fi
