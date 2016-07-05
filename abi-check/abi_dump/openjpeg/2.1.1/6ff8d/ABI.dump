@@ -8,7 +8,7 @@ $VAR1 = {
                        },
           'Language' => 'C',
           'LibraryName' => 'libopenjp2.so.2.1.1',
-          'LibraryVersion' => 'current',
+          'LibraryVersion' => '2.1.1',
           'NameSpaces' => {},
           'Needed' => {
                         'libc.so.6' => 1,

@@ -10,7 +10,8 @@ $VAR1 = {
                            '1.5.2' => 'NEWS',
                            '2.0' => 'NEWS',
                            '2.0.1' => 'NEWS',
-                           '2.1' => 'NEWS'
+                           '2.1' => 'NEWS',
+                           '2.1.1' => 'Off'
                          },
           'Installed' => {
                            '1.1' => 'installed/openjpeg/1.1',
@@ -22,6 +23,7 @@ $VAR1 = {
                            '2.0' => 'installed/openjpeg/2.0',
                            '2.0.1' => 'installed/openjpeg/2.0.1',
                            '2.1' => 'installed/openjpeg/2.1',
+                           '2.1.1' => 'installed/openjpeg/2.1.1',
                            'current' => 'installed/openjpeg/current'
                          },
           'Source' => {
@@ -36,6 +38,7 @@ $VAR1 = {
                         '2.0' => 'src/openjpeg/2.0/version.2.0.tar.gz',
                         '2.0.1' => 'src/openjpeg/2.0.1/version.2.0.1.tar.gz',
                         '2.1' => 'src/openjpeg/2.1/version.2.1.tar.gz',
+                        '2.1.1' => 'src/openjpeg/2.1.1/version.2.1.1.tar.gz',
                         'current' => 'src/openjpeg/current'
                       }
         };

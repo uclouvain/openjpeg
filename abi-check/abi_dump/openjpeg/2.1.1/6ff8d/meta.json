@@ -1,0 +1,7 @@
+{
+  "Object": "lib/libopenjp2.so.2.1.1",
+  "Lang": "C",
+  "TotalSymbols": "43",
+  "PublicABI": "1",
+  "Version": "1.7"
+}
