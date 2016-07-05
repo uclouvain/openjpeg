@@ -10,7 +10,8 @@ $VAR1 = {
                            '1.5.2' => 'NEWS',
                            '2.0' => 'NEWS',
                            '2.0.1' => 'NEWS',
-                           '2.1' => 'NEWS'
+                           '2.1' => 'NEWS',
+                           '2.1.1' => 'Off'
                          },
           'Installed' => {
                            '1.1' => 'installed/openjpeg/1.1',
