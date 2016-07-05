@@ -14,7 +14,7 @@ if [ "${OPJ_CI_ABI_CHECK:-}" != "1" ]; then
 fi
 
 OPJ_UPLOAD_ABI_REPORT=0
-OPJ_LATEST_VERSION="2.1"
+OPJ_LATEST_VERSION="2.1.1"
 OPJ_LIMIT_ABI_BUILDS="-limit 2"
 OPJ_REPO="https://github.com/uclouvain/openjpeg.git"
 OPJ_SSH_REPO=${OPJ_REPO/https:\/\/github.com\//git@github.com:}
