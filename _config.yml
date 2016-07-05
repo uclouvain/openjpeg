@@ -19,7 +19,7 @@ author :
   #feedburner : feedname
 
 # Version of binary release (update this for each new release!)
-binVersion: 2.1.0
+binVersion: 2.1.1
 
 # Remaining URLs
 gitURL: https://github.com/uclouvain/openjpeg
