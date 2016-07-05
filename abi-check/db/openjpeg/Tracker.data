@@ -236,7 +236,8 @@ $VAR1 = {
                                                      'TotalObjects' => 1,
                                                      'TotalProblems' => 0
                                                    }
-                                    }
+                                    },
+                           '2.1.1' => {}
                          },
           'ABIReport_D' => {
                              '1.1' => {
@@ -383,7 +384,7 @@ $VAR1 = {
                       '2.0' => '2014-03-28 08:13',
                       '2.0.1' => '2014-04-22 07:53',
                       '2.1' => '2014-04-29 12:58',
-                      'current' => '2016-07-05 18:10:35'
+                      'current' => '2016-07-05 22:12:11'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -440,12 +441,13 @@ $VAR1 = {
                                                        'Path' => 'headers_diff/openjpeg/2.1/current/diff.html',
                                                        'Total' => 2
                                                      }
-                                      }
+                                      },
+                             '2.1.1' => {}
                            },
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1467735691',
+          'ScmUpdateTime' => '1467750251',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'
