@@ -5,7 +5,7 @@ The build method maintained by OpenJPEG is [CMake](https://cmake.org/).
 
 ## UNIX/LINUX - MacOS (terminal) - WINDOWS (cygwin, MinGW)
 
-To build the library, type in root openjpeg directory:
+To build the library, type from source tree directory:
 ```
 mkdir build
 cd build
