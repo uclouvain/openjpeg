@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 7948d83340e19f8520b4d1dc87a03fcc9613732e
+<pre class='wrap'>commit 9db62b20111198429c4fa9650dda16e1ee326f3c
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-07-05 23:53:31 +0200
+
+    Update ABI tracker from 2.1 to 2.1.1
+
+commit 7948d83340e19f8520b4d1dc87a03fcc9613732e
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-07-05 23:33:00 +0200
 
@@ -566,30 +572,12 @@ Date:   2016-01-25 17:30:43 +0100
     Fixes #245
 
 commit 3767af52deaa8e75c322961aa51f56b397de22af
-Merge: 1b86fb6 c00ee8b
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-01-23 19:43:09 +0100
 
     Merge pull request #648 from stweil/alloc
     
     Fix support of posix_memalloc for Linux
-
-commit 1b86fb6f488e85231bfee21d7831d66ee4da2b8b
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-01-11 00:35:47 +0100
-
-    Update known failures
-
-commit c00ee8bff7cd6473021cb6f40199d25898d09250
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2015-11-01 20:37:19 +0100
-
-    Fix support of posix_memalign for Linux
-    
-    posix_memalign is only declared conditionally in stdlib.h,
-    so add one of the possible definitions to get the declaration.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 ...</pre></div>
 

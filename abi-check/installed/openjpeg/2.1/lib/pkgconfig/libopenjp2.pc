@@ -1,4 +1,4 @@
-prefix=/root/abi-check/work/abi-check/installed/openjpeg/2.1
+prefix=/home/travis/abi-check/work/abi-check/installed/openjpeg/2.1
 bindir=${prefix}/bin
 mandir=${prefix}/
 docdir=${prefix}/
