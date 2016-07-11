@@ -9,7 +9,7 @@ Name: openjpwl
 Description: JPEG2000 Wireless library (Part 11)
 URL: http://www.openjpeg.org/
 Version: @OPENJPEG_VERSION@
-Requires: openjp2
+Requires: libopenjp2
 Libs: -L${libdir} -lopenjpwl
 Libs.private: -lm
 Cflags: -I${includedir}

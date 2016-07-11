@@ -9,7 +9,7 @@ Name: openjpip
 Description: JPEG2000 Interactivity tools, APIs and protocols (Part 9)
 URL: http://www.openjpeg.org/
 Version: @OPENJPEG_VERSION@
-Requires: openjp2
+Requires: libopenjp2
 Libs: -L${libdir} -lopenjpip
 Libs.private: -lm -lcurl -lfcgi -lpthread
 Cflags: -I${includedir}
