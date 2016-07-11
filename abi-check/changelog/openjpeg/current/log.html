@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b3c422654fe847b765b7f2f1d662e43bac1a682c
+<pre class='wrap'>commit 18da6155b2b69472d36ef8b13fd82878966b451c
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-07-12 00:45:51 +0200
+
+    Fix dependency for pkg-config (issue #594) (#795)
+    
+    openjpeg provides libopenjp2.pc, so the require statements must refer to
+    libopenjp2 instead of openjp2.
+    Fixes #594
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit b3c422654fe847b765b7f2f1d662e43bac1a682c
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-07-06 00:26:37 +0200
 
@@ -537,21 +549,12 @@ Date:   2016-04-12 10:48:02 +0200
     Remove dead code in opj_dump
 
 commit 40b5a53d2f364fe59b8ed86f4821c867d345a95e
-Merge: 5c5ae1d e7797b9
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-04-12 10:47:28 +0200
 
     Merge pull request #735 from senbox-org/cppcheck_fix_openjp2
     
     Fix uninitialized variable reported by cppcheck
-
-commit e7797b97a1922e0d38d705916117c29af96471a0
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-04-09 19:02:05 +0200
-
-    Fix uninitialized variable reported by cppcheck
-    
-    Also reorder initialization to follow declaration order
 
 commit 5e5f6999a8e218f52584841ea6fdffde34743722
 Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
@@ -570,14 +573,6 @@ Author: Aaron Boxer &lt;boxerab@gmail.com&gt;
 Date:   2016-01-28 19:34:00 -0500
 
     issue #695 MQ Encode: ensure that bp pointer never points to uninitialized memory
-
-commit 5c5ae1d51a3b5a1c4e68ae0323f7a14d7628f465
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-01-25 17:30:43 +0100
-
-    fixed tile numbering
-    
-    Fixes #245
 
 ...</pre></div>
 
