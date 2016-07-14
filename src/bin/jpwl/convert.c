@@ -187,10 +187,9 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 
 #ifdef OPJ_BIG_ENDIAN
 
-static inline int16_t swap16(int16_t x)
+static inline uint16_t swap16(uint16_t x)
 {
-  return((((u_int16_t)x & 0x00ffU) <<  8) |
-     (((u_int16_t)x & 0xff00U) >>  8));
+    return(((x & 0x00ffU) << 8) | ((x & 0xff00U) >> 8));
 }
 
 #endif
