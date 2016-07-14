@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e40c28c2e89c30ebb682fe2fabef10930e039c1f
+<pre class='wrap'>commit b8bd1b0e07cf427b80eb0dc6823efebbdd1b8e5b
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-07-14 11:06:26 +0200
+
+    Add compilation test for standalone inclusion of openjpeg.h (#798)
+    
+    This ensures all openjpeg.h dependencies are met.
+    Fix #673
+
+commit e40c28c2e89c30ebb682fe2fabef10930e039c1f
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
 Date:   2016-07-14 10:49:17 +0200
 
@@ -524,12 +533,6 @@ Date:   2016-04-22 00:16:16 +0200
 
     Import pnglibconf.h.prebuilt as new pnglibconf.h
 
-commit 889bf167913c202ee33b25c64063fd6db5bece96
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-04-21 18:49:15 +0200
-
-    update libpng to from 1.6.17 to 1.6.21
-
 commit 6ea2ff0b0627655d36ad7cc7483de7592b8bcbd1
 Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
 Date:   2016-04-19 15:25:42 +0200
@@ -543,27 +546,12 @@ Date:   2016-04-19 15:22:49 +0200
     upgrade cmake to 3.5.2
 
 commit e1a93d9e59f08b708200e6a371f3f6a4eeb54940
-Merge: a1c0ee9 0069a2b
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-04-18 10:51:51 +0200
 
     Merge pull request #708 from GrokImageCompression/issue_695
     
     issue #695 MQ Encode: ensure that bp pointer never points to uninitialized memory
-
-commit a1c0ee9a861778d54df734ebc21b604f06bd52bf
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-04-12 10:48:02 +0200
-
-    Merge pull request #734 from senbox-org/opj_dump_dead_code
-    
-    Remove dead code in opj_dump
-
-commit 0069a2bd2f8055b7edf9699332f4f00ac5351564
-Author: Aaron Boxer &lt;boxerab@gmail.com&gt;
-Date:   2016-01-30 10:05:46 -0500
-
-    suppress valgrind error - avoid accessing uninitialized memory in mq encoder
 
 ...</pre></div>
 
