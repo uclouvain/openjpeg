@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 18da6155b2b69472d36ef8b13fd82878966b451c
+<pre class='wrap'>commit e40c28c2e89c30ebb682fe2fabef10930e039c1f
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-07-14 10:49:17 +0200
+
+    jpwl: Remove non-portable data type u_int16_t (fix issue #796) (#797)
+    
+    The type casts which used this data type can be removed by changing
+    the signature of function swap16. As this function is called with
+    unsigned variables, this change is reasonable.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 18da6155b2b69472d36ef8b13fd82878966b451c
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
 Date:   2016-07-12 00:45:51 +0200
 
@@ -540,7 +552,6 @@ Date:   2016-04-18 10:51:51 +0200
     issue #695 MQ Encode: ensure that bp pointer never points to uninitialized memory
 
 commit a1c0ee9a861778d54df734ebc21b604f06bd52bf
-Merge: 40b5a53 5e5f699
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-04-12 10:48:02 +0200
 
@@ -548,31 +559,11 @@ Date:   2016-04-12 10:48:02 +0200
     
     Remove dead code in opj_dump
 
-commit 40b5a53d2f364fe59b8ed86f4821c867d345a95e
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-04-12 10:47:28 +0200
-
-    Merge pull request #735 from senbox-org/cppcheck_fix_openjp2
-    
-    Fix uninitialized variable reported by cppcheck
-
-commit 5e5f6999a8e218f52584841ea6fdffde34743722
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-04-09 18:34:11 +0200
-
-    Remove dead code in opj_dump
-
 commit 0069a2bd2f8055b7edf9699332f4f00ac5351564
 Author: Aaron Boxer &lt;boxerab@gmail.com&gt;
 Date:   2016-01-30 10:05:46 -0500
 
     suppress valgrind error - avoid accessing uninitialized memory in mq encoder
-
-commit e3100f714c2bae3da26877020048e2cf5906172b
-Author: Aaron Boxer &lt;boxerab@gmail.com&gt;
-Date:   2016-01-28 19:34:00 -0500
-
-    issue #695 MQ Encode: ensure that bp pointer never points to uninitialized memory
 
 ...</pre></div>
 
