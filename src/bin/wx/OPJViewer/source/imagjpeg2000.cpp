@@ -56,8 +56,6 @@
     #include "wx/module.h"
 #endif
 
-#include "openjp2/openjpeg.h"
-
 #include "wx/filefn.h"
 #include "wx/wfstream.h"
 
