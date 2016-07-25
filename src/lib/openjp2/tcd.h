@@ -70,7 +70,7 @@ typedef struct opj_tcd_pass {
 	OPJ_UINT32 rate;
 	OPJ_FLOAT64 distortiondec;
 	OPJ_UINT32 len;
-	OPJ_UINT32 term : 1;
+	OPJ_BITFIELD term : 1;
 } opj_tcd_pass_t;
 
 /**
@@ -219,7 +219,7 @@ typedef struct opj_tcd
 	/** current encoded/decoded tile */
 	OPJ_UINT32 tcd_tileno;
 	/** tell if the tcd is a decoder. */
-	OPJ_UINT32 m_is_decoder : 1;
+	OPJ_BITFIELD m_is_decoder : 1;
 } opj_tcd_t;
 
 /** @name Exported functions */
