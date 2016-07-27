@@ -497,9 +497,9 @@ typedef struct opj_j2k_dec
 	 */
 	OPJ_BOOL   m_last_tile_part;
 	/** to tell that a tile can be decoded. */
-	OPJ_BITFIELD m_can_decode	  : 1;
-	OPJ_BITFIELD m_discard_tiles  : 1;
-	OPJ_BITFIELD m_skip_data	  : 1;
+	OPJ_BITFIELD m_can_decode : 1;
+	OPJ_BITFIELD m_discard_tiles : 1;
+	OPJ_BITFIELD m_skip_data : 1;
 	/** TNsot correction : see issue 254 **/
 	OPJ_BITFIELD m_nb_tile_parts_correction_checked : 1;
 	OPJ_BITFIELD m_nb_tile_parts_correction : 1;
