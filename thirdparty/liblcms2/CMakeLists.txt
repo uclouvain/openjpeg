@@ -1,9 +1,9 @@
 project(liblcms2 C)
 #
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/liblcms2/include")
 #
-file(GLOB SRCS src/*.c)
-file(GLOB HDRS include/*.h)
+file(GLOB SRCS liblcms2/src/*.c)
+file(GLOB HDRS liblcms2/include/*.h)
 #
 set(LIBTARGET "lcms2")
 #

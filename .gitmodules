@@ -1,0 +1,12 @@
+[submodule "liblcms2"]
+	path = thirdparty/liblcms2/liblcms2
+	url = https://github.com/mm2/Little-CMS.git
+	ignore = dirty
+[submodule "libpng"]
+	path = thirdparty/libpng/libpng
+	url = https://github.com/glennrp/libpng.git
+	ignore = dirty
+[submodule "zlib"]
+	path = thirdparty/zlib/zlib
+	url = https://github.com/madler/zlib.git
+	ignore = dirty
