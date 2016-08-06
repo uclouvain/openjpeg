@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 1509ccc51f8de0523821ffd2f3d1946b10e49614
+<pre class='wrap'>commit 4a2a8693e5a02207a8813b02a375abdc4e43c49b
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-08-06 13:04:56 +0200
+
+    Update to lcms 2.8 (#808)
+
+commit 1509ccc51f8de0523821ffd2f3d1946b10e49614
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-08-06 12:51:40 +0200
 
@@ -413,20 +419,6 @@ Date:   2016-04-28 19:20:14 +0200
 
     Check SSIZ is valid in opj_j2k_read_siz (#762)
 
-commit 29313eb5f1b2c01c7493087fa2d8f1a20495a34e
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-28 13:16:43 +0200
-
-    Fix unsigned int overflow reported by UBSan (#761)
-    
-    * Fix unsigned int overflow reported by UBSan
-    
-    Please add -DOPJ_UBSAN_BUILD to CFLAGS when building with
-    -fsanitize=undefined,unsigned-integer-overflow
-    
-    It seems clang/gcc do not allow to disable checking for block of code
-    other than function or file.
-
 commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-01-25 22:16:49 +0100
@@ -489,29 +481,12 @@ Date:   2016-04-23 14:17:31 +0200
     Fix #727
 
 commit a9feb9addd05bc9f05e833dab16a8114bb6d70f3
-Merge: 06e8dc9 74e8143
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-04-23 10:51:46 +0200
 
     Merge pull request #750 from mayeut/issue-729-2
     
     Allow to read/write 3/5/7/9/11/13/15 bpp TIF files
-
-commit 74e814358c2530d238e3ada22d8eee6bf1d65283
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-23 01:53:32 +0200
-
-    Allow to write 3/5/7/9/11/13/15 bpp TIF files
-    
-    Update uclouvain/openjpeg#729
-
-commit 06e8dc9edde8aacea66b32c14a8f8fb6e3cdbbbf
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-22 12:54:25 +0200
-
-    Merge pull request #746 from senbox-org/update_cmake_jpylyzer
-    
-    Update cmake &amp; jpylyzer for travis builds
 
 ...</pre></div>
 
