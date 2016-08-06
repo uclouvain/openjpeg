@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b8bd1b0e07cf427b80eb0dc6823efebbdd1b8e5b
+<pre class='wrap'>commit 5bb919a30e77ee2c96984883fe2cfb714b62bddc
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-08-06 12:26:46 +0200
+
+    Reenable clang-3.9 build on travis (#806)
+    
+    clang-3.9 is now available with apt add-on in travis-ci
+
+commit b8bd1b0e07cf427b80eb0dc6823efebbdd1b8e5b
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-07-14 11:06:26 +0200
 
@@ -419,12 +427,6 @@ Date:   2016-04-28 11:52:45 +0200
 
     Fix implicit float-to-bool conversions (#752)
 
-commit 66fd497765939d02e8816d6d019839388fffdf79
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-28 00:18:37 +0200
-
-    Fix unsigned int overflow reported by UBSan (#759)
-
 commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-01-25 22:16:49 +0100
@@ -519,7 +521,6 @@ Date:   2016-04-22 12:54:25 +0200
     Update cmake &amp; jpylyzer for travis builds
 
 commit f5446fdcfb4f9174c449a706e641b635d07bfa5c
-Merge: e1a93d9 8611d12
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-04-22 10:48:40 +0200
 
@@ -527,31 +528,11 @@ Date:   2016-04-22 10:48:40 +0200
     
     update libpng to from 1.6.17 to 1.6.21
 
-commit 8611d127db0957aa0de65613a9d2626a6314122b
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-04-22 00:16:16 +0200
-
-    Import pnglibconf.h.prebuilt as new pnglibconf.h
-
 commit 6ea2ff0b0627655d36ad7cc7483de7592b8bcbd1
 Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
 Date:   2016-04-19 15:25:42 +0200
 
     Update jpylyzer to 1.17.0
-
-commit 3436c4e9baac1fd847c4475b961802cd1c9bbe7e
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-04-19 15:22:49 +0200
-
-    upgrade cmake to 3.5.2
-
-commit e1a93d9e59f08b708200e6a371f3f6a4eeb54940
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-04-18 10:51:51 +0200
-
-    Merge pull request #708 from GrokImageCompression/issue_695
-    
-    issue #695 MQ Encode: ensure that bp pointer never points to uninitialized memory
 
 ...</pre></div>
 
