@@ -28,6 +28,7 @@ matrix:
         apt:
           sources:
             - llvm-toolchain-precise
+            - ubuntu-toolchain-r-test
           packages:
             - clang-3.9
     - os: linux
