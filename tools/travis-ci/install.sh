@@ -115,33 +115,3 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 		fi
 	fi
 fi
-
-# Install clang if necessary.
-# clang-3.4 is available on base image
-# For more up-to-date versions, use packages from http://llvm.org/apt
-# Cannot use addons.apt.packages because clang-3.9 is currently on hold
-# (see https://github.com/travis-ci/apt-package-whitelist/pull/2780 or https://github.com/travis-ci/apt-package-whitelist/pull/2770)
-# "sudo: required" should be set in .travis.yml matrix for those configurations
-if echo "${CC:-}" | egrep -q "^clang-3.[7-9]?$" ; then
-  case "${CC:-}" in
-  clang-3.7)
-    echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.7 main" | sudo tee /etc/apt/sources.list.d/llvm.list
-    ;;
-  clang-3.8)
-    echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.8 main" | sudo tee /etc/apt/sources.list.d/llvm.list
-    ;;
-  clang-3.9)
-    echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise main" | sudo tee /etc/apt/sources.list.d/llvm.list
-    ;;
-  *)
-    echo "We should never have been there. Exiting..."
-    exit 1
-  esac
-  wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-
-  # On precise, ubuntu-toolchain ppa must be installed also (see http://llvm.org/apt)
-  sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-
-  sudo apt-get update -qq
-  sudo apt-get install "${CC:-}" -y
-fi
