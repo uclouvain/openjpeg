@@ -44,6 +44,7 @@
 #endif
 
 #include <windows.h>
+#include <process.h>
 
 OPJ_BOOL OPJ_CALLCONV opj_has_thread_support(void)
 {
@@ -224,11 +225,11 @@ struct opj_thread_t
     HANDLE hThread;
 };
 
-static DWORD WINAPI opj_thread_callback_adapter( void *info )
+unsigned int __stdcall opj_thread_callback_adapter( void *info )
 {
     opj_thread_t* thread = (opj_thread_t*) info;
     HANDLE hEvent = NULL;
-    
+
     thread->thread_fn( thread->user_data );
 
     /* Free the handle possible allocated by a cond */
@@ -258,7 +259,6 @@ static DWORD WINAPI opj_thread_callback_adapter( void *info )
 opj_thread_t* opj_thread_create( opj_thread_fn thread_fn, void* user_data )
 {
     opj_thread_t* thread;
-    DWORD nThreadId = 0;
 
     assert( thread_fn );
 
@@ -268,8 +268,8 @@ opj_thread_t* opj_thread_create( opj_thread_fn thread_fn, void* user_data )
     thread->thread_fn = thread_fn;
     thread->user_data = user_data;
 
-    thread->hThread = CreateThread( NULL, 0, opj_thread_callback_adapter, thread,
-                                    0, &nThreadId );
+    thread->hThread = (HANDLE)_beginthreadex(NULL, 0,
+                                    opj_thread_callback_adapter, thread, 0, NULL);
 
     if( thread->hThread == NULL )
     {
