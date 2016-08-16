@@ -36,6 +36,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <limits.h>
 #include "opj_includes.h"
 
 /** @defgroup PI PI - Implementation of a packet iterator */
@@ -1237,7 +1238,13 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 	l_current_pi = l_pi;
 
 	/* memory allocation for include */
-	l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
+	/* prevent an integer overflow issue */
+	l_current_pi->include = 00;
+	if (l_step_l && l_tcp->numlayers < UINT_MAX / l_step_l - 1)
+	{
+		l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
+	}
+
 	if
 		(!l_current_pi->include)
 	{
