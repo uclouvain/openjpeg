@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9f24b078c7193e886f6cfb329d3469eb1facf68d
+<pre class='wrap'>commit ccd9ced49ea66f31b1d3d9dd07f4438fa94db328
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-06 00:50:44 +0200
+
+    Add overflow check in opj_j2k_update_image_data (#817)
+
+commit 9f24b078c7193e886f6cfb329d3469eb1facf68d
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-09-06 00:49:53 +0200
 
@@ -407,12 +413,6 @@ Date:   2016-04-30 01:50:33 +0200
 
     Fix bad call to fclose with NULL pointer
 
-commit be42e72d220ffa89b33c8d24d0c0d4c8de8533cf
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-30 01:12:16 +0200
-
-    Fix warnings (#763)
-
 commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-01-25 22:16:49 +0100
@@ -433,19 +433,6 @@ Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
 Date:   2016-04-27 23:05:43 +0200
 
     Add clang 3.9 build to Travis matrix (#753)
-
-commit e6881e75279627096fbbaca19e837252737a3892
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-27 21:56:09 +0200
-
-    Fix negative shift left reported by UBSan (#758)
-    
-    Follow-up of #757
-    
-    This shall have no performance impact on 2’s complement machine where
-    the compiler replaces the multiplication by power of two (constant) by
-    a left shift.
-    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
 
 ...</pre></div>
 
