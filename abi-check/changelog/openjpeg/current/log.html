@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 51155950eb3320a49835bb05d7867240d4d0cccc
+<pre class='wrap'>commit 9f24b078c7193e886f6cfb329d3469eb1facf68d
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-06 00:49:53 +0200
+
+    Change 'restrict' define to 'OPJ_RESTRICT' (#816)
+    
+    Visual Studio 2015 does not pass regression tests with `__restrict` so kept disabled for MSVC.
+    Need to check proper usage of OPJ_RESTRICT (if correct then there’s
+    probably a bug  in vc14)
+    
+    Closes #661
+
+commit 51155950eb3320a49835bb05d7867240d4d0cccc
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
 Date:   2016-09-05 22:07:50 +0200
 
@@ -401,30 +413,6 @@ Date:   2016-04-30 01:12:16 +0200
 
     Fix warnings (#763)
 
-commit 15f081c89650dccee4aa4ae66f614c3fdb268767
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-30 00:33:27 +0200
-
-    Fix Out-Of-Bounds Read in sycc42x_to_rgb function (#745)
-    
-    42x Images with an odd x0/y0 lead to subsampled component starting at the
-    2nd column/line.
-    That is offset = comp-&gt;dx * comp-&gt;x0 - image-&gt;x0 = 1
-    
-    Fix #726
-
-commit ad593c9e0622e0d8d87228e67e4dbd36243ffd22
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-29 23:51:14 +0200
-
-    Fix heap-buffer-overflow in color_esycc_to_rgb (#748)
-    
-    When all components do not have the same dx/dy, components buffer are
-    read beyond their end.
-    Do not convert in this case.
-    
-    Update uclouvain/openjpeg#725
-
 commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-01-25 22:16:49 +0100
@@ -453,25 +441,6 @@ Date:   2016-04-27 21:56:09 +0200
     Fix negative shift left reported by UBSan (#758)
     
     Follow-up of #757
-    
-    This shall have no performance impact on 2’s complement machine where
-    the compiler replaces the multiplication by power of two (constant) by
-    a left shift.
-    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
-
-commit 2296dc9e68e0ebc8342a8669aa2398a029b0fa3f
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-04-26 22:12:11 +0200
-
-    Remove whitespace and CR at line endings (#678)
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 6f2ac3ee366a9b587abe9a72febc400ba5b98c24
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-26 22:06:06 +0200
-
-    Fix negative shift left reported by UBSan (#757)
     
     This shall have no performance impact on 2’s complement machine where
     the compiler replaces the multiplication by power of two (constant) by
