@@ -552,6 +552,11 @@ static OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
+	if (jp2->comps != NULL) {
+		opj_event_msg(p_manager, EVT_WARNING, "Ignoring ihdr box. First ihdr box already read\n");
+		return OPJ_TRUE;
+	}
+	
 	if (p_image_header_size != 14) {
 		opj_event_msg(p_manager, EVT_ERROR, "Bad image header box (bad size)\n");
 		return OPJ_FALSE;
@@ -563,6 +568,11 @@ static OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
 	p_image_header_data += 4;
 	opj_read_bytes(p_image_header_data,&(jp2->numcomps),2);		/* NC */
 	p_image_header_data += 2;
+	
+	if ((jp2->numcomps - 1U) >= 16384U) { /* unsigned underflow is well defined: 1U <= jp2->numcomps <= 16384U */
+		opj_event_msg(p_manager, EVT_ERROR, "Invalid number of components (ihdr)\n");
+		return OPJ_FALSE;
+	}
 
 	/* allocate memory for components */
 	jp2->comps = (opj_jp2_comps_t*) opj_calloc(jp2->numcomps, sizeof(opj_jp2_comps_t));
@@ -1764,7 +1774,7 @@ void opj_jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters)
 
 	/* further JP2 initializations go here */
 	jp2->color.jp2_has_colr = 0;
-    jp2->ignore_pclr_cmap_cdef = parameters->flags & OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
+	jp2->ignore_pclr_cmap_cdef = parameters->flags & OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -1810,7 +1820,6 @@ OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	jp2->numcl = 1;
 	jp2->cl = (OPJ_UINT32*) opj_malloc(jp2->numcl * sizeof(OPJ_UINT32));
 	if (!jp2->cl){
-		jp2->cl = NULL;
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
 		return OPJ_FALSE;
 	}
@@ -1821,7 +1830,6 @@ OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	jp2->numcomps = image->numcomps;	/* NC */
 	jp2->comps = (opj_jp2_comps_t*) opj_malloc(jp2->numcomps * sizeof(opj_jp2_comps_t));
 	if (!jp2->comps) {
-		jp2->comps = NULL;
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
 		/* Memory of jp2->cl will be freed by opj_jp2_destroy */
 		return OPJ_FALSE;
