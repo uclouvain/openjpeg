@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d7e6b7de8a3860dd3135bfe49e0e1be2d9dba80f
+<pre class='wrap'>commit ea320dab8bc491c10b1584a6617378cecea9f4fa
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-06 07:54:29 +0200
+
+    Add overflow check in opj_tcd_init_tile (#819)
+
+commit d7e6b7de8a3860dd3135bfe49e0e1be2d9dba80f
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-09-06 01:31:15 +0200
 
@@ -401,7 +407,6 @@ Date:   2016-04-30 17:58:04 +0200
     Update to mm2/Little-CMS@0e8234e090d6aab33f90e2eb0296f30aa0705e57
 
 commit 72deb588cbc8d5f56f8b0db3a2d120913e792cb8
-Merge: cd77b60 20789fe
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-04-30 13:51:01 +0200
 
@@ -409,39 +414,6 @@ Date:   2016-04-30 13:51:01 +0200
     
     Fix issue 135
     The fix is legal regarding the standard but I did not manage to find out if it covers a bug in opj_t2_read_packet_data or if the file is corrupted
-
-commit cd77b6003b774dd337835630ea7b9b1fbc68d264
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-30 12:15:22 +0200
-
-    Fix some coverity warnings
-
-commit f40a2ff2ad821cf6492761c01de136ac2bf48b4a
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-30 01:50:33 +0200
-
-    Fix bad call to fclose with NULL pointer
-
-commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-01-25 22:16:49 +0100
-
-    Fix issue 135
-    
-    dwt_interleave_h.gsr105.jp2 now has the same output as kakadu
-    issue399 is corrupted. Only the corrupted part changes.
-    
-    Update known failures for x86 MD5
-    
-    NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
-    NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
-    NR-DEC-issue135.j2k-68-decode-md5
-
-commit 5947e10ff7bebdcc8f72ab9246f03db05582fa0a
-Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
-Date:   2016-04-27 23:05:43 +0200
-
-    Add clang 3.9 build to Travis matrix (#753)
 
 ...</pre></div>
 
