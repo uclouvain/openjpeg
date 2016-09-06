@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit ccd9ced49ea66f31b1d3d9dd07f4438fa94db328
+<pre class='wrap'>commit d7e6b7de8a3860dd3135bfe49e0e1be2d9dba80f
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-06 01:31:15 +0200
+
+    Fix leak &amp; invalid behavior of opj_jp2_read_ihdr (#818)
+    
+    In case multiple ihdr box are present, only the first one shall be
+    taken into account.
+
+commit ccd9ced49ea66f31b1d3d9dd07f4438fa94db328
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-09-06 00:50:44 +0200
 
