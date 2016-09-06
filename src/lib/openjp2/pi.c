@@ -1239,7 +1239,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 	/* memory allocation for include */
 	/* prevent an integer overflow issue */
 	l_current_pi->include = 00;
-	if (l_step_l && l_tcp->numlayers < ((SIZE_MAX)-1) / sizeof(OPJ_INT16) / l_step_l - 1)
+	if (l_step_l <= (SIZE_MAX / (l_tcp->numlayers + 1U)))
 	{
 		l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
 	}
