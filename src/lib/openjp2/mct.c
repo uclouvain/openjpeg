@@ -74,9 +74,9 @@ const OPJ_FLOAT64 * opj_mct_get_mct_norms_real ()
 /* </summary> */
 #ifdef __SSE2__
 void opj_mct_encode(
-		OPJ_INT32* restrict c0,
-		OPJ_INT32* restrict c1,
-		OPJ_INT32* restrict c2,
+		OPJ_INT32* OPJ_RESTRICT c0,
+		OPJ_INT32* OPJ_RESTRICT c1,
+		OPJ_INT32* OPJ_RESTRICT c2,
 		OPJ_UINT32 n)
 {
 	OPJ_SIZE_T i;
@@ -116,9 +116,9 @@ void opj_mct_encode(
 }
 #else
 void opj_mct_encode(
-		OPJ_INT32* restrict c0,
-		OPJ_INT32* restrict c1,
-		OPJ_INT32* restrict c2,
+		OPJ_INT32* OPJ_RESTRICT c0,
+		OPJ_INT32* OPJ_RESTRICT c1,
+		OPJ_INT32* OPJ_RESTRICT c2,
 		OPJ_UINT32 n)
 {
 	OPJ_SIZE_T i;
@@ -143,9 +143,9 @@ void opj_mct_encode(
 /* </summary> */
 #ifdef __SSE2__
 void opj_mct_decode(
-		OPJ_INT32* restrict c0,
-		OPJ_INT32* restrict c1,
-		OPJ_INT32* restrict c2,
+		OPJ_INT32* OPJ_RESTRICT c0,
+		OPJ_INT32* OPJ_RESTRICT c1,
+		OPJ_INT32* OPJ_RESTRICT c2,
 		OPJ_UINT32 n)
 {
 	OPJ_SIZE_T i;
@@ -178,9 +178,9 @@ void opj_mct_decode(
 }
 #else
 void opj_mct_decode(
-		OPJ_INT32* restrict c0,
-		OPJ_INT32* restrict c1, 
-		OPJ_INT32* restrict c2, 
+		OPJ_INT32* OPJ_RESTRICT c0,
+		OPJ_INT32* OPJ_RESTRICT c1, 
+		OPJ_INT32* OPJ_RESTRICT c2, 
 		OPJ_UINT32 n)
 {
 	OPJ_UINT32 i;
@@ -210,9 +210,9 @@ OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno) {
 /* </summary> */
 #ifdef __SSE4_1__
 void opj_mct_encode_real(
-												 OPJ_INT32* restrict c0,
-												 OPJ_INT32* restrict c1,
-												 OPJ_INT32* restrict c2,
+												 OPJ_INT32* OPJ_RESTRICT c0,
+												 OPJ_INT32* OPJ_RESTRICT c1,
+												 OPJ_INT32* OPJ_RESTRICT c2,
 												 OPJ_UINT32 n)
 {
 	OPJ_SIZE_T i;
@@ -351,9 +351,9 @@ void opj_mct_encode_real(
 }
 #else
 void opj_mct_encode_real(
-		OPJ_INT32* restrict c0,
-		OPJ_INT32* restrict c1,
-		OPJ_INT32* restrict c2,
+		OPJ_INT32* OPJ_RESTRICT c0,
+		OPJ_INT32* OPJ_RESTRICT c1,
+		OPJ_INT32* OPJ_RESTRICT c2,
 		OPJ_UINT32 n)
 {
 	OPJ_UINT32 i;
@@ -375,9 +375,9 @@ void opj_mct_encode_real(
 /* Inverse irreversible MCT. */
 /* </summary> */
 void opj_mct_decode_real(
-		OPJ_FLOAT32* restrict c0,
-		OPJ_FLOAT32* restrict c1,
-		OPJ_FLOAT32* restrict c2,
+		OPJ_FLOAT32* OPJ_RESTRICT c0,
+		OPJ_FLOAT32* OPJ_RESTRICT c1,
+		OPJ_FLOAT32* OPJ_RESTRICT c2,
 		OPJ_UINT32 n)
 {
 	OPJ_UINT32 i;

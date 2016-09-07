@@ -808,12 +808,22 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 			l_br_prc_y_end = opj_int_ceildivpow2(l_res->y1, (OPJ_INT32)l_pdy) << l_pdy;
 			/*fprintf(stderr, "\t\t\tprc_x_start=%d, prc_y_start=%d, br_prc_x_end=%d, br_prc_y_end=%d \n", l_tl_prc_x_start, l_tl_prc_y_start, l_br_prc_x_end ,l_br_prc_y_end );*/
 			
-			l_res->pw = (l_res->x0 == l_res->x1) ? 0 : (OPJ_UINT32)((l_br_prc_x_end - l_tl_prc_x_start) >> l_pdx);
-			l_res->ph = (l_res->y0 == l_res->y1) ? 0 : (OPJ_UINT32)((l_br_prc_y_end - l_tl_prc_y_start) >> l_pdy);
+			l_res->pw = (l_res->x0 == l_res->x1) ? 0U : (OPJ_UINT32)((l_br_prc_x_end - l_tl_prc_x_start) >> l_pdx);
+			l_res->ph = (l_res->y0 == l_res->y1) ? 0U : (OPJ_UINT32)((l_br_prc_y_end - l_tl_prc_y_start) >> l_pdy);
 			/*fprintf(stderr, "\t\t\tres_pw=%d, res_ph=%d\n", l_res->pw, l_res->ph );*/
-			
+
+			if ((l_res->pw != 0U) && ((((OPJ_UINT32)-1) / l_res->pw) < l_res->ph)) {
+				opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
+				return OPJ_FALSE;
+			}
 			l_nb_precincts = l_res->pw * l_res->ph;
+
+			if ((((OPJ_UINT32)-1) / (OPJ_UINT32)sizeof(opj_tcd_precinct_t)) < l_nb_precincts) {
+				opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
+				return OPJ_FALSE;
+			}
 			l_nb_precinct_size = l_nb_precincts * (OPJ_UINT32)sizeof(opj_tcd_precinct_t);
+
 			if (resno == 0) {
 				tlcbgxstart = l_tl_prc_x_start;
 				tlcbgystart = l_tl_prc_y_start;
@@ -870,6 +880,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 				if (!l_band->precincts && (l_nb_precincts > 0U)) {
 					l_band->precincts = (opj_tcd_precinct_t *) opj_malloc( /*3 * */ l_nb_precinct_size);
 					if (! l_band->precincts) {
+						opj_event_msg(manager, EVT_ERROR, "Not enough memory to handle band precints\n");
 						return OPJ_FALSE;
 					}
 					/*fprintf(stderr, "\t\t\t\tAllocate precincts of a band (opj_tcd_precinct_t): %d\n",l_nb_precinct_size);     */

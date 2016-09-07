@@ -8217,8 +8217,14 @@ static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
 
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
+                        OPJ_SIZE_T l_width = l_img_comp_dest->w;
+                        OPJ_SIZE_T l_height = l_img_comp_dest->h;
 
-                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc((OPJ_SIZE_T)l_img_comp_dest->w * (OPJ_SIZE_T)l_img_comp_dest->h, sizeof(OPJ_INT32));
+                        if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height))) {
+                                /* would overflow */
+                                return OPJ_FALSE;
+                        }
+                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(l_width * l_height, sizeof(OPJ_INT32));
                         if (! l_img_comp_dest->data) {
                                 return OPJ_FALSE;
                         }
