@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit acfb307df43a811cc56c035d0dc651dac8c9e7de
+<pre class='wrap'>commit e078172b1c3f98d2219c37076b238fb759c751ea
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-08 00:24:15 +0200
+
+    Add sanity check for tile coordinates (#823)
+    
+    Coordinates are casted from OPJ_UINT32 to OPJ_INT32
+    Add sanity check for negative values and upper bound becoming lower
+    than lower bound.
+    See also
+    https://pdfium.googlesource.com/pdfium/+/b6befb2ed2485a3805cddea86dc7574510178ea9
+
+commit acfb307df43a811cc56c035d0dc651dac8c9e7de
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-09-07 00:00:21 +0200
 
@@ -383,7 +395,6 @@ Date:   2016-05-02 14:34:32 +0200
     Fix UBSan gcc warning for first arg to memset non null
 
 commit da56086e012117edb278408e6062d1b890b53576
-Merge: b51d088 04b8cbd
 Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
 Date:   2016-05-02 14:32:08 +0200
 
@@ -391,32 +402,11 @@ Date:   2016-05-02 14:32:08 +0200
     
     Ignore clang's summary warning
 
-commit 04b8cbd27aae2372b19598a38ba15e860952cae2
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-05-02 12:55:43 +0200
-
-    Ignore clang's summary warning
-    
-    This assumes prior text has matched some other warning expression.
-    
-    This reduces the warnings reported for clang build on the dashboard,
-    which were caused only by the "XXX warnings generated." message.
-    For some reason they were not reported when not using ctest launchers.
-    
-    This commit allows to confidently use ctest launchers to improve
-    dashboard reports.
-
 commit e1e018a8dc8c96f45486768356b7fb370ae0527c
 Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
 Date:   2016-05-02 12:13:24 +0200
 
     Fix UBSan gcc warning for first arg to memset non null
-
-commit b51d088267cb88eb95555ea047755120e36c511b
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-05-01 18:05:46 +0200
-
-    Update to libtiff-4.0.6 (#764)
 
 ...</pre></div>
 
