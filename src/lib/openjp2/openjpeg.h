@@ -129,8 +129,6 @@ typedef uint64_t OPJ_UINT64;
 
 typedef int64_t  OPJ_OFF_T; /* 64-bit file offset type */
 
-typedef unsigned int OPJ_BITFIELD;
-
 #include <stdio.h>
 typedef size_t   OPJ_SIZE_T;
 

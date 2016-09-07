@@ -183,6 +183,9 @@ static INLINE long opj_lrintf(float f) {
 #	pragma intrinsic(__emul)
 #endif
 
+/* Type to use for bit-fields in internal headers */
+typedef unsigned int OPJ_BITFIELD;
+
 #include "opj_inttypes.h"
 #include "opj_clock.h"
 #include "opj_malloc.h"
