@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e078172b1c3f98d2219c37076b238fb759c751ea
+<pre class='wrap'>commit ef01f18dfc6780b776d0674ed3e7415c6ef54d24
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-08 07:34:46 +0200
+
+    Cast to size_t before multiplication
+    
+    Need to cast to size_t before multiplication otherwise overflow check is useless.
+
+commit e078172b1c3f98d2219c37076b238fb759c751ea
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-09-08 00:24:15 +0200
 
@@ -386,26 +394,11 @@ Date:   2016-05-02 16:03:16 +0200
     - useless space at end of lines
 
 commit ba0cf122f6820d38a7a5acc65b9d64392dd94e83
-Merge: da56086 e1e018a
 Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
 Date:   2016-05-02 14:34:32 +0200
 
     Merge pull request #767 from julienmalik/fix_memset_null_pointer
     
-    Fix UBSan gcc warning for first arg to memset non null
-
-commit da56086e012117edb278408e6062d1b890b53576
-Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
-Date:   2016-05-02 14:32:08 +0200
-
-    Merge pull request #768 from julienmalik/filter_clang_warnings
-    
-    Ignore clang's summary warning
-
-commit e1e018a8dc8c96f45486768356b7fb370ae0527c
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-05-02 12:13:24 +0200
-
     Fix UBSan gcc warning for first arg to memset non null
 
 ...</pre></div>
