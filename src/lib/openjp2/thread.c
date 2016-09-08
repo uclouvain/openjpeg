@@ -930,7 +930,9 @@ void opj_thread_pool_destroy(opj_thread_pool_t* tp)
         int i;
         opj_thread_pool_wait_completion(tp, 0);
 
+        opj_mutex_lock(tp->mutex);
         tp->state = OPJWTS_STOP;
+        opj_mutex_unlock(tp->mutex);
 
         for(i=0;i<tp->worker_threads_count;i++)
         {
