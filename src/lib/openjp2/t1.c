@@ -1561,7 +1561,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
     opj_tcd_band_t* band;
     opj_tcd_tilecomp_t* tilec;
     opj_tccp_t* tccp;
-    OPJ_INT32* restrict datap;
+    OPJ_INT32* OPJ_RESTRICT datap;
     OPJ_UINT32 cblk_w, cblk_h;
     OPJ_INT32 x, y;
     OPJ_UINT32 i, j;
@@ -1631,7 +1631,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         }
     }
     if (tccp->qmfbid == 1) {
-        OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+        OPJ_INT32* OPJ_RESTRICT tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
         for (j = 0; j < cblk_h; ++j) {
             i = 0;
             for (; i < (cblk_w & ~3); i += 4) {
@@ -1650,9 +1650,9 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
             }
         }
     } else {        /* if (tccp->qmfbid == 0) */
-        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+        OPJ_FLOAT32* OPJ_RESTRICT tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
         for (j = 0; j < cblk_h; ++j) {
-            OPJ_FLOAT32* restrict tiledp2 = tiledp;
+            OPJ_FLOAT32* OPJ_RESTRICT tiledp2 = tiledp;
             for (i = 0; i < cblk_w; ++i) {
                 OPJ_FLOAT32 tmp = (OPJ_FLOAT32)*datap * band->stepsize;
                 *tiledp2 = tmp;
@@ -1679,7 +1679,7 @@ void opj_t1_decode_cblks( opj_thread_pool_t* tp,
 		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
 
 		for (bandno = 0; bandno < res->numbands; ++bandno) {
-			opj_tcd_band_t* restrict band = &res->bands[bandno];
+			opj_tcd_band_t* OPJ_RESTRICT band = &res->bands[bandno];
 
 			for (precno = 0; precno < res->pw * res->ph; ++precno) {
 				opj_tcd_precinct_t* precinct = &band->precincts[precno];
@@ -1874,7 +1874,7 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 			opj_tcd_resolution_t *res = &tilec->resolutions[resno];
 
 			for (bandno = 0; bandno < res->numbands; ++bandno) {
-				opj_tcd_band_t* restrict band = &res->bands[bandno];
+				opj_tcd_band_t* OPJ_RESTRICT band = &res->bands[bandno];
                 OPJ_INT32 bandconst = 8192 * 8192 / ((OPJ_INT32) floor(band->stepsize * 8192));
 
 				for (precno = 0; precno < res->pw * res->ph; ++precno) {
@@ -1882,7 +1882,7 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
 						opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
-						OPJ_INT32* restrict tiledp;
+						OPJ_INT32* OPJ_RESTRICT tiledp;
 						OPJ_UINT32 cblk_w;
 						OPJ_UINT32 cblk_h;
 						OPJ_UINT32 i, j, tileIndex=0, tileLineAdvance;

@@ -1,7 +1,7 @@
 
 # OPENJPEG Library and Applications
 
-## What is OpenJPEG ?
+## What is OpenJPEG ? 
 
 OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been developed in order to promote the use of [JPEG 2000](http://www.jpeg.org/jpeg2000), a still-image compression standard from the Joint Photographic Experts Group ([JPEG](http://www.jpeg.org)).  Since April 2015, it is officially recognized by ISO/IEC and ITU-T as a [JPEG 2000 Reference Software](http://www.itu.int/rec/T-REC-T.804-201504-I!Amd2).
 
@@ -52,11 +52,13 @@ The library is developed and maintained by the Image and Signal Processing Group
 
 See [LICENSE][link-license] for license and copyright information.
 
-See [INSTALL](https://github.com/uclouvain/openjpeg/blob/master/INSTALL) for installation procedures.
+See [INSTALL](https://github.com/uclouvain/openjpeg/blob/master/INSTALL.md) for installation procedures.
 
-See [NEWS](https://github.com/uclouvain/openjpeg/blob/master/NEWS) for user visible changes in successive releases.
+See [NEWS](https://github.com/uclouvain/openjpeg/blob/master/NEWS.md) for user visible changes in successive releases.
 
 ## API/ABI
+
+An API/ABI timeline is automatically updated [here][link-api-timeline].
 
 OpenJPEG strives to provide a stable API/ABI for your applications. As such it
 only exposes a limited subset of its functions.  It uses a mechanism of
@@ -77,3 +79,4 @@ API available is the one supported by OpenJPEG.
 [link-msvc-build]: https://ci.appveyor.com/project/detonin/openjpeg/branch/master "Windows Build Status"
 [badge-coverity]: https://scan.coverity.com/projects/6383/badge.svg "Coverity Scan Build Status"
 [link-coverity]: https://scan.coverity.com/projects/uclouvain-openjpeg "Coverity Scan Build Status"
+[link-api-timeline]: http://www.openjpeg.org/abi-check/timeline/openjpeg "OpenJPEG API/ABI timeline"

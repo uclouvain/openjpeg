@@ -60,7 +60,7 @@ Apply a reversible multi-component transform to an image
 @param c2 Samples blue component
 @param n Number of samples for each component
 */
-void opj_mct_encode(OPJ_INT32 *c0, OPJ_INT32 *c1, OPJ_INT32 *c2, OPJ_UINT32 n);
+void opj_mct_encode(OPJ_INT32* OPJ_RESTRICT c0, OPJ_INT32* OPJ_RESTRICT c1, OPJ_INT32* OPJ_RESTRICT c2, OPJ_UINT32 n);
 /**
 Apply a reversible multi-component inverse transform to an image
 @param c0 Samples for luminance component
@@ -68,7 +68,7 @@ Apply a reversible multi-component inverse transform to an image
 @param c2 Samples for blue chrominance component
 @param n Number of samples for each component
 */
-void opj_mct_decode(OPJ_INT32 *c0, OPJ_INT32 *c1, OPJ_INT32 *c2, OPJ_UINT32 n);
+void opj_mct_decode(OPJ_INT32* OPJ_RESTRICT c0, OPJ_INT32* OPJ_RESTRICT c1, OPJ_INT32* OPJ_RESTRICT c2, OPJ_UINT32 n);
 /**
 Get norm of the basis function used for the reversible multi-component transform
 @param compno Number of the component (0->Y, 1->U, 2->V)
@@ -83,7 +83,7 @@ Apply an irreversible multi-component transform to an image
 @param c2 Samples blue component
 @param n Number of samples for each component
 */
-void opj_mct_encode_real(OPJ_INT32 *c0, OPJ_INT32 *c1, OPJ_INT32 *c2, OPJ_UINT32 n);
+void opj_mct_encode_real(OPJ_INT32* OPJ_RESTRICT c0, OPJ_INT32* OPJ_RESTRICT c1, OPJ_INT32* OPJ_RESTRICT c2, OPJ_UINT32 n);
 /**
 Apply an irreversible multi-component inverse transform to an image
 @param c0 Samples for luminance component
@@ -91,7 +91,7 @@ Apply an irreversible multi-component inverse transform to an image
 @param c2 Samples for blue chrominance component
 @param n Number of samples for each component
 */
-void opj_mct_decode_real(OPJ_FLOAT32* c0, OPJ_FLOAT32* c1, OPJ_FLOAT32* c2, OPJ_UINT32 n);
+void opj_mct_decode_real(OPJ_FLOAT32* OPJ_RESTRICT c0, OPJ_FLOAT32* OPJ_RESTRICT c1, OPJ_FLOAT32* OPJ_RESTRICT c2, OPJ_UINT32 n);
 /**
 Get norm of the basis function used for the irreversible multi-component transform
 @param compno Number of the component (0->Y, 1->U, 2->V)

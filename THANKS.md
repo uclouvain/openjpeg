@@ -1,4 +1,4 @@
-OpenJPEG THANKS file
+# OpenJPEG THANKS file
 
 Many people have contributed to OpenJPEG by reporting problems, suggesting various improvements,
 or submitting actual code. Here is a list of these people. Help me keep
@@ -24,10 +24,12 @@ Hans Johnson
 Callum Lerwick
 Sebastien Lugan
 Benoit Macq
-Arnaud Maye
+Mathieu Malaterre
 Julien Malik
+Arnaud Maye
 Vincent Nicolas
 Glenn Pearson
+Even Rouault
 Dzonatas Sol
 Winfried Szukalski
 Vincent Torri

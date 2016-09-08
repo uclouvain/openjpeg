@@ -14,18 +14,29 @@ if [ "${OPJ_CI_ABI_CHECK:-}" != "1" ]; then
 fi
 
 OPJ_UPLOAD_ABI_REPORT=0
-OPJ_LIMIT_ABI_BUILDS="-limit 2"
+#OPJ_PREVIOUS_VERSION="2.1"
+OPJ_LATEST_VERSION="2.1.1"
+if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
+	OPJ_LIMIT_ABI_BUILDS="-limit 3"
+else
+	OPJ_LIMIT_ABI_BUILDS="-limit 2"
+fi
+OPJ_REPO="https://github.com/uclouvain/openjpeg.git"
+OPJ_SSH_REPO=${OPJ_REPO/https:\/\/github.com\//git@github.com:}
+OPJ_UPLOAD_BRANCH="gh-pages"
+OPJ_UPLOAD_DIR="abi-check"
 if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
 	if [ "$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')" == "uclouvain" ] && [ "${TRAVIS_PULL_REQUEST:-}" == "false" ]; then
-		# Upload report
+		# Upload updated report to gh-pages
 		OPJ_UPLOAD_ABI_REPORT=1
 		# Build full report
-		OPJ_LIMIT_ABI_BUILDS=
+		#OPJ_LIMIT_ABI_BUILDS=
 	fi
 fi
 
 OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)
 
+# INSTALL REQUIRED PACKAGES
 
 mkdir ${HOME}/abi-check
 cd ${HOME}/abi-check
@@ -40,21 +51,27 @@ make check &> /dev/null
 make install &> /dev/null
 cd ..
 export PATH=${PWD}/tools/wdiff/bin:$PATH
-
 wget -qO - https://tools.ietf.org/tools/rfcdiff/rfcdiff-1.42.tgz | tar -xz
 mv rfcdiff-1.42 ${PWD}/tools/rfcdiff
 export PATH=${PWD}/tools/rfcdiff:$PATH
-wget -qO - https://github.com/lvc/installer/archive/0.4.tar.gz | tar -xz
+wget -qO - https://github.com/lvc/installer/archive/0.10.tar.gz | tar -xz
 mkdir ${PWD}/tools/abi-tracker
-make -C installer-0.4 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
+make -C installer-0.10 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
 export PATH=${PWD}/tools/abi-tracker/bin:$PATH
 
-mkdir tracker
-cd tracker
+# RUN THE ABI-CHECK SCRIPTS
+
+mkdir work
+cd work
+
+# Clone the gh-pages branch and work from there
+git clone -b $OPJ_UPLOAD_BRANCH --single-branch $OPJ_REPO .
+cd $OPJ_UPLOAD_DIR
+rm -rf installed/openjpeg/current/*
 
 # Let's create all we need
 grep -v Git ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
-abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
+#abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
 if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
 	cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./openjpeg.json
 else
@@ -62,24 +79,47 @@ else
 	grep -v Configure ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 fi
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
-abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -build openjpeg.json
+abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -rebuild openjpeg.json
 abi-tracker -build openjpeg.json
 
 EXIT_CODE=0
 
 # Check API
-abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/2.1 -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -api -s || EXIT_CODE=1
+abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -api -s || EXIT_CODE=1
+if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
+	abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_PREVIOUS_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -header openjpeg.h -api -s || EXIT_CODE=1
+fi
 
 # Check ABI
 if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
-	abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/2.1 -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
+	abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
+	if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
+		abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_PREVIOUS_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
+	fi
 else
 	echo "Disable ABI check for now, problems with symbol visibility..."
 fi
 
-rm -rf src installed
+rm -rf src/openjpeg/current
+rm -rf build_logs
 
 if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
-	echo "TODO: Where to upload the report"
+	git config user.name "OpenJPEG Travis CI"
+	git config user.email "info@openjpeg.org"
+
+	git add .
+	git commit -m "Update ABI/API compatibility reports after commit ${TRAVIS_COMMIT:-}"
+
+	# Get the deploy key by using Travis's stored variables to decrypt travis_rsa.enc
+	openssl aes-256-cbc -K $encrypted_99d63218f67a_key -iv $encrypted_99d63218f67a_iv -in ${OPJ_SOURCE_DIR}/tools/travis-ci/travis_rsa.enc -out travis_rsa -d
+	chmod 600 travis_rsa
+	eval `ssh-agent -s`
+	ssh-add travis_rsa
+
+	# Now that we're all set up, we can push.
+	git push $OPJ_SSH_REPO $OPJ_UPLOAD_BRANCH
 fi
+
+rm -rf src installed
+
 exit $EXIT_CODE

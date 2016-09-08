@@ -103,12 +103,21 @@
 */
 
 /* Are restricted pointers available? (C99) */
-#if (__STDC_VERSION__ != 199901L)
+#if (__STDC_VERSION__ >= 199901L)
+  #define OPJ_RESTRICT restrict
+#else
 	/* Not a C99 compiler */
-	#ifdef __GNUC__
-		#define restrict __restrict__
+	#if defined(__GNUC__)
+		#define OPJ_RESTRICT __restrict__
+
+/*
+  vc14 (2015) outputs wrong results.
+  Need to check OPJ_RESTRICT usage (or a bug in vc14)
+	#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+		#define OPJ_RESTRICT __restrict
+*/
 	#else
-		#define restrict /* restrict */
+		#define OPJ_RESTRICT /* restrict */
 	#endif
 #endif
 

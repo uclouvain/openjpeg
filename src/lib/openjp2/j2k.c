@@ -5405,6 +5405,7 @@ static OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
         OPJ_UINT32 l_nb_collections;
         OPJ_UINT32 l_nb_comps;
         OPJ_UINT32 l_nb_bytes_by_comp;
+        OPJ_BOOL l_new_mcc = OPJ_FALSE;
 
         /* preconditions */
         assert(p_header_data != 00);
@@ -5466,6 +5467,7 @@ static OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
                         memset(l_mcc_record,0,(l_tcp->m_nb_max_mcc_records-l_tcp->m_nb_mcc_records) * sizeof(opj_simple_mcc_decorrelation_data_t));
                 }
                 l_mcc_record = l_tcp->m_mcc_records + l_tcp->m_nb_mcc_records;
+                l_new_mcc = OPJ_TRUE;
         }
         l_mcc_record->m_index = l_indix;
 
@@ -5601,7 +5603,9 @@ static OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
-        ++l_tcp->m_nb_mcc_records;
+        if (l_new_mcc) {
+                ++l_tcp->m_nb_mcc_records;
+        }
 
         return OPJ_TRUE;
 }
@@ -8257,8 +8261,14 @@ static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
 
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
+                        OPJ_SIZE_T l_width = l_img_comp_dest->w;
+                        OPJ_SIZE_T l_height = l_img_comp_dest->h;
 
-                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc((OPJ_SIZE_T)l_img_comp_dest->w * (OPJ_SIZE_T)l_img_comp_dest->h, sizeof(OPJ_INT32));
+                        if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height))) {
+                                /* would overflow */
+                                return OPJ_FALSE;
+                        }
+                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(l_width * l_height, sizeof(OPJ_INT32));
                         if (! l_img_comp_dest->data) {
                                 return OPJ_FALSE;
                         }

@@ -94,7 +94,7 @@ Apply an irreversible inverse DWT transform to a component of an image.
 @param tilec Tile component information (current tile)
 @param numres Number of resolution levels to decode
 */
-OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numres);
+OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec, OPJ_UINT32 numres);
 
 /**
 Get the gain of a subband for the irreversible 9-7 DWT.
