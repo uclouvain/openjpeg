@@ -41,6 +41,8 @@
 Byte_t * update_JPIPstream( Byte_t *newstream, OPJ_SIZE_T newstreamlen, Byte_t *cache_stream, OPJ_SIZE_T *streamlen)
 {
   Byte_t *stream = (Byte_t *)opj_malloc( (*streamlen)+newstreamlen);
+  if(stream == NULL) return NULL;
+
   if( *streamlen > 0)
     memcpy( stream, cache_stream, *streamlen);
   memcpy( stream+(*streamlen), newstream, newstreamlen);
@@ -123,7 +125,10 @@ ihdrbox_param_t * get_SIZ_from_jpipstream( Byte_t *jpipstream, msgqueue_param_t 
   }
 
   ihdrbox = (ihdrbox_param_t *)opj_malloc( sizeof(ihdrbox_param_t));
-
+  if(ihdrbox == NULL){
+	opj_free( j2kstream);
+	return NULL;
+  }
   ihdrbox->width = SIZ.Xsiz;
   ihdrbox->height = SIZ.Ysiz;
   ihdrbox->nc = SIZ.Csiz;

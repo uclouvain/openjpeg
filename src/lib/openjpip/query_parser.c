@@ -160,6 +160,7 @@ query_param_t * get_initquery(void)
   int i;
 
   query = (query_param_t *)opj_malloc( sizeof(query_param_t));
+  if(query == NULL) return NULL;
 
   query->target = NULL;
   query->tid = NULL;
@@ -264,7 +265,7 @@ void print_queryparam( query_param_t query_param)
   }
 
   fprintf( logstream, "\t req-box-prop\n");
-  for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
+  for( i=0; i<MAX_NUMOFBOX && query_param.box_type[i][0]!=0; i++){
     fprintf( logstream, "\t\t box_type: %.4s limit: %d w:%d s:%d g:%d a:%d priority:%d\n", query_param.box_type[i], query_param.limit[i], query_param.w[i], query_param.s[i], query_param.g[i], query_param.a[i], query_param.priority[i]);
   }
   
@@ -369,7 +370,7 @@ void parse_req_box_prop( char *req_box_prop, int idx, query_param_t *query_param
   if((ptr = strchr( req_box_prop, '!')))
     query_param->priority[idx] = OPJ_TRUE;
   
-  idx++;   
+/*  idx++;   */
 }
 
 void parse_comps( char *field, query_param_t *query_param)
@@ -400,6 +401,7 @@ void parse_comps( char *field, query_param_t *query_param)
   
   query_param->lastcomp = stop > aux ? stop : aux;
   query_param->comps = (OPJ_BOOL *)opj_calloc( 1, (OPJ_SIZE_T)(query_param->lastcomp+1)*sizeof(OPJ_BOOL));
+  if(query_param->comps == NULL) return; /* FIXME szukw000 */
 
   for( i=start; i<=stop; i++)
     query_param->comps[i]=OPJ_TRUE;

@@ -121,6 +121,11 @@ FILE * open_jp2file( const char filename[])
   }
   
   data = (char *)malloc( 12); /* size of header */
+  if(data == NULL){
+	fprintf(stderr,"open_jp2file: memory out\n");
+	fclose(fp);
+	return NULL;
+  }
   if( fread( data, 12, 1, fp) != 1){
     free( data);
     fclose(fp);
@@ -170,7 +175,11 @@ char * read_xmlfile( const char filename[], long *fsize)
   }
 
   data = (char *)malloc( (size_t)*fsize);
-  
+  if(data == NULL){
+	fprintf(stderr, "read_xmlfile: memory out\n");
+	fclose(fp);
+	return NULL;
+  }
   if( fread( data, (size_t)*fsize, 1, fp) != 1){
     fprintf( stderr, "XML file %s broken (read error)\n", filename);
     free( data);

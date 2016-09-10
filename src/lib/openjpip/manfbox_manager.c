@@ -49,7 +49,8 @@ manfbox_param_t * gene_manfbox( box_param_t *box)
   boxheader_param_t *last; /* last boxheader pointer of the list */
   OPJ_OFF_T pos;                 /* current position in manf_box contents; */
   
-  manf = ( manfbox_param_t *)malloc( sizeof( manfbox_param_t));
+  manf = ( manfbox_param_t *)opj_malloc( sizeof( manfbox_param_t));
+  if(manf == NULL) return NULL;
 
   pos = 0;
   manf->first = last = NULL;
@@ -79,10 +80,10 @@ void delete_manfbox( manfbox_param_t **manf)
 #ifndef SERVER
     /*      fprintf( logstream, "local log: boxheader %.4s deleted!\n", bhPtr->type); */
 #endif
-      free(bhPtr);
+      opj_free(bhPtr);
       bhPtr = bhNext;
   }
-  free( *manf);
+  opj_free( *manf);
 }
 
 void print_manfbox( manfbox_param_t *manf)

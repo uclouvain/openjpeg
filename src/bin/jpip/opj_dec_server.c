@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
   dec_server_record_t *server_record;
   client_t client;
   int port = 50000;
-  int erreur;
+  int erreur = 0;
   (void)erreur;
 
   if( argc > 1)

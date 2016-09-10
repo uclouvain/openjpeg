@@ -174,7 +174,9 @@ static Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
       fprintf( stderr, "Exception: bits per component not identical, codestream: %d, ihdrbox: %d\n", image->comps[0].prec, (*ihdrbox)->bpc);
   }
   else{
-    *ihdrbox = (ihdrbox_param_t *)malloc( sizeof(ihdrbox_param_t));
+    *ihdrbox = (ihdrbox_param_t *)opj_malloc( sizeof(ihdrbox_param_t));
+	if(*ihdrbox == NULL) return NULL;
+
     (*ihdrbox)->width  = image->comps[0].w;
     (*ihdrbox)->height = image->comps[0].h;
     assert( image->comps[0].prec < 256 );
@@ -208,7 +210,12 @@ static Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
       adjustB = 0;
   }
 
-  pix = (Byte_t *)malloc( datasize);
+  pix = (Byte_t *)opj_malloc( datasize);
+  if(pix == NULL){
+	opj_free(*ihdrbox);
+	*ihdrbox = NULL;
+	return NULL;
+  }
   ptr = pix;
 
   for( i = 0; i < image->comps[0].w * image->comps[0].h; i++){

@@ -49,8 +49,9 @@ placeholderlist_param_t * gene_placeholderlist(void)
 {
   placeholderlist_param_t *list;
 
-  list = (placeholderlist_param_t *)malloc( sizeof(placeholderlist_param_t));
-  
+  list = (placeholderlist_param_t *)opj_malloc( sizeof(placeholderlist_param_t));
+  if(list == NULL) return NULL;
+
   list->first = NULL;
   list->last  = NULL;
 
@@ -71,15 +72,16 @@ void delete_placeholderlist( placeholderlist_param_t **list)
     delete_placeholder( &ptr);
     ptr=next;
   }
-  free( *list);
+  opj_free( *list);
 }
 
 placeholder_param_t * gene_placeholder( box_param_t *box, Byte8_t origID)
 {
   placeholder_param_t *placeholder;
 
-  placeholder = (placeholder_param_t *)malloc( sizeof(placeholder_param_t));
-  
+  placeholder = (placeholder_param_t *)opj_malloc( sizeof(placeholder_param_t));
+  if(placeholder == NULL) return NULL;
+
   strncpy( placeholder->TBox, "phld", 4);
   placeholder->Flags = 1; /* only the access to the original contents of this box, for now */
   placeholder->OrigID = origID;
@@ -94,8 +96,8 @@ placeholder_param_t * gene_placeholder( box_param_t *box, Byte8_t origID)
 void delete_placeholder( placeholder_param_t **placeholder)
 {
   if( (*placeholder)->OrigBH)
-    free((*placeholder)->OrigBH);
-  free(*placeholder);
+    opj_free((*placeholder)->OrigBH);
+  opj_free(*placeholder);
 }
 
 void insert_placeholder_into_list( placeholder_param_t *phld, placeholderlist_param_t *phldlist)

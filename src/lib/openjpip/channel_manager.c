@@ -50,7 +50,8 @@ channellist_param_t * gene_channellist(void)
   channellist_param_t *channellist;
 
   channellist = (channellist_param_t *)opj_malloc( sizeof(channellist_param_t));
-  
+  if(channellist == NULL) return NULL;
+
   channellist->first = NULL;
   channellist->last  = NULL;
 
@@ -69,6 +70,8 @@ channel_param_t * gene_channel( query_param_t query_param, auxtrans_param_t auxt
   }
 
   channel = (channel_param_t *)opj_malloc( sizeof(channel_param_t));
+  if(channel == NULL) return NULL;
+
   channel->cachemodel = cachemodel;
 
   /* set channel ID and get present time */

@@ -58,7 +58,8 @@
 server_record_t * init_JPIPserver( int tcp_auxport, int udp_auxport)
 {
   server_record_t *record = (server_record_t *)opj_malloc( sizeof(server_record_t));
-  
+  if(record == NULL) return NULL;
+
   record->sessionlist = gene_sessionlist();
   record->targetlist  = gene_targetlist();
   record->auxtrans = init_aux_transport( tcp_auxport, udp_auxport);
@@ -80,7 +81,8 @@ QR_t * parse_querystring( const char *query_string)
   QR_t *qr;
 
   qr = (QR_t *)opj_malloc( sizeof(QR_t));
-    
+  if(qr == NULL) return NULL;
+
   qr->query = parse_query( query_string);
   qr->msgqueue = NULL;
   qr->channel = NULL;
@@ -212,6 +214,7 @@ void local_log( OPJ_BOOL query, OPJ_BOOL messages, OPJ_BOOL sessions, OPJ_BOOL t
 dec_server_record_t * OPJ_CALLCONV init_dec_server( int port)
 {
   dec_server_record_t *record = (dec_server_record_t *)opj_malloc( sizeof(dec_server_record_t));
+  if(record == NULL) return NULL;
 
   record->cachelist = gene_cachelist();
   record->jpipstream = NULL;
@@ -311,6 +314,7 @@ jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( OPJ_BOOL jp2)
   jpip_dec_param_t *dec;
   
   dec = (jpip_dec_param_t *)opj_calloc( 1, sizeof(jpip_dec_param_t));
+  if(dec == NULL) return NULL;
 
   dec->msgqueue = gene_msgqueue( OPJ_TRUE, NULL);
   
@@ -334,7 +338,10 @@ OPJ_BOOL OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec)
     return OPJ_FALSE;
   
   dec->jpipstream = (Byte_t *)opj_malloc( dec->jpiplen);
-
+  if(dec->jpipstream == NULL){
+	close(infd);
+	return OPJ_FALSE;
+  }
   if( read( infd, dec->jpipstream, dec->jpiplen) != (int)dec->jpiplen){
     fprintf( stderr, "file reading error\n");
     opj_free( dec->jpipstream);
@@ -420,6 +427,8 @@ index_t * OPJ_CALLCONV get_index_from_JP2file( int fd)
   }
   
   data = (char *)opj_malloc( 12); /* size of header*/
+  if(data == NULL) return NULL;
+
   if( read( fd, data, 12) != 12){
     opj_free( data);
     fprintf( stderr, "Error: File broken (read error)\n");

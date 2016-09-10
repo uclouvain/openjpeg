@@ -106,14 +106,23 @@ Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn
   while(( ptr = search_message( METADATA_MSG, (Byte8_t)-1, csn, ptr))!=NULL){
     if( ptr->phld){
       if( strncmp( (char *)ptr->phld->OrigBH+4, "jp2c", 4) == 0){
-	jp2cDBoxOffset = *jp2len + ptr->phld->OrigBHlen;
-	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); /* header only */
-	jp2cDBoxlen = *jp2len - jp2cDBoxOffset;
+		jp2cDBoxOffset = *jp2len + ptr->phld->OrigBHlen;
+		jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); /* header only */
+		if(jp2stream == NULL){
+			return NULL;
+		}
+		jp2cDBoxlen = *jp2len - jp2cDBoxOffset;
       }
       else
-	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); /* header only */
+		jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); /* header only */
+		if(jp2stream == NULL){
+			return NULL;
+		}
     }
     jp2stream = add_msgstream( ptr, jpipstream, jp2stream, jp2len);
+	if(jp2stream == NULL){
+		return NULL;
+	}
     ptr = ptr->next;
   }
   
@@ -179,7 +188,9 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
 
   *j2klen = 0;
   j2kstream = add_mainhead_msgstream( msgqueue, jpipstream, j2kstream, csn, j2klen);
-
+  if(j2kstream == NULL){
+	return NULL;
+  }
   if( !get_mainheader_from_j2kstream( j2kstream, &SIZ, NULL))
     return j2kstream;
 
@@ -199,6 +210,9 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
       if( ptr->bin_offset == binOffset){
 	found = OPJ_TRUE;
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
+	if(j2kstream == NULL){
+		return NULL;
+	}
 	binOffset += ptr->length;
       }
       ptr = ptr->next;
@@ -209,13 +223,20 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
 	if( ptr->bin_offset == binOffset){
 	  found = OPJ_TRUE;
 	  j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
+	  if(j2kstream == NULL){
+		return NULL;
+	  }
 	  binOffset += ptr->length;
 	}
       }
       ptr = ptr->next;
     }
-    if(!found)
+    if(!found){
       j2kstream = add_emptytilestream( tileID, j2kstream, j2klen);
+	  if(j2kstream == NULL){
+		return NULL;
+	  }
+	}
   }
   
   j2kstream = add_EOC( j2kstream, j2klen);
@@ -243,7 +264,9 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
   
   *j2klen = 0;
   j2kstream = add_mainhead_msgstream( msgqueue, jpipstream, j2kstream, csn, j2klen);
-  
+  if(j2kstream == NULL){
+	return NULL;
+  } 
   if( !get_mainheader_from_j2kstream( j2kstream, &SIZ, &COD))
     return j2kstream;
 
@@ -263,8 +286,14 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
     SOToffset = *j2klen;
     while(( ptr = search_message( TILE_HEADER_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->bin_offset == binOffset){
-	j2kstream = add_SOTmkr( j2kstream, j2klen);
+		j2kstream = add_SOTmkr( j2kstream, j2klen);
+		if(j2kstream == NULL){
+			return NULL;
+		}
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
+	if(j2kstream == NULL){
+		return NULL;
+	}	
 	foundTH = OPJ_TRUE;
 	binOffset += ptr->length;
       }
@@ -275,8 +304,12 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
       j2kstream = recons_bitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, &max_reslev, j2klen);     
       modify_tileheader( j2kstream, SOToffset, (max_reslev<COD.numOfdecomp ? max_reslev : -1), SIZ.Csiz, j2klen);
     }
-    else
+    else{
       j2kstream = add_emptytilestream( tileID, j2kstream, j2klen);
+	  if(j2kstream == NULL){
+		return NULL;
+	  }
+	}
   }
 
   if( max_reslev < COD.numOfdecomp)
@@ -302,6 +335,9 @@ Byte_t * add_mainhead_msgstream( msgqueue_param_t *msgqueue, Byte_t *origstream,
   while(( ptr = search_message( MAINHEADER_MSG, (Byte8_t)-1, csn, ptr))!=NULL){
     if( ptr->bin_offset == binOffset){
       j2kstream = add_msgstream( ptr, origstream, j2kstream, j2klen);
+	  if(j2kstream == NULL){
+		return NULL;
+	  }
       binOffset += ptr->length;
     }
     ptr = ptr->next;
@@ -316,12 +352,13 @@ Byte_t * add_SOTmkr( Byte_t *j2kstream, Byte8_t *j2klen)
 
   buf = (Byte_t *)opj_malloc(( *j2klen)+2);
 
+  if(buf){
   memcpy( buf, j2kstream, *j2klen);
   memcpy( buf+(*j2klen), &SOT, 2);
   
   *j2klen += 2;
-
-  if(j2kstream) opj_free(j2kstream);
+  }
+  opj_free(j2kstream);
 
   return buf;
 }
@@ -383,13 +420,18 @@ Byte_t * recons_LRCPbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, B
   for( l=0; l<COD.numOflayers; l++)
     for( r=0; r<=(COD.numOfdecomp-mindeclev); r++){
       if( COD.Scod & 0x01)
-	numOfprcts = comp_numOfprcts( tileID, SIZ, COD, r);
+		numOfprcts = comp_numOfprcts( tileID, SIZ, COD, r);
       else
-	numOfprcts = 1;
+		numOfprcts = 1;
       
-      for( c=0; c<SIZ.Csiz; c++)
-	for( p=0; p<numOfprcts; p++)
-	  j2kstream = recons_packet( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, p, l, j2klen);
+      for( c=0; c<SIZ.Csiz; c++){
+		for( p=0; p<numOfprcts; p++){
+	  		j2kstream = recons_packet( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, p, l, j2klen);
+			if(j2kstream == NULL){
+				return NULL;
+			}
+		}
+	  }
     }
   
   return j2kstream;
@@ -407,10 +449,16 @@ Byte_t * recons_RLCPbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, B
     else
       numOfprcts = 1;
 
-    for( l=0; l<COD.numOflayers; l++)
-      for( c=0; c<SIZ.Csiz; c++)
-	for( p=0; p<numOfprcts; p++)
-	  j2kstream = recons_packet( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, p, l, j2klen);
+    for( l=0; l<COD.numOflayers; l++){
+      for( c=0; c<SIZ.Csiz; c++){
+		for( p=0; p<numOfprcts; p++){
+	  	  j2kstream = recons_packet( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, p, l, j2klen);
+		  if(j2kstream == NULL){
+			return NULL;
+		  }
+		}
+	  }
+	}
   }
       
   return j2kstream;
@@ -541,6 +589,9 @@ Byte_t * recons_packet( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *
     if( ptr->bin_offset == binOffset){
       if( lay_idx == l){
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
+	if(j2kstream == NULL){
+		return NULL;
+	}
 	foundPrec = OPJ_TRUE;
 	if( *max_reslev < res_idx)
 	  *max_reslev = res_idx;
@@ -576,7 +627,9 @@ Byte_t * recons_precinct( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t
   while(( ptr = search_message( PRECINCT_MSG, precID, csn, ptr))!=NULL){
     if( ptr->bin_offset == binOffset){
       j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
-      
+      if(j2kstream == NULL){
+		return NULL;
+	  }
       foundPrec = OPJ_TRUE;
       binOffset += ptr->length;
       if( *max_reslev < res_idx)
@@ -659,16 +712,19 @@ Byte_t * add_msgstream( message_param_t *message, Byte_t *origstream, Byte_t *j2
     return NULL;
 
   newstream = gene_msgstream( message, origstream, &newlen);
-
+  if(newstream == NULL){
+	return NULL;
+  }
   buf = (Byte_t *)opj_malloc(( *j2klen)+newlen);
 
+  if(buf){
   memcpy( buf, j2kstream, *j2klen);
   memcpy( buf+(*j2klen), newstream, newlen);
   
   *j2klen += newlen;
-  
+  }
   opj_free( newstream);
-  if(j2kstream) opj_free(j2kstream);
+  opj_free(j2kstream);
 
   return buf;
 }
@@ -678,7 +734,7 @@ Byte_t * add_emptyboxstream( placeholder_param_t *phld, Byte_t *jp2stream, Byte8
 {
   Byte_t *newstream;
   Byte8_t newlen;
-  Byte_t *buf;
+  Byte_t *buf = NULL;
   
   if( phld->OrigBHlen == 8)
     newlen = big4(phld->OrigBH);
@@ -686,18 +742,22 @@ Byte_t * add_emptyboxstream( placeholder_param_t *phld, Byte_t *jp2stream, Byte8
     newlen = big8(phld->OrigBH+8);
 
   newstream = (Byte_t *)opj_malloc( newlen);
-  memset( newstream, 0, newlen);
-  memcpy( newstream, phld->OrigBH, phld->OrigBHlen);
 
-  buf = (Byte_t *)opj_malloc(( *jp2len)+newlen);
+  if(newstream){
+    memset( newstream, 0, newlen);
+    memcpy( newstream, phld->OrigBH, phld->OrigBHlen);
 
-  memcpy( buf, jp2stream, *jp2len);
-  memcpy( buf+(*jp2len), newstream, newlen);
+    buf = (Byte_t *)opj_malloc(( *jp2len)+newlen);
+
+    if(buf){
+      memcpy( buf, jp2stream, *jp2len);
+      memcpy( buf+(*jp2len), newstream, newlen);
   
-  *jp2len += newlen;
-  
-  opj_free( newstream);
-  if(jp2stream) opj_free(jp2stream);
+      *jp2len += newlen;
+    }
+    opj_free( newstream);
+  }
+  opj_free(jp2stream);
 
   return buf;
 }
@@ -706,19 +766,22 @@ Byte_t * add_emptytilestream( const Byte8_t tileID, Byte_t *j2kstream, Byte8_t *
 {
   Byte_t *newstream;
   Byte8_t newlen;
-  Byte_t *buf;
+  Byte_t *buf = NULL;
 
   newstream = gene_emptytilestream( tileID, &newlen);
 
-  buf = (Byte_t *)opj_malloc(( *j2klen)+newlen);
+  if(newstream){
+    buf = (Byte_t *)opj_malloc(( *j2klen)+newlen);
 
-  memcpy( buf, j2kstream, *j2klen);
-  memcpy( buf+(*j2klen), newstream, newlen);
-  
-  *j2klen += newlen;
-
-  opj_free( newstream);
-  if(j2kstream) opj_free(j2kstream);
+    if(buf){
+      memcpy( buf, j2kstream, *j2klen);
+      memcpy( buf+(*j2klen), newstream, newlen);
+    
+      *j2klen += newlen;
+    }
+    opj_free( newstream);
+  }
+  opj_free(j2kstream);
 
   return buf;
 }
@@ -729,12 +792,13 @@ Byte_t * add_padding( Byte8_t padding, Byte_t *j2kstream, Byte8_t *j2klen)
 
   buf = (Byte_t *)opj_malloc(( *j2klen)+padding);
 
-  memcpy( buf, j2kstream, *j2klen);
-  memset( buf+(*j2klen), 0, padding);
+  if(buf){
+    memcpy( buf, j2kstream, *j2klen);
+    memset( buf+(*j2klen), 0, padding);
   
-  *j2klen += padding;
-
-  if(j2kstream) opj_free(j2kstream);
+    *j2klen += padding;
+  }
+  opj_free(j2kstream);
 
   return buf;
 }
@@ -747,12 +811,13 @@ Byte_t * add_EOC( Byte_t *j2kstream, Byte8_t *j2klen)
 
   buf = (Byte_t *)opj_malloc(( *j2klen)+2);
 
-  memcpy( buf, j2kstream, *j2klen);
-  memcpy( buf+(*j2klen), &EOC, 2);
+  if(buf){
+    memcpy( buf, j2kstream, *j2klen);
+    memcpy( buf+(*j2klen), &EOC, 2);
 
-  *j2klen += 2;
-
-  if(j2kstream) opj_free(j2kstream);
+    *j2klen += 2;
+  }
+  opj_free(j2kstream);
 
   return buf;
 }
@@ -766,8 +831,10 @@ Byte_t * gene_msgstream( message_param_t *message, Byte_t *stream, Byte8_t *leng
 
   *length = message->length;
   buf = (Byte_t *)opj_malloc( *length);
-  memcpy( buf, stream+message->res_offset,  *length);
 
+  if(buf){
+    memcpy( buf, stream+message->res_offset,  *length);
+  }
   return buf;
 }
 
@@ -784,16 +851,17 @@ Byte_t * gene_emptytilestream( const Byte8_t tileID, Byte8_t *length)
   *length = 14;
   buf = (Byte_t *)opj_malloc(*length);
 
-  Isot = (Byte2_t)((((Byte2_t)tileID) << 8) | ((((Byte2_t)tileID) & 0xf0) >> 8));
+  if(buf){
+    Isot = (Byte2_t)((((Byte2_t)tileID) << 8) | ((((Byte2_t)tileID) & 0xf0) >> 8));
   
-  memcpy( buf, &SOT, 2);
-  memcpy( buf+2, &Lsot, 2);
-  memcpy( buf+4, &Isot, 2);
-  memcpy( buf+6, &Psot, 4);
-  memcpy( buf+10, &TPsot, 1);
-  memcpy( buf+11, &TNsot, 1);
-  memcpy( buf+12, &SOD, 2);
-
+    memcpy( buf, &SOT, 2);
+    memcpy( buf+2, &Lsot, 2);
+    memcpy( buf+4, &Isot, 2);
+    memcpy( buf+6, &Psot, 4);
+    memcpy( buf+10, &TPsot, 1);
+    memcpy( buf+11, &TNsot, 1);
+    memcpy( buf+12, &SOD, 2);
+  }
   return buf;
 }
 

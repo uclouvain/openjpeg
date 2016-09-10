@@ -31,6 +31,7 @@
 #ifndef   	BOXHEADER_MANAGER_H_
 # define   	BOXHEADER_MANAGER_H_
 
+#include "opj_includes.h"
 #include "openjpeg.h"
 #include "byte_manager.h"
 #include "box_manager.h"

@@ -61,6 +61,7 @@ msgqueue_param_t * gene_msgqueue( OPJ_BOOL stateless, cachemodel_param_t *cachem
   msgqueue_param_t *msgqueue;
 
   msgqueue = (msgqueue_param_t *)opj_malloc( sizeof(msgqueue_param_t));
+  if(msgqueue == NULL) return NULL;
 
   msgqueue->first = NULL;
   msgqueue->last  = NULL;
@@ -136,7 +137,11 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
   codeidx = target->codeidx;
   
   msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
-
+  if(msg == NULL) 
+  {
+	cachemodel->mhead_model = OPJ_FALSE;
+	return;
+  }
   msg->last_byte = OPJ_TRUE;
   msg->in_class_id = 0;
   msg->class_id = MAINHEADER_MSG;
@@ -167,6 +172,10 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
 
   if( !cachemodel->th_model[ tile_id]){
     msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
+	if(msg == NULL){
+		cachemodel->th_model[ tile_id] = OPJ_FALSE;
+		return;
+	}
     msg->last_byte = OPJ_TRUE;
     assert( tile_id >= 0 );
     msg->in_class_id = (Byte8_t)tile_id;
@@ -221,7 +230,10 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
     
     if( !tp_model[i]){
       msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
-      
+      if(msg == NULL){
+		tp_model[i] = OPJ_FALSE;
+		return;
+	  }
       msg->last_byte = (i==numOftparts-1);
       msg->in_class_id = tile_id;
       msg->class_id = class_id;
@@ -270,6 +282,10 @@ void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueu
     if( !cachemodel->pp_model[comp_id][tile_id*(int)nmax+seq_id*numOflayers+layer_id]){
   
       msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
+	  if(msg == NULL){
+		cachemodel->pp_model[comp_id][tile_id*(int)nmax+seq_id*numOflayers+layer_id] = OPJ_FALSE;
+		return;
+	  }
       msg->last_byte = (layer_id == (numOflayers-1));
       msg->in_class_id = comp_precinct_id( tile_id, comp_id, seq_id, codeidx->SIZ.Csiz, (int)codeidx->SIZ.XTnum * (int) codeidx->SIZ.YTnum);
       msg->class_id = PRECINCT_MSG;
@@ -337,6 +353,8 @@ void enqueue_box( Byte8_t meta_id, boxlist_param_t *boxlist, msgqueue_param_t *m
   assert( msgqueue->cachemodel->target->csn >= 0);
   while( box){
     msg = gene_metamsg( meta_id, *binOffset, box->length, box->offset, NULL, (Byte8_t)msgqueue->cachemodel->target->csn);
+	if(msg == NULL) return; /* FIXME szukw000 */
+
     enqueue_message( msg, msgqueue);
 
     *binOffset += box->length;
@@ -353,6 +371,8 @@ void enqueue_phld( Byte8_t meta_id, placeholderlist_param_t *phldlist, msgqueue_
   assert( msgqueue->cachemodel->target->csn >= 0);
   while( phld){
     msg = gene_metamsg( meta_id, *binOffset, phld->LBox, 0, phld, (Byte8_t)msgqueue->cachemodel->target->csn);
+	if(msg == NULL) return; /* FIXME szukw000 */
+
     enqueue_message( msg, msgqueue);
 
     *binOffset += phld->LBox;
@@ -367,6 +387,8 @@ void enqueue_boxcontents( Byte8_t meta_id, boxcontents_param_t *boxcontents, msg
   assert(msgqueue->cachemodel->target->csn >= 0);
   msg = gene_metamsg( meta_id, *binOffset, boxcontents->length,
     boxcontents->offset, NULL, (Byte8_t)msgqueue->cachemodel->target->csn);
+  if(msg == NULL) return;
+
   enqueue_message( msg, msgqueue);
   
   *binOffset += boxcontents->length;
@@ -377,7 +399,8 @@ message_param_t * gene_metamsg( Byte8_t meta_id, Byte8_t binOffset, Byte8_t leng
   message_param_t *msg;
 
   msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
-    
+  if(msg == NULL) return NULL;
+
   msg->last_byte = OPJ_FALSE;
   msg->in_class_id = meta_id;
   msg->class_id = METADATA_MSG;
@@ -597,7 +620,8 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, OPJ_OFF_T offset, 
   ptr = JPIPstream;
   while( (Byte8_t)(ptr-JPIPstream) < streamlen){
     msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
-    
+    if(msg == NULL) return; /* FIXME szukw000 */
+
     ptr = parse_bin_id_vbas( ptr, &bb, &c, &msg->in_class_id);
     
     msg->last_byte   = c == 1 ? OPJ_TRUE : OPJ_FALSE;
@@ -665,20 +689,26 @@ void parse_metadata( metadata_param_t *metadata, message_param_t *msg, Byte_t *d
   msg->phld = NULL;
 
   if( strncmp( boxtype, "phld", 4) == 0){
-    if( !metadata->placeholderlist)
-	metadata->placeholderlist = gene_placeholderlist();
-    
+    if( !metadata->placeholderlist){
+		metadata->placeholderlist = gene_placeholderlist();
+		if(metadata->placeholderlist == NULL) return;
+    }
     phld = parse_phld( datastream, msg->length);
+	if(phld == NULL) return;
+
     msg->phld = phld;
     insert_placeholder_into_list( phld, metadata->placeholderlist);
   }
   else if( isalpha(boxtype[0]) && isalpha(boxtype[1]) &&
 	   (isalnum(boxtype[2])||isspace(boxtype[2])) &&
 	   (isalpha(boxtype[3])||isspace(boxtype[3]))){
-    if( !metadata->boxlist)
+    if( !metadata->boxlist){
       metadata->boxlist = gene_boxlist();
-    
+	  if(metadata->boxlist == NULL) return;
+    }
     box = gene_boxbyOffinStream( datastream, msg->res_offset);
+	if(box == NULL) return;
+
     insert_box_into_list( box, metadata->boxlist);
   }
   else
@@ -690,13 +720,18 @@ placeholder_param_t * parse_phld( Byte_t *datastream, Byte8_t metalength)
   placeholder_param_t *phld;
 
   phld = (placeholder_param_t *)opj_malloc( sizeof(placeholder_param_t));
-  
+  if(phld == NULL) return NULL;
+
   phld->LBox = big4( datastream);
   strncpy( phld->TBox, "phld", 4);
   phld->Flags = big4( datastream+8);
   phld->OrigID = big8( datastream+12);
   phld->OrigBHlen = (Byte_t)(metalength - 20);
   phld->OrigBH = (Byte_t *)opj_malloc(phld->OrigBHlen);
+  if(phld->OrigBH == NULL){
+	opj_free(phld);
+	return NULL;
+  }
   memcpy( phld->OrigBH, datastream+20, phld->OrigBHlen);
   phld->next = NULL;
 

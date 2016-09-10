@@ -34,6 +34,15 @@
 
 #include "opj_includes.h"
 
+#ifndef OPJ_BOOL
+typedef int OPJ_BOOL;
+#define OPJ_TRUE 1
+#define OPJ_FALSE 0
+#endif
+#ifndef OPJ_SIZE_T
+typedef size_t   OPJ_SIZE_T;
+#endif
+
 /** maximum number of meta request box */
 #define MAX_NUMOFBOX 10
 

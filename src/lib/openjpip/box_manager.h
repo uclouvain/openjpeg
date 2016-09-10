@@ -31,6 +31,7 @@
 #ifndef   	BOX_MANAGER_H_
 # define   	BOX_MANAGER_H_
 
+#include "opj_includes.h"
 #include "byte_manager.h"
 
 /** box parameters*/

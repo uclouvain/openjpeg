@@ -50,14 +50,18 @@ mhixbox_param_t * gene_mhixbox( box_param_t *box)
   markeridx_param_t  *mkridx, *lastmkidx;
   OPJ_OFF_T pos = 0;
 
-  mhix = ( mhixbox_param_t *)malloc( sizeof( mhixbox_param_t));
-  
+  mhix = ( mhixbox_param_t *)opj_malloc( sizeof( mhixbox_param_t));
+  if(mhix == NULL) return NULL;
+
   mhix->tlen = fetch_DBox8bytebigendian( box, (pos+=8)-8);
  
   mhix->first = lastmkidx = NULL;
   while( (OPJ_SIZE_T)pos < get_DBoxlen( box)){
     
-    mkridx = ( markeridx_param_t *)malloc( sizeof( markeridx_param_t));
+    mkridx = ( markeridx_param_t *)opj_malloc( sizeof( markeridx_param_t));
+	if(mkridx == NULL){
+		goto fails;
+	}
     mkridx->code       = fetch_DBox2bytebigendian( box, (pos+=2)-2);
     mkridx->num_remain = fetch_DBox2bytebigendian( box, (pos+=2)-2);
     mkridx->offset     = (OPJ_OFF_T)fetch_DBox8bytebigendian( box, (pos+=8)-8);
@@ -71,6 +75,10 @@ mhixbox_param_t * gene_mhixbox( box_param_t *box)
     lastmkidx = mkridx;
   } 
   return mhix;
+
+fails:
+	delete_mhixbox(&mhix);
+	return NULL;
 }
 
 
@@ -132,10 +140,10 @@ void delete_mhixbox( mhixbox_param_t **mhix)
 #ifndef SERVER
     /*      fprintf( logstream, "local log: marker index %#x deleted!\n", mkPtr->code); */
 #endif
-      free(mkPtr);
+      opj_free(mkPtr);
       mkPtr=mkNext;
   }
-  free(*mhix);
+  opj_free(*mhix);
 }
 
 

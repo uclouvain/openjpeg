@@ -99,7 +99,8 @@ index_param_t * parse_jp2file( int fd)
   }
 
   jp2idx = (index_param_t *)opj_malloc( sizeof(index_param_t));
-  
+  if(jp2idx == NULL) return NULL;
+
   if( !set_cidxdata( cidx, jp2idx)){
     fprintf( FCGI_stderr, "Error: Not correctl format in cidx box\n");
     opj_free(jp2idx);
@@ -493,12 +494,22 @@ OPJ_BOOL set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   }
   
   manf = gene_manfbox( manf_box);
+  if(manf == NULL){
+	opj_free(manf_box);
+	opj_free( thix_box);
+	return OPJ_FALSE;
+  }
   ptr = manf->first;
   mhixseqoff = manf_box->offset+(OPJ_OFF_T)manf_box->length;
   pos = 0;
   tile_no = 0;
   jp2idx->tileheader = (mhixbox_param_t **)opj_malloc( jp2idx->SIZ.XTnum*jp2idx->SIZ.YTnum*sizeof(mhixbox_param_t *));
-    
+  if(jp2idx->tileheader == NULL){
+	delete_manfbox(&manf);
+	opj_free(manf);
+	opj_free(thix_box);
+	return OPJ_FALSE;
+  }
   while( ptr){
     if( !(mhix_box = gene_boxbyType( thix_box->fd, mhixseqoff+(OPJ_OFF_T)pos, get_DBoxlen( thix_box)-manf_box->length-pos, "mhix"))){
       fprintf( FCGI_stderr, "Error: mhix box not present in thix box\n");
@@ -547,25 +558,38 @@ OPJ_BOOL set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   opj_free( ppix_box);
 
   manf = gene_manfbox( manf_box);
+  if(manf == NULL){
+	return OPJ_FALSE;
+  }
   bh = search_boxheader( "faix", manf);
   inbox_offset = manf_box->offset + (OPJ_OFF_T)manf_box->length;
   
   opj_free( manf_box);
 
   jp2idx->precpacket = (faixbox_param_t **)opj_malloc( jp2idx->SIZ.Csiz*sizeof(faixbox_param_t *));
-
+  if(jp2idx->precpacket == NULL){
+	delete_manfbox( &manf);
+	return OPJ_FALSE;
+  }
   for( comp_idx=0; bh!=NULL; bh=bh->next, comp_idx++){
     if( jp2idx->SIZ.Csiz <= comp_idx ){
       fprintf( FCGI_stderr, "Error: num of faix boxes is not identical to num of components in ppix box\n");
+	  delete_manfbox( &manf);
       return OPJ_FALSE;
     }
 
     if( !(faix_box = gene_boxbyOffset( cidx_box->fd, inbox_offset))){
       fprintf( FCGI_stderr, "Error: faix box not present in ppix box\n");
+	  delete_manfbox( &manf);
       return OPJ_FALSE;
     }
   
     faix = gene_faixbox( faix_box);
+	if(faix == NULL){
+		delete_manfbox( &manf);
+		opj_free( faix_box);
+		return OPJ_FALSE;
+	}
     jp2idx->precpacket[comp_idx] = faix;
 
     inbox_offset = faix_box->offset + (OPJ_OFF_T)faix_box->length;
@@ -634,8 +658,13 @@ OPJ_BOOL set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestr
   
   if(COD->Scod & 0x01){
     COD->XPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
-    COD->YPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
+	if(COD->XPsiz == NULL) return OPJ_FALSE;
 
+    COD->YPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
+	if(COD->YPsiz == NULL){
+		opj_free(COD->XPsiz); COD->XPsiz = NULL;
+		return OPJ_FALSE;
+	}
     for( i=0; i<=COD->numOfdecomp; i++){
       /*precinct size*/
       COD->XPsiz[i] = (Byte2_t)pow( 2, fetch_marker1byte( codmkr, 12+i) & 0x0F);
@@ -644,8 +673,13 @@ OPJ_BOOL set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestr
   }
   else{
     COD->XPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
-    COD->YPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
+	if(COD->XPsiz == NULL) return OPJ_FALSE;
 
+    COD->YPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
+	if(COD->YPsiz == NULL){
+		opj_free(COD->XPsiz); COD->XPsiz = NULL;
+		return OPJ_FALSE;
+	}
     COD->XPsiz[0] = COD->YPsiz[0] = 1 << 15; /* pow(2,15); */
   }
   return OPJ_TRUE;

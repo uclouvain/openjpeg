@@ -81,7 +81,7 @@ install(TARGETS openjpip
 
 if(BUILD_JPIP_SERVER)
   add_library(openjpip_server STATIC ${OPENJPIP_SRCS} ${SERVER_SRCS})
-  target_link_libraries(openjpip_server ${FCGI_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(openjpip_server ${FCGI_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OPENJPEG_LIBRARY_NAME})
   set_target_properties(openjpip_server
     PROPERTIES COMPILE_FLAGS "-DSERVER")
   install(TARGETS openjpip_server
