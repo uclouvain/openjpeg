@@ -1166,41 +1166,71 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 		OPJ_UINT32 w,
 		OPJ_UINT32 h)
 {
-	OPJ_UINT32 datasize=w * h;
 	OPJ_UINT32 flagssize;
 
 	/* encoder uses tile buffer, so no need to allocate */
 	if (!t1->encoder) {
+		OPJ_UINT32 datasize;
+		
+		/* Overflow check */
+		if ((w > 0U) && (h > (0xFFFFFFFFU /* UINT32_MAX */ / w))) {
+			/* FIXME event manager error callback */
+			return OPJ_FALSE;
+		}
+		datasize = w * h;
+		
+		/* Overflow check */
+		if ((size_t)datasize > (SIZE_MAX / sizeof(OPJ_INT32))) {
+			/* FIXME event manager error callback */
+			return OPJ_FALSE;
+		}
+		
 		if(datasize > t1->datasize){
 			opj_aligned_free(t1->data);
-			t1->data = (OPJ_INT32*) opj_aligned_malloc(datasize * sizeof(OPJ_INT32));
+			t1->data = (OPJ_INT32*) opj_aligned_malloc((size_t)datasize * sizeof(OPJ_INT32));
 			if(!t1->data){
 				/* FIXME event manager error callback */
 				return OPJ_FALSE;
 			}
-			t1->datasize=datasize;
+			t1->datasize = datasize;
 		}
 		/* memset first arg is declared to never be null by gcc */
 		if (t1->data != NULL) {
-			memset(t1->data,0,datasize * sizeof(OPJ_INT32));
+			memset(t1->data, 0, (size_t)datasize * sizeof(OPJ_INT32));
 		}
 	}
-	t1->flags_stride=w+2;
-	flagssize=t1->flags_stride * (h+2);
+	
+	if ((w > (0xFFFFFFFFU /* UINT32_MAX */ - 2U)) || (h > (0xFFFFFFFFU /* UINT32_MAX */ - 2U))) {
+		/* FIXME event manager error callback */
+		return OPJ_FALSE;
+	}
+	
+	t1->flags_stride = w + 2U; /* can't be 0U */
+	if ((h + 2U) > (0xFFFFFFFFU /* UINT32_MAX */ / t1->flags_stride)) {
+		/* FIXME event manager error callback */
+		return OPJ_FALSE;
+	}
+	flagssize = t1->flags_stride * (h + 2U);
 
+	/* Overflow check */
+	if ((size_t)flagssize > (SIZE_MAX / sizeof(opj_flag_t))) {
+		/* FIXME event manager error callback */
+		return OPJ_FALSE;
+	}
+	
 	if(flagssize > t1->flagssize){
 		opj_aligned_free(t1->flags);
-		t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize * sizeof(opj_flag_t));
+		t1->flags = (opj_flag_t*) opj_aligned_malloc((size_t)flagssize * sizeof(opj_flag_t));
 		if(!t1->flags){
 			/* FIXME event manager error callback */
 			return OPJ_FALSE;
 		}
-		t1->flagssize=flagssize;
+		t1->flagssize = flagssize;
 	}
-	memset(t1->flags,0,flagssize * sizeof(opj_flag_t));
+	memset(t1->flags, 0, (size_t)flagssize * sizeof(opj_flag_t));
 
-	t1->w=w;
-	t1->h=h;
+	t1->w = w;
+	t1->h = h;
 
 	return OPJ_TRUE;
 }
