@@ -248,13 +248,6 @@ static void opj_t1_enc_clnpass(
 		OPJ_INT32 bpno,
 		OPJ_INT32 *nmsedec,
 		OPJ_UINT32 cblksty);
-/**
-Decode clean-up pass
-*/
-static void opj_t1_dec_clnpass(
-		opj_t1_t *t1,
-		OPJ_INT32 bpno,
-		OPJ_INT32 cblksty);
 
 static OPJ_FLOAT64 opj_t1_getwmsedec(
 		OPJ_INT32 nmsedec,
@@ -798,7 +791,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
                 OPJ_INT32 vsc,
                 OPJ_INT32 row)
 {
-        OPJ_INT32 v, t, flag;
+        OPJ_INT32 v, t;
        
         opj_mqc_t *mqc = t1->mqc;       /* MQC component */
        
@@ -853,7 +846,6 @@ static void opj_t1_dec_refpass_raw(
 {
         OPJ_INT32 one, poshalf, neghalf;
         OPJ_UINT32 i, j, k;
-        OPJ_INT32 vsc;
         opj_colflag_t *colflags1 = &t1->colflags[t1->flags_stride + 1];
         one = 1 << bpno;
         poshalf = one >> 1;

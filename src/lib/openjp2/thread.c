@@ -314,11 +314,13 @@ struct opj_mutex_t
 
 opj_mutex_t* opj_mutex_create(void)
 {
-    opj_mutex_t* mutex = (opj_mutex_t*) opj_malloc(sizeof(opj_mutex_t));
-    if( !mutex )
-        return NULL;
-    pthread_mutex_t pthr_mutex = PTHREAD_MUTEX_INITIALIZER;
-    mutex->mutex = pthr_mutex;
+    opj_mutex_t* mutex = (opj_mutex_t*) opj_calloc(1U, sizeof(opj_mutex_t));
+    if( mutex != NULL ) {
+        if ( pthread_mutex_init(&mutex->mutex, NULL) != 0) {
+            opj_free(mutex);
+            mutex = NULL;
+        }
+    }
     return mutex;
 }
 
@@ -541,8 +543,9 @@ OPJ_BOOL opj_tls_set(opj_tls_t* tls, int key, void* value, opj_tls_free_func opj
     {
         if( tls->key_val[i].key == key )
         {
-            if( tls->key_val[i].opj_free_func )
+            if( tls->key_val[i].opj_free_func ) {
                 tls->key_val[i].opj_free_func(tls->key_val[i].value);
+            }
             tls->key_val[i].value = value;
             tls->key_val[i].opj_free_func = opj_free_func;
             return OPJ_TRUE;

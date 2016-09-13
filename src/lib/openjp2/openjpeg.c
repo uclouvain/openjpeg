@@ -361,7 +361,7 @@ void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *paramete
 }
 
 
-OPJ_API OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,
+OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,
                                                     int num_threads)
 {
   if (p_codec ) { 
