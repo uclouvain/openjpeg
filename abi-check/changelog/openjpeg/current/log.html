@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit f1f7c533089130266a6c1a502b30a846bb506b56
+<pre class='wrap'>commit d6d0f070e179fc195849aacd842c92f79653934f
+Merge: f1f7c53 48c16b2
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-09-13 16:39:26 +0200
+
+    Merge pull request #786 from rouault/tier1_optimizations_multithreading
+    
+    T1 &amp; DWT multithreading decoding optimizations
+
+commit f1f7c533089130266a6c1a502b30a846bb506b56
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-13 16:21:38 +0200
 
@@ -55,6 +64,22 @@ Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-08 11:28:58 +0200
 
     Update THANKS.md
+
+commit 48c16b2c199210a3c20b306a737eac5fc2c8f6c9
+Merge: ab22c5b ef01f18
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-09-08 10:30:09 +0200
+
+    Merge branch 'master' of https://github.com/uclouvain/openjpeg into tier1_optimizations_multithreading_2
+    
+    Conflicts:
+    	src/lib/openjp2/t1.c
+
+commit ab22c5bad55fccdc440847c896baaf4bf89365a0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-09-08 09:43:36 +0200
+
+    opj_thread_pool: fix potential deadlock at thread pool destruction
 
 commit ef01f18dfc6780b776d0674ed3e7415c6ef54d24
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
@@ -155,6 +180,12 @@ Date:   2016-09-02 23:58:12 +0200
     Switch to clang 3.8 (#814)
     
     clang 3.9 is currently unavailable for precise through apt
+
+commit 4f9abb9a45ffd711f9717db15d062fa020ed6cf5
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-08-11 21:50:46 +0200
+
+    [Win32] Use _beginthreadex instead of CreateThread()
 
 commit 4a2a8693e5a02207a8813b02a375abdc4e43c49b
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
@@ -323,6 +354,150 @@ Date:   2016-06-21 16:19:06 +0200
 
     setup automatic upload of ABI reports
 
+commit 7d3c7a345f05adbc9ca26d8ca7f6c7fffa5096be
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-26 23:51:32 +0200
+
+    Be robust to failed allocations of job structures
+
+commit 69497d35c0e35a1f9b789d016e9eb4946b8f0fab
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-25 21:39:21 +0200
+
+    opj_decompress: use clock_gettime() instead of getrusage() so as to get the time spent, and not to the total CPU time
+
+commit d67cd2220a291b54718f731052be4a9397f67077
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-25 19:08:04 +0200
+
+    opj_decompress: add a -threads &lt;num_threads&gt; option
+
+commit e3eb0a206d66cc873eccb57fc12a0497de400aca
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-25 18:39:41 +0200
+
+    .travis.yml: add a conf with OPJ_NUM_THREADS=2
+
+commit 57b216bb587aa7eba13afbbfd6a1fe5f04201b61
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-25 18:07:15 +0200
+
+    Use thread pool for DWT decoding
+
+commit 5fbb8b2645a085391b070162d8551aa960caab6a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-25 16:38:44 +0200
+
+    Use thread-pool for T1 decoding
+
+commit d4b7f03cfa4732132767188782683f3d957da912
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-25 16:36:47 +0200
+
+    Add opj_codec_set_threads() in public API and propagate resulting thread pool to tcd level
+    
+    By default, only the main thread is used. If opj_codec_set_threads() is not used,
+    but the OPJ_NUM_THREADS environment variable is set, its value will be
+    used to initialize the number of threads. The value can be either an integer
+    number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is called,
+    this function will override the behaviour of the environment variable.
+
+commit 54179fe1d53156c6b440166fe71a10f238a6ea56
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-25 16:34:52 +0200
+
+    Add threading and thread pool API
+
+commit 7092f7ea112fcc44e7426c462bf01a406b076620
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-23 16:00:04 +0200
+
+    Fix MSVC210 build issue (use of C99 declaration after statement) introduced in ba1edf6cd41415594729bc90ad3b0008af48251e
+
+commit 107eb31531ca688e2799406e69e9383efc13448f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-23 13:45:15 +0200
+
+    Improve perf of opj_t1_dec_sigpass_mqc_vsc() and opj_t1_dec_refpass_mqc_vsc() with loop unrolling
+
+commit 8371491a9968a31ce16d6ce37b775ef3c7d090c8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-23 11:44:54 +0200
+
+    Better inlining of opj_t1_updateflagscolflags() w.r.t. flags_stride
+
+commit 956c31d5a6e4530a92b6dd6099bdbf071144f6f1
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-23 10:34:44 +0200
+
+    opj_t1_dec_clnpass(): remove useless test in the runlen decoding path (of the non VSC case)
+
+commit 93f7f907117675cf6af227b4d0243a58f6c3640a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-23 10:25:55 +0200
+
+    opj_t1_decode_cblks(): tiny perf increase when loop unrolling
+
+commit 1da397e94a4e441a7c9a1aa4c2debd1c06ba05e2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-23 01:33:06 +0200
+
+    Tier 1 decoding: add a colflags array
+    
+    Addition flag array such that colflags[1+0] is for state of col=0,row=0..3,
+    colflags[1+1] for col=1, row=0..3, colflags[1+flags_stride] for col=0,row=4..7, ...
+    This array avoids too much cache trashing when processing by 4 vertical samples
+    as done in the various decoding steps.
+
+commit 31882ad7f4a0d9d0231c3fdb9c75a6b69912e1b7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-22 00:54:06 +0200
+
+    Const'ify lut arrays so they are in the read-only data section
+
+commit ba1edf6cd41415594729bc90ad3b0008af48251e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-22 00:50:34 +0200
+
+    Reduce number of occurrences of orient function argument
+    
+    This is essentially used to shift inside the lut_ctxno_zc, which we
+    can precompute at the beginning of opj_t1_decode_cblk() /
+    opj_t1_encode_cblk()
+
+commit 23a01dfdef1a266754af268b07d912efbe04a759
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-21 16:27:35 +0200
+
+    Specialize decoding passes for 64x64 code blocks
+
+commit d8fef96f23ea8b12226d7326118f2ffd91da28ac
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-21 15:52:02 +0200
+
+    Improve code generation in opj_t1_dec_clnpass()
+    
+    Add a opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit() method that
+    does the job of opj_t1_dec_clnpass_step_only() assuming the conditions
+    are met. And use it in opj_t1_dec_clnpass(). The compiler generates
+    more efficient code.
+
+commit c539808d097945866c0f7120ccdea28921a011a2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-05-21 15:41:36 +0200
+
+    opj_t1_updateflags(): tiny optimization
+    
+    We can avoid using a loop-up table with some shift arithmetics.
+
+commit 426bf8d337715f7b2e867cb2643128e5c2e3b5bb
+Author: Kal Conley &lt;kcconley@gmail.com&gt;
+Date:   2015-12-27 20:14:47 +0100
+
+    Move some MQC functions into a header for speed
+    
+    Allow these hot functions to be inlined. This boosts decode performance by ~10%.
+
 commit d0babeb6f6cdd1887308137df37bb2b4724a6592
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-05-15 01:36:31 +0200
@@ -382,6 +557,239 @@ Date:   2016-05-08 20:10:13 +0200
     Fix Out-of-Bounds Access in function opj_tgt_reset
     
     Fix uclouvain/openjpeg#775
+
+commit 162f6199c0cd3ec1c6c6dc65e41b2faab92b2d91
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-08 19:18:05 +0200
+
+    Fix Heap Buffer Overflow in function color_cmyk_to_rgb
+    
+    Fix uclouvain/openjpeg#774
+
+commit 8f9cc62b3f9a1da9712329ddcedb9750d585505c
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-08 18:40:12 +0200
+
+    Fix division by zero
+    
+    Fix uclouvain/openjpeg#733
+
+commit 44a499f2acf10b55172d07abf387e5a579a585f7
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-03 22:22:03 +0200
+
+    Update lcms2 (#773)
+    
+    Update to mm2/Little-CMS@e342f44
+
+commit 94cfb1b008319e8b0b17e741f1e29e0a7b90af38
+Merge: ba0cf12 17a0a8a
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-05-02 21:57:55 +0200
+
+    Merge pull request #769 from julienmalik/cmake_lowercase
+    
+    Use lowercase for cmake commands consistenly
+
+commit 17a0a8a195a9aad76a6bdb174edc8aa5fb8b7831
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-05-02 16:03:16 +0200
+
+    Use lowercase for cmake commands consistenly
+    
+    Inspired from https://github.com/InsightSoftwareConsortium/ITK/blob/master/Utilities/Maintenance/HowToCreateTheCMakeCaseConversion.txt
+    This needs vim 7.3 and fails with vim 7.4
+    
+    This also fixes a number of :
+    - missing empty line at end of files
+    - useless space at end of lines
+
+commit ba0cf122f6820d38a7a5acc65b9d64392dd94e83
+Merge: da56086 e1e018a
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-05-02 14:34:32 +0200
+
+    Merge pull request #767 from julienmalik/fix_memset_null_pointer
+    
+    Fix UBSan gcc warning for first arg to memset non null
+
+commit da56086e012117edb278408e6062d1b890b53576
+Merge: b51d088 04b8cbd
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-05-02 14:32:08 +0200
+
+    Merge pull request #768 from julienmalik/filter_clang_warnings
+    
+    Ignore clang's summary warning
+
+commit 04b8cbd27aae2372b19598a38ba15e860952cae2
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-05-02 12:55:43 +0200
+
+    Ignore clang's summary warning
+    
+    This assumes prior text has matched some other warning expression.
+    
+    This reduces the warnings reported for clang build on the dashboard,
+    which were caused only by the "XXX warnings generated." message.
+    For some reason they were not reported when not using ctest launchers.
+    
+    This commit allows to confidently use ctest launchers to improve
+    dashboard reports.
+
+commit e1e018a8dc8c96f45486768356b7fb370ae0527c
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-05-02 12:13:24 +0200
+
+    Fix UBSan gcc warning for first arg to memset non null
+
+commit b51d088267cb88eb95555ea047755120e36c511b
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-01 18:05:46 +0200
+
+    Update to libtiff-4.0.6 (#764)
+
+commit 4f11e89c803fd9a332698bc36338a4be87c6d199
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 18:51:36 +0200
+
+    Add tests for recent issues
+    
+    Update uclouvain/openjpeg#725
+    Update uclouvain/openjpeg#726
+
+commit 9a20f8e8d1a91bd032e81ac53bf9a48dbb92bc29
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 17:58:04 +0200
+
+    Update lcms (#544)
+    
+    Update to mm2/Little-CMS@0e8234e090d6aab33f90e2eb0296f30aa0705e57
+
+commit 72deb588cbc8d5f56f8b0db3a2d120913e792cb8
+Merge: cd77b60 20789fe
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-04-30 13:51:01 +0200
+
+    Merge pull request #706 from mayeut/issue135
+    
+    Fix issue 135
+    The fix is legal regarding the standard but I did not manage to find out if it covers a bug in opj_t2_read_packet_data or if the file is corrupted
+
+commit cd77b6003b774dd337835630ea7b9b1fbc68d264
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 12:15:22 +0200
+
+    Fix some coverity warnings
+
+commit f40a2ff2ad821cf6492761c01de136ac2bf48b4a
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 01:50:33 +0200
+
+    Fix bad call to fclose with NULL pointer
+
+commit be42e72d220ffa89b33c8d24d0c0d4c8de8533cf
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 01:12:16 +0200
+
+    Fix warnings (#763)
+
+commit 15f081c89650dccee4aa4ae66f614c3fdb268767
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 00:33:27 +0200
+
+    Fix Out-Of-Bounds Read in sycc42x_to_rgb function (#745)
+    
+    42x Images with an odd x0/y0 lead to subsampled component starting at the
+    2nd column/line.
+    That is offset = comp-&gt;dx * comp-&gt;x0 - image-&gt;x0 = 1
+    
+    Fix #726
+
+commit ad593c9e0622e0d8d87228e67e4dbd36243ffd22
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-29 23:51:14 +0200
+
+    Fix heap-buffer-overflow in color_esycc_to_rgb (#748)
+    
+    When all components do not have the same dx/dy, components buffer are
+    read beyond their end.
+    Do not convert in this case.
+    
+    Update uclouvain/openjpeg#725
+
+commit 319fc971fef8a1e1c1c543506c26805873e3f258
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-04-29 23:49:17 +0200
+
+    cppcheck fix for openjp2 (#740)
+
+commit e166e4a209d9a3e4b583e4b2cdcbab2c57967eb1
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-28 19:20:14 +0200
+
+    Check SSIZ is valid in opj_j2k_read_siz (#762)
+
+commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-25 22:16:49 +0100
+
+    Fix issue 135
+    
+    dwt_interleave_h.gsr105.jp2 now has the same output as kakadu
+    issue399 is corrupted. Only the corrupted part changes.
+    
+    Update known failures for x86 MD5
+    
+    NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
+    NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
+    NR-DEC-issue135.j2k-68-decode-md5
+
+commit 5947e10ff7bebdcc8f72ab9246f03db05582fa0a
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-04-27 23:05:43 +0200
+
+    Add clang 3.9 build to Travis matrix (#753)
+
+commit e6881e75279627096fbbaca19e837252737a3892
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-27 21:56:09 +0200
+
+    Fix negative shift left reported by UBSan (#758)
+    
+    Follow-up of #757
+    
+    This shall have no performance impact on 2’s complement machine where
+    the compiler replaces the multiplication by power of two (constant) by
+    a left shift.
+    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
+
+commit 2296dc9e68e0ebc8342a8669aa2398a029b0fa3f
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-04-26 22:12:11 +0200
+
+    Remove whitespace and CR at line endings (#678)
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 6f2ac3ee366a9b587abe9a72febc400ba5b98c24
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-26 22:06:06 +0200
+
+    Fix negative shift left reported by UBSan (#757)
+    
+    This shall have no performance impact on 2’s complement machine where
+    the compiler replaces the multiplication by power of two (constant) by
+    a left shift.
+    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
+
+commit c559c628539bc8956193a5ff8ac787a0c6fa090c
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-23 14:17:31 +0200
+
+    Do not define __attribute__ in opj_includes.h (#751)
+    
+    Fix #727
 
 ...</pre></div>
 
