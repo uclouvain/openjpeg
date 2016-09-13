@@ -52,6 +52,7 @@ static int t1_init_ctxno_zc(int f, int orient) {
 			t = h;
 			h = v;
 			v = t;
+			/* fall through */
 		case 0:
 		case 1:
 			if (!h) {
