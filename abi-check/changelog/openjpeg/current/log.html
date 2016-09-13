@@ -20,7 +20,21 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d6d0f070e179fc195849aacd842c92f79653934f
+<pre class='wrap'>commit 1e69940955f6d5b05369ebeeafe70e698cc2b870
+Merge: d6d0f07 f66e120
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-09-13 21:21:56 +0200
+
+    Merge branch 'smuehlst-bit-fields-type'
+
+commit f66e1204523415e8936c237ce9cc759e2185708f
+Merge: d6d0f07 8750e18
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-09-13 21:21:11 +0200
+
+    Merge branch 'bit-fields-type' of https://github.com/smuehlst/openjpeg into smuehlst-bit-fields-type
+
+commit d6d0f070e179fc195849aacd842c92f79653934f
 Merge: f1f7c53 48c16b2
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-13 16:39:26 +0200
@@ -100,6 +114,22 @@ Date:   2016-09-08 00:24:15 +0200
     than lower bound.
     See also
     https://pdfium.googlesource.com/pdfium/+/b6befb2ed2485a3805cddea86dc7574510178ea9
+
+commit 8750e183c652de44d332e786842ca33182c375be
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2016-09-07 08:41:01 +0200
+
+    Moved type OPJ_BITFIELD from openjpeg.h to opj_includes.h
+    
+    OPJ_BITFIELD is used only in internal headers and must not
+    appear in the public openjpeg.h header.
+
+commit 6c83f1468c3ac4d8b031efb016aa075b36895aaf
+Merge: 5487419 c16bc05
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2016-09-07 08:35:19 +0200
+
+    Merge branch 'master' into bit-fields-type
 
 commit acfb307df43a811cc56c035d0dc651dac8c9e7de
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
@@ -206,6 +236,24 @@ Date:   2016-08-06 12:26:46 +0200
     Reenable clang-3.9 build on travis (#806)
     
     clang-3.9 is now available with apt add-on in travis-ci
+
+commit 54874194a88997c2492fe1206203047739266dff
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2016-07-27 10:09:54 +0200
+
+    Unified bit-field declaration, removed tabs.
+
+commit d2d35bf6c2119cd39a298f57b03bf9e17d36946b
+Author: Stephan Mühlstrasser &lt;stephan.muehlstrasser@web.de&gt;
+Date:   2016-07-25 20:46:11 +0200
+
+    Create separate type for bit-fields.
+    
+    The definition of bit-fields with type OPJ_UINT32 caused complilation errors
+    on IBM iSeries, because OPJ_UINT32 is defined as uint32_t, and
+    uint32_t is defined as unsigned long in &lt;stdint.h&gt;. The definition of
+    bit-fields with an integer type of  a specific size doesn't make sense
+    anyway.
 
 commit b8bd1b0e07cf427b80eb0dc6823efebbdd1b8e5b
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
@@ -724,12 +772,6 @@ Date:   2016-04-29 23:49:17 +0200
 
     cppcheck fix for openjp2 (#740)
 
-commit e166e4a209d9a3e4b583e4b2cdcbab2c57967eb1
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-28 19:20:14 +0200
-
-    Check SSIZ is valid in opj_j2k_read_siz (#762)
-
 commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-01-25 22:16:49 +0100
@@ -744,52 +786,6 @@ Date:   2016-01-25 22:16:49 +0100
     NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
     NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
     NR-DEC-issue135.j2k-68-decode-md5
-
-commit 5947e10ff7bebdcc8f72ab9246f03db05582fa0a
-Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
-Date:   2016-04-27 23:05:43 +0200
-
-    Add clang 3.9 build to Travis matrix (#753)
-
-commit e6881e75279627096fbbaca19e837252737a3892
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-27 21:56:09 +0200
-
-    Fix negative shift left reported by UBSan (#758)
-    
-    Follow-up of #757
-    
-    This shall have no performance impact on 2’s complement machine where
-    the compiler replaces the multiplication by power of two (constant) by
-    a left shift.
-    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
-
-commit 2296dc9e68e0ebc8342a8669aa2398a029b0fa3f
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-04-26 22:12:11 +0200
-
-    Remove whitespace and CR at line endings (#678)
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 6f2ac3ee366a9b587abe9a72febc400ba5b98c24
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-26 22:06:06 +0200
-
-    Fix negative shift left reported by UBSan (#757)
-    
-    This shall have no performance impact on 2’s complement machine where
-    the compiler replaces the multiplication by power of two (constant) by
-    a left shift.
-    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
-
-commit c559c628539bc8956193a5ff8ac787a0c6fa090c
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-23 14:17:31 +0200
-
-    Do not define __attribute__ in opj_includes.h (#751)
-    
-    Fix #727
 
 ...</pre></div>
 
