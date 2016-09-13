@@ -911,7 +911,7 @@ OPJ_FLOAT64 opj_clock(void) {
 #elif defined(__linux)
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
-	return( ts.tv_sec + ts.tv_nsec * 1e-9 );
+	return( (OPJ_FLOAT64)ts.tv_sec + (OPJ_FLOAT64)ts.tv_nsec * 1e-9 );
 #else
 	/* Unix : use resource usage */
 	/* FIXME: this counts the total CPU time, instead of the user perceived time */

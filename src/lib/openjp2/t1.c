@@ -86,15 +86,15 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
                 OPJ_INT32 vsc,
-                OPJ_INT32 row);
+                OPJ_UINT32 row);
 static INLINE void opj_t1_dec_sigpass_step_mqc(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
                 opj_colflag_t* colflagsp,
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
-                OPJ_INT32 row,
-                OPJ_INT32 flags_stride);
+                OPJ_UINT32 row,
+                OPJ_UINT32 flags_stride);
 static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
@@ -102,7 +102,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
                 OPJ_INT32 vsc,
-                OPJ_INT32 row);
+                OPJ_UINT32 row);
 
 
 /**
@@ -179,7 +179,7 @@ static INLINE void  opj_t1_dec_refpass_step_raw(
                 OPJ_INT32 *datap,
                 OPJ_INT32 poshalf,
                 OPJ_INT32 neghalf,
-                OPJ_INT32 row);
+                OPJ_UINT32 row);
 static INLINE void opj_t1_dec_refpass_step_mqc(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
@@ -187,7 +187,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
                 OPJ_INT32 *datap,
                 OPJ_INT32 poshalf,
                 OPJ_INT32 neghalf,
-                OPJ_INT32 row);
+                OPJ_UINT32 row);
 static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
@@ -196,7 +196,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
                 OPJ_INT32 poshalf,
                 OPJ_INT32 neghalf,
                 OPJ_INT32 vsc,
-                OPJ_INT32 row);
+                OPJ_UINT32 row);
 
 
 
@@ -221,14 +221,14 @@ static void opj_t1_dec_clnpass_step_partial(
 		opj_colflag_t *colflagsp,
 		OPJ_INT32 *datap,
 		OPJ_INT32 oneplushalf,
-		OPJ_INT32 row);
+		OPJ_UINT32 row);
 static void opj_t1_dec_clnpass_step(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
 		opj_colflag_t *colflagsp,
 		OPJ_INT32 *datap,
 		OPJ_INT32 oneplushalf,
-		OPJ_INT32 row);
+		OPJ_UINT32 row);
 static void opj_t1_dec_clnpass_step_vsc(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
@@ -237,7 +237,7 @@ static void opj_t1_dec_clnpass_step_vsc(
 		OPJ_INT32 oneplushalf,
 		OPJ_INT32 partial,
 		OPJ_INT32 vsc,
-		OPJ_INT32 row);
+		OPJ_UINT32 row);
 /**
 Encode clean-up pass
 */
@@ -353,10 +353,10 @@ static INLINE void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT
 	sp[1]  |= T1_SIG_NW;
 }
 
-static INLINE void opj_t1_updateflagscolflags(opj_flag_t *flagsp, opj_colflag_t *colflagsp, OPJ_UINT32 s, OPJ_UINT32 stride, OPJ_INT32 row)
+static INLINE void opj_t1_updateflagscolflags(opj_flag_t *flagsp, opj_colflag_t *colflagsp, OPJ_UINT32 s, OPJ_UINT32 stride, OPJ_UINT32 row)
 {
 	opj_t1_updateflags(flagsp, s, stride);
-	if( row == 0 )
+	if( row == 0U )
 	{
 			*colflagsp |= (T1_COLFLAG_SIG_ROW_0 <<  (T1_COLFLAG_RBS * row)) |
 						  (T1_COLFLAG_SIG_OTHER_ROW_0 <<  (T1_COLFLAG_RBS * (row+1)));
@@ -368,7 +368,7 @@ static INLINE void opj_t1_updateflagscolflags(opj_flag_t *flagsp, opj_colflag_t 
 			*(colflagsp - stride) |= (T1_COLFLAG_SIG_OTHER_ROW_3);
 			*(colflagsp - stride + 1) |= (T1_COLFLAG_SIG_OTHER_ROW_3);
 	}
-	else if( row == 3 )
+	else if( row == 3U )
 	{
 			*colflagsp |= (T1_COLFLAG_SIG_ROW_0 <<  (T1_COLFLAG_RBS * row)) |
 						  (T1_COLFLAG_SIG_OTHER_ROW_0 <<  (T1_COLFLAG_RBS * (row-1)));
@@ -441,7 +441,7 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
                 OPJ_INT32 vsc,
-                OPJ_INT32 row)
+                OPJ_UINT32 row)
 {
         OPJ_INT32 v, flag;
         opj_raw_t *raw = t1->raw;       /* RAW component */
@@ -466,8 +466,8 @@ static INLINE void opj_t1_dec_sigpass_step_mqc(
                 opj_colflag_t* colflagsp,
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
-                OPJ_INT32 row,
-                OPJ_INT32 flags_stride)
+                OPJ_UINT32 row,
+                OPJ_UINT32 flags_stride)
 {
         OPJ_INT32 v, flag;
        
@@ -501,7 +501,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
                 OPJ_INT32 vsc,
-                OPJ_INT32 row)
+                OPJ_UINT32 row)
 {
         OPJ_INT32 v, flag;
        
@@ -578,7 +578,7 @@ static void opj_t1_dec_sigpass_raw(
                                                 &t1->data[(j * t1->w) + i],
                                                 oneplushalf,
                                                 vsc,
-                                                (OPJ_INT32)(j - k));
+                                                j - k);
                         }
                 }
                 colflags1 += t1->flags_stride;
@@ -602,16 +602,16 @@ static void opj_t1_dec_sigpass_raw(
                         opj_colflag_t *colflags2 = colflags1 + i; \
                         if( *colflags2 == 0 ) continue; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 0, flags_stride); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 0U, flags_stride); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 1, flags_stride); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 1U, flags_stride); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 2, flags_stride); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 2U, flags_stride); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 3, flags_stride); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 3U, flags_stride); \
                         data2 += w; \
                 } \
                 data1 += w << 2; \
@@ -657,22 +657,22 @@ static void opj_t1_dec_sigpass_mqc_vsc(
         one = 1 << bpno;
         half = one >> 1;
         oneplushalf = one | half;
-        for (k = 0; k < (t1->h & ~3); k += 4) {
+        for (k = 0; k < (t1->h & ~(OPJ_UINT32)3); k += 4U) {
                 for (i = 0; i < t1->w; ++i) {
                         OPJ_INT32 *data2 = data1 + i;
                         opj_flag_t *flags2 = flags1 + i;
                         opj_colflag_t *colflags2 = colflags1 + i;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 0);
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 0U);
                         data2 += t1->w;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 1);
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 1U);
                         data2 += t1->w;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 2);
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 2U);
                         data2 += t1->w;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 1, 3);
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 1, 3U);
                         data2 += t1->w;
                 }
                 data1 += t1->w << 2;
@@ -690,7 +690,7 @@ static void opj_t1_dec_sigpass_mqc_vsc(
                                         &t1->data[(j * t1->w) + i],
                                         oneplushalf,
                                         vsc,
-                                        (OPJ_INT32)(j - k));
+                                        j - k);
                 }
         }
 }                               /* VSC and  BYPASS by Antonin */
@@ -731,7 +731,7 @@ static INLINE void opj_t1_dec_refpass_step_raw(
                 OPJ_INT32 *datap,
                 OPJ_INT32 poshalf,
                 OPJ_INT32 neghalf,
-                OPJ_INT32 row)
+                OPJ_UINT32 row)
 {
         OPJ_INT32 v, t;
        
@@ -757,7 +757,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
                 OPJ_INT32 *datap,
                 OPJ_INT32 poshalf,
                 OPJ_INT32 neghalf,
-                OPJ_INT32 row)
+                OPJ_UINT32 row)
 {
         OPJ_INT32 v, t;
        
@@ -788,7 +788,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
                 OPJ_INT32 poshalf,
                 OPJ_INT32 neghalf,
                 OPJ_INT32 vsc,
-                OPJ_INT32 row)
+                OPJ_UINT32 row)
 {
         OPJ_INT32 v, t;
        
@@ -857,7 +857,7 @@ static void opj_t1_dec_refpass_raw(
                                                 colflags2,
                                                 &t1->data[(j * t1->w) + i],
                                                 poshalf,
-                                                neghalf, (OPJ_INT32)(j - k));
+                                                neghalf, j - k);
                         }
                 }
                 colflags1 += t1->flags_stride;
@@ -881,16 +881,16 @@ static void opj_t1_dec_refpass_raw(
                         opj_colflag_t *colflags2 = colflags1 + i; \
                         if( *colflags2 == 0 ) continue; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 0); \
+                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 0U); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 1); \
+                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 1U); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 2); \
+                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 2U); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 3); \
+                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 3U); \
                         data2 += w; \
                 } \
                 data1 += w << 2; \
@@ -903,7 +903,7 @@ static void opj_t1_dec_refpass_raw(
                 opj_colflag_t *colflags2 = colflags1 + i; \
                 for (j = k; j < h; ++j) { \
                         flags2 += flags_stride; \
-                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, (OPJ_INT32)(j - k)); \
+                        opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, j - k); \
                         data2 += w; \
                 } \
         } \
@@ -937,22 +937,22 @@ static void opj_t1_dec_refpass_mqc_vsc(
         one = 1 << bpno;
         poshalf = one >> 1;
         neghalf = bpno > 0 ? -poshalf : -1;
-        for (k = 0; k < (t1->h & ~3); k += 4) {
+        for (k = 0; k < (t1->h & ~(OPJ_UINT32)3U); k += 4U) {
                 for (i = 0; i < t1->w; ++i) {
                         OPJ_INT32 *data2 = data1 + i;
                         opj_flag_t *flags2 = flags1 + i;
                         opj_colflag_t *colflags2 = colflags1 + i;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 0);
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 0U);
                         data2 += t1->w;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 1);
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 1U);
                         data2 += t1->w;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 2);
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 2U);
                         data2 += t1->w;
                         flags2 += t1->flags_stride;
-                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 1, 3);
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 1, 3U);
                         data2 += t1->w;
                 }
                 data1 += t1->w << 2;
@@ -970,7 +970,7 @@ static void opj_t1_dec_refpass_mqc_vsc(
                                         &t1->data[(j * t1->w) + i],
                                         poshalf, neghalf,
                                         vsc,
-                                        (OPJ_INT32)(j - k));
+                                        j - k);
                 }
         }
 }                               /* VSC and  BYPASS by Antonin */
@@ -1017,7 +1017,7 @@ static void opj_t1_dec_clnpass_step_partial(
 		opj_colflag_t *colflagsp,
 		OPJ_INT32 *datap,
 		OPJ_INT32 oneplushalf,
-		OPJ_INT32 row)
+		OPJ_UINT32 row)
 {
 	OPJ_INT32 v, flag;
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
@@ -1038,7 +1038,7 @@ static void opj_t1_dec_clnpass_step(
 		opj_colflag_t *colflagsp,
 		OPJ_INT32 *datap,
 		OPJ_INT32 oneplushalf,
-		OPJ_INT32 row)
+		OPJ_UINT32 row)
 {
 	OPJ_INT32 v, flag;
 	
@@ -1067,8 +1067,8 @@ static void opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(
         opj_colflag_t *colflagsp,
         OPJ_INT32 *datap,
         OPJ_INT32 oneplushalf,
-        OPJ_INT32 row,
-        OPJ_INT32 flags_stride)
+        OPJ_UINT32 row,
+        OPJ_UINT32 flags_stride)
 {
     OPJ_INT32 v;
     OPJ_INT32 flag;
@@ -1092,12 +1092,12 @@ static void opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(
 static void opj_t1_dec_clnpass_step_vsc(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
-        opj_colflag_t *colflagsp,
+		opj_colflag_t *colflagsp,
 		OPJ_INT32 *datap,
 		OPJ_INT32 oneplushalf,
 		OPJ_INT32 partial,
 		OPJ_INT32 vsc,
-        OPJ_INT32 row)
+		OPJ_UINT32 row)
 {
 	OPJ_INT32 v, flag;
 	
@@ -1283,28 +1283,28 @@ static void opj_t1_enc_clnpass(
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 0, flags_stride); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 0U, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 1, flags_stride); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 1U, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 2, flags_stride); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 2U, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 3, flags_stride); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 3U, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
