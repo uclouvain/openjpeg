@@ -563,13 +563,13 @@ typedef struct
     OPJ_UINT32 rw;
     OPJ_UINT32 w;
     OPJ_INT32 * OPJ_RESTRICT tiledp;
-    int min_j;
-    int max_j;
+    OPJ_UINT32 min_j;
+    OPJ_UINT32 max_j;
 } opj_dwd_decode_h_job_t;
 
 static void opj_dwt_decode_h_func(void* user_data, opj_tls_t* tls)
 {
-    int j;
+    OPJ_UINT32 j;
     opj_dwd_decode_h_job_t* job;
     (void)tls;
 
@@ -592,13 +592,13 @@ typedef struct
     OPJ_UINT32 rh;
     OPJ_UINT32 w;
     OPJ_INT32 * OPJ_RESTRICT tiledp;
-    int min_j;
-    int max_j;
+    OPJ_UINT32 min_j;
+    OPJ_UINT32 max_j;
 } opj_dwd_decode_v_job_t;
 
 static void opj_dwt_decode_v_func(void* user_data, opj_tls_t* tls)
 {
-    int j;
+    OPJ_UINT32 j;
     opj_dwd_decode_v_job_t* job;
     (void)tls;
 
@@ -631,8 +631,8 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
 	OPJ_UINT32 rh = (OPJ_UINT32)(tr->y1 - tr->y0);	/* height of the resolution level computed */
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
-    size_t h_mem_size;
-    int num_threads;
+	size_t h_mem_size;
+	int num_threads;
 	
 	if (numres == 1U) {
 		return OPJ_TRUE;
@@ -671,9 +671,10 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
         }
         else
         {
-            int num_jobs = num_threads;
-            if( rh < num_jobs )
+            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+            if( rh < num_jobs ) {
                 num_jobs = rh;
+            }
             for( j = 0; j < num_jobs; j++ )
             {
                 opj_dwd_decode_h_job_t* job;
@@ -695,7 +696,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
                 job->w = w;
                 job->tiledp = tiledp;
                 job->min_j = j * (rh / num_jobs);
-                job->max_j = (j+1) * (rh / num_jobs);
+                job->max_j = (j+1) * (rh / num_jobs); /* TODO this can overflow */
                 if( job->max_j > rh || j == num_jobs - 1 )
                     job->max_j = rh;
                 job->h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
@@ -728,7 +729,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
         }
         else
         {
-            int num_jobs = num_threads;
+            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
             if( rw < num_jobs )
                 num_jobs = rw;
             for( j = 0; j < num_jobs; j++ )
@@ -752,7 +753,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
                 job->w = w;
                 job->tiledp = tiledp;
                 job->min_j = j * (rw / num_jobs);
-                job->max_j = (j+1) * (rw / num_jobs);
+                job->max_j = (j+1) * (rw / num_jobs); /* TODO this can overflow */
                 if( job->max_j > rw || j == num_jobs - 1 )
                     job->max_j = rw;
                 job->v.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
