@@ -539,6 +539,10 @@ OPJ_BOOL opj_tls_set(opj_tls_t* tls, int key, void* value, opj_tls_free_func opj
 {
     opj_tls_key_val_t* new_key_val;
     int i;
+	
+    if (tls->key_val_count == INT_MAX) {
+        return OPJ_FALSE;
+    }
     for(i=0;i<tls->key_val_count;i++)
     {
         if( tls->key_val[i].key == key )
@@ -552,7 +556,7 @@ OPJ_BOOL opj_tls_set(opj_tls_t* tls, int key, void* value, opj_tls_free_func opj
         }
     }
     new_key_val = (opj_tls_key_val_t*) opj_realloc( tls->key_val,
-                        (tls->key_val_count + 1) * sizeof(opj_tls_key_val_t) );
+                        ((size_t)tls->key_val_count + 1U) * sizeof(opj_tls_key_val_t) );
     if( !new_key_val )
         return OPJ_FALSE;
     tls->key_val = new_key_val;
@@ -694,7 +698,7 @@ static OPJ_BOOL opj_thread_pool_setup(opj_thread_pool_t* tp, int num_threads)
     if( tp->cond == NULL )
         return OPJ_FALSE;
 
-    tp->worker_threads = (opj_worker_thread_t*) opj_calloc( num_threads,
+    tp->worker_threads = (opj_worker_thread_t*) opj_calloc( (size_t)num_threads,
                                                         sizeof(opj_worker_thread_t) );
     if( tp->worker_threads == NULL )
         return OPJ_FALSE;

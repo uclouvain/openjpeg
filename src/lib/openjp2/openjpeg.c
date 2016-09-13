@@ -364,12 +364,12 @@ void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *paramete
 OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,
                                                     int num_threads)
 {
-  if (p_codec ) { 
-        opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+	if (p_codec && (num_threads >= 0)) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
 
-        return l_codec->opj_set_threads(l_codec->m_codec, num_threads);
-    }
-    return OPJ_FALSE;
+		return l_codec->opj_set_threads(l_codec->m_codec, (OPJ_UINT32)num_threads);
+	}
+	return OPJ_FALSE;
 }
 
 OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,

@@ -54,6 +54,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
+#include <limits.h>
 
 /*
   Use fseeko() and ftello() if they are available since they use

@@ -671,7 +671,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
         }
         else
         {
-            OPJ_UINT32 num_jobs = num_threads;
+            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
             if( rh < num_jobs ) {
                 num_jobs = rh;
             }
