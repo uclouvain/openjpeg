@@ -349,7 +349,7 @@ static INLINE void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT
 	flagsp[1]  |= (opj_flag_t)(flag_N << 3U);
 
 	sp[-1] |= T1_SIG_NE;
-	sp[0]  |= flag_N;
+	sp[0]  |= (opj_flag_t)flag_N;
 	sp[1]  |= T1_SIG_NW;
 }
 
@@ -1237,7 +1237,7 @@ static void opj_t1_enc_clnpass(
 						agg && (j == k + (OPJ_UINT32)runlen), \
 						vsc, j - k); \
 			} \
-			*colflags2 &= ~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
+			*colflags2 &= (opj_colflag_t)~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
 		} \
 		colflags1 += flags_stride; \
 	} \
@@ -1310,7 +1310,7 @@ static void opj_t1_enc_clnpass(
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
 				} \
-				*colflags2 &= ~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
+				*colflags2 &= (opj_colflag_t)~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
 			} \
 			data1 += w << 2; \
 			flags1 += flags_stride << 2; \
@@ -1325,7 +1325,7 @@ static void opj_t1_enc_clnpass(
 				opj_t1_dec_clnpass_step(t1, flags2, colflags2, data2, oneplushalf, j - k); \
 				data2 += w; \
 			} \
-			*colflags2 &= ~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
+			*colflags2 &= (opj_colflag_t)~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
 		} \
 	} \
  \
