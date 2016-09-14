@@ -70,23 +70,23 @@ in T1.C are used by some function in TCD.C.
 #define T1_SGN_W 0x0800U
 #define T1_SGN (T1_SGN_N|T1_SGN_E|T1_SGN_S|T1_SGN_W)
 
-#define T1_SIG 0x1000U    /**< No longer used by decoder */
+#define T1_SIG    0x1000U /**< No longer used by decoder */
 #define T1_REFINE 0x2000U /**< No longer used by decoder */
-#define T1_VISIT 0x4000U  /**< No longer used by decoder */
+#define T1_VISIT  0x4000U /**< No longer used by decoder */
 /* END of flags that apply to opj_flag_t */
 
-#define T1_NUMCTXS_ZC 9
-#define T1_NUMCTXS_SC 5
+#define T1_NUMCTXS_ZC  9
+#define T1_NUMCTXS_SC  5
 #define T1_NUMCTXS_MAG 3
 #define T1_NUMCTXS_AGG 1
 #define T1_NUMCTXS_UNI 1
 
-#define T1_CTXNO_ZC 0
-#define T1_CTXNO_SC (T1_CTXNO_ZC+T1_NUMCTXS_ZC)
+#define T1_CTXNO_ZC  0
+#define T1_CTXNO_SC  (T1_CTXNO_ZC+T1_NUMCTXS_ZC)
 #define T1_CTXNO_MAG (T1_CTXNO_SC+T1_NUMCTXS_SC)
 #define T1_CTXNO_AGG (T1_CTXNO_MAG+T1_NUMCTXS_MAG)
 #define T1_CTXNO_UNI (T1_CTXNO_AGG+T1_NUMCTXS_AGG)
-#define T1_NUMCTXS (T1_CTXNO_UNI+T1_NUMCTXS_UNI)
+#define T1_NUMCTXS   (T1_CTXNO_UNI+T1_NUMCTXS_UNI)
 
 #define T1_NMSEDEC_FRACBITS (T1_NMSEDEC_BITS-1)
 
@@ -95,10 +95,10 @@ in T1.C are used by some function in TCD.C.
 
 /* Those flags are used by opj_colflag_t */
 #define T1_COLFLAG_RBS              4U /* RBS = Row Bit Shift */
-#define T1_COLFLAG_SIG_OTHER_ROW_0 (1U << 0)  /**< This sample has at least one significant neighbour */
-#define T1_COLFLAG_SIG_ROW_0       (1U << 1)  /**< This sample is significant */
-#define T1_COLFLAG_VISIT_ROW_0     (1U << 2)  /**< This sample has been visited */
-#define T1_COLFLAG_REFINE_ROW_0    (1U << 3)  /**< This sample has been refined */
+#define T1_COLFLAG_SIG_OTHER_ROW_0 (1U << 0U)  /**< This sample has at least one significant neighbour */
+#define T1_COLFLAG_SIG_ROW_0       (1U << 1U)  /**< This sample is significant */
+#define T1_COLFLAG_VISIT_ROW_0     (1U << 2U)  /**< This sample has been visited */
+#define T1_COLFLAG_REFINE_ROW_0    (1U << 3U)  /**< This sample has been refined */
 #define T1_COLFLAG_SIG_OTHER_ROW_1 (T1_COLFLAG_SIG_OTHER_ROW_0 << (1U * T1_COLFLAG_RBS))
 #define T1_COLFLAG_SIG_ROW_1       (T1_COLFLAG_SIG_ROW_0       << (1U * T1_COLFLAG_RBS))
 #define T1_COLFLAG_VISIT_ROW_1     (T1_COLFLAG_VISIT_ROW_0     << (1U * T1_COLFLAG_RBS))
