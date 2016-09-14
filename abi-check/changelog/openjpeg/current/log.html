@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 0954bc11e3ab6a39d86e5ed51286da4b8989743d
+<pre class='wrap'>commit f88c9974e27161427c003dda5d89f61a5a3995e9
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-14 23:46:46 +0200
+
+    Flags in T1 shall be unsigned (#840)
+    
+    This will remove some conversion warnings
+
+commit 0954bc11e3ab6a39d86e5ed51286da4b8989743d
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-09-14 00:12:43 +0200
 
@@ -761,18 +769,6 @@ Date:   2016-04-30 00:33:27 +0200
     That is offset = comp-&gt;dx * comp-&gt;x0 - image-&gt;x0 = 1
     
     Fix #726
-
-commit ad593c9e0622e0d8d87228e67e4dbd36243ffd22
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-29 23:51:14 +0200
-
-    Fix heap-buffer-overflow in color_esycc_to_rgb (#748)
-    
-    When all components do not have the same dx/dy, components buffer are
-    read beyond their end.
-    Do not convert in this case.
-    
-    Update uclouvain/openjpeg#725
 
 commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
 Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
