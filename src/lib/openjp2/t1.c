@@ -1286,28 +1286,28 @@ static void opj_t1_enc_clnpass(
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) {\
 						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 0U, flags_stride); \
 					} \
-					if( consistency_check ) *flags2 &= ~T1_VISIT; \
+					if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) {\
 						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 1U, flags_stride); \
 					} \
-					if( consistency_check ) *flags2 &= ~T1_VISIT; \
+					if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) {\
 						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 2U, flags_stride); \
 					} \
-					if( consistency_check ) *flags2 &= ~T1_VISIT; \
+					if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) {\
 						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 3U, flags_stride); \
 					} \
-					if( consistency_check ) *flags2 &= ~T1_VISIT; \
+					if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
 					data2 += w; \
 				} \
 				*colflags2 &= (opj_colflag_t)~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
