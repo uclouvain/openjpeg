@@ -1406,56 +1406,135 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 		OPJ_UINT32 w,
 		OPJ_UINT32 h)
 {
-	OPJ_UINT32 datasize=w * h;
-	OPJ_UINT32 flagssize;
-
 	/* encoder uses tile buffer, so no need to allocate */
 	if (!t1->encoder) {
-		if(datasize > t1->datasize){
+		size_t datasize;
+		
+#if (SIZE_MAX / 0xFFFFFFFFU) < 0xFFFFFFFFU /* UINT32_MAX */
+		/* Overflow check */
+		if ((w > 0U) && ((size_t)h > (SIZE_MAX / (size_t)w))) {
+			/* FIXME event manager error callback */
+			return OPJ_FALSE;
+		}
+#endif
+		datasize = (size_t)w * h;
+
+		/* Overflow check */
+		if (datasize > (SIZE_MAX / sizeof(OPJ_INT32))) {
+			/* FIXME event manager error callback */
+			return OPJ_FALSE;
+		}
+
+		if(datasize > (size_t)t1->datasize){
 			opj_aligned_free(t1->data);
 			t1->data = (OPJ_INT32*) opj_aligned_malloc(datasize * sizeof(OPJ_INT32));
 			if(!t1->data){
 				/* FIXME event manager error callback */
 				return OPJ_FALSE;
 			}
-			t1->datasize=datasize;
+#if SIZE_MAX > 0xFFFFFFFFU /* UINT32_MAX */
+			/* TODO remove this if t1->datasize type changes to size_t */
+			/* Overflow check */
+			if (datasize > (size_t)0xFFFFFFFFU /* UINT32_MAX */) {
+				/* FIXME event manager error callback */
+				return OPJ_FALSE;
+			}
+#endif
+			t1->datasize = (OPJ_UINT32)datasize;
 		}
 		/* memset first arg is declared to never be null by gcc */
 		if (t1->data != NULL) {
-			memset(t1->data,0,datasize * sizeof(OPJ_INT32));
+			memset(t1->data, 0, datasize * sizeof(OPJ_INT32));
 		}
 	}
-	t1->flags_stride=w+2;
-	flagssize=t1->flags_stride * (h+2);
 
-	if(flagssize > t1->flagssize){
-		opj_aligned_free(t1->flags);
-		t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize * sizeof(opj_flag_t));
-		if(!t1->flags){
+	{
+		size_t flagssize;
+
+		/* Overflow check */
+		if (w > (0xFFFFFFFFU /* UINT32_MAX */ - 2U)) {
 			/* FIXME event manager error callback */
 			return OPJ_FALSE;
 		}
-		t1->flagssize=flagssize;
-	}
-	memset(t1->flags,0,flagssize * sizeof(opj_flag_t));
-	
-	if (!t1->encoder) {
-		OPJ_UINT32 colflags_size=t1->flags_stride * ((h+3) / 4 + 2);
+		t1->flags_stride = w + 2U; /* can't be 0U */
 
-		if(colflags_size > t1->colflags_size){
+#if (SIZE_MAX - 3U) < 0xFFFFFFFFU /* UINT32_MAX */
+		/* Overflow check */
+		if (h > (0xFFFFFFFFU /* UINT32_MAX */ - 3U)) {
+			/* FIXME event manager error callback */
+			return OPJ_FALSE;
+		}
+#endif
+		flagssize = (size_t)h + 3U;
+		
+		/* Overflow check */
+		if (flagssize > (SIZE_MAX / (size_t)t1->flags_stride)) {
+			/* FIXME event manager error callback */
+			return OPJ_FALSE;
+		}
+		flagssize *= (size_t)t1->flags_stride;
+
+		if(flagssize > (size_t)t1->flagssize){
+			/* Overflow check */
+			if (flagssize > (SIZE_MAX / sizeof(opj_flag_t))) {
+				/* FIXME event manager error callback */
+				return OPJ_FALSE;
+			}
+			opj_aligned_free(t1->flags);
+			t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize * sizeof(opj_flag_t));
+			if(!t1->flags){
+				/* FIXME event manager error callback */
+				return OPJ_FALSE;
+			}
+#if SIZE_MAX > 0xFFFFFFFFU /* UINT32_MAX */
+			/* TODO remove this if t1->flagssize type changes to size_t */
+			/* Overflow check */
+			if (flagssize > (size_t)0xFFFFFFFFU /* UINT32_MAX */) {
+				/* FIXME event manager error callback */
+				return OPJ_FALSE;
+			}
+#endif
+			t1->flagssize = (OPJ_UINT32)flagssize;
+		}
+		memset(t1->flags, 0, flagssize * sizeof(opj_flag_t));
+	}
+	if (!t1->encoder) {
+		size_t colflags_size = ((((size_t)h + 3U) / 4U) + 2U); /* Can't overflow, h checked against UINT32_MAX - 3U */
+		
+		/* Overflow check */
+		if (colflags_size > (SIZE_MAX / (size_t)t1->flags_stride)) {
+			/* FIXME event manager error callback */
+			return OPJ_FALSE;
+		}
+		colflags_size *= (size_t)t1->flags_stride;
+		
+		if(colflags_size > (size_t)t1->colflags_size){
+			/* Overflow check */
+			if ((size_t)colflags_size > (SIZE_MAX / sizeof(opj_colflag_t))) {
+				/* FIXME event manager error callback */
+				return OPJ_FALSE;
+			}
 			opj_aligned_free(t1->colflags);
 			t1->colflags = (opj_colflag_t*) opj_aligned_malloc(colflags_size * sizeof(opj_colflag_t));
 			if(!t1->colflags){
 				/* FIXME event manager error callback */
 				return OPJ_FALSE;
 			}
-			t1->colflags_size=colflags_size;
+#if SIZE_MAX > 0xFFFFFFFFU /* UINT32_MAX */
+			/* TODO remove this if t1->colflags_size type changes to size_t */
+			/* Overflow check */
+			if (colflags_size > (size_t)0xFFFFFFFFU /* UINT32_MAX */) {
+				/* FIXME event manager error callback */
+				return OPJ_FALSE;
+			}
+#endif
+			t1->colflags_size = (OPJ_UINT32)colflags_size;
 		}
-		memset(t1->colflags,0,colflags_size * sizeof(opj_colflag_t));
+		memset(t1->colflags, 0, colflags_size * sizeof(opj_colflag_t));
 	}
 
-	t1->w=w;
-	t1->h=h;
+	t1->w = w;
+	t1->h = h;
 
 	return OPJ_TRUE;
 }

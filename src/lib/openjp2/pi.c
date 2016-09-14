@@ -1238,14 +1238,14 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 
 	/* memory allocation for include */
 	/* prevent an integer overflow issue */
+	/* 0 < l_tcp->numlayers < 65536 c.f. opj_j2k_read_cod in j2k.c */
 	l_current_pi->include = 00;
 	if (l_step_l <= (SIZE_MAX / (l_tcp->numlayers + 1U)))
 	{
 		l_current_pi->include = (OPJ_INT16*) opj_calloc((size_t)(l_tcp->numlayers + 1U) * l_step_l, sizeof(OPJ_INT16));
 	}
 
-	if
-		(!l_current_pi->include)
+	if (!l_current_pi->include)
 	{
 		opj_free(l_tmp_data);
 		opj_free(l_tmp_ptr);
