@@ -407,11 +407,19 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void 
 	l_cur_res = tilec->resolutions + l;
 	l_last_res = l_cur_res - 1;
 
-	l_data_size = opj_dwt_max_resolution( tilec->resolutions,tilec->numresolutions) * (OPJ_UINT32)sizeof(OPJ_INT32);
-	bj = (OPJ_INT32*)opj_malloc((size_t)l_data_size);
+	l_data_size = opj_dwt_max_resolution(tilec->resolutions, tilec->numresolutions);
+ 
+	/* overflow check */
+	if ((size_t)l_data_size > (SIZE_MAX / sizeof(OPJ_INT32))) {
+		/* FIXME event manager error callback */
+		return OPJ_FALSE;
+	}
+
+	bj = (OPJ_INT32*)opj_malloc((size_t)l_data_size * sizeof(OPJ_INT32));
 	/* l_data_size is equal to 0 when numresolutions == 1 but bj is not used */
 	/* in that case, so do not error out */
 	if (l_data_size != 0 && ! bj) {
+		/* FIXME event manager error callback */
 		return OPJ_FALSE;
 	}
 	i = l;
@@ -569,11 +577,22 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 	OPJ_UINT32 rh = (OPJ_UINT32)(tr->y1 - tr->y0);	/* height of the resolution level computed */
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+
+	OPJ_UINT32 mr; /* max resolution */
 	
 	if (numres == 1U) {
 		return OPJ_TRUE;
 	}
-	h.mem = (OPJ_INT32*)opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
+	
+	mr = opj_dwt_max_resolution(tr, numres);
+	
+	/* overflow check */
+	if ((size_t)mr > (SIZE_MAX / sizeof(OPJ_INT32))) {
+		/* FIXME event manager error callback */
+		return OPJ_FALSE;
+	}
+	
+	h.mem = (OPJ_INT32*)opj_aligned_malloc((size_t)mr * sizeof(OPJ_INT32));
 	if (! h.mem){
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
@@ -845,8 +864,24 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec, OPJ_UINT32 
 	OPJ_UINT32 rh = (OPJ_UINT32)(res->y1 - res->y0);	/* height of the resolution level computed */
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+	
+	OPJ_UINT32 mr; /* max resolution */
+	
+	mr = opj_dwt_max_resolution(res, numres);
+	
+	/* overflow check */
+	if (mr > (0xFFFFFFFFU /* UINT32_MAX */ - 5U)) {
+		/* FIXME event manager error callback */
+		return OPJ_FALSE;
+	}
+	mr += 5U;
+	
+	if ((size_t)mr > (SIZE_MAX / sizeof(opj_v4_t))) {
+		/* FIXME event manager error callback */
+		return OPJ_FALSE;
+	}
 
-	h.wavelet = (opj_v4_t*) opj_aligned_malloc((opj_dwt_max_resolution(res, numres)+5) * sizeof(opj_v4_t));
+	h.wavelet = (opj_v4_t*) opj_aligned_malloc((size_t)mr * sizeof(opj_v4_t));
 	if (!h.wavelet) {
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
