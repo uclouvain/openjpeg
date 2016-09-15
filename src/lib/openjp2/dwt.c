@@ -674,7 +674,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
 		h.dn = (OPJ_INT32)(rw - (OPJ_UINT32)h.sn);
 		h.cas = tr->x0 % 2;
 
-		if( num_threads <= 1 || rh == 1 )
+		if( num_threads <= 1 || rh <= 1 )
 		{
 			for(j = 0; j < rh; ++j) {
 				opj_dwt_interleave_h(&h, &tiledp[j*w]);
@@ -734,7 +734,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
 		v.dn = (OPJ_INT32)(rh - (OPJ_UINT32)v.sn);
 		v.cas = tr->y0 % 2;
 
-		if( num_threads <= 1 || rw == 1 )
+		if( num_threads <= 1 || rw <= 1 )
 		{
 			for(j = 0; j < rw; ++j){
 				OPJ_UINT32 k;
