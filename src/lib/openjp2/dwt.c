@@ -625,9 +625,10 @@ static void opj_dwt_decode_v_func(void* user_data, opj_tls_t* tls)
 
 
 /* <summary>                            */
-/* Inverse wavelet transform in 2-D.     */
+/* Inverse wavelet transform in 2-D.    */
 /* </summary>                           */
-static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
+static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D)
+{
 	opj_dwt_t h;
 	opj_dwt_t v;
 
@@ -673,120 +674,133 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
 		h.dn = (OPJ_INT32)(rw - (OPJ_UINT32)h.sn);
 		h.cas = tr->x0 % 2;
 
-        if( num_threads <= 1 || rh == 1 )
-        {
-            for(j = 0; j < rh; ++j) {
-                opj_dwt_interleave_h(&h, &tiledp[j*w]);
-                (dwt_1D)(&h);
-                memcpy(&tiledp[j*w], h.mem, rw * sizeof(OPJ_INT32));
-            }
-        }
-        else
-        {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
-            if( rh < num_jobs ) {
-                num_jobs = rh;
-            }
-            for( j = 0; j < num_jobs; j++ )
-            {
-                opj_dwd_decode_h_job_t* job;
+		if( num_threads <= 1 || rh <= 1 )
+		{
+			for(j = 0; j < rh; ++j) {
+				opj_dwt_interleave_h(&h, &tiledp[j*w]);
+				(dwt_1D)(&h);
+				memcpy(&tiledp[j*w], h.mem, rw * sizeof(OPJ_INT32));
+			}
+		}
+		else
+		{
+			OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+			OPJ_UINT32 step_j;
 
-                job = (opj_dwd_decode_h_job_t*) opj_malloc(sizeof(opj_dwd_decode_h_job_t));
-                if( !job )
-                {
-                    /* It would be nice to fallback to single thread case, but */
-                    /* unfortunately some jobs may be launched and have modified */
-                    /* tiledp, so it is not practical to recover from that error */
-                    /* FIXME event manager error callback */
-                    opj_thread_pool_wait_completion(tp, 0);
-                    opj_aligned_free(h.mem);
-                    return OPJ_FALSE;
-                }
-                job->h = h;
-                job->dwt_1D = dwt_1D;
-                job->rw = rw;
-                job->w = w;
-                job->tiledp = tiledp;
-                job->min_j = j * (rh / num_jobs);
-                job->max_j = (j+1) * (rh / num_jobs); /* TODO this can overflow */
-                if( job->max_j > rh || j == num_jobs - 1 )
-                    job->max_j = rh;
-                job->h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
-                if (!job->h.mem)
-                {
-                    /* FIXME event manager error callback */
-                    opj_thread_pool_wait_completion(tp, 0);
-                    opj_free(job);
-                    opj_aligned_free(h.mem);
-                    return OPJ_FALSE;
-                }
-                opj_thread_pool_submit_job( tp, opj_dwt_decode_h_func, job );
-            }
-            opj_thread_pool_wait_completion(tp, 0);
-        }
+			if( rh < num_jobs ) {
+				num_jobs = rh;
+			}
+			step_j = (rh / num_jobs);
+
+			for(j = 0; j < num_jobs; j++)
+			{
+				opj_dwd_decode_h_job_t* job;
+
+				job = (opj_dwd_decode_h_job_t*) opj_malloc(sizeof(opj_dwd_decode_h_job_t));
+				if( !job )
+				{
+					/* It would be nice to fallback to single thread case, but */
+					/* unfortunately some jobs may be launched and have modified */
+					/* tiledp, so it is not practical to recover from that error */
+					/* FIXME event manager error callback */
+					opj_thread_pool_wait_completion(tp, 0);
+					opj_aligned_free(h.mem);
+					return OPJ_FALSE;
+				}
+				job->h = h;
+				job->dwt_1D = dwt_1D;
+				job->rw = rw;
+				job->w = w;
+				job->tiledp = tiledp;
+				job->min_j = j * step_j;
+				job->max_j = (j + 1U) * step_j; /* this can overflow */
+				if( j == (num_jobs - 1U) ) { /* this will take care of the overflow */
+					job->max_j = rh;
+				}
+				job->h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
+				if (!job->h.mem)
+				{
+					/* FIXME event manager error callback */
+					opj_thread_pool_wait_completion(tp, 0);
+					opj_free(job);
+					opj_aligned_free(h.mem);
+					return OPJ_FALSE;
+				}
+				opj_thread_pool_submit_job( tp, opj_dwt_decode_h_func, job );
+			}
+			opj_thread_pool_wait_completion(tp, 0);
+		}
 
 		v.dn = (OPJ_INT32)(rh - (OPJ_UINT32)v.sn);
 		v.cas = tr->y0 % 2;
 
-        if( num_threads <= 1 || rw == 1 )
-        {
-            for(j = 0; j < rw; ++j){
-                OPJ_UINT32 k;
-                opj_dwt_interleave_v(&v, &tiledp[j], (OPJ_INT32)w);
-                (dwt_1D)(&v);
-                for(k = 0; k < rh; ++k) {
-                    tiledp[k * w + j] = v.mem[k];
-                }
-            }
-        }
-        else
-        {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
-            if( rw < num_jobs )
-                num_jobs = rw;
-            for( j = 0; j < num_jobs; j++ )
-            {
-                opj_dwd_decode_v_job_t* job;
+		if( num_threads <= 1 || rw <= 1 )
+		{
+			for(j = 0; j < rw; ++j){
+				OPJ_UINT32 k;
 
-                job = (opj_dwd_decode_v_job_t*) opj_malloc(sizeof(opj_dwd_decode_v_job_t));
-                if( !job )
-                {
-                    /* It would be nice to fallback to single thread case, but */
-                    /* unfortunately some jobs may be launched and have modified */
-                    /* tiledp, so it is not practical to recover from that error */
-                    /* FIXME event manager error callback */
-                    opj_thread_pool_wait_completion(tp, 0);
-                    opj_aligned_free(v.mem);
-                    return OPJ_FALSE;
-                }
-                job->v = v;
-                job->dwt_1D = dwt_1D;
-                job->rh = rh;
-                job->w = w;
-                job->tiledp = tiledp;
-                job->min_j = j * (rw / num_jobs);
-                job->max_j = (j+1) * (rw / num_jobs); /* TODO this can overflow */
-                if( job->max_j > rw || j == num_jobs - 1 )
-                    job->max_j = rw;
-                job->v.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
-                if (!job->v.mem)
-                {
-                    /* FIXME event manager error callback */
-                    opj_thread_pool_wait_completion(tp, 0);
-                    opj_free(job);
-                    opj_aligned_free(v.mem);
-                    return OPJ_FALSE;
-                }
-                opj_thread_pool_submit_job( tp, opj_dwt_decode_v_func, job );
-            }
-            opj_thread_pool_wait_completion(tp, 0);
-        }
+				opj_dwt_interleave_v(&v, &tiledp[j], (OPJ_INT32)w);
+				(dwt_1D)(&v);
+				for(k = 0; k < rh; ++k) {
+					tiledp[k * w + j] = v.mem[k];
+				}
+			}
+		}
+		else
+		{
+			OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+			OPJ_UINT32 step_j;
+
+			if( rw < num_jobs ) {
+				num_jobs = rw;
+			}
+			step_j = (rw / num_jobs);
+
+			for( j = 0; j < num_jobs; j++ )
+			{
+				opj_dwd_decode_v_job_t* job;
+
+				job = (opj_dwd_decode_v_job_t*) opj_malloc(sizeof(opj_dwd_decode_v_job_t));
+				if( !job )
+				{
+					/* It would be nice to fallback to single thread case, but */
+					/* unfortunately some jobs may be launched and have modified */
+					/* tiledp, so it is not practical to recover from that error */
+					/* FIXME event manager error callback */
+					opj_thread_pool_wait_completion(tp, 0);
+					opj_aligned_free(v.mem);
+					return OPJ_FALSE;
+				}
+				job->v = v;
+				job->dwt_1D = dwt_1D;
+				job->rh = rh;
+				job->w = w;
+				job->tiledp = tiledp;
+				job->min_j = j * step_j;
+				job->max_j = (j + 1U) * step_j; /* this can overflow */
+				if( j == (num_jobs - 1U) ) { /* this will take care of the overflow */
+					job->max_j = rw;
+				}
+				job->v.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
+				if (!job->v.mem)
+				{
+					/* FIXME event manager error callback */
+					opj_thread_pool_wait_completion(tp, 0);
+					opj_free(job);
+					opj_aligned_free(v.mem);
+					return OPJ_FALSE;
+				}
+				opj_thread_pool_submit_job( tp, opj_dwt_decode_v_func, job );
+			}
+			opj_thread_pool_wait_completion(tp, 0);
+		}
 	}
 	opj_aligned_free(h.mem);
 	return OPJ_TRUE;
 }
 
-static void opj_v4dwt_interleave_h(opj_v4dwt_t* OPJ_RESTRICT w, OPJ_FLOAT32* OPJ_RESTRICT a, OPJ_INT32 x, OPJ_INT32 size){
+static void opj_v4dwt_interleave_h(opj_v4dwt_t* OPJ_RESTRICT w, OPJ_FLOAT32* OPJ_RESTRICT a, OPJ_INT32 x, OPJ_INT32 size)
+{
 	OPJ_FLOAT32* OPJ_RESTRICT bi = (OPJ_FLOAT32*) (w->wavelet + w->cas);
 	OPJ_INT32 count = w->sn;
 	OPJ_INT32 i, k;
