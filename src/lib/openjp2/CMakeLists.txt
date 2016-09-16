@@ -127,7 +127,7 @@ endif()
 
 # Experimental option; let's how cppcheck performs
 # Implementation details:
-# I could not figure out how to easily upload a file to CDash. Instead simply
+# I could not figure out how to easily upload a file to CDash. Instead simply
 # pretend cppcheck is part of the Build step. Technically cppcheck can even
 # output gcc formatted error/warning report
 # Another implementation detail: I could not redirect error to the error
@@ -156,30 +156,30 @@ endif()
 #################################################################################
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 
-option(USE_THREAD "Build with thread/mutex support " ON)
-if(NOT USE_THREAD)
+option(OPJ_USE_THREAD "Build with thread/mutex support " ON)
+if(NOT OPJ_USE_THREAD)
    add_definitions( -DMUTEX_stub)
-endif(NOT USE_THREAD)
+endif(NOT OPJ_USE_THREAD)
 
 find_package(Threads QUIET)
 
-if(USE_THREAD AND WIN32 AND NOT Threads_FOUND )
+if(OPJ_USE_THREAD AND WIN32 AND NOT Threads_FOUND )
     add_definitions( -DMUTEX_win32)
     set(Threads_FOUND YES)
 endif()
 
-if(USE_THREAD AND Threads_FOUND AND CMAKE_USE_WIN32_THREADS_INIT )
+if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_WIN32_THREADS_INIT )
    add_definitions( -DMUTEX_win32)
-endif(USE_THREAD AND Threads_FOUND AND CMAKE_USE_WIN32_THREADS_INIT )
+endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_WIN32_THREADS_INIT )
 
-if(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT )
+if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT )
    add_definitions( -DMUTEX_pthread)
-endif(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT )
+endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT )
 
-if(USE_THREAD AND NOT Threads_FOUND)
-  message(FATAL_ERROR "No thread library found and thread/mutex support is required by USE_THREAD option")
-endif(USE_THREAD AND NOT Threads_FOUND)
+if(OPJ_USE_THREAD AND NOT Threads_FOUND)
+  message(FATAL_ERROR "No thread library found and thread/mutex support is required by OPJ_USE_THREAD option")
+endif(OPJ_USE_THREAD AND NOT Threads_FOUND)
 
-if(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
    TARGET_LINK_LIBRARIES(${OPENJPEG_LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
-endif(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
