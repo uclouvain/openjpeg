@@ -113,9 +113,7 @@
     "HeadersDiff":    "On",
     "PkgDiff":        "Off",
     "ABIView":        "Off",
-    "ABIDiff":        "Off",
-    "PublicSymbols":  "public_symbols/openjpeg/1.4/list",
-    "PublicTypes":    "public_types/openjpeg/1.4/list"
+    "ABIDiff":        "Off"
   },
   {
     "Number":         "1.2",
@@ -125,9 +123,7 @@
     "HeadersDiff":    "On",
     "PkgDiff":        "Off",
     "ABIView":        "Off",
-    "ABIDiff":        "Off",
-    "PublicSymbols":  "public_symbols/openjpeg/1.2/list",
-    "PublicTypes":    "public_types/openjpeg/1.2/list"
+    "ABIDiff":        "Off"
   },
   {
     "Number":         "1.1",
