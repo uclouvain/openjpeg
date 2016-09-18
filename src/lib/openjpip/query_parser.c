@@ -264,7 +264,7 @@ void print_queryparam( query_param_t query_param)
   }
 
   fprintf( logstream, "\t req-box-prop\n");
-  for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
+  for( i=0; i<MAX_NUMOFBOX && query_param.box_type[i][0]!=0; i++){
     fprintf( logstream, "\t\t box_type: %.4s limit: %d w:%d s:%d g:%d a:%d priority:%d\n", query_param.box_type[i], query_param.limit[i], query_param.w[i], query_param.s[i], query_param.g[i], query_param.a[i], query_param.priority[i]);
   }
   
