@@ -118,11 +118,13 @@ install(
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man3)
 endif()
 
-# internal utilities to generate t1_luts.h (part of the jp2 lib)
+if(BUILD_LUTS_GENERATOR)
+# internal utility to generate t1_luts.h (part of the jp2 lib)
 # no need to install:
-add_executable(t1_generate_luts t1_generate_luts.c)
-if(UNIX)
-  target_link_libraries(t1_generate_luts m)
+  add_executable(t1_generate_luts t1_generate_luts.c)
+  if(UNIX)
+    target_link_libraries(t1_generate_luts m)
+  endif()
 endif()
 
 # Experimental option; let's how cppcheck performs
