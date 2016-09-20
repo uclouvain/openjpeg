@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 31d44f02807a6ce02feead4326e58fac9681c045
+<pre class='wrap'>commit da940424816e11d624362ce080bc026adffa26e8
+Merge: 31d44f0 893143c
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-09-20 18:59:30 +0200
+
+    Merge pull request #834 from trylab/issue833
+    
+    Fix issue 833.
+
+commit 31d44f02807a6ce02feead4326e58fac9681c045
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-20 18:48:06 +0200
 
@@ -98,6 +107,14 @@ Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-13 16:21:38 +0200
 
     remove ops 1.4 and 1.2 from abi-check to avoid symlinks in gh-pages
+
+commit 893143c8e13e491d0e884eb757580ec9575bbc8f
+Author: trylab &lt;trylab@users.noreply.github.com&gt;
+Date:   2016-09-13 17:43:30 +0800
+
+    Fix issue 833.
+    
+    Add some overflow check operations.
 
 commit 805972f4c85fd4b34e08e499c12c68334706df47
 Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
@@ -763,15 +780,6 @@ Date:   2016-04-30 17:58:04 +0200
     Update lcms (#544)
     
     Update to mm2/Little-CMS@0e8234e090d6aab33f90e2eb0296f30aa0705e57
-
-commit 72deb588cbc8d5f56f8b0db3a2d120913e792cb8
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-04-30 13:51:01 +0200
-
-    Merge pull request #706 from mayeut/issue135
-    
-    Fix issue 135
-    The fix is legal regarding the standard but I did not manage to find out if it covers a bug in opj_t2_read_packet_data or if the file is corrupted
 
 ...</pre></div>
 
