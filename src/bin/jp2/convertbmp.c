@@ -675,9 +675,27 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 		}
 	}
 	
+	if (Info_h.biWidth == 0 || Info_h.biHeight == 0) {
+		fclose(IN);
+		return NULL;
+	}
+	
+	if (Info_h.biBitCount > (((OPJ_UINT32)-1) - 31) / Info_h.biWidth) {
+		fclose(IN);
+		return NULL;
+	}
 	stride = ((Info_h.biWidth * Info_h.biBitCount + 31U) / 32U) * 4U; /* rows are aligned on 32bits */
 	if (Info_h.biBitCount == 4 && Info_h.biCompression == 2) { /* RLE 4 gets decoded as 8 bits data for now... */
+		if (8 > (((OPJ_UINT32)-1) - 31) / Info_h.biWidth) {
+			fclose(IN);
+			return NULL;
+		}
 		stride = ((Info_h.biWidth * 8U + 31U) / 32U) * 4U;
+	}
+	
+	if (stride > ((OPJ_UINT32)-1) / sizeof(OPJ_UINT8) / Info_h.biHeight) {
+		fclose(IN);
+		return NULL;
 	}
 	pData = (OPJ_UINT8 *) calloc(1, stride * Info_h.biHeight * sizeof(OPJ_UINT8));
 	if (pData == NULL) {
