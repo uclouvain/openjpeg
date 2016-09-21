@@ -69,7 +69,7 @@ int main (int argc, char *argv[])
 	opj_stream_t * l_stream;
 	OPJ_UINT32 l_nb_tiles;
 	OPJ_UINT32 l_data_size;
-	unsigned char len;
+	size_t len;
 
 #ifdef USING_MCT
 	const OPJ_FLOAT32 l_mct [] =
@@ -96,7 +96,7 @@ int main (int argc, char *argv[])
   int tile_height;
   int comp_prec;
   int irreversible;
-  char output_file[64];
+  const char *output_file;
 
   /* should be test_tile_encoder 3 2000 2000 1000 1000 8 tte1.j2k */
   if( argc == 9 )
@@ -108,7 +108,7 @@ int main (int argc, char *argv[])
     tile_height = atoi( argv[5] );
     comp_prec = atoi( argv[6] );
     irreversible = atoi( argv[7] );
-    strcpy(output_file, argv[8] );
+    output_file = argv[8];
     }
   else
     {
@@ -119,7 +119,7 @@ int main (int argc, char *argv[])
     tile_height = 1000;
     comp_prec = 8;
     irreversible = 1;
-    strcpy(output_file, "test.j2k" );
+    output_file = "test.j2k";
     }
   if( num_comps > NUM_COMPS_MAX )
     {
@@ -228,7 +228,7 @@ int main (int argc, char *argv[])
 	}
 
   /* should we do j2k or jp2 ?*/
-  len = (unsigned char)strlen( output_file );
+  len = strlen( output_file );
   if( strcmp( output_file + len - 4, ".jp2" ) == 0 )
     {
     l_codec = opj_create_compress(OPJ_CODEC_JP2);
