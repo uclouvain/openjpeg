@@ -20,7 +20,40 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 045aa4d9f297b8d3d5f89e9983a54252d103a3da
+<pre class='wrap'>commit 8715ce2749d1e5a1e9c77646e9a2ddf0ec82bac9
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-09-21 21:15:25 +0200
+
+    Fix some issues reported by Coverity Scan (#846)
+    
+    * test_tile_decoder: Fix potential buffer overflow (coverity)
+    
+    CID 1190155 (#1 of 1): Unbounded source buffer (STRING_SIZE)
+    
+    Using a pointer instead of buffer of fixed size avoids the limit
+    for the length of the input file name.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+    
+    * test_tile_encoder: Fix potential buffer overflow (coverity)
+    
+    CID 1190154 (#1 of 1): Unbounded source buffer (STRING_SIZE)
+    
+    Using a pointer instead of buffer of fixed size avoids the limit
+    for the length of the output file name. This implies that the length
+    can exceed 255, so the data type for variable len had to be fixed, too.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+    
+    * openjpip: Initialize data before returning it
+    
+    This fixes an error reported by Coverity:
+    
+    CID 1190143 (#1 of 1): Uninitialized scalar variable (UNINIT)
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 045aa4d9f297b8d3d5f89e9983a54252d103a3da
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
 Date:   2016-09-21 13:17:09 +0200
 
@@ -785,15 +818,6 @@ Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-05-01 18:05:46 +0200
 
     Update to libtiff-4.0.6 (#764)
-
-commit 4f11e89c803fd9a332698bc36338a4be87c6d199
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-30 18:51:36 +0200
-
-    Add tests for recent issues
-    
-    Update uclouvain/openjpeg#725
-    Update uclouvain/openjpeg#726
 
 ...</pre></div>
 
