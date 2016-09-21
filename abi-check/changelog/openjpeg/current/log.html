@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8715ce2749d1e5a1e9c77646e9a2ddf0ec82bac9
+<pre class='wrap'>commit fac916f72a162483a4d6d804fd070fdf32f402ed
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-09-22 00:30:34 +0200
+
+    Fix PNM file reading (#847)
+    
+    Malformed PNM file could cause a crash in opj_compress.
+    Checks were added to prevent this.
+    
+    Fixes #843
+    Updates #440
+
+commit 8715ce2749d1e5a1e9c77646e9a2ddf0ec82bac9
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
 Date:   2016-09-21 21:15:25 +0200
 
@@ -784,7 +796,6 @@ Date:   2016-05-02 14:34:32 +0200
     Fix UBSan gcc warning for first arg to memset non null
 
 commit da56086e012117edb278408e6062d1b890b53576
-Merge: b51d088 04b8cbd
 Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
 Date:   2016-05-02 14:32:08 +0200
 
@@ -792,32 +803,11 @@ Date:   2016-05-02 14:32:08 +0200
     
     Ignore clang's summary warning
 
-commit 04b8cbd27aae2372b19598a38ba15e860952cae2
-Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
-Date:   2016-05-02 12:55:43 +0200
-
-    Ignore clang's summary warning
-    
-    This assumes prior text has matched some other warning expression.
-    
-    This reduces the warnings reported for clang build on the dashboard,
-    which were caused only by the "XXX warnings generated." message.
-    For some reason they were not reported when not using ctest launchers.
-    
-    This commit allows to confidently use ctest launchers to improve
-    dashboard reports.
-
 commit e1e018a8dc8c96f45486768356b7fb370ae0527c
 Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
 Date:   2016-05-02 12:13:24 +0200
 
     Fix UBSan gcc warning for first arg to memset non null
-
-commit b51d088267cb88eb95555ea047755120e36c511b
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-05-01 18:05:46 +0200
-
-    Update to libtiff-4.0.6 (#764)
 
 ...</pre></div>
 
