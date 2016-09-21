@@ -20,7 +20,29 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit da940424816e11d624362ce080bc026adffa26e8
+<pre class='wrap'>commit 045aa4d9f297b8d3d5f89e9983a54252d103a3da
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-09-21 13:17:09 +0200
+
+    Fix potential out-of-bounds read (coverity)  (#844)
+    
+    * query_parser: Fix potential out-of-bounds read (coverity)
+    
+    CID 1190207 (#1 of 1): Out-of-bounds read (OVERRUN)
+    
+    Variable i must be checked before testing query_param.box_type.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+    
+    * jpip_parser: Fix potential out-of-bounds read (coverity)
+    
+    CID 1190206 (#1 of 1): Out-of-bounds read (OVERRUN)
+    
+    Variable i must be checked before testing query_param.box_type.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit da940424816e11d624362ce080bc026adffa26e8
 Merge: 31d44f0 893143c
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-20 18:59:30 +0200
@@ -772,14 +794,6 @@ Date:   2016-04-30 18:51:36 +0200
     
     Update uclouvain/openjpeg#725
     Update uclouvain/openjpeg#726
-
-commit 9a20f8e8d1a91bd032e81ac53bf9a48dbb92bc29
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-04-30 17:58:04 +0200
-
-    Update lcms (#544)
-    
-    Update to mm2/Little-CMS@0e8234e090d6aab33f90e2eb0296f30aa0705e57
 
 ...</pre></div>
 
