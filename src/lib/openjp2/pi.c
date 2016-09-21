@@ -360,8 +360,14 @@ if (!pi->tp_on){
 					try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
+					if ((OPJ_INT32)(comp->dy << rpy) == 0 || (1 << rpy) == 0) {
+						continue;
+					}
 					if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
+					}
+					if ((OPJ_INT32)(comp->dx << rpx) == 0 || (1 << rpx) == 0) {
+						continue;
 					}
 					if (!((pi->x % (OPJ_INT32)(comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
 						continue;
@@ -441,8 +447,14 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi) {
 					try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
+					if ((OPJ_INT32)(comp->dy << rpy) == 0 || (1 << rpy) == 0) {
+						continue;
+					}
 					if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
+					}
+					if ((OPJ_INT32)(comp->dx << rpx) == 0 || (1 << rpx) == 0) {
+						continue;
 					}
 					if (!((pi->x % (OPJ_INT32)(comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
 						continue;
@@ -520,8 +532,14 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi) {
 					try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
+					if ((OPJ_INT32)(comp->dy << rpy) == 0 || (1 << rpy) == 0) {
+						continue;
+					}
 					if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
+					}
+					if ((OPJ_INT32)(comp->dx << rpx) == 0 || (1 << rpx) == 0) {
+						continue;
 					}
 					if (!((pi->x % (OPJ_INT32)(comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
 						continue;
