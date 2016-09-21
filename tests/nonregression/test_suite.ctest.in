@@ -146,6 +146,8 @@ opj_compress -i @INPUT_NR_PATH@/flower-minisblack-11.tif -o @TEMP_PATH@/flower-m
 opj_compress -i @INPUT_NR_PATH@/flower-minisblack-13.tif -o @TEMP_PATH@/flower-minisblack-13.tif.jp2
 opj_compress -i @INPUT_NR_PATH@/flower-minisblack-15.tif -o @TEMP_PATH@/flower-minisblack-15.tif.jp2
 
+# issue 843 Crash with invalid ppm file
+!opj_compress -i @INPUT_NR_PATH@/issue843.ppm -o @TEMP_PATH@/issue843.ppm.jp2
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
