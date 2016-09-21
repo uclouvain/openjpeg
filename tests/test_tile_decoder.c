@@ -178,7 +178,7 @@ int main (int argc, char *argv[])
         int da_y0=0;
         int da_x1=1000;
         int da_y1=1000;
-        char input_file[64];
+        const char *input_file;
 
         /* should be test_tile_decoder 0 0 1000 1000 tte1.j2k */
         if( argc == 6 )
@@ -187,7 +187,7 @@ int main (int argc, char *argv[])
                 da_y0=atoi(argv[2]);
                 da_x1=atoi(argv[3]);
                 da_y1=atoi(argv[4]);
-                strcpy(input_file,argv[5]);
+                input_file = argv[5];
 
         }
         else
@@ -196,7 +196,7 @@ int main (int argc, char *argv[])
                 da_y0=0;
                 da_x1=1000;
                 da_y1=1000;
-                strcpy(input_file,"test.j2k");
+                input_file = "test.j2k";
         }
 
         if (! l_data) {
