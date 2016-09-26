@@ -32,7 +32,7 @@
 .TH opj_compress 1 "Version 2.1.1" "opj_compress" "converts to jpeg2000 files"
 .P
 .SH NAME
-opj_compress - 
+opj_compress \- 
 This program reads in an image of a certain type and converts it to a
 jpeg2000 file. It is part of the OpenJPEG library.
 .SP
@@ -43,20 +43,20 @@ Valid output image extensions are
 .B .j2k, .jp2
 .SH SYNOPSIS
 .P
-.B opj_compress -i \fRinfile.bmp \fB-o \fRoutfile.j2k
+.B opj_compress \-i \fRinfile.bmp \fB-o \fRoutfile.j2k
 .P
-.B opj_compress -ImgDir \fRdirectory_name \fB-OutFor \fRjp2
+.B opj_compress \-ImgDir \fRdirectory_name \fB-OutFor \fRjp2
 .P
-.B opj_compress -h \fRPrint a help message and exit.
+.B opj_compress \-h \fRPrint a help message and exit.
 .P
 .R See JPWL OPTIONS for special options
 .SH OPTIONS
 .TP
 .B \-\^b " n,n"
-(Size of code block (e.g. -b 32,32). Default: 64 x 64)
+(Size of code block (e.g. \-b 32,32). Default: 64 x 64)
 .TP
 .B \-\^c " n"
-(Size of precinct (e.g. -c 128,128). Default: 2^15 x 2^15)
+(Size of precinct (e.g. \-c 128,128). Default: 2^15 x 2^15)
 .TP
 .B \-\^cinema2K " fps"
 Digital Cinema 2K profile compliant codestream. Valid \fBfps\fR values are 24 or 48.
@@ -65,7 +65,7 @@ Digital Cinema 2K profile compliant codestream. Valid \fBfps\fR values are 24 or
 Digital Cinema 4K profile compliant codestream. Does not need an fps: default is 24 fps.
 .TP
 .B \-\^d " X,Y"
-(Offset of image origin (e.g. -d 150,300))
+(Offset of image origin (e.g. \-d 150,300))
 .TP
 .B \-\^h
 Print a help message and exit.
@@ -85,20 +85,20 @@ Progression order. \fBname\fR can be one out of:LRCP, RLCP, RPCL, PCRL, CPRL. De
 .B \-\^q " n"
 different psnr for successive layers
 .br
-.B Note: \fR(options -r and -q cannot be used together)
+.B Note: \fR(options \-r and \-q cannot be used together)
 .TP
 .B \-\^r " n"
 different compression ratio(s) for successive layers. The rate specified for each quality level is the desired compression factor.
 .br
-.B Note: \fR(options -r and -q cannot be used together)
+.B Note: \fR(options \-r and \-q cannot be used together)
 .TP
 .B \-\^s " X,Y"
-sub-sampling factor (e.g. -s 2,2). Default: No sub-sampling in x or y direction.
+sub-sampling factor (e.g. \-s 2,2). Default: No sub-sampling in x or y direction.
 .br
 .B Remark: \fRsub-sampling bigger than 2 can produce errors.
 .TP
 .B \-\^t " W,H"
-(Size of tile (e.g. -t 512,512) )
+(Size of tile (e.g. \-t 512,512) )
 .TP
 .B \-\^x " name"
 (Create index file and fill it. Default: no index file)
@@ -132,7 +132,7 @@ ERTERM(16)
 .br
 SEGMARK(32)
 .br
-Values can be added: RESTART(4) + RESET(2) + SEGMARK(32) = -M 38
+Values can be added: RESTART(4) + RESET(2) + SEGMARK(32) = \-M 38
 .TP
 .B \-\^OutFor "ext"
 (extension for output files)
@@ -149,7 +149,7 @@ e.g. \fB-ROI c=0,U=25\fR
 (Write SOP marker before each packet. Default: No SOP marker in the codestream.)
 .TP
 .B \-\^T "X,Y"
-(Offset of the origin of the tiles (e.g. -T 100,75) )
+(Offset of the origin of the tiles (e.g. \-T 100,75) )
 .TP
 .B \-\^W
 (see JPWL OPTIONS)
@@ -157,7 +157,7 @@ e.g. \fB-ROI c=0,U=25\fR
 .SH JPWL OPTIONS
 Options usable only if the library has been compiled with \fB-DUSE_JPWL\fR
 .P
-.B      -W h<tilepart><=type>, s<tilepart><=method>, a=<addr>, z=<size>, g=<range>, p<tilepart:pack><=type>
+.B      \-W h<tilepart><=type>, s<tilepart><=method>, a=<addr>, z=<size>, g=<range>, p<tilepart:pack><=type>
 .P
 .B h\fR selects the header error protection (EPB): \fBtype\fR can be
    [0=none 1,absent=predefined 16=CRC-16 32=CRC-32 37-128=RS]
@@ -176,7 +176,7 @@ Options usable only if the library has been compiled with \fB-DUSE_JPWL\fR
      (max. 16 specs)
 .P
 .B s \fRenables sensitivity data insertion (ESD): \fBmethod\fR can be
-   [-1=NO ESD 0=RELATIVE ERROR 1=MSE 2=MSE REDUCTION 3=PSNR
+   [\-1=NO ESD 0=RELATIVE ERROR 1=MSE 2=MSE REDUCTION 3=PSNR
     4=PSNR INCREMENT 5=MAXERR 6=TSE 7=RESERVED]
    if \fBtilepart\fR is absent, it is for main header only
    if \fBtilepart\fR is present, it applies from that tile
@@ -194,13 +194,13 @@ Options usable only if the library has been compiled with \fB-DUSE_JPWL\fR
 .P
 .SH EXAMPLES
 .P
-.B opj_compress -i \fRfile.bmp \fB-o \fRfile.j2k \fB-r \fR20,10,1 (compress 20x, then 10x, then lossless).
+.B opj_compress \-i \fRfile.bmp \fB-o \fRfile.j2k \fB-r \fR20,10,1 (compress 20x, then 10x, then lossless).
 .P
-.B opj_compress -i \fRfile.ppm \fB-o \fRfile.j2k \fB-q \fR30,40,50
+.B opj_compress \-i \fRfile.ppm \fB-o \fRfile.j2k \fB-q \fR30,40,50
 .P
-.B opj_compress -i \fRfile.pgx \fB-o \fRfile.j2k \fB-POC \fRT1=0,0,1,5,3,CPRL
+.B opj_compress \-i \fRfile.pgx \fB-o \fRfile.j2k \fB-POC \fRT1=0,0,1,5,3,CPRL
 .P
-.B opj_compress -i \fRlena.raw \fB-o \fRlena.j2k \fB-F \fR512,512,3,8,u
+.B opj_compress \-i \fRlena.raw \fB-o \fRlena.j2k \fB-F \fR512,512,3,8,u
 .P
 .SH AUTHORS
 Copyright (c) 2002-2014, Universite catholique de Louvain (UCL), Belgium
