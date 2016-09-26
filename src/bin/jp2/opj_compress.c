@@ -236,7 +236,7 @@ static void encode_help_display(void) {
     fprintf(stdout,"-I\n");
     fprintf(stdout,"    Use the irreversible DWT 9-7.\n");
     fprintf(stdout,"-mct <0|1|2>\n");
-    fprintf(stdout,"    Explicitely specifies if a Multiple Component Transform has to be used.\n");
+    fprintf(stdout,"    Explicitly specifies if a Multiple Component Transform has to be used.\n");
     fprintf(stdout,"    0: no MCT ; 1: RGB->YCC conversion ; 2: custom MCT.\n");
     fprintf(stdout,"    If custom MCT, \"-m\" option has to be used (see hereunder).\n");
     fprintf(stdout,"    By default, RGB->YCC conversion is used if there are 3 components or more,\n");
@@ -1029,7 +1029,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
             fprintf(stdout,"CINEMA 2K profile activated\n"
-                    "Other options specified could be overriden\n");
+                    "Other options specified could be overridden\n");
 
         }
             break;
@@ -1040,7 +1040,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         {
             parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
             fprintf(stdout,"CINEMA 4K profile activated\n"
-                    "Other options specified could be overriden\n");
+                    "Other options specified could be overridden\n");
         }
             break;
 
