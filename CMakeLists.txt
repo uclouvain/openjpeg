@@ -67,7 +67,7 @@ set(OPENJPEG_LIBRARY_PROPERTIES
 # --------------------------------------------------------------------------
 # Path to additional CMake modules
 set(CMAKE_MODULE_PATH
-    ${CMAKE_SOURCE_DIR}/cmake
+    ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake
     ${CMAKE_MODULE_PATH})
 
 # --------------------------------------------------------------------------
@@ -163,8 +163,8 @@ TEST_BIG_ENDIAN(OPJ_BIG_ENDIAN)
 #-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
 configure_file(
-  ${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake.in
-  ${CMAKE_BINARY_DIR}/CTestCustom.cmake
+  ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake/CTestCustom.cmake.in
+  ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/CTestCustom.cmake
   @ONLY
   )
 
@@ -323,8 +323,8 @@ endif()
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets
 install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
-configure_file( ${OPENJPEG_SOURCE_DIR}/cmake/OpenJPEGConfig.cmake.in
-  ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+configure_file( ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake/OpenJPEGConfig.cmake.in
+  ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/OpenJPEGConfig.cmake
   @ONLY
 )
 install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
