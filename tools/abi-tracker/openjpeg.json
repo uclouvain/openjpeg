@@ -116,29 +116,5 @@
     "ABIDiff":        "Off",
     "PublicSymbols":  "public_symbols/openjpeg/1.5/list",
     "PublicTypes":    "public_types/openjpeg/1.5/list"
-  },
-  {
-    "Number":         "1.4",
-    "Installed":      "installed/openjpeg/1.4",
-    "Source":         "src/openjpeg/1.4/version.1.4.tar.gz",
-    "Changelog":      "CHANGES",
-    "HeadersDiff":    "On",
-    "PkgDiff":        "Off",
-    "ABIView":        "Off",
-    "ABIDiff":        "Off",
-    "PublicSymbols":  "public_symbols/openjpeg/1.4/list",
-    "PublicTypes":    "public_types/openjpeg/1.4/list"
-  },
-  {
-    "Number":         "1.2",
-    "Installed":      "installed/openjpeg/1.2",
-    "Source":         "src/openjpeg/1.2/version.1.2.tar.gz",
-    "Changelog":      "ChangeLog",
-    "HeadersDiff":    "On",
-    "PkgDiff":        "Off",
-    "ABIView":        "Off",
-    "ABIDiff":        "Off",
-    "PublicSymbols":  "public_symbols/openjpeg/1.2/list",
-    "PublicTypes":    "public_types/openjpeg/1.2/list"
   }]
 }
