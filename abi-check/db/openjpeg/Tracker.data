@@ -107,6 +107,13 @@ $VAR1 = {
                                                      'Path' => 'abi_dump/openjpeg/current/2c999/ABI.dump',
                                                      'TotalSymbols' => '46',
                                                      'Version' => '1.7'
+                                                   },
+                                        '6ff8d' => {
+                                                     'Lang' => 'C',
+                                                     'Object' => 'lib/libopenjp2.so.2.1.1',
+                                                     'Path' => 'abi_dump/openjpeg/current/6ff8d/ABI.dump',
+                                                     'TotalSymbols' => '46',
+                                                     'Version' => '1.7'
                                                    }
                                       }
                        },
@@ -533,7 +540,7 @@ $VAR1 = {
                                      'lib/libopenjp2.so.2.1.1' => 'libopenjp2.so.7'
                                    },
                         'current' => {
-                                       'lib/libopenjp2.so.2.2.0' => 'libopenjp2.so.7'
+                                       'lib/libopenjp2.so.2.1.2' => 'libopenjp2.so.7'
                                      }
                       },
           'Sover' => {
