@@ -101,11 +101,11 @@ $VAR1 = {
                                                  }
                                     },
                          'current' => {
-                                        '57d0d' => {
+                                        '2c999' => {
                                                      'Lang' => 'C',
-                                                     'Object' => 'lib/libopenjp2.so.2.1.2',
-                                                     'Path' => 'abi_dump/openjpeg/current/57d0d/ABI.dump',
-                                                     'TotalSymbols' => '43',
+                                                     'Object' => 'lib/libopenjp2.so.2.2.0',
+                                                     'Path' => 'abi_dump/openjpeg/current/2c999/ABI.dump',
+                                                     'TotalSymbols' => '46',
                                                      'Version' => '1.7'
                                                    }
                                       }
@@ -433,7 +433,7 @@ $VAR1 = {
                       '2.0.1' => '2014-04-22 07:53',
                       '2.1' => '2014-04-29 12:58',
                       '2.1.1' => '2016-07-05 14:54',
-                      'current' => '2016-09-28 18:55:02'
+                      'current' => '2016-09-28 20:33:31'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -502,7 +502,7 @@ $VAR1 = {
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1475082903',
+          'ScmUpdateTime' => '1475090568',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'
@@ -535,7 +535,7 @@ $VAR1 = {
                                      'lib/libopenjp2.so.2.1.1' => 'libopenjp2.so.7'
                                    },
                         'current' => {
-                                       'lib/libopenjp2.so.2.1.2' => 'libopenjp2.so.7'
+                                       'lib/libopenjp2.so.2.2.0' => 'libopenjp2.so.7'
                                      }
                       },
           'Sover' => {
