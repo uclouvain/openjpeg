@@ -2,6 +2,11 @@
 
 More details in the [Changelog](https://github.com/uclouvain/openjpeg/blob/master/CHANGELOG.md)
 
+## OpenJPEG 2.1.2
+
+* Bug fixes (including security fixes)
+* No API/ABI break compared to v2.1.1
+
 ## OpenJPEG 2.1.1
 
 * Huge amount of critical bugfixes
