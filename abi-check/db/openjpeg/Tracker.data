@@ -101,18 +101,11 @@ $VAR1 = {
                                                  }
                                     },
                          'current' => {
-                                        '2c999' => {
+                                        '57d0d' => {
                                                      'Lang' => 'C',
-                                                     'Object' => 'lib/libopenjp2.so.2.2.0',
-                                                     'Path' => 'abi_dump/openjpeg/current/2c999/ABI.dump',
-                                                     'TotalSymbols' => '46',
-                                                     'Version' => '1.7'
-                                                   },
-                                        '6ff8d' => {
-                                                     'Lang' => 'C',
-                                                     'Object' => 'lib/libopenjp2.so.2.1.1',
-                                                     'Path' => 'abi_dump/openjpeg/current/6ff8d/ABI.dump',
-                                                     'TotalSymbols' => '46',
+                                                     'Object' => 'lib/libopenjp2.so.2.1.2',
+                                                     'Path' => 'abi_dump/openjpeg/current/57d0d/ABI.dump',
+                                                     'TotalSymbols' => '43',
                                                      'Version' => '1.7'
                                                    }
                                       }
@@ -268,7 +261,8 @@ $VAR1 = {
                                                        'TotalObjects' => 1,
                                                        'TotalProblems' => 0
                                                      }
-                                      }
+                                      },
+                           '2.1.2' => {}
                          },
           'ABIReport_D' => {
                              '1.1' => {
@@ -502,7 +496,8 @@ $VAR1 = {
                                                          'Path' => 'headers_diff/openjpeg/2.1.1/current/diff.html',
                                                          'Total' => 2
                                                        }
-                                        }
+                                        },
+                             '2.1.2' => {}
                            },
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
