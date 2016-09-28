@@ -524,7 +524,7 @@ $VAR1 = {
                                      'lib/libopenjp2.so.2.1.1' => 'libopenjp2.so.7'
                                    },
                         'current' => {
-                                       'lib/libopenjp2.so.2.1.1' => 'libopenjp2.so.7'
+                                       'lib/libopenjp2.so.2.1.2' => 'libopenjp2.so.7'
                                      }
                       },
           'Sover' => {

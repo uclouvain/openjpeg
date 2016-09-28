@@ -8,7 +8,7 @@
 # The OPENJPEG version number.
 set(OPENJPEG_MAJOR_VERSION "2")
 set(OPENJPEG_MINOR_VERSION "1")
-set(OPENJPEG_BUILD_VERSION "1")
+set(OPENJPEG_BUILD_VERSION "2")
 
 # The libraries.
 set(OPENJPEG_LIBRARIES "openjp2")
