@@ -24,7 +24,7 @@
   {
     "Number":         "2.1.2",
     "Installed":      "installed/openjpeg/2.1.2",
-    "Source":         "src/openjpeg/2.1.2/v2.1.2.tar.gz",
+    "Source":         "src/openjpeg/2.1.2/version.-2.1.2.tar.gz",
     "Changelog":      "CHANGELOG.md",
     "HeadersDiff":    "On",
     "PkgDiff":        "Off",
@@ -36,7 +36,7 @@
   {
     "Number":         "2.1.1",
     "Installed":      "installed/openjpeg/2.1.1",
-    "Source":         "src/openjpeg/2.1.1/v2.1.1.tar.gz",
+    "Source":         "src/openjpeg/2.1.1/version.-2.1.1.tar.gz",
     "Changelog":      "CHANGELOG.md",
     "HeadersDiff":    "On",
     "PkgDiff":        "Off",

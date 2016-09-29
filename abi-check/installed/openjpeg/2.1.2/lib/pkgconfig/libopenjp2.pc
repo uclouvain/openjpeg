@@ -1,0 +1,14 @@
+prefix=/home/travis/abi-check/work/abi-check/installed/openjpeg/2.1.2
+bindir=${prefix}/bin
+mandir=${prefix}/
+docdir=${prefix}/
+libdir=${prefix}/lib
+includedir=${prefix}/include/openjpeg-2.1
+
+Name: openjp2
+Description: JPEG2000 library (Part 1 and 2)
+URL: http://www.openjpeg.org/
+Version: 2.1.2
+Libs: -L${libdir} -lopenjp2
+Libs.private: -lm
+Cflags: -I${includedir}
