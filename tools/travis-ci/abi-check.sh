@@ -14,7 +14,7 @@ if [ "${OPJ_CI_ABI_CHECK:-}" != "1" ]; then
 fi
 
 OPJ_UPLOAD_ABI_REPORT=0
-OPJ_PREVIOUS_VERSION="2.1.1"
+#OPJ_PREVIOUS_VERSION="2.1.1"
 OPJ_LATEST_VERSION="2.1.2"
 if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
 	OPJ_LIMIT_ABI_BUILDS="-limit 3"
@@ -26,7 +26,7 @@ OPJ_SSH_REPO=${OPJ_REPO/https:\/\/github.com\//git@github.com:}
 OPJ_UPLOAD_BRANCH="gh-pages"
 OPJ_UPLOAD_DIR="abi-check"
 if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
-	if [ "$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')" == "uclouvain" ] && [ "${TRAVIS_PULL_REQUEST:-}" == "false" ]; then
+	if [ "$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')" == "uclouvain" ] && [ "${TRAVIS_PULL_REQUEST:-}" == "false" ] && [ "${TRAVIS_BRANCH:-}" == "master" ]; then
 		# Upload updated report to gh-pages
 		OPJ_UPLOAD_ABI_REPORT=1
 		# Build full report
