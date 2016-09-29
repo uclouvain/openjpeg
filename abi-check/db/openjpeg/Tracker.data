@@ -433,7 +433,7 @@ $VAR1 = {
                       '2.0.1' => '2014-04-22 07:53',
                       '2.1' => '2014-04-29 12:58',
                       '2.1.1' => '2016-07-05 14:54',
-                      'current' => '2016-09-28 20:33:31'
+                      'current' => '2016-09-29 20:23:01'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -502,7 +502,7 @@ $VAR1 = {
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1475090568',
+          'ScmUpdateTime' => '1475173939',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'
