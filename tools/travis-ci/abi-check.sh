@@ -71,7 +71,7 @@ rm -rf installed/openjpeg/current/*
 
 # Let's create all we need
 grep -v Git ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
-#abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
+abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
 if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
 	cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./openjpeg.json
 else
@@ -79,7 +79,11 @@ else
 	grep -v Configure ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 fi
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
-abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -rebuild openjpeg.json
+abi-monitor -v current -build openjpeg.json
+abi-monitor -v ${OPJ_LATEST_VERSION} -build openjpeg.json
+if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
+	abi-monitor -v ${OPJ_PREVIOUS_VERSION} -build openjpeg.json
+fi
 abi-tracker -build openjpeg.json
 
 EXIT_CODE=0
