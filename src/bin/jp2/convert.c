@@ -906,7 +906,8 @@ int imagetotga(opj_image_t * image, const char *outfile) {
     for (i = 0; i < image->numcomps-1; i++)	{
         if ((image->comps[0].dx != image->comps[i+1].dx)
                 ||(image->comps[0].dy != image->comps[i+1].dy)
-                ||(image->comps[0].prec != image->comps[i+1].prec))	{
+                ||(image->comps[0].prec != image->comps[i+1].prec)
+				||(image->comps[0].sgnd != image->comps[i+1].sgnd))	{
             fclose(fdest);
             fprintf(stderr, "Unable to create a tga file with such J2K image charateristics.");
             return 1;
@@ -1743,7 +1744,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
     int *red, *green, *blue, *alpha;
     int wr, hr, max;
     int i;
-    unsigned int compno, ncomp;
+    unsigned int compno, ncomp, ui;
     int adjustR, adjustG, adjustB, adjustA;
     int fails, two, want_gray, has_alpha, triple;
     int prec, v;
@@ -1767,6 +1768,27 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
     ncomp = image->numcomps;
 
     if(want_gray) ncomp = 1;
+
+    for (ui = 1; ui < ncomp; ++ui) {
+        if (image->comps[0].dx != image->comps[ui].dx) {
+            break;
+        }
+        if (image->comps[0].dy != image->comps[ui].dy) {
+            break;
+        }
+        if (image->comps[0].prec != image->comps[ui].prec) {
+            break;
+        }
+        if (image->comps[0].sgnd != image->comps[ui].sgnd) {
+            break;
+        }
+    }
+    if (ui != ncomp) {
+        fprintf(stderr,"imagetopnm: All components\n    shall have "
+         "the same subsampling, same bit depth, same sign.\n"
+         "    Aborting\n");
+        return 1;
+    }
 
     if ((force_split == 0) &&
 				(ncomp == 2 /* GRAYA */
@@ -2126,7 +2148,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
 {
     FILE *rawFile = NULL;
     size_t res;
-    unsigned int compno;
+    unsigned int compno, numcomps;
     int w, h, fails;
     int line, row, curr, mask;
     int *ptr;
@@ -2139,6 +2161,31 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         return 1;
     }
 
+    numcomps = image->numcomps;
+
+    if (numcomps > 4) {
+        numcomps = 4;
+    }
+    for (compno = 1; compno < numcomps; ++compno) {
+        if (image->comps[0].dx != image->comps[compno].dx) {
+            break;
+        }
+        if (image->comps[0].dy != image->comps[compno].dy) {
+            break;
+        }
+        if (image->comps[0].prec != image->comps[compno].prec) {
+            break;
+        }
+        if (image->comps[0].sgnd != image->comps[compno].sgnd) {
+            break;
+        }
+    }
+    if (compno != numcomps) {
+        fprintf(stderr,"imagetoraw_common: All components shall have the same subsampling, same bit depth, same sign.\n");
+        fprintf(stderr,"\tAborting\n");
+        return 1;
+    }
+
     rawFile = fopen(outfile, "wb");
     if (!rawFile) {
         fprintf(stderr, "Failed to open %s for writing !!\n", outfile);
@@ -2146,9 +2193,9 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
     }
 
     fails = 1;
-    fprintf(stdout,"Raw image characteristics: %d components\n", image->numcomps);
+    fprintf(stdout,"Raw image characteristics: %d components\n", numcomps);
 
-    for(compno = 0; compno < image->numcomps; compno++)
+    for(compno = 0; compno < numcomps; compno++)
     {
         fprintf(stdout,"Component %u characteristics: %dx%dx%d %s\n", compno, image->comps[compno].w,
                 image->comps[compno].h, image->comps[compno].prec, image->comps[compno].sgnd==1 ? "signed": "unsigned");
@@ -2238,7 +2285,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         }
         else if (image->comps[compno].prec <= 32)
         {
-            fprintf(stderr,"More than 16 bits per component no handled yet\n");
+            fprintf(stderr,"More than 16 bits per component not handled yet\n");
             goto fin;
         }
         else

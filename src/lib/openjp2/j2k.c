@@ -2158,7 +2158,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                                   i, l_img_comp->dx, l_img_comp->dy);
                     return OPJ_FALSE;
                 }
-                if( l_img_comp->prec > 38) { /* TODO openjpeg won't handle more than ? */
+                if( l_img_comp->prec < 1 || l_img_comp->prec > 38) { /* TODO openjpeg won't handle more than ? */
                     opj_event_msg(p_manager, EVT_ERROR,
                                   "Invalid values for comp = %d : prec=%u (should be between 1 and 38 according to the JPEG2000 norm)\n",
                                   i, l_img_comp->prec);
@@ -10029,7 +10029,11 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
         /* Move data and copy one information from codec to output image*/
         for (compno = 0; compno < p_image->numcomps; compno++) {
                 p_image->comps[compno].resno_decoded = p_j2k->m_output_image->comps[compno].resno_decoded;
-                p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+		p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+
+		if(p_image->comps[compno].data == NULL) return OPJ_FALSE;
+
+                p_j2k->m_output_image->comps[compno].data = NULL;
 #if 0
                 char fn[256];
                 sprintf( fn, "/tmp/%d.raw", compno );
@@ -10037,7 +10041,6 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
                 fwrite( p_image->comps[compno].data, sizeof(OPJ_INT32), p_image->comps[compno].w * p_image->comps[compno].h, debug );
                 fclose( debug );
 #endif
-                p_j2k->m_output_image->comps[compno].data = NULL;
         }
 
         return OPJ_TRUE;
@@ -10130,6 +10133,8 @@ OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
                         opj_free(p_image->comps[compno].data);
 
                 p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+
+				if (p_image->comps[compno].data == NULL) return OPJ_FALSE;
 
                 p_j2k->m_output_image->comps[compno].data = NULL;
         }
