@@ -39,7 +39,7 @@ newIssueURL: https://github.com/uclouvain/openjpeg/issues/new
 mlURL: 'https://groups.google.com/forum/#!forum/openjpeg'
 mlsubURL: 'https://groups.google.com/forum/#!forum/openjpeg/join'
 refSoftURL: http://www.jpeg.org/jpeg2000/software.html
-openjpipURL: https://github.com/uclouvain/openjpeg/wiki/JPIP
+openjpipURL: https://github.com/uclouvain/openjpeg/wiki/OpenJPIP
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 
