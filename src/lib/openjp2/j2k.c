@@ -2577,22 +2577,6 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         /* Apply the coding style to other components of the current tile or the m_default_tcp*/
         opj_j2k_copy_tile_component_parameters(p_j2k);
 
-        /* Index */
-#ifdef WIP_REMOVE_MSD
-        if (p_j2k->cstr_info) {
-                /*opj_codestream_info_t *l_cstr_info = p_j2k->cstr_info;*/
-                p_j2k->cstr_info->prog = l_tcp->prg;
-                p_j2k->cstr_info->numlayers = l_tcp->numlayers;
-                p_j2k->cstr_info->numdecompos = (OPJ_INT32*) opj_malloc(l_image->numcomps * sizeof(OPJ_UINT32));
-				if(!p_j2k->cstr_info->numdecompos){
-					return OPJ_FALSE;
-				}
-                for     (i = 0; i < l_image->numcomps; ++i) {
-                        p_j2k->cstr_info->numdecompos[i] = l_tcp->tccps[i].numresolutions - 1;
-                }
-        }
-#endif
-
         return OPJ_TRUE;
 }
 
@@ -7153,9 +7137,7 @@ static OPJ_BOOL opj_j2k_decoding_validation (  opj_j2k_t *p_j2k,
 
         /* STATE checking */
         /* make sure the state is at 0 */
-#ifdef TODO_MSD
-        l_is_valid &= (p_j2k->m_specific_param.m_decoder.m_state == J2K_DEC_STATE_NONE);
-#endif
+
         l_is_valid &= (p_j2k->m_specific_param.m_decoder.m_state == 0x0000);
 
         /* POINTER validation */
@@ -8937,23 +8919,6 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
                         l_tccp->prch[i] = 15;
                 }
         }
-
-#ifdef WIP_REMOVE_MSD
-        /* INDEX >> */
-        if (p_j2k->cstr_info && compno == 0) {
-                OPJ_UINT32 l_data_size = l_tccp->numresolutions * sizeof(OPJ_UINT32);
-
-                p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].cblkh = l_tccp->cblkh;
-                p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].cblkw = l_tccp->cblkw;
-                p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].numresolutions = l_tccp->numresolutions;
-                p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].cblksty = l_tccp->cblksty;
-                p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].qmfbid = l_tccp->qmfbid;
-
-                memcpy(p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].pdx,l_tccp->prcw, l_data_size);
-                memcpy(p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].pdy,l_tccp->prch, l_data_size);
-        }
-        /* << INDEX */
-#endif
 
         return OPJ_TRUE;
 }
