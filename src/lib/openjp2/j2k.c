@@ -10214,7 +10214,6 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
         }
         opj_copy_image_header(p_image, p_j2k->m_private_image);
 
-        /* TODO_MSD: Find a better way */
         if (p_image->comps) {
                 OPJ_UINT32 it_comp;
                 for (it_comp = 0 ; it_comp < p_image->numcomps; it_comp++) {
