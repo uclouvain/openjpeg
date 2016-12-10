@@ -42,8 +42,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-/* TODO MSD: */
-#ifdef TODO_MSD 
+#ifdef TCD_DUMPœ 
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
         int tileno, compno, resno, bandno, precno;/*, cblkno;*/
 
