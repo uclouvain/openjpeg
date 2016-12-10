@@ -100,7 +100,7 @@ static OPJ_BOOL opj_bio_bytein(opj_bio_t *bio) {
 
 static void opj_bio_putbit(opj_bio_t *bio, OPJ_UINT32 b) {
 	if (bio->ct == 0) {
-		opj_bio_byteout(bio); /* MSD: why not check the return value of this function ? */
+		opj_bio_byteout(bio);
 	}
 	bio->ct--;
 	bio->buf |= b << bio->ct;
@@ -108,7 +108,7 @@ static void opj_bio_putbit(opj_bio_t *bio, OPJ_UINT32 b) {
 
 static OPJ_UINT32 opj_bio_getbit(opj_bio_t *bio) {
 	if (bio->ct == 0) {
-		opj_bio_bytein(bio); /* MSD: why not check the return value of this function ? */
+		opj_bio_bytein(bio);
 	}
 	bio->ct--;
 	return (bio->buf >> bio->ct) & 1;
