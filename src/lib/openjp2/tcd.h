@@ -227,11 +227,6 @@ typedef struct opj_tcd
 /* ----------------------------------------------------------------------- */
 
 /**
-Dump the content of a tcd structure
-*/
-/*void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t *img);*/ /* TODO MSD shoul use the new v2 structures */ 
-
-/**
 Create a new TCD handle
 @param p_is_decoder FIXME DOC
 @return Returns a new TCD handle if successful returns NULL otherwise
