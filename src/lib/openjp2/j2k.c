@@ -6475,8 +6475,13 @@ OPJ_BOOL opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         }
         if (parameters->numpocs) {
                 /* initialisation of POC */
-                opj_j2k_check_poc_val(parameters->POC,parameters->numpocs, (OPJ_UINT32)parameters->numresolution, image->numcomps, (OPJ_UINT32)parameters->tcp_numlayers, p_manager);
-                /* TODO MSD use the return value*/
+                if (!opj_j2k_check_poc_val( parameters->POC,
+                                            parameters->numpocs,
+                                            (OPJ_UINT32)parameters->numresolution,
+                                            image->numcomps, 
+                                            (OPJ_UINT32)parameters->tcp_numlayers, 
+                                            p_manager) )
+                    opj_event_msg(p_manager , EVT_ERROR, "POC values are not correct.\n");
         }
 
         for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
