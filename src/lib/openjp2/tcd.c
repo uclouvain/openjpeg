@@ -42,8 +42,12 @@
 
 /* ----------------------------------------------------------------------- */
 
-/* TODO MSD: */
-#ifdef TODO_MSD 
+#ifdef TCD_DUMP 
+/**
+Dump the content of a tcd structure
+*/
+static void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t *img);
+
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
         int tileno, compno, resno, bandno, precno;/*, cblkno;*/
 
@@ -1278,29 +1282,6 @@ OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
         OPJ_UINT32 l_data_read;
         p_tcd->tcd_tileno = p_tile_no;
         p_tcd->tcp = &(p_tcd->cp->tcps[p_tile_no]);
-
-#ifdef TODO_MSD /* FIXME */
-        /* INDEX >>  */
-        if(p_cstr_info) {
-                OPJ_UINT32 resno, compno, numprec = 0;
-                for (compno = 0; compno < (OPJ_UINT32) p_cstr_info->numcomps; compno++) {
-                        opj_tcp_t *tcp = &p_tcd->cp->tcps[0];
-                        opj_tccp_t *tccp = &tcp->tccps[compno];
-                        opj_tcd_tilecomp_t *tilec_idx = &p_tcd->tcd_image->tiles->comps[compno];
-                        for (resno = 0; resno < tilec_idx->numresolutions; resno++) {
-                                opj_tcd_resolution_t *res_idx = &tilec_idx->resolutions[resno];
-                                p_cstr_info->tile[p_tile_no].pw[resno] = res_idx->pw;
-                                p_cstr_info->tile[p_tile_no].ph[resno] = res_idx->ph;
-                                numprec += res_idx->pw * res_idx->ph;
-                                p_cstr_info->tile[p_tile_no].pdx[resno] = tccp->prcw[resno];
-                                p_cstr_info->tile[p_tile_no].pdy[resno] = tccp->prch[resno];
-                        }
-                }
-                p_cstr_info->tile[p_tile_no].packet = (opj_packet_info_t *) opj_malloc(p_cstr_info->numlayers * numprec * sizeof(opj_packet_info_t));
-                p_cstr_info->packno = 0;
-        }
-        /* << INDEX */
-#endif
 
         /*--------------TIER2------------------*/
         /* FIXME _ProfStart(PGROUP_T2); */

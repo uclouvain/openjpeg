@@ -357,9 +357,9 @@ typedef struct opj_cp
 	/** Rsiz*/
     OPJ_UINT16 rsiz;
 	/** XTOsiz */
-	OPJ_UINT32 tx0; /* MSD see norm */
+	OPJ_UINT32 tx0;
 	/** YTOsiz */
-	OPJ_UINT32 ty0; /* MSD see norm */
+	OPJ_UINT32 ty0;
 	/** XTsiz */
 	OPJ_UINT32 tdx;
 	/** YTsiz */
