@@ -681,7 +681,8 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 	OPJ_UINT32 l_nb_code_blocks_size;
 	/* size of data for a tile */
 	OPJ_UINT32 l_data_size;
-	
+	OPJ_INT32 l_max_w, l_max_h, l_tile_w, l_tile_h;
+
 	l_cp = p_tcd->cp;
 	l_tcp = &(l_cp->tcps[p_tile_no]);
 	l_tile = p_tcd->tcd_image->tiles;
@@ -720,6 +721,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 	}
 	/*fprintf(stderr, "Tile border = %d,%d,%d,%d\n", l_tile->x0, l_tile->y0,l_tile->x1,l_tile->y1);*/
 	
+	l_max_w = l_image->comps[0].w; l_max_h = l_image->comps[0].h;
 	/*tile->numcomps = image->numcomps; */
 	for (compno = 0; compno < l_tile->numcomps; ++compno) {
 		/*fprintf(stderr, "compno = %d/%d\n", compno, l_tile->numcomps);*/
@@ -730,7 +732,14 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 		l_tilec->x1 = opj_int_ceildiv(l_tile->x1, (OPJ_INT32)l_image_comp->dx);
 		l_tilec->y1 = opj_int_ceildiv(l_tile->y1, (OPJ_INT32)l_image_comp->dy);
 		/*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/
-		
+
+		l_tile_w = l_tilec->x1 - l_tilec->x0; l_tile_h = l_tilec->y1 - l_tilec->y0;
+
+		if(l_tile_w > l_max_w || l_tile_h > l_max_h) {
+			opj_event_msg(manager, EVT_ERROR, "component[%d] tile w(%d) h(%d) vs. max_w(%d) max_h(%d)\n",
+			 compno, l_tile_w,l_tile_h,l_max_w,l_max_h);
+			return OPJ_FALSE;
+		}
 		/* compute l_data_size with overflow check */
 		l_data_size = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
 		/* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
