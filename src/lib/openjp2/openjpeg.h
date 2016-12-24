@@ -240,28 +240,6 @@ typedef size_t   OPJ_SIZE_T;
 */
 
 /**
- * DEPRECATED: use RSIZ, OPJ_PROFILE_* and OPJ_EXTENSION_* instead
- * Rsiz Capabilities
- * */
-typedef enum RSIZ_CAPABILITIES {
-    OPJ_STD_RSIZ = 0,       /** Standard JPEG2000 profile*/
-    OPJ_CINEMA2K = 3,       /** Profile name for a 2K image*/
-    OPJ_CINEMA4K = 4,       /** Profile name for a 4K image*/
-    OPJ_MCT = 0x8100
-} OPJ_RSIZ_CAPABILITIES;
-
-/**
- * DEPRECATED: use RSIZ, OPJ_PROFILE_* and OPJ_EXTENSION_* instead
- * Digital cinema operation mode
- * */
-typedef enum CINEMA_MODE {
-    OPJ_OFF = 0,            /** Not Digital Cinema*/
-    OPJ_CINEMA2K_24 = 1,    /** 2K Digital Cinema at 24 fps*/
-    OPJ_CINEMA2K_48 = 2,    /** 2K Digital Cinema at 48 fps*/
-    OPJ_CINEMA4K_24 = 3     /** 4K Digital Cinema at 24 fps*/
-} OPJ_CINEMA_MODE;
-
-/**
  * Progression order
  * */
 typedef enum PROG_ORDER {
@@ -412,10 +390,6 @@ typedef struct opj_cparameters {
     char infile[OPJ_PATH_LEN];
     /** output file name */
     char outfile[OPJ_PATH_LEN];
-    /** DEPRECATED. Index generation is now handeld with the opj_encode_with_info() function. Set to NULL */
-    int index_on;
-    /** DEPRECATED. Index generation is now handeld with the opj_encode_with_info() function. Set to NULL */
-    char index[OPJ_PATH_LEN];
     /** subimage encoding: origin image offset in x direction */
     int image_offset_x0;
     /** subimage encoding: origin image offset in y direction */
@@ -463,20 +437,10 @@ typedef struct opj_cparameters {
     /* <<UniPG */
 
     /**
-     * DEPRECATED: use RSIZ, OPJ_PROFILE_* and MAX_COMP_SIZE instead
-     * Digital Cinema compliance 0-not compliant, 1-compliant
-     * */
-    OPJ_CINEMA_MODE cp_cinema;
-    /**
      * Maximum size (in bytes) for each component.
      * If == 0, component size limitation is not considered
      * */
     int max_comp_size;
-    /**
-     * DEPRECATED: use RSIZ, OPJ_PROFILE_* and OPJ_EXTENSION_* instead
-     * Profile name
-     * */
-    OPJ_RSIZ_CAPABILITIES cp_rsiz;
     /** Tile part generation*/
     char tp_on;
     /** Flag for Tile part generation*/
