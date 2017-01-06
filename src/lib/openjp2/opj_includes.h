@@ -68,7 +68,8 @@
 #endif
 
 
-#if defined(WIN32) && !defined(Windows95) && !defined(__BORLANDC__) && \
+#if defined(WIN32) && !defined(Windows95) && !defined(
+) && \
   !(defined(_MSC_VER) && _MSC_VER < 1400) && \
   !(defined(__MINGW32__) && __MSVCRT_VERSION__ < 0x800)
   /*
@@ -153,7 +154,7 @@ static INLINE long opj_lrintf(float f){
 	return (long)((f>0.0f) ? (f + 0.5f) : (f - 0.5f));
 #endif
 }
-#elif defined(__BORLANDC__)
+#elif defined(__BORLANDC__) && defined(_WIN32)
 static INLINE long opj_lrintf(float f) {
 #ifdef _M_X64
      return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
