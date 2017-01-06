@@ -36,10 +36,17 @@
 #include <inttypes.h>
 #else
 #if defined(_WIN32)
+#if defined(__BORLANDC__) && defined(_WIN64)
+#define PRId64 "lld"
+#define PRIi64 "lli"
+#define PRIu64 "llu"
+#define PRIx64 "llx"
+#else
 #define PRId64 "I64d"
 #define PRIi64 "I64i"
 #define PRIu64 "I64u"
 #define PRIx64 "I64x"
+#endif
 #else
 #error unsupported platform
 #endif
