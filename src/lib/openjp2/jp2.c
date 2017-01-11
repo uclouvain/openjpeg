@@ -570,7 +570,7 @@ static OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
 	p_image_header_data += 2;
 	
 	if ((jp2->numcomps - 1U) >= 16384U) { /* unsigned underflow is well defined: 1U <= jp2->numcomps <= 16384U */
-		opj_event_msg(p_manager, EVT_ERROR, "Invalid number of components (ihdr)\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Invalid number of components (ihdr): %u\n", jp2->numcomps);
 		return OPJ_FALSE;
 	}
 
@@ -596,6 +596,11 @@ static OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
 	++ p_image_header_data;
 	opj_read_bytes(p_image_header_data,&(jp2->IPR),1);			/* IPR */
 	++ p_image_header_data;
+
+	jp2->j2k->m_cp.bpc_is_255 = (jp2->bpc == 255); /* For AFL test */
+	jp2->j2k->ihdr_w = jp2->w; /* For AFL test */
+	jp2->j2k->ihdr_h = jp2->h; /* For AFL test */
+	jp2->has_ihdr = 1; /* For AFL test */
 
 	return OPJ_TRUE;
 }
@@ -912,7 +917,10 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 		/* verify that no component is targeted more than once */
 		for (i = 0; i < nr_channels; i++) {
       OPJ_UINT16 pcol = cmap[i].pcol;
-      assert(cmap[i].mtyp == 0 || cmap[i].mtyp == 1);
+			if(cmap[i].mtyp != 0 && cmap[i].mtyp != 1) {/* AFL test */
+				opj_event_msg(p_manager, EVT_ERROR, "Invalid cmap[%d].mtyp ==> %d\n",i,cmap[i].mtyp);
+				is_sane = OPJ_FALSE;
+			}
 			if (pcol >= nr_channels) {
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component/palette index for direct mapping %d.\n", pcol);
 				is_sane = OPJ_FALSE;
@@ -1484,8 +1492,8 @@ static OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 	{
 		/*	ISO/IEC 15444-1:2004 (E), Table I.9 Legal METH values:
 		conforming JP2 reader shall ignore the entire Colour Specification box.*/
-		opj_event_msg(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), "
-			"so we will ignore the entire Colour Specification box. \n", jp2->meth);
+		opj_event_msg(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d),\n"
+			"       so we will ignore the entire Colour Specification box. \n", jp2->meth);
 	}
 	return OPJ_TRUE;
 }
@@ -1495,12 +1503,22 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
                         opj_image_t* p_image,
                         opj_event_mgr_t * p_manager)
 {
+	OPJ_UINT32 ihdr_w, ihdr_h, img_w, img_h;
+
 	if (!p_image)
 		return OPJ_FALSE;
 
 	/* J2K decoding */
 	if( ! opj_j2k_decode(jp2->j2k, p_stream, p_image, p_manager) ) {
 		opj_event_msg(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
+		return OPJ_FALSE;
+	}
+/* AFL test: */
+	ihdr_w = jp2->w; ihdr_h = jp2->h;
+	img_w = p_image->x1 - p_image->x0; img_h = p_image->y1 - p_image->y0;
+
+	if(img_w > ihdr_w || img_h > ihdr_h) {
+		opj_event_msg(p_manager, EVT_ERROR, "IHDR w(%u) h(%u) vs. IMAGE w(%u) h(%u)\n",ihdr_w,ihdr_h,img_w,img_h);
 		return OPJ_FALSE;
 	}
 
@@ -2563,6 +2581,7 @@ static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
 	}
 
 	jp2->jp2_state |= JP2_STATE_HEADER;
+	jp2->has_jp2h = 1;
 
 	return OPJ_TRUE;
 }
@@ -2667,7 +2686,16 @@ OPJ_BOOL opj_jp2_read_header(	opj_stream_private_t *p_stream,
 	if (! opj_jp2_exec (jp2,jp2->m_procedure_list,p_stream,p_manager)) {
 		return OPJ_FALSE;
 	}
-
+/* AFL test: */
+	if(jp2->has_jp2h == 0) {
+		opj_event_msg(p_manager, EVT_ERROR, "JP2H box missing. Required.\n");
+		return OPJ_FALSE;
+	}
+/* AFL test: */
+	if(jp2->has_ihdr == 0) {
+		opj_event_msg(p_manager, EVT_ERROR, "IHDR box_missing. Required.\n");
+		return OPJ_FALSE;
+	}
 	return opj_j2k_read_header(	p_stream,
 							jp2->j2k,
 							p_image,
