@@ -1290,7 +1290,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
   @return a pointer to a char[]
   Syntax of the index:
 	one char for the version number (1): one byte because no problem with little endian, big endian etc.
-	one int for each of the following informations:
+	one int for each of the following information:
 			Image Width	
 			Image Height	
 			progression order	
@@ -1358,7 +1358,7 @@ static char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int*
 	
 	buffer[0] = 1;	/* Version stored on a byte*/
 	buffer++;
-	/* Remaining informations are stored on a int.*/
+	/* Remaining information are stored on a int.*/
 	((int*)buffer)[buffer_pos++] = cstr_info->image_w;
 	((int*)buffer)[buffer_pos++] = cstr_info->image_h;
 	((int*)buffer)[buffer_pos++] = cstr_info->prog;

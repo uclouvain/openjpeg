@@ -331,7 +331,7 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 	  if( msgqueue->cachemodel->jppstream){
 	    enqueue_tileheader( (int)tile_id, msgqueue);
 
-      /* FIXME: The following code is suspicious it implicitely cast an unsigned int to int, which truncates values */
+      /* FIXME: The following code is suspicious it implicitly cast an unsigned int to int, which truncates values */
 	    xmin = tile_Xrange.minvalue >= (Byte4_t)(imgreg.xosiz + imgreg.ox) ? 0 : imgreg.xosiz + imgreg.ox - (int)tile_Xrange.minvalue;
 	    xmax = tile_Xrange.maxvalue <= (Byte4_t)(imgreg.xosiz + imgreg.ox + imgreg.sx) ? (int)(tile_Xrange.maxvalue - tile_Xrange.minvalue -1) : (int)(imgreg.xosiz + imgreg.ox + imgreg.sx - (int)tile_Xrange.minvalue - 1);
 	    ymin = tile_Yrange.minvalue >= (Byte4_t)(imgreg.yosiz + imgreg.oy) ? 0 : imgreg.yosiz + imgreg.oy - (int)tile_Yrange.minvalue;

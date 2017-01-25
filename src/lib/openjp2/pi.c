@@ -727,7 +727,7 @@ static void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 	*p_dy_min = 0x7fffffff;
 
 	for (compno = 0; compno < p_image->numcomps; ++compno) {
-		/* aritmetic variables to calculate*/
+		/* arithmetic variables to calculate*/
 		OPJ_UINT32 l_level_no;
 		OPJ_INT32 l_rx0, l_ry0, l_rx1, l_ry1;
 		OPJ_INT32 l_px0, l_py0, l_px1, py1;
