@@ -81,7 +81,6 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv, opj_e
         /* ADD */
         if (tree->numnodes == 0) {
                 opj_free(tree);
-                opj_event_msg(manager, EVT_WARNING, "tgt_create tree->numnodes == 0, no tree created.\n");
                 return 00;
         }
 
