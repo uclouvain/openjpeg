@@ -324,10 +324,12 @@ void opj_mqc_flush(opj_mqc_t *mqc) {
 	
 	if (*mqc->bp != 0xff) {
 		mqc->bp++;
+		*mqc->bp = 0;
 	}
 }
 
 void opj_mqc_bypass_init_enc(opj_mqc_t *mqc) {
+	opj_mqc_byteout(mqc);
 	mqc->c = 0;
 	mqc->ct = 8;
 	/*if (*mqc->bp == 0xff) {
@@ -362,6 +364,8 @@ OPJ_UINT32 opj_mqc_bypass_flush_enc(opj_mqc_t *mqc) {
 		}
 		mqc->bp++;
 		*mqc->bp = (OPJ_BYTE)mqc->c;
+		mqc->bp++;
+		*mqc->bp = 0;
 		mqc->ct = 8;
 		mqc->c = 0;
 	}
