@@ -807,7 +807,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
     int adjustR, adjustG, adjustB;
 
     if (image->comps[0].prec < 8) {
-        fprintf(stderr, "Unsupported number of components: %d\n", image->comps[0].prec);
+        fprintf(stderr, "imagetobmp: Unsupported precision: %d\n", image->comps[0].prec);
         return 1;
     }
     if (image->numcomps >= 3 && image->comps[0].dx == image->comps[1].dx
@@ -815,7 +815,9 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
             && image->comps[0].dy == image->comps[1].dy
             && image->comps[1].dy == image->comps[2].dy
             && image->comps[0].prec == image->comps[1].prec
-            && image->comps[1].prec == image->comps[2].prec) {
+            && image->comps[1].prec == image->comps[2].prec
+            && image->comps[0].sgnd == image->comps[1].sgnd
+            && image->comps[1].sgnd == image->comps[2].sgnd) {
 
         /* -->> -->> -->> -->>
         24 bits color
@@ -924,6 +926,9 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
         if (!fdest) {
             fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
             return 1;
+        }
+        if(image->numcomps > 1){
+           fprintf(stderr,"imagetobmp: only first component of %d is used.\n",image->numcomps);
         }
         w = (int)image->comps[0].w;
         h = (int)image->comps[0].h;

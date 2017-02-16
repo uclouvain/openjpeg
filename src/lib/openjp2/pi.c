@@ -354,16 +354,24 @@ if (!pi->tp_on){
 					}
 					res = &comp->resolutions[pi->resno];
 					levelno = comp->numresolutions - 1 - pi->resno;
+
+					if(levelno > 31) continue; /* AFL test */
+					if((comp->dx << levelno) == 0) continue; /* AFL test */
+					if((comp->dy << levelno) == 0) continue; /* AFL test */
+
 					trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
 					try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
 					trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
 					try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
-					if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
+					if(rpx > 31 || rpy > 31) continue; /* AFL test. FIXME: 38, the Norm prec ? */
+					if((comp->dy << rpy) == 0)  continue; /* AFL test */
+					if((comp->dx << rpx) == 0) continue;  /* AFL test */
+					if (!(((pi->y % (comp->dy << rpy)) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
 					}
-					if (!((pi->x % (OPJ_INT32)(comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
+					if (!(((pi->x % (comp->dx << rpx)) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
 						continue;
 					}
 					
@@ -435,12 +443,20 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi) {
 					OPJ_INT32 prci, prcj;
 					res = &comp->resolutions[pi->resno];
 					levelno = comp->numresolutions - 1 - pi->resno;
+
+					if(levelno > 31) continue; /* AFL test */
+					if((comp->dx << levelno) == 0) continue; /* AFL test */
+					if((comp->dy << levelno) == 0) continue; /* AFL test */
+
 					trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
 					try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
 					trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
 					try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
+					if(rpx > 31 || rpy > 31) continue; /* AFL test. FIXME: 38, the Norm prec ? */
+					if((comp->dy << rpy) == 0)  continue; /* AFL test */
+					if((comp->dx << rpx) == 0) continue;  /* AFL test */
 					if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
 					}
@@ -514,12 +530,20 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi) {
 					OPJ_INT32 prci, prcj;
 					res = &comp->resolutions[pi->resno];
 					levelno = comp->numresolutions - 1 - pi->resno;
+					if(levelno > 31) continue; /* AFL test */
+					if((comp->dx << levelno) == 0) continue; /* AFL test */
+					if((comp->dy << levelno) == 0) continue; /* AFL test */
+
 					trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
 					try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
 					trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
 					try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
+					if(rpx > 31 || rpy > 31) continue; /* AFL test */
+					if((comp->dx << rpx) == 0) continue; /* AFL test */
+					if((comp->dy << rpy) == 0) continue; /* AFL test */
+
 					if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
 					}
@@ -612,6 +636,9 @@ static void opj_get_encoding_parameters(	const opj_image_t *p_image,
 		OPJ_UINT32 l_product;
 		OPJ_INT32 l_tcx0, l_tcy0, l_tcx1, l_tcy1;
 
+		if(l_img_comp->dx == 0) continue; /* AFL test */
+		if(l_img_comp->dy == 0) continue; /* AFL test */
+
 		l_tcx0 = opj_int_ceildiv(*p_tx0, (OPJ_INT32)l_img_comp->dx);
 		l_tcy0 = opj_int_ceildiv(*p_ty0, (OPJ_INT32)l_img_comp->dy);
 		l_tcx1 = opj_int_ceildiv(*p_tx1, (OPJ_INT32)l_img_comp->dx);
@@ -629,6 +656,9 @@ static void opj_get_encoding_parameters(	const opj_image_t *p_image,
 			l_pdx = l_tccp->prcw[resno];
 			l_pdy = l_tccp->prch[resno];
 
+			if((l_pdx + l_tccp->numresolutions - 1 - resno) > 31) continue; /* AFL test */
+			if((l_pdy + l_tccp->numresolutions - 1 - resno) > 31) continue; /* AFL test */
+
 			l_dx = l_img_comp->dx * (1u << (l_pdx + l_tccp->numresolutions - 1 - resno));
 			l_dy = l_img_comp->dy * (1u << (l_pdy + l_tccp->numresolutions - 1 - resno));
 
@@ -639,6 +669,9 @@ static void opj_get_encoding_parameters(	const opj_image_t *p_image,
 			/* various calculations of extents */
 			l_level_no = l_tccp->numresolutions - 1 - resno;
 
+			if(l_level_no > 31) continue; /* AFL test */
+			if(l_pdx > 31 || l_pdy > 31) continue; /* AFL test */
+			
 			l_rx0 = opj_int_ceildivpow2(l_tcx0, (OPJ_INT32)l_level_no);
 			l_ry0 = opj_int_ceildivpow2(l_tcy0, (OPJ_INT32)l_level_no);
 			l_rx1 = opj_int_ceildivpow2(l_tcx1, (OPJ_INT32)l_level_no);
@@ -734,6 +767,8 @@ static void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 		OPJ_UINT32 l_product;
 		OPJ_INT32 l_tcx0, l_tcy0, l_tcx1, l_tcy1;
 		OPJ_UINT32 l_pdx, l_pdy , l_pw , l_ph;
+
+		if(l_img_comp->dx == 0 || l_img_comp->dy == 0) continue; /* AFL test */
 
 		lResolutionPtr = p_resolutions[compno];
 
