@@ -297,25 +297,159 @@ OPJ_UINT32 opj_mqc_numbytes(opj_mqc_t *mqc) {
 	return (OPJ_UINT32)diff;
 }
 
+// pg. 477
+// FIXME: bitwise AND of the upper part of the C was omitted, so far
+#define BOOK_Ccarry(mqc)      (OPJ_BYTE)( (mqc)->c >> 27 )
+#define BOOK_Cmsbs(mqc)       (OPJ_BYTE)( (mqc)->c >> 20 )
+#define BOOK_Cpartial(mqc)    (OPJ_BYTE)( (mqc)->c >> 19 )
+#define BOOK_Ccarry_reset(mqc)    (void)( (mqc)->c &= 0x7ffffff )
+#define BOOK_Cmsbs_reset(mqc)     (void)( (mqc)->c &= 0x00fffff )
+#define BOOK_Cpartial_reset(mqc)  (void)( (mqc)->c &= 0x007ffff )
+
+#ifdef BOOK_ENABLE
+static void BOOK_mq_encoder_initialization(opj_mqc_t *mqc, OPJ_BYTE *bpst)
+{
+	mqc->a = 0x8000;
+	mqc->c = 0;
+	mqc->ct = 12;
+	mqc->b = 0;
+	mqc->bp = bpst - 1;
+}
+#endif
+
 void opj_mqc_init_enc(opj_mqc_t *mqc, OPJ_BYTE *bp) {
     /* TODO MSD: need to take a look to the v2 version */
 	opj_mqc_setcurctx(mqc, 0);
+#ifdef BOOK_ENABLE
+	BOOK_mq_encoder_initialization(mqc, bp);
+#else
 	mqc->a = 0x8000;
 	mqc->c = 0;
 	mqc->bp = bp - 1;
 	mqc->ct = 12;
+#endif
 	mqc->start = bp;
 }
 
+#ifdef BOOK_ENABLE
+// pg. 479
+static void BOOK_put_byte(opj_mqc_t *mqc)
+{
+	if( mqc->bp >= mqc->start ) // if L >= 0
+	{
+		*mqc->bp = mqc->b; // B_L <- T
+	}
+
+	mqc->bp++; // L = L + 1
+}
+#endif
+
+#ifdef BOOK_ENABLE
+// pg. 479
+static void BOOK_transfer_byte(opj_mqc_t *mqc)
+{
+	if( mqc->b == 0xff ) // if T = FF
+	{
+		BOOK_put_byte(mqc); // Put-Byte(T,L)
+		mqc->b = BOOK_Cmsbs(mqc); // T <- Cmsbs
+		BOOK_Cmsbs_reset(mqc); // Cmsbs <- 0
+		mqc->ct = 7; // t <- 7
+	}
+	else
+	{
+		mqc->b += BOOK_Ccarry(mqc); // T <- T + Ccarry
+		BOOK_Ccarry_reset(mqc); // Ccarry <- 0
+		BOOK_put_byte(mqc); // Put-Byte(T,L)
+		if( mqc->b == 0xff ) // if T = FF
+		{
+			mqc->b = BOOK_Cmsbs(mqc); // T <- Cmsbs
+			BOOK_Cmsbs_reset(mqc); // Cmsbs <- 0
+			mqc->ct = 7; // t <- 7
+		}
+		else
+		{
+			mqc->b = BOOK_Cpartial(mqc); // T <- Cpartial
+			BOOK_Cpartial_reset(mqc); // Cpartial <- 0
+			mqc->ct = 8; // t <- 8
+		}
+	}
+}
+#endif
+
+#ifdef BOOK_ENABLE
+static void BOOK_mq_encode(opj_mqc_t *mqc, OPJ_UINT32 x)
+{
+	OPJ_UINT32 s = (*mqc->curctx)->mps; // s = MPS(CX)
+	OPJ_UINT32 p = (*mqc->curctx)->qeval; // p = Qe(I(CX))
+	mqc->a -= p; // A <- A - p
+	if( mqc->a < p ) // if A < p
+	{
+		s = 1 - s; // s <- 1 - s
+	}
+	if( x == s ) // if x = s
+	{
+		mqc->c += p; // C <- C + p
+	}
+	else
+	{
+		mqc->a = p; // A <- p
+	}
+	if( mqc->a < 0x8000 ) // if A < 2^15
+	{
+		if( x == (*mqc->curctx)->mps ) // if x = s_k
+		{
+			*mqc->curctx = (*mqc->curctx)->nmps; // ...
+		}
+		else
+		{
+			// (*mqc->curctx)->mps ^= 1; // NOTE: omitted in OpenJPEG
+			*mqc->curctx = (*mqc->curctx)->nlps; // ...
+		}
+	}
+	while( mqc->a < 0x8000 ) // while A < 2^15
+	{
+		mqc->a <<= 1; // A <- 2A
+		mqc->c <<= 1; // C <- 2C
+		mqc->ct--; // t <- t - 1
+		if( mqc->ct == 0 ) // if t = 0
+		{
+			BOOK_transfer_byte(mqc); // Transfer-Byte(T,C,L,t)
+		}
+	}
+}
+#endif
+
+#ifdef BOOK_ENABLE
+static void BOOK_easy_mq_codeword_termination(opj_mqc_t *mqc)
+{
+	OPJ_INT32 nbits = 27 - 15 - mqc->ct; // nbits <- 27 - 15 - t
+	mqc->c <<= mqc->ct; // C <- 2^t * C
+	while( nbits > 0 )
+	{
+		BOOK_transfer_byte(mqc); // Transfer-Byte(T,C,L,t)
+		nbits -= mqc->ct; // nbits <- nbits - t
+		mqc->c <<= mqc->ct; // C <- 2^t * C
+	}
+	BOOK_transfer_byte(mqc); // Transfer-Byte(T,C,L,t)
+}
+#endif
+
 void opj_mqc_encode(opj_mqc_t *mqc, OPJ_UINT32 d) {
+#ifdef BOOK_ENABLE
+	BOOK_mq_encode(mqc, d);
+#else
 	if ((*mqc->curctx)->mps == d) {
 		opj_mqc_codemps(mqc);
 	} else {
 		opj_mqc_codelps(mqc);
 	}
+#endif
 }
 
 void opj_mqc_flush(opj_mqc_t *mqc) {
+#ifdef BOOK_ENABLE
+	BOOK_easy_mq_codeword_termination(mqc);
+#else
 	opj_mqc_setbits(mqc);
 	mqc->c <<= mqc->ct;
 	opj_mqc_byteout(mqc);
@@ -326,6 +460,7 @@ void opj_mqc_flush(opj_mqc_t *mqc) {
 		mqc->bp++;
 		*mqc->bp = 0;
 	}
+#endif
 }
 
 void opj_mqc_bypass_init_enc(opj_mqc_t *mqc) {
@@ -397,6 +532,10 @@ OPJ_UINT32 opj_mqc_restart_enc(opj_mqc_t *mqc) {
 }
 
 void opj_mqc_restart_init_enc(opj_mqc_t *mqc) {
+#ifdef BOOK_ENABLE
+	// FIXME why is there the +1 term?
+	BOOK_mq_encoder_initialization(mqc, mqc->bp+1);
+#else
 	/* <Re-init part> */
 	opj_mqc_setcurctx(mqc, 0);
 	mqc->a = 0x8000;
@@ -406,6 +545,7 @@ void opj_mqc_restart_init_enc(opj_mqc_t *mqc) {
 	if (*mqc->bp == 0xff) {
 		mqc->ct = 13;
 	}
+#endif
 }
 
 void opj_mqc_erterm_enc(opj_mqc_t *mqc) {
