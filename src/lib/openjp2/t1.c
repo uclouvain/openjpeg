@@ -2102,9 +2102,9 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 		/* Code switch "RESTART" (i.e. TERMALL) */
 		if ((cblksty & J2K_CCP_CBLKSTY_TERMALL)	&& !((passtype == 2) && (bpno - 1 < 0))) {
 			if (type == T1_TYPE_RAW) {
-				opj_mqc_flush(mqc);
+                /*opj_mqc_flush(mqc);*/
+                opj_mqc_bypass_flush_enc(mqc);
 				correction = 1;
-				/* correction = mqc_bypass_flush_enc(); */
 			} else {			/* correction = mqc_restart_enc(); */
 				opj_mqc_flush(mqc);
 				correction = 1;
@@ -2114,9 +2114,9 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 			if (((bpno < ((OPJ_INT32) (cblk->numbps) - 4) && (passtype > 0))
 				|| ((bpno == ((OPJ_INT32)cblk->numbps - 4)) && (passtype == 2))) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) {
 				if (type == T1_TYPE_RAW) {
-					opj_mqc_flush(mqc);
+                    /*opj_mqc_flush(mqc);*/
+                    opj_mqc_bypass_flush_enc(mqc);
 					correction = 1;
-					/* correction = mqc_bypass_flush_enc(); */
 				} else {		/* correction = mqc_restart_enc(); */
 					opj_mqc_flush(mqc);
 					correction = 1;
@@ -2132,7 +2132,8 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 			bpno--;
 		}
 
-		if (pass->term && bpno > 0) {
+        /*if (pass->term && bpno > 0) {*/
+        if (pass->term && (bpno > 0 || (bpno == 0 && passtype < 2))) {
 			type = ((bpno < ((OPJ_INT32) (cblk->numbps) - 4)) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 			if (type == T1_TYPE_RAW)
 				opj_mqc_bypass_init_enc(mqc);
