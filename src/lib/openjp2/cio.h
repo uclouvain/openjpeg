@@ -75,6 +75,25 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 #define OPJ_STREAM_STATUS_END     0x4U
 #define OPJ_STREAM_STATUS_ERROR   0x8U
 
+#if defined(__cplusplus)
+
+static inline opj_stream_flag operator |=(opj_stream_flag a, opj_stream_flag b)
+{
+    return opj_stream_flag(int(a) | int(b));
+}
+
+static inline opj_stream_flag operator &=(opj_stream_flag a, opj_stream_flag b)
+{
+    return opj_stream_flag(int(a) & int(b));
+}
+
+static inline opj_stream_flag operator ~(opj_stream_flag a)
+{
+    return opj_stream_flag(~int(a));
+}
+
+#endif /* __cplusplus */
+
 /**
 Byte input-output stream.
 */
