@@ -37,6 +37,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 
 #include "opj_apps_config.h"
 #include "opj_getopt.h"
