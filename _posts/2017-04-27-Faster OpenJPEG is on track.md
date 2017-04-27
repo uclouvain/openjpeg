@@ -15,7 +15,7 @@ Starting May 1st, a 4-month improvement plan will take place, thanks to the fund
 
 This plan has also been made possible thanks to the support of the International Image Interoperability Framework ([IIIF](http://iiif.io/)), the Council on Library and Information Resources ([CLIR](https://www.clir.org/)), [intoPIX](http://www.intopix.com), and of course the Image and Signal Processing Group ([ISPGroup](http://sites.uclouvain.be/ispgroup/index.php/Main/HomePage)) from University of Louvain ([UCL](https://uclouvain.be), Belgium) hosting the OpenJPEG project.
 
-The primary goal of this improvement plan is to upgrade OpenJPEG so that it meets the needs of the Digital Library Community. Practically, Even Rouault, already known for its contribution on multi-threading, will work towards improving several aspects of the code. Main focus is the decoding speed, region-of-interest decoding and memory footprint.
+The primary goal of this improvement plan is to upgrade OpenJPEG so that it meets the needs of the Digital Library Community. Practically, Even Rouault, already known for his contributions on multi-threading, will work towards improving several aspects of the code. Main focus is the decoding speed, region-of-interest decoding and memory footprint.
 
 Project status will be publicly accessible on [Github](https://github.com/uclouvain/openjpeg/projects/1).
 
