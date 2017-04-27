@@ -7,7 +7,7 @@ title: Faster OpenJPEG is on track
 Good news for OpenJPEG and its community !
 
 Starting May 1st, a 4-month improvement plan will take place, thanks to the funding provided by five well known academic institutions and archival organizations, namely:
-- [Wellcome Trust](https://wellcome.ac.uk/)
+- [Wellcome Library](https://wellcomelibrary.org/)
 - [Stanford University](https://www.stanford.edu/)
 - [Nationale Bibliotheek van Nederland, (KBNL)](https://www.kb.nl/en)
 - [University of Michigan](https://www.umich.edu/)
@@ -21,12 +21,12 @@ Project status will be publicly accessible on [Github](https://github.com/uclouv
 
 Faster and better OpenJPEG can therefore be expected by the end of 2017 !
 
-<a href="https://wellcome.ac.uk/"><img src="{{ BASE_PATH }}/assets/images/wellcome.png" width="100"></a>
+<a href="https://wellcomelibrary.org/"><img src="{{ BASE_PATH }}/assets/images/wellcome-logo.png" width="125"></a>
 <a href="https://www.stanford.edu/"><img src="{{ BASE_PATH }}/assets/images/stanford.png" width="200"></a>
-<a href="https://www.kb.nl/en"><img src="{{ BASE_PATH }}/assets/images/kbnl.jpg" width="125"></a>
+<a href="https://www.kb.nl/en"><img src="{{ BASE_PATH }}/assets/images/kbnl.jpg" width="110"></a>
 <a href="https://www.umich.edu/"><img src="{{ BASE_PATH }}/assets/images/umich.jpg" width="75"></a>
 <a href="http://www.ucla.edu/"><img src="{{ BASE_PATH }}/assets/images/ucla.gif" width="125"></a>
-<a href="http://iiif.io/"><img src="{{ BASE_PATH }}/assets/images/iiif.png" width="100"></a>
+<a href="http://iiif.io/"><img src="{{ BASE_PATH }}/assets/images/iiif.png" width="90"></a>
 <a href="https://www.clir.org/"><img src="{{ BASE_PATH }}/assets/images/clir.jpg" width="150"></a>
 <!--<a href="http://www.intopix.com"><img src="{{ BASE_PATH }}/assets/images/logo_intopix.png" width="100"></a>
 <a href="https://uclouvain.be"><img src="{{ BASE_PATH }}/assets/images/UCL_logo.png" width="100"></a>-->
