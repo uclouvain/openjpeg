@@ -4,12 +4,12 @@ title: Faster OpenJPEG is on track
 ---
 {% include JB/setup %}
 
-Good news for OpenJPEG and its community !
+Good news for OpenJPEG and the JPEG 2000 open-source community !
 
 Starting May 1st, a 4-month improvement plan will take place, thanks to the funding provided by five well known academic institutions and archival organizations, namely:
 - [Wellcome Library](https://wellcomelibrary.org/)
 - [Stanford University](https://www.stanford.edu/)
-- [Nationale Bibliotheek van Nederland, (KBNL)](https://www.kb.nl/en)
+- [Nationale Bibliotheek van Nederland (KBNL)](https://www.kb.nl/en)
 - [University of Michigan](https://www.umich.edu/)
 - [University of California, Los Angeles (UCLA)](http://www.ucla.edu/)
 
