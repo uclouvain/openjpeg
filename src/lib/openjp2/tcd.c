@@ -987,21 +987,11 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 						l_current_precinct->incltree = opj_tgt_init(l_current_precinct->incltree, l_current_precinct->cw, l_current_precinct->ch, manager);
 					}
 
-					if (! l_current_precinct->incltree)     {
-						opj_event_msg(manager, EVT_WARNING, "No incltree created.\n");
-						/*return OPJ_FALSE;*/
-					}
-
 					if (! l_current_precinct->imsbtree) {
 						l_current_precinct->imsbtree = opj_tgt_create(l_current_precinct->cw, l_current_precinct->ch, manager);
 					}
 					else {
 						l_current_precinct->imsbtree = opj_tgt_init(l_current_precinct->imsbtree, l_current_precinct->cw, l_current_precinct->ch, manager);
-					}
-
-					if (! l_current_precinct->imsbtree) {
-						opj_event_msg(manager, EVT_WARNING, "No imsbtree created.\n");
-						/*return OPJ_FALSE;*/
 					}
 
 					for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
