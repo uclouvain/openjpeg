@@ -6,6 +6,7 @@
 find_package(Doxygen)
 
 if(DOXYGEN_FOUND)
+  EXEC_PROGRAM(${DOXYGEN} ARGS -s -u ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.dox.cmake.in)
   # Configure the doxygen config file with variable from CMake and move it
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.dox.cmake.in
     ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox @ONLY)

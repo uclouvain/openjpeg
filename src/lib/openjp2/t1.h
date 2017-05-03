@@ -168,7 +168,8 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 
 /**
 Decode the code-blocks of a tile
-@param t1 T1 handle
+@param tp    Thread pool
+@param pret  Pointer to return value: OPJ_TRUE or OPJ_FALSE
 @param tilec The tile to decode
 @param tccp Tile coding parameters
 */
