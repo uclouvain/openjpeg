@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit a18040e02238c577cf7853a0e303cbca62e044a8
+<pre class='wrap'>commit 20291aad07591da40ac86e5f5a87b4f6d154ba6a
+Merge: a18040e 04980a8
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-05-03 12:41:02 +0200
+
+    Merge pull request #915 from rouault/appveyor_fix_attempt
+    
+    Fix retrieval of jpylyzer in AppVeyor
+
+commit 04980a8c7b6c260394084ab12b4bdee957caa24f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-03 12:03:00 +0200
+
+    Fix retrieval of jpylyzer in AppVeyor
+
+commit a18040e02238c577cf7853a0e303cbca62e044a8
 Merge: e7ff1ef a43f1be
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-03 11:48:02 +0200
@@ -660,12 +675,6 @@ Date:   2016-06-21 16:46:38 +0200
 
     Automatic upload of ABI report (ctd)
 
-commit 48744a1342123945ca461839ffe52d9b2c467fc9
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-06-21 16:19:06 +0200
-
-    setup automatic upload of ABI reports
-
 commit 7d3c7a345f05adbc9ca26d8ca7f6c7fffa5096be
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-05-26 23:51:32 +0200
@@ -801,14 +810,6 @@ Date:   2016-05-21 15:41:36 +0200
     opj_t1_updateflags(): tiny optimization
     
     We can avoid using a loop-up table with some shift arithmetics.
-
-commit 426bf8d337715f7b2e867cb2643128e5c2e3b5bb
-Author: Kal Conley &lt;kcconley@gmail.com&gt;
-Date:   2015-12-27 20:14:47 +0100
-
-    Move some MQC functions into a header for speed
-    
-    Allow these hot functions to be inlined. This boosts decode performance by ~10%.
 
 ...</pre></div>
 
