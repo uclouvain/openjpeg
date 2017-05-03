@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e7ff1efb82fab7ba6c6d69e7d286811abb4ee7e7
+<pre class='wrap'>commit a18040e02238c577cf7853a0e303cbca62e044a8
+Merge: e7ff1ef a43f1be
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-05-03 11:48:02 +0200
+
+    Merge pull request #893 from rouault/remove_tagtree_warnings
+    
+    Remove warnings related to empty tag-trees.
+
+commit e7ff1efb82fab7ba6c6d69e7d286811abb4ee7e7
 Merge: 807da62 cf08763
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-03 11:46:45 +0200
@@ -59,6 +68,21 @@ Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2017-03-03 23:23:39 +0100
 
     Fixed CRLF auto conversion issue in openjpeg-data #655
+
+commit a43f1bea6273e87d9e5cb6e428f560ae7a59223b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-02-13 12:36:45 +0100
+
+    Remove warnings related to empty tag-trees.
+    
+    Decoding some valid .jp2 files like Sentinel2 datasets leads to warnings like:
+    No incltree created.
+    tgt_create tree-&gt;numnodes == 0, no tree created.
+    No imsbtree created.
+    tgt_create tree-&gt;numnodes == 0, no tree created.
+    
+    Besides that, the image is correctly decoded. So there is no reason to emit
+    those warnings.
 
 commit 7113c4e3bbb4b397ae0c27cbfb645ae8acfee042
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
@@ -785,18 +809,6 @@ Date:   2015-12-27 20:14:47 +0100
     Move some MQC functions into a header for speed
     
     Allow these hot functions to be inlined. This boosts decode performance by ~10%.
-
-commit d0babeb6f6cdd1887308137df37bb2b4724a6592
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-05-15 01:36:31 +0200
-
-    WIP automatic release
-
-commit d1ca2b4f29efc9e12a77c7aba76091beae1966ec
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-05-15 00:53:24 +0200
-
-    WIP: debug travis run script
 
 ...</pre></div>
 
