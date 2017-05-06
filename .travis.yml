@@ -20,7 +20,11 @@ matrix:
             - gcc-multilib
     - os: linux
       compiler: gcc
-      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug
+      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_PROFILE=1
+      addons:
+        apt:
+          packages:
+            - valgrind
     - os: linux
       compiler: clang
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_ASAN=1
