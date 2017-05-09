@@ -49,6 +49,7 @@ The library is developed and maintained by the Image and Signal Processing Group
 * doc: doxygen documentation setup file and man pages
 * tests: configuration files and utilities for the openjpeg test suite. All test images are located in [openjpeg-data](https://github.com/uclouvain/openjpeg-data) repository.
 * cmake: cmake related files
+* scripts: scripts for developers
 
 See [LICENSE][link-license] for license and copyright information.
 

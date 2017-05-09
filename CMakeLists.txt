@@ -24,7 +24,7 @@ endif()
 #string(TOLOWER ${OPENJPEG_NAMESPACE} OPENJPEG_LIBRARY_NAME)
 set(OPENJPEG_LIBRARY_NAME openjp2)
 
-project(${OPENJPEG_NAMESPACE} C)
+project(${OPENJPEG_NAMESPACE})
 
 # Do full dependency headers.
 include_regular_expression("^.*$")
@@ -386,3 +386,6 @@ if(BUILD_PKGCONFIG_FILES)
 endif()
 
 #-----------------------------------------------------------------------------
+
+# build our version of astyle
+SET (WITH_ASTYLE FALSE CACHE BOOL "If you plan to contribute you should reindent with scripts/prepare-commit.sh (using 'our' astyle)")

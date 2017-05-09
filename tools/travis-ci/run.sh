@@ -30,6 +30,16 @@ if [ "${OPJ_CI_ABI_CHECK:-}" == "1" ]; then
 	exit 0
 fi
 
+if [ "${OPJ_CI_CC:-}" != "" ]; then
+    export CC=${OPJ_CI_CC}
+    echo "Using ${CC}"
+fi
+
+if [ "${OPJ_CI_CXX:-}" != "" ]; then
+    export CXX=${OPJ_CI_CXX}
+    echo "Using ${CXX}"
+fi
+
 # Set-up some variables
 if [ "${OPJ_CI_BUILD_CONFIGURATION:-}" == "" ]; then
 	export OPJ_CI_BUILD_CONFIGURATION=Release #default
@@ -190,6 +200,15 @@ fi
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
 set +x
+
+
+
+if [ "${OPJ_CI_CHECK_STYLE:-}" == "1" ]; then
+    export OPJSTYLE=${PWD}/scripts/opjstyle
+    export PATH=${HOME}/.local/bin:${PATH}
+    scripts/verify-indentation.sh
+fi
+
 
 # Deployment if needed
 #---------------------
