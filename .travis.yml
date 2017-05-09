@@ -7,7 +7,7 @@ matrix:
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_INCLUDE_IF_DEPLOY=1
     - os: linux
       compiler: gcc
-      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_INCLUDE_IF_DEPLOY=1
+      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_INCLUDE_IF_DEPLOY=1 OPJ_CI_PERF_TESTS=1
     - os: linux
       compiler: gcc
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_NUM_THREADS=2
@@ -26,7 +26,7 @@ matrix:
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_ASAN=1
     - os: linux
       compiler: clang-3.8
-      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release
+      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_PERF_TESTS=1
       addons:
         apt:
           sources:

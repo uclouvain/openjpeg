@@ -184,7 +184,9 @@ export OPJ_BINARY_DIR=$(opjpath -m ${PWD}/build)
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
+if [ "${OPJ_SKIP_REBUILD:-}" != "1" ]; then
+    ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
+fi
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
 set +x
@@ -301,6 +303,47 @@ New/unknown test failure found!!!
 			OPJ_CI_RESULT=1
 		fi
 	fi
+fi
+
+if [ "${OPJ_CI_PERF_TESTS:-}" == "1" ]; then
+    cd tests/performance
+    echo "Running performance tests on current version (dry-run)"
+    PATH=../../build/bin:$PATH python ./perf_test.py
+    echo "Running performance tests on current version"
+    PATH=../../build/bin:$PATH python ./perf_test.py -o /tmp/new.csv
+    if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ -d ../../kdu ]; then
+        echo "Running performances tests with Kakadu"
+        LD_LIBRARY_PATH=../../kdu PATH=../../kdu::$PATH python ./perf_test.py -kakadu -o /tmp/kakadu.csv
+        echo "Comparing current version with Kakadu"
+        python compare_perfs.py /tmp/kakadu.csv /tmp/new.csv || true
+    fi
+    cd ../..
+
+    REF_VERSION=master
+    if [ "${TRAVIS_PULL_REQUEST:-false}" == "false" ]; then
+        REF_VERSION=v2.1.2
+    fi
+    if [ ! -d ref_opj ]; then
+        git clone https://github.com/uclouvain/openjpeg ref_opj
+    fi
+    echo "Building reference version (${REF_VERSION})"
+    cd ref_opj
+    git checkout ${REF_VERSION}
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_BUILD_TYPE=${OPJ_BUILD_CONFIGURATION}
+    make -j3
+    cd ../..
+    cd tests/performance
+    echo "Running performance tests on ${REF_VERSION} version (dry-run)"
+    PATH=../../ref_opj/build/bin:$PATH python ./perf_test.py
+    echo "Running performance tests on ${REF_VERSION} version"
+    PATH=../../ref_opj/build/bin:$PATH python ./perf_test.py -o /tmp/ref.csv
+    echo "Comparing current version with ${REF_VERSION} version"
+    # we should normally set OPJ_CI_RESULT=1 in case of failure, but
+    # this is too unreliable
+    python compare_perfs.py /tmp/ref.csv /tmp/new.csv || true
+    cd ../..
 fi
 
 exit ${OPJ_CI_RESULT}
