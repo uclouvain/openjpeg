@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e92fe29016300e7ae9ccfa6e9cf5422456f57e25
+<pre class='wrap'>commit 8650b70e06408d394c1708846b6fc2d86cf14079
+Merge: e92fe29 05d5845
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-05-09 13:16:53 +0200
+
+    Merge pull request #918 from rouault/profile
+    
+    Add profiling of CPU and memory usage (#912)
+
+commit 05d58451a1221ba95db8fb1d159eb0f76dbafb22
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-06 15:06:24 +0200
+
+    Add profiling of CPU and memory usage (#912)
+
+commit e92fe29016300e7ae9ccfa6e9cf5422456f57e25
 Merge: 20291aa 328f076
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-09 12:33:07 +0200
@@ -680,12 +695,6 @@ Date:   2016-06-21 17:41:29 +0200
 
     Automatic upload of ABI report (end)
 
-commit cdcb77e796f8f06d3838356c0a2931a82b4375be
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-06-21 17:21:08 +0200
-
-    Automatic upload of ABI report (ctd)
-
 commit 7d3c7a345f05adbc9ca26d8ca7f6c7fffa5096be
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-05-26 23:51:32 +0200
@@ -802,17 +811,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-05-21 16:27:35 +0200
 
     Specialize decoding passes for 64x64 code blocks
-
-commit d8fef96f23ea8b12226d7326118f2ffd91da28ac
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-21 15:52:02 +0200
-
-    Improve code generation in opj_t1_dec_clnpass()
-    
-    Add a opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit() method that
-    does the job of opj_t1_dec_clnpass_step_only() assuming the conditions
-    are met. And use it in opj_t1_dec_clnpass(). The compiler generates
-    more efficient code.
 
 ...</pre></div>
 
