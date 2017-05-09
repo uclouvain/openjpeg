@@ -346,4 +346,23 @@ if [ "${OPJ_CI_PERF_TESTS:-}" == "1" ]; then
     cd ../..
 fi
 
+if [ "${OPJ_CI_PROFILE:-}" == "1" ]; then
+    rm -rf build_gprof
+    mkdir build_gprof
+    cd build_gprof
+    # We need static linking for gprof
+    cmake "-DCMAKE_C_FLAGS=-pg -O3" -DCMAKE_EXE_LINKER_FLAGS=-pg -DCMAKE_SHARED_LINKER_FLAGS=-pg -DBUILD_SHARED_LIBS=OFF ..
+    make -j3
+    cd ..
+    build_gprof/bin/opj_decompress -i data/input/nonregression/kodak_2layers_lrcp.j2c -o out.tif > /dev/null
+    echo "Most CPU consuming functions:"
+    gprof build_gprof/bin/opj_decompress gmon.out | head || true
+
+    rm -f massif.out.*
+    valgrind --tool=massif build/bin/opj_decompress -i data/input/nonregression/kodak_2layers_lrcp.j2c -o out.tif >/dev/null 2>/dev/null
+    echo ""
+    echo "Memory consumption profile:"
+    python tests/profiling/filter_massif_output.py massif.out.*
+fi
+
 exit ${OPJ_CI_RESULT}
