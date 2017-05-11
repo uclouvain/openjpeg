@@ -724,6 +724,10 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 	for (compno = 0; compno < l_tile->numcomps; ++compno) {
 		/*fprintf(stderr, "compno = %d/%d\n", compno, l_tile->numcomps);*/
 		l_image_comp->resno_decoded = 0;
+
+		if(l_image_comp->dx == 0 || l_image_comp->dy == 0){ /* AFL test */
+			return OPJ_FALSE; 
+		} 
 		/* border of each l_tile component (global) */
 		l_tilec->x0 = opj_int_ceildiv(l_tile->x0, (OPJ_INT32)l_image_comp->dx);
 		l_tilec->y0 = opj_int_ceildiv(l_tile->y0, (OPJ_INT32)l_image_comp->dy);
@@ -1356,6 +1360,7 @@ OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
         opj_tcd_resolution_t * l_res;
         OPJ_UINT32 l_size_comp, l_remaining;
         OPJ_UINT32 l_stride, l_width,l_height;
+        OPJ_UINT32 l_w0 = 0, l_h0 = 0, l_size_comp0 = 0, l_ycc;
 
         l_data_size = opj_tcd_get_decoded_tile_size(p_tcd);
         if (l_data_size > p_dest_length) {
@@ -1364,7 +1369,7 @@ OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
 
         l_tilec = p_tcd->tcd_image->tiles->comps;
         l_img_comp = p_tcd->image->comps;
-
+        l_ycc = (p_tcd->enumcs == 18);
         for (i=0;i<p_tcd->image->numcomps;++i) {
                 l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
                 l_remaining = l_img_comp->prec & 7;  /* (%8) */
@@ -1372,7 +1377,9 @@ OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
                 l_width = (OPJ_UINT32)(l_res->x1 - l_res->x0);
                 l_height = (OPJ_UINT32)(l_res->y1 - l_res->y0);
                 l_stride = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0) - l_width;
-
+                if(l_res->x0 >= l_res->x1 || l_res->y0 >= l_res->y1) { /* AFL test */
+                    fprintf(stdout,"[WARNING] component[%u] width %d or height %d <= 0\n",i,l_width,l_height);
+                }
                 if (l_remaining) {
                         ++l_size_comp;
                 }
@@ -1381,6 +1388,14 @@ OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
                         l_size_comp = 4;
                 }
 
+                if(i == 0) { /* AFL test */
+                    l_size_comp0 = l_size_comp;
+                }
+                else
+                if(l_ycc == 0 && (l_size_comp != l_size_comp0)) { /* AFL test */
+                    fprintf(stdout,"[ERROR] component[%u] size_comp(%u) vs. component[0] size_comp(%u)\n",i,l_size_comp,l_size_comp0);
+                    return OPJ_FALSE;
+                }
                 switch (l_size_comp)
                         {
                         case 1:
