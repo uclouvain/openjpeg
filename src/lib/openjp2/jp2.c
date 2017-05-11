@@ -597,6 +597,8 @@ static OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
 	opj_read_bytes(p_image_header_data,&(jp2->IPR),1);			/* IPR */
 	++ p_image_header_data;
 
+	jp2->j2k->m_cp.bpc_is_255 = (jp2->bpc == 255);
+
 	return OPJ_TRUE;
 }
 

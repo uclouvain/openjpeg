@@ -2000,6 +2000,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         OPJ_UINT32 l_remaining_size;
         OPJ_UINT32 l_nb_tiles;
         OPJ_UINT32 l_tmp, l_tx1, l_ty1;
+        OPJ_UINT32 l_prec0, l_sgnd0;
         opj_image_t *l_image = 00;
         opj_cp_t *l_cp = 00;
         opj_image_comp_t * l_img_comp = 00;
@@ -2085,7 +2086,17 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: illegal tile offset\n");
                 return OPJ_FALSE;
         }
-
+        {
+         OPJ_UINT32 w, h, tw, th;
+  
+         w = l_image->x1 - l_image->x0; h = l_image->y1 - l_image->y0;
+         tw = l_cp->tdx - l_cp->tx0; th = l_cp->tdy - l_cp->ty0;
+  
+         if(tw > w || th > h) {
+             opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: IMAGE w(%u) h(%u) vs. TILE w(%u) h(%u)\n", w, h, tw, th);
+              return OPJ_FALSE;
+         }
+        }
 #ifdef USE_JPWL
         if (l_cp->correct) {
                 /* if JPWL is on, we check whether TX errors have damaged
@@ -2138,6 +2149,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
 
         l_img_comp = l_image->comps;
 
+		l_prec0 = 0; l_sgnd0 = 0;
         /* Read the component information */
         for (i = 0; i < l_image->numcomps; ++i){
                 OPJ_UINT32 tmp;
@@ -2145,6 +2157,19 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 ++p_header_data;
                 l_img_comp->prec = (tmp & 0x7f) + 1;
                 l_img_comp->sgnd = tmp >> 7;
+
+                if(i == 0) {
+                    l_prec0 = l_img_comp->prec; l_sgnd0 = l_img_comp->sgnd;
+                }
+                else
+                if(l_cp->bpc_is_255 == 0 
+                && (l_img_comp->prec != l_prec0 || l_img_comp->sgnd != l_sgnd0)) {
+                    opj_event_msg(p_manager, EVT_ERROR,
+                        "Invalid precision and/or sgnd values for comp[%d]:\n"
+                        "        [0] prec(%d) sgnd(%d) [%d] prec(%d) sgnd(%d)\n",i,l_prec0,l_sgnd0,
+                        i,l_img_comp->prec,l_img_comp->sgnd);
+                    return OPJ_FALSE;
+                }
                 opj_read_bytes(p_header_data,&tmp,1);   /* XRsiz_i */
                 ++p_header_data;
                 l_img_comp->dx = (OPJ_UINT32)tmp; /* should be between 1 and 255 */
@@ -2158,7 +2183,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                                   i, l_img_comp->dx, l_img_comp->dy);
                     return OPJ_FALSE;
                 }
-                if( l_img_comp->prec > 38) { /* TODO openjpeg won't handle more than ? */
+                if( l_img_comp->prec < 1 || l_img_comp->prec > 38) { /* TODO openjpeg won't handle more than ? */
                     opj_event_msg(p_manager, EVT_ERROR,
                                   "Invalid values for comp = %d : prec=%u (should be between 1 and 38 according to the JPEG2000 norm)\n",
                                   i, l_img_comp->prec);
@@ -2196,7 +2221,6 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 l_img_comp->factor = l_cp->m_specific_param.m_dec.m_reduce; /* reducing factor per component */
                 ++l_img_comp;
         }
-
         /* Compute the number of tiles */
         l_cp->tw = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(l_image->x1 - l_cp->tx0), (OPJ_INT32)l_cp->tdx);
         l_cp->th = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(l_image->y1 - l_cp->ty0), (OPJ_INT32)l_cp->tdy);
@@ -4855,7 +4879,7 @@ static OPJ_BOOL opj_j2k_read_eoc (     opj_j2k_t *p_j2k,
                 if (l_tcp->m_data) {
                         if (! opj_tcd_init_decode_tile(l_tcd, i)) {
                                 opj_tcd_destroy(l_tcd);
-                                opj_event_msg(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
+                                opj_event_msg(p_manager, EVT_ERROR, "Cannot decode tile %d\n",i);
                                 return OPJ_FALSE;
                         }
 
@@ -8130,7 +8154,7 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
         }
         /*FIXME ???*/
         if (! opj_tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number, p_manager)) {
-                opj_event_msg(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
+                opj_event_msg(p_manager, EVT_ERROR, "Cannot decode tile %d\n",p_j2k->m_current_tile_number);
                 return OPJ_FALSE;
         }
 
@@ -9779,10 +9803,10 @@ static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
                                                             opj_event_mgr_t * p_manager)
 {
         OPJ_BOOL l_go_on = OPJ_TRUE;
-        OPJ_UINT32 l_current_tile_no;
+        OPJ_UINT32 l_current_tile_no = 0;
         OPJ_UINT32 l_data_size,l_max_data_size;
         OPJ_INT32 l_tile_x0,l_tile_y0,l_tile_x1,l_tile_y1;
-        OPJ_UINT32 l_nb_comps;
+        OPJ_UINT32 l_nb_comps = 0;
         OPJ_BYTE * l_current_data;
         OPJ_UINT32 nr_tiles = 0;
 
@@ -9791,9 +9815,10 @@ static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tiles\n");
                 return OPJ_FALSE;
         }
-        l_max_data_size = 1000;
+        l_max_data_size = 1000; l_data_size = 0;
 
 		for (;;) {
+			l_tile_x0 = l_tile_y0 = l_tile_x1 = l_tile_y1 = 0;
                 if (! opj_j2k_read_tile_header( p_j2k,
                                         &l_current_tile_no,
                                         &l_data_size,
@@ -10030,6 +10055,9 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
         for (compno = 0; compno < p_image->numcomps; compno++) {
                 p_image->comps[compno].resno_decoded = p_j2k->m_output_image->comps[compno].resno_decoded;
                 p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+                if(p_image->comps[compno].data == NULL){
+                    return OPJ_FALSE;
+                }
 #if 0
                 char fn[256];
                 sprintf( fn, "/tmp/%d.raw", compno );
@@ -10131,6 +10159,9 @@ OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
 
                 p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
 
+                if(p_image->comps[compno].data == NULL){
+                    return OPJ_FALSE;
+                }
                 p_j2k->m_output_image->comps[compno].data = NULL;
         }
 

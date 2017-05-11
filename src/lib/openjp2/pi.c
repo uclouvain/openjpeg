@@ -324,10 +324,14 @@ static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi) {
 		for (compno = 0; compno < pi->numcomps; compno++) {
 			comp = &pi->comps[compno];
 			for (resno = 0; resno < comp->numresolutions; resno++) {
+				int64_t dx64, dy64;
 				OPJ_UINT32 dx, dy;
 				res = &comp->resolutions[resno];
-				dx = comp->dx * (1u << (res->pdx + comp->numresolutions - 1 - resno));
-				dy = comp->dy * (1u << (res->pdy + comp->numresolutions - 1 - resno));
+				dx64 = comp->dx * (1u << (res->pdx + comp->numresolutions - 1 - resno));
+				dy64 = comp->dy * (1u << (res->pdy + comp->numresolutions - 1 - resno));
+				if(dx64 <= 0 || dx64 > UINT_MAX || dy64 <= 0 || dy64 > UINT_MAX) return OPJ_FALSE;
+
+				dx = (OPJ_UINT32)dx64; dy = (OPJ_UINT32)dy64;
 				pi->dx = !pi->dx ? dx : opj_uint_min(pi->dx, dx);
 				pi->dy = !pi->dy ? dy : opj_uint_min(pi->dy, dy);
 			}
@@ -408,10 +412,15 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi) {
 		for (compno = 0; compno < pi->numcomps; compno++) {
 			comp = &pi->comps[compno];
 			for (resno = 0; resno < comp->numresolutions; resno++) {
+				int64_t dx64, dy64;
 				OPJ_UINT32 dx, dy;
 				res = &comp->resolutions[resno];
-				dx = comp->dx * (1u << (res->pdx + comp->numresolutions - 1 - resno));
-				dy = comp->dy * (1u << (res->pdy + comp->numresolutions - 1 - resno));
+				dx64 = comp->dx * (1u << (res->pdx + comp->numresolutions - 1 - resno));
+				dy64 = comp->dy * (1u << (res->pdy + comp->numresolutions - 1 - resno));
+				if(dx64 <= 0 || dx64 > UINT_MAX || dy64 <= 0 || dy64 > UINT_MAX) return OPJ_FALSE;
+
+				dx = (OPJ_UINT32)dx64; dy = (OPJ_UINT32)dy64;
+
 				pi->dx = !pi->dx ? dx : opj_uint_min(pi->dx, dx);
 				pi->dy = !pi->dy ? dy : opj_uint_min(pi->dy, dy);
 			}
@@ -491,10 +500,15 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi) {
 		pi->dx = 0;
 		pi->dy = 0;
 		for (resno = 0; resno < comp->numresolutions; resno++) {
+			int64_t dx64, dy64;
 			OPJ_UINT32 dx, dy;
 			res = &comp->resolutions[resno];
-			dx = comp->dx * (1u << (res->pdx + comp->numresolutions - 1 - resno));
-			dy = comp->dy * (1u << (res->pdy + comp->numresolutions - 1 - resno));
+			dx64 = comp->dx * (1u << (res->pdx + comp->numresolutions - 1 - resno));
+			dy64 = comp->dy * (1u << (res->pdy + comp->numresolutions - 1 - resno));
+            if(dx64 <= 0 || dx64 > UINT_MAX || dy64 <= 0 || dy64 > UINT_MAX) return OPJ_FALSE;
+
+			dx = (OPJ_UINT32)dx64; dy = (OPJ_UINT32)dy64;
+
 			pi->dx = !pi->dx ? dx : opj_uint_min(pi->dx, dx);
 			pi->dy = !pi->dy ? dy : opj_uint_min(pi->dy, dy);
 		}
