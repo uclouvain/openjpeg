@@ -806,8 +806,35 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
     FILE *fdest = NULL;
     int adjustR, adjustG, adjustB;
 
+   {
+    unsigned int ui, ncomp = image->numcomps;
+
+    if (ncomp > 4) { /* RGBA in bmpmask32toimage */
+        ncomp = 4;
+    }
+    for (ui = 1; ui < ncomp; ++ui) {
+        if (image->comps[0].dx != image->comps[ui].dx) {
+            break;
+        }
+        if (image->comps[0].dy != image->comps[ui].dy) {
+            break;
+        }
+        if (image->comps[0].prec != image->comps[ui].prec) {
+            break;
+        }
+        if (image->comps[0].sgnd != image->comps[ui].sgnd) {
+            break;
+        }
+    }
+    if (ui != ncomp) {
+        fprintf(stderr,"imagetobmp: All components shall have the same subsampling, same bit depth, same sign.\n");
+        fprintf(stderr,"\tAborting\n");
+        return 1;
+    }
+
+   }
     if (image->comps[0].prec < 8) {
-        fprintf(stderr, "Unsupported number of components: %d\n", image->comps[0].prec);
+        fprintf(stderr, "imagetobmp: Unsupported precision: %d\n", image->comps[0].prec);
         return 1;
     }
     if (image->numcomps >= 3 && image->comps[0].dx == image->comps[1].dx

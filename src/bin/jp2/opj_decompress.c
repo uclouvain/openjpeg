@@ -1607,7 +1607,7 @@ fin:
 		if(dirptr->filename_buf) free(dirptr->filename_buf);
 		free(dirptr);
 	}
-	if (numDecompressedImages) {
+	if (numDecompressedImages && !failed) {
 		fprintf(stdout, "decode time: %d ms\n", (int)( (tCumulative * 1000.0) / (OPJ_FLOAT64)numDecompressedImages));
 	}
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
