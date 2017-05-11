@@ -65,12 +65,18 @@ typedef struct opj_mqc_state {
 
 #define MQC_NUMCTXS 19
 
+// enable impl. according to the book "JPEG2000: Image Compression Fundamentals, Standards and Practice"
+// #define BOOK_ENABLE
+
 /**
 MQ coder
 */
 typedef struct opj_mqc {
 	OPJ_UINT32 c;
 	OPJ_UINT32 a;
+#ifdef BOOK_ENABLE
+	OPJ_BYTE b;
+#endif
 	OPJ_UINT32 ct;
 	OPJ_BYTE *bp;
 	OPJ_BYTE *start;
