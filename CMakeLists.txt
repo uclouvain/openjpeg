@@ -322,6 +322,11 @@ if(BUILD_TESTING)
   endif()
 endif()
 
+# Allow the use of CTEST_USE_LAUNCHERS even when not including CTest (mingw builds)
+# CTestUseLaunchers module is only available starting cmake >= 3.0. Using OPTIONAL flag
+# to cope with it
+include(CTestUseLaunchers OPTIONAL)
+
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets
 install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})

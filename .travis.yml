@@ -49,7 +49,7 @@ matrix:
             - gcc-mingw-w64-x86-64
             - gcc-mingw-w64
     - os: linux
-      compiler: x86_64-w64-mingw32-gcc
+      compiler: i686-w64-mingw32-gcc
       env: OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
       addons:
         apt:

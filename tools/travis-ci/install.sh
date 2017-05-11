@@ -35,7 +35,7 @@ if [ "${COVERITY_SCAN_BRANCH:-}" == "1" ] || [ "${OPJ_CI_ABI_CHECK:-}" == "1" ];
 	exit 0
 fi
 
-if [ "${OPJ_CI_ASAN:-}" == "1" ]; then
+if [ "${TRAVIS_OS_NAME:-}" == "linux" ]; then
 	# We need a new version of cmake than travis-ci provides
 	wget --no-check-certificate -qO - https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz | tar -xz
 	# copy to a directory that will not changed every version
@@ -62,7 +62,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	git clone --depth=1 --branch=${OPJ_DATA_BRANCH} git://github.com/uclouvain/openjpeg-data.git data
 
 	# We need jpylyzer for the test suite
-    JPYLYZER_VERSION="1.17.0"    
+	JPYLYZER_VERSION="1.17.0"    
 	echo "Retrieving jpylyzer"
 	if [ "${APPVEYOR:-}" == "True" ]; then
 		wget -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_${JPYLYZER_VERSION}_win32.zip

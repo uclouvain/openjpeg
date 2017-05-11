@@ -23,6 +23,15 @@ else()
 	set( JPYLYZER_EXT          "py"  )
 endif()
 
+# Choose CTest reporting mode.
+if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
+  # Launchers work only with Makefile generators.
+  set(CTEST_USE_LAUNCHERS 0)
+elseif(NOT DEFINED CTEST_USE_LAUNCHERS)
+  # The setting is ignored by CTest < 2.8 so we need no version test.
+  set(CTEST_USE_LAUNCHERS 1)
+endif()
+
 if ("$ENV{OPJ_BUILD_CONFIGURATION}" STREQUAL "")
   set( CTEST_BUILD_CONFIGURATION "Release")
 else()
@@ -112,6 +121,8 @@ OPJ_DATA_ROOT:PATH=$ENV{PWD}/data
 # jpylyzer is available with on GitHub: https://github.com/openpreserve/jpylyzer
 JPYLYZER_EXECUTABLE=$ENV{PWD}/jpylyzer/jpylyzer.${JPYLYZER_EXT}
 
+# Better build error/warning reports on the dashboard
+CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 " )
 
 #---------------------
