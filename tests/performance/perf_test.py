@@ -51,6 +51,9 @@ while i < len(sys.argv):
     if sys.argv[i] == '-o' and i + 1 < len(sys.argv):
         i += 1
         out_filename = sys.argv[i]
+    elif sys.argv[i] == '-i' and i + 1 < len(sys.argv):
+        i += 1
+        in_filename = sys.argv[i]
     elif sys.argv[i] == '-q':
         quiet = True
     elif sys.argv[i] == '-kakadu':
