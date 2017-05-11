@@ -528,7 +528,7 @@ typedef struct {
 typedef struct {
   DWORD biSize;			/* Size of the structure in bytes */
   DWORD biWidth;		/* Width of the image in pixels */
-  DWORD biHeight;		/* Heigth of the image in pixels */
+  DWORD biHeight;		/* Height of the image in pixels */
   WORD biPlanes;		/* 1 */
   WORD biBitCount;		/* Number of color bits by pixels */
   DWORD biCompression;		/* Type of encoding 0: none 1: RLE8 2: RLE4 */
