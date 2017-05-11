@@ -402,6 +402,26 @@ void color_apply_icc_profile(opj_image_t *image)
 
 	if(out_space == cmsSigRgbData) /* enumCS 16 */
 	{
+		unsigned int i, nr_comp = image->numcomps;
+
+		if (nr_comp > 4) {
+			nr_comp = 4;
+		}
+		for (i = 1; i < nr_comp; ++i) { /* AFL test */
+			if (image->comps[0].dx != image->comps[i].dx) break;
+		
+			if (image->comps[0].dy != image->comps[i].dy) break;
+		
+			if (image->comps[0].prec != image->comps[i].prec) break;
+		
+			if (image->comps[0].sgnd != image->comps[i].sgnd) break;
+		
+		}
+		if (i != nr_comp) {
+			cmsCloseProfile(in_prof);
+			return;
+		}
+
 		if( prec <= 8 )
 		{
 			in_type = TYPE_RGB_8;
@@ -442,6 +462,7 @@ void color_apply_icc_profile(opj_image_t *image)
 
 		return;
 	}
+
 	if(out_prof == NULL)
 	{
 		cmsCloseProfile(in_prof);
@@ -449,7 +470,7 @@ void color_apply_icc_profile(opj_image_t *image)
 	}
 
 #ifdef DEBUG_PROFILE
-	fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tchannels(%d) prec(%d) w(%d) h(%d)"
+	fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tchannels(%d) prec(%d) w(%ld) h(%ld)"
 	        "\n\tprofile: in(%p) out(%p)\n",__FILE__,__LINE__,image->numcomps,prec,
 	        max_w,max_h, (void*)in_prof,(void*)out_prof);
 

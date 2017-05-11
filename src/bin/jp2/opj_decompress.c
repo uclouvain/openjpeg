@@ -1503,7 +1503,7 @@ int main(int argc, char **argv)
         failed = 1;
 			}
 			else {
-                fprintf(stdout,"[INFO] Generated Outfile %s\n",parameters.outfile);
+                fprintf(stdout,"[INFO] Generated Outfile %s (or .pgm files)\n",parameters.outfile);
 			}
 			break;
 
@@ -1607,7 +1607,7 @@ fin:
 		if(dirptr->filename_buf) free(dirptr->filename_buf);
 		free(dirptr);
 	}
-	if (numDecompressedImages) {
+	if (numDecompressedImages && !failed) {
 		fprintf(stdout, "decode time: %d ms\n", (int)( (tCumulative * 1000.0) / (OPJ_FLOAT64)numDecompressedImages));
 	}
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
