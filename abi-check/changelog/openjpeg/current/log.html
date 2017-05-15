@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 28d2eabca79d06378843d1e94fecfb4a5e22178d
+<pre class='wrap'>commit f7a126af61877cd4623327142521d82a0c19430d
+Merge: 28d2eab 3c2972f
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-05-15 13:08:03 +0200
+
+    Merge pull request #926 from rouault/reformat_h_files
+    
+    Reformat: apply reformattin on .h files (#128)
+
+commit 3c2972f924857016bb454201c7e92f25de9105ee
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-15 12:21:30 +0200
+
+    Reformat: apply reformattin on .h files (#128)
+
+commit 28d2eabca79d06378843d1e94fecfb4a5e22178d
 Merge: 0ecac46 cde210b
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-15 12:09:45 +0200
@@ -714,14 +729,6 @@ Date:   2016-06-25 01:09:42 +0200
 
     Correct abi-check.sh for PR (#791)
 
-commit cb72c08472f2e82387ebdde1792c6b39a25019d5
-Author: maddin200 &lt;maddin200@aol.com&gt;
-Date:   2016-06-21 22:13:57 +0200
-
-    Update tcd.c (#790)
-    
-    cppcheck unitialized variable
-
 commit 7d3c7a345f05adbc9ca26d8ca7f6c7fffa5096be
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-05-26 23:51:32 +0200
@@ -805,17 +812,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-05-23 10:25:55 +0200
 
     opj_t1_decode_cblks(): tiny perf increase when loop unrolling
-
-commit 1da397e94a4e441a7c9a1aa4c2debd1c06ba05e2
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-23 01:33:06 +0200
-
-    Tier 1 decoding: add a colflags array
-    
-    Addition flag array such that colflags[1+0] is for state of col=0,row=0..3,
-    colflags[1+1] for col=1, row=0..3, colflags[1+flags_stride] for col=0,row=4..7, ...
-    This array avoids too much cache trashing when processing by 4 vertical samples
-    as done in the various decoding steps.
 
 ...</pre></div>
 
