@@ -20,11 +20,46 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 0ecac46a1db911cbe340c4467000e91cea82c96d
+<pre class='wrap'>commit 28d2eabca79d06378843d1e94fecfb4a5e22178d
+Merge: 0ecac46 cde210b
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-05-15 12:09:45 +0200
+
+    Merge pull request #919 from rouault/reformat
+    
+    Add mechanisms to reformat and check code style, and reformat whole codebase (#128)
+
+commit 0ecac46a1db911cbe340c4467000e91cea82c96d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-11 20:18:42 +0200
 
     perf_test.py: implement -i option
+
+commit cde210be392d60fbcd8a3e7cacfa62660a95e8d9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-11 11:21:37 +0200
+
+    astyle.options: use non deprecated option name
+
+commit 563bd8499e63db976ca8358216138647593354bc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-09 15:44:46 +0200
+
+    Reformat whole codebase with astyle.options (#128)
+
+commit d4e54e9f35d532062533f1d369c159810b01d224
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-09 15:28:09 +0200
+
+    Add mechanisms to reformant and check code style (#128)
+    
+    Use an internal version of astyle (astyle 3.0). Scripts taken from QGIS.
+    astyle.options from https://github.com/uclouvain/openjpeg/issues/128
+    
+    scripts/prepare-commit.sh can be used locally to automatically reformat
+    edited files.
+    
+    Travis-CI will run scripts/verify-indentation.sh to verify committed files.
 
 commit 8650b70e06408d394c1708846b6fc2d86cf14079
 Merge: e92fe29 05d5845
@@ -687,14 +722,6 @@ Date:   2016-06-21 22:13:57 +0200
     
     cppcheck unitialized variable
 
-commit 898ca6f52247cf869b66048b21871f236fd5f900
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-06-21 22:09:08 +0200
-
-    Remove clang-3.9 build
-    
-    c.f. travis-ci/travis-ci#6120
-
 commit 7d3c7a345f05adbc9ca26d8ca7f6c7fffa5096be
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-05-26 23:51:32 +0200
@@ -789,28 +816,6 @@ Date:   2016-05-23 01:33:06 +0200
     colflags[1+1] for col=1, row=0..3, colflags[1+flags_stride] for col=0,row=4..7, ...
     This array avoids too much cache trashing when processing by 4 vertical samples
     as done in the various decoding steps.
-
-commit 31882ad7f4a0d9d0231c3fdb9c75a6b69912e1b7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-22 00:54:06 +0200
-
-    Const'ify lut arrays so they are in the read-only data section
-
-commit ba1edf6cd41415594729bc90ad3b0008af48251e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-22 00:50:34 +0200
-
-    Reduce number of occurrences of orient function argument
-    
-    This is essentially used to shift inside the lut_ctxno_zc, which we
-    can precompute at the beginning of opj_t1_decode_cblk() /
-    opj_t1_encode_cblk()
-
-commit 23a01dfdef1a266754af268b07d912efbe04a759
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-21 16:27:35 +0200
-
-    Specialize decoding passes for 64x64 code blocks
 
 ...</pre></div>
 

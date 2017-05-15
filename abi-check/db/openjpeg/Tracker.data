@@ -109,16 +109,7 @@ $VAR1 = {
                                                    'TotalSymbolsFiltered' => '43',
                                                    'Version' => '1.7'
                                                  }
-                                    },
-                         'current' => {
-                                        '2c999' => {
-                                                     'Lang' => 'C',
-                                                     'Object' => 'lib/libopenjp2.so.2.2.0',
-                                                     'Path' => 'abi_dump/openjpeg/current/2c999/ABI.dump',
-                                                     'TotalSymbols' => '46',
-                                                     'Version' => '1.7'
-                                                   }
-                                      }
+                                    }
                        },
           'ABIReport' => {
                            '1.1' => {
@@ -285,21 +276,7 @@ $VAR1 = {
                                                        'TotalProblems' => 0
                                                      }
                                       },
-                           '2.1.2' => {
-                                        'current' => {
-                                                       'Added' => 3,
-                                                       'BC' => 100,
-                                                       'ChangedSoname' => 0,
-                                                       'ObjectsAdded' => 0,
-                                                       'ObjectsAddedSymbols' => 0,
-                                                       'ObjectsRemoved' => 0,
-                                                       'ObjectsRemovedSymbols' => 0,
-                                                       'Path' => 'objects_report/openjpeg/2.1.2/current/report.html',
-                                                       'Removed' => 0,
-                                                       'TotalObjects' => 1,
-                                                       'TotalProblems' => 0
-                                                     }
-                                      }
+                           '2.1.2' => {}
                          },
           'ABIReport_D' => {
                              '1.1' => {
@@ -496,7 +473,7 @@ $VAR1 = {
                       '2.1' => '2014-04-29 12:58',
                       '2.1.1' => '2016-07-05 14:54',
                       '2.1.2' => '2016-09-28 18:18',
-                      'current' => '2017-05-11 20:18:42'
+                      'current' => '2017-05-15 12:09:45'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -564,12 +541,7 @@ $VAR1 = {
                                                          'Total' => 2
                                                        }
                                         },
-                             '2.1.2' => {
-                                          'current' => {
-                                                         'Path' => 'headers_diff/openjpeg/2.1.2/current/diff.html',
-                                                         'Total' => 2
-                                                       }
-                                        }
+                             '2.1.2' => {}
                            },
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
@@ -608,10 +580,7 @@ $VAR1 = {
                                    },
                         '2.1.2' => {
                                      'lib/libopenjp2.so.2.1.2' => 'libopenjp2.so.7'
-                                   },
-                        'current' => {
-                                       'lib/libopenjp2.so.2.2.0' => 'libopenjp2.so.7'
-                                     }
+                                   }
                       },
           'Sover' => {
                        '1.1' => 'None',
@@ -624,8 +593,7 @@ $VAR1 = {
                        '2.0.1' => '7',
                        '2.1' => '7',
                        '2.1.1' => '7',
-                       '2.1.2' => '7',
-                       'current' => '7'
+                       '2.1.2' => '7'
                      },
           'Title' => 'OpenJPEG'
         };
