@@ -275,22 +275,12 @@ static void opj_mqc_setbits(opj_mqc_t *mqc)
 opj_mqc_t* opj_mqc_create(void)
 {
     opj_mqc_t *mqc = (opj_mqc_t*)opj_malloc(sizeof(opj_mqc_t));
-#ifdef MQC_PERF_OPT
-    if (mqc) {
-        mqc->buffer = NULL;
-    }
-#endif
     return mqc;
 }
 
 void opj_mqc_destroy(opj_mqc_t *mqc)
 {
     if (mqc) {
-#ifdef MQC_PERF_OPT
-        if (mqc->buffer) {
-            opj_free(mqc->buffer);
-        }
-#endif
         opj_free(mqc);
     }
 }
@@ -463,50 +453,6 @@ OPJ_BOOL opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len)
         mqc->c = (OPJ_UINT32)(*mqc->bp << 16);
     }
 
-#ifdef MQC_PERF_OPT /* TODO_MSD: check this option and put in experimental */
-    {
-        OPJ_UINT32 c;
-        OPJ_UINT32 *ip;
-        OPJ_BYTE *end = mqc->end - 1;
-        void* new_buffer = opj_realloc(mqc->buffer, (len + 1) * sizeof(OPJ_UINT32));
-        if (! new_buffer) {
-            opj_free(mqc->buffer);
-            mqc->buffer = NULL;
-            return OPJ_FALSE;
-        }
-        mqc->buffer = new_buffer;
-
-        ip = (OPJ_UINT32 *) mqc->buffer;
-
-        while (bp < end) {
-            c = *(bp + 1);
-            if (*bp == 0xff) {
-                if (c > 0x8f) {
-                    break;
-                } else {
-                    *ip = 0x00000017 | (c << 9);
-                }
-            } else {
-                *ip = 0x00000018 | (c << 8);
-            }
-            bp++;
-            ip++;
-        }
-
-        /* Handle last byte of data */
-        c = 0xff;
-        if (*bp == 0xff) {
-            *ip = 0x0000ff18;
-        } else {
-            bp++;
-            *ip = 0x00000018 | (c << 8);
-        }
-        ip++;
-
-        *ip = 0x0000ff08;
-        mqc->bp = mqc->buffer;
-    }
-#endif
     opj_mqc_bytein(mqc);
     mqc->c <<= 7;
     mqc->ct -= 7;

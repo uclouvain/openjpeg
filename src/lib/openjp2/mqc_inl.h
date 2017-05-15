@@ -82,15 +82,6 @@ static INLINE OPJ_INT32 opj_mqc_lpsexchange(opj_mqc_t *const mqc)
 Input a byte
 @param mqc MQC handle
 */
-#ifdef MQC_PERF_OPT
-static INLINE void opj_mqc_bytein(opj_mqc_t *const mqc)
-{
-    unsigned int i = *((unsigned int *) mqc->bp);
-    mqc->c += i & 0xffff00;
-    mqc->ct = i & 0x0f;
-    mqc->bp += (i >> 2) & 0x04;
-}
-#else
 static INLINE void opj_mqc_bytein(opj_mqc_t *const mqc)
 {
     /* Implements ISO 15444-1 C.3.4 Compressed image data input (BYTEIN) */
@@ -123,7 +114,6 @@ static INLINE void opj_mqc_bytein(opj_mqc_t *const mqc)
         mqc->ct = 8;
     }
 }
-#endif
 
 /**
 Renormalize mqc->a and mqc->c while decoding

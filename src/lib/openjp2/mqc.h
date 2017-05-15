@@ -78,9 +78,6 @@ typedef struct opj_mqc {
     opj_mqc_state_t *ctxs[MQC_NUMCTXS];
     opj_mqc_state_t **curctx;
     const OPJ_BYTE *lut_ctxno_zc_orient; /* lut_ctxno_zc shifted by 256 * bandno */
-#ifdef MQC_PERF_OPT
-    unsigned char *buffer;
-#endif
 } opj_mqc_t;
 
 #include "mqc_inl.h"
