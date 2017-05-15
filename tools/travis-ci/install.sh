@@ -115,3 +115,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 		fi
 	fi
 fi
+
+if [ "${OPJ_CI_CHECK_STYLE:-}" == "1" ]; then
+    pip install --user autopep8
+fi
