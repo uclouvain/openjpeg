@@ -448,6 +448,11 @@ void opj_mqc_segmark_enc(opj_mqc_t *mqc)
 
 OPJ_BOOL opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len)
 {
+    /* Implements ISO 15444-1 C.3.5 Initialization of the decoder (INITDEC) */
+    /* Note: alternate "J.1 - Initialization of the software-conventions */
+    /* decoder" has been tried, but does */
+    /* not bring any improvement. */
+    /* See https://github.com/uclouvain/openjpeg/issues/921 */
     opj_mqc_setcurctx(mqc, 0);
     mqc->start = bp;
     mqc->end = bp + len;

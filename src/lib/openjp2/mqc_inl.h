@@ -93,6 +93,10 @@ static INLINE void opj_mqc_bytein(opj_mqc_t *const mqc)
 #else
 static INLINE void opj_mqc_bytein(opj_mqc_t *const mqc)
 {
+    /* Implements ISO 15444-1 C.3.4 Compressed image data input (BYTEIN) */
+    /* Note: alternate "J.3 - Inserting a new byte into the C register in the */
+    /* software-conventions decoder" has been tried, but does not bring any */
+    /* improvement. See https://github.com/uclouvain/openjpeg/issues/921 */
     if (mqc->bp != mqc->end) {
         OPJ_UINT32 c;
         if (mqc->bp + 1 != mqc->end) {
@@ -144,6 +148,10 @@ Decode a symbol
 */
 static INLINE OPJ_INT32 opj_mqc_decode(opj_mqc_t *const mqc)
 {
+    /* Implements ISO 15444-1 C.3.2 Decoding a decision (DECODE) */
+    /* Note: alternate "J.2 - Decoding an MPS or an LPS in the */
+    /* software-conventions decoder" has been tried, but does not bring any */
+    /* improvement. See https://github.com/uclouvain/openjpeg/issues/921 */
     OPJ_INT32 d;
     mqc->a -= (*mqc->curctx)->qeval;
     if ((mqc->c >> 16) < (*mqc->curctx)->qeval) {
