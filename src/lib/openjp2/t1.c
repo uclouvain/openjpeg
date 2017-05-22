@@ -12,6 +12,7 @@
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2007, Callum Lerwick <seg@haxxed.com>
+ * Copyright (c) 2017, IntoPIX SA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -466,7 +467,7 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
                             (T1_COLFLAG_RBS * row)))) {
         if (opj_raw_decode(raw)) {
             v = opj_raw_decode(raw);    /* ESSAI */
-            *datap = v ? -oneplushalf : oneplushalf;
+            *datap = BUILD_SMR(v, oneplushalf);
             opj_t1_updateflagscolflags(flagsp, colflagsp, v, t1->flags_stride, row);
         }
 #ifdef CONSISTENCY_CHECK
@@ -502,7 +503,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc(
         if (opj_mqc_decode(mqc)) {
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc((OPJ_UINT32)flag));
             v = opj_mqc_decode(mqc) ^ opj_t1_getspb((OPJ_UINT32)flag);
-            *datap = v ? -oneplushalf : oneplushalf;
+            *datap = BUILD_SMR(v, oneplushalf);
             opj_t1_updateflagscolflags(flagsp, colflagsp, (OPJ_UINT32)v, flags_stride, row);
         }
 #ifdef CONSISTENCY_CHECK
@@ -534,7 +535,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
         if (opj_mqc_decode(mqc)) {
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
             v = (OPJ_UINT32)opj_mqc_decode(mqc) ^ opj_t1_getspb(flag);
-            *datap = v ? -oneplushalf : oneplushalf;
+            *datap = BUILD_SMR(v, oneplushalf);
             opj_t1_updateflagscolflags(flagsp, colflagsp, v, t1->flags_stride, row);
         }
 #ifdef CONSISTENCY_CHECK
@@ -771,7 +772,8 @@ static INLINE void opj_t1_dec_refpass_step_raw(
             ((T1_COLFLAG_SIG_ROW_0) << (T1_COLFLAG_RBS * row))) {
         v = (OPJ_INT32)opj_raw_decode(raw);
         t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
+        *datap = UPDATE_MANTISSA_FROM_SMR(*datap,
+                                          GET_MANTISSA_FROM_SMR(*datap) + t);
         *colflagsp |= (opj_colflag_t)(T1_COLFLAG_REFINE_ROW_0 <<
                                       (T1_COLFLAG_RBS * row));
     }
@@ -811,7 +813,8 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
         opj_mqc_setcurctx(mqc, tmp2);      /* ESSAI */
         v = opj_mqc_decode(mqc);
         t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
+        *datap = UPDATE_MANTISSA_FROM_SMR(*datap,
+                                          GET_MANTISSA_FROM_SMR(*datap) + t);
         *colflagsp |= (opj_colflag_t)(T1_COLFLAG_REFINE_ROW_0 <<
                                       (T1_COLFLAG_RBS * row));
     }
@@ -843,7 +846,8 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
         opj_mqc_setcurctx(mqc, tmp2);      /* ESSAI */
         v = (OPJ_UINT32)opj_mqc_decode(mqc);
         t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
+        *datap = UPDATE_MANTISSA_FROM_SMR(*datap,
+                                          GET_MANTISSA_FROM_SMR(*datap) + t);
         *colflagsp |= (opj_colflag_t)(T1_COLFLAG_REFINE_ROW_0 <<
                                       (T1_COLFLAG_RBS * row));
     }
@@ -1074,7 +1078,7 @@ static void opj_t1_dec_clnpass_step_partial(
     flag = *flagsp;
     opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc((OPJ_UINT32)flag));
     v = opj_mqc_decode(mqc) ^ opj_t1_getspb((OPJ_UINT32)flag);
-    *datap = v ? -oneplushalf : oneplushalf;
+    *datap = BUILD_SMR(v, oneplushalf);
     opj_t1_updateflagscolflags(flagsp, colflagsp, (OPJ_UINT32)v, t1->flags_stride,
                                row);
 #ifdef CONSISTENCY_CHECK
@@ -1104,7 +1108,7 @@ static void opj_t1_dec_clnpass_step(
         if (opj_mqc_decode(mqc)) {
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc((OPJ_UINT32)flag));
             v = opj_mqc_decode(mqc) ^ opj_t1_getspb((OPJ_UINT32)flag);
-            *datap = v ? -oneplushalf : oneplushalf;
+            *datap = BUILD_SMR(v, oneplushalf);
             opj_t1_updateflagscolflags(flagsp, colflagsp, (OPJ_UINT32)v, t1->flags_stride,
                                        row);
         }
@@ -1135,7 +1139,7 @@ static void opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(
         if (opj_mqc_decode(mqc)) {
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc((OPJ_UINT32)flag));
             v = opj_mqc_decode(mqc) ^ opj_t1_getspb((OPJ_UINT32)flag);
-            *datap = v ? -oneplushalf : oneplushalf;
+            *datap = BUILD_SMR(v, oneplushalf);
             opj_t1_updateflagscolflags(flagsp, colflagsp, (OPJ_UINT32)v, flags_stride, row);
         }
     }
@@ -1168,7 +1172,7 @@ static void opj_t1_dec_clnpass_step_vsc(
 LABEL_PARTIAL:
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
             v = (OPJ_UINT32)opj_mqc_decode(mqc) ^ opj_t1_getspb(flag);
-            *datap = v ? -oneplushalf : oneplushalf;
+            *datap = BUILD_SMR(v, oneplushalf);
             opj_t1_updateflagscolflags(flagsp, colflagsp, v, t1->flags_stride, row);
         }
     }
@@ -1748,11 +1752,11 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         OPJ_INT32 thresh = 1 << tccp->roishift;
         for (j = 0; j < cblk_h; ++j) {
             for (i = 0; i < cblk_w; ++i) {
-                OPJ_INT32 val = datap[(j * cblk_w) + i];
-                OPJ_INT32 mag = abs(val);
+                OPJ_INT32 mag = GET_MANTISSA_FROM_SMR(datap[(j * cblk_w) + i]);
                 if (mag >= thresh) {
                     mag >>= tccp->roishift;
-                    datap[(j * cblk_w) + i] = val < 0 ? -mag : mag;
+                    datap[(j * cblk_w) + i] =
+                        UPDATE_MANTISSA_FROM_SMR(datap[(j * cblk_w) + i], mag);
                 }
             }
         }
@@ -1763,18 +1767,18 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         for (j = 0; j < cblk_h; ++j) {
             i = 0;
             for (; i < (cblk_w & ~(OPJ_UINT32)3U); i += 4U) {
-                OPJ_INT32 tmp0 = datap[(j * cblk_w) + i + 0U];
-                OPJ_INT32 tmp1 = datap[(j * cblk_w) + i + 1U];
-                OPJ_INT32 tmp2 = datap[(j * cblk_w) + i + 2U];
-                OPJ_INT32 tmp3 = datap[(j * cblk_w) + i + 3U];
-                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 0U] = tmp0 / 2;
-                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 1U] = tmp1 / 2;
-                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 2U] = tmp2 / 2;
-                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 3U] = tmp3 / 2;
+                OPJ_UINT32 tmp0 = datap[(j * cblk_w) + i + 0U];
+                OPJ_UINT32 tmp1 = datap[(j * cblk_w) + i + 1U];
+                OPJ_UINT32 tmp2 = datap[(j * cblk_w) + i + 2U];
+                OPJ_UINT32 tmp3 = datap[(j * cblk_w) + i + 3U];
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 0U] = GET_FROM_SMR(tmp0) / 2;
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 1U] = GET_FROM_SMR(tmp1) / 2;
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 2U] = GET_FROM_SMR(tmp2) / 2;
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i + 3U] = GET_FROM_SMR(tmp3) / 2;
             }
             for (; i < cblk_w; ++i) {
-                OPJ_INT32 tmp = datap[(j * cblk_w) + i];
-                ((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp / 2;
+                OPJ_UINT32 tmp = datap[(j * cblk_w) + i];
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i] = GET_FROM_SMR(tmp) / 2;
             }
         }
     } else {        /* if (tccp->qmfbid == 0) */
@@ -1783,7 +1787,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         for (j = 0; j < cblk_h; ++j) {
             OPJ_FLOAT32* OPJ_RESTRICT tiledp2 = tiledp;
             for (i = 0; i < cblk_w; ++i) {
-                OPJ_FLOAT32 tmp = (OPJ_FLOAT32) * datap * band->stepsize;
+                OPJ_FLOAT32 tmp = (OPJ_FLOAT32) GET_FROM_SMR(*datap) * band->stepsize;
                 *tiledp2 = tmp;
                 datap++;
                 tiledp2++;
@@ -2264,7 +2268,8 @@ static void opj_t1_dec_refpass_step(opj_t1_t *t1,
             v = opj_mqc_decode(mqc);
         }
         t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
+        *datap = UPDATE_MANTISSA_FROM_SMR(*datap,
+                                          GET_MANTISSA_FROM_SMR(*datap) + t);
         *flagsp |= T1_REFINE;
     }
 }               /* VSC and  BYPASS by Antonin  */

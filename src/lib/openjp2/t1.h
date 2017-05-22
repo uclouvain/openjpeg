@@ -11,6 +11,7 @@
  * Copyright (c) 2003-2007, Francois-Olivier Devaux
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2017, IntoPIX SA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -147,6 +148,23 @@ typedef struct opj_t1 {
 } opj_t1_t;
 
 #define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
+
+/* SMR: Signed magnitude representation */
+#define SMR_SIGN_IN_MSB
+#ifdef SMR_SIGN_IN_MSB
+#define BUILD_SMR(s,mantissa)       ((OPJ_INT32)((((OPJ_UINT32)(s)) << 31) | (mantissa)))
+#define UPDATE_MANTISSA_FROM_SMR(smr, mantissa) \
+                                    ((((OPJ_UINT32)(smr)) & 0x80000000) | (mantissa))
+#define GET_SIGN_FROM_SMR(smr)      (((OPJ_UINT32)(smr)) >> 31)
+#define GET_MANTISSA_FROM_SMR(smr)  (((OPJ_UINT32)(smr)) & 0x7FFFFFFF)
+#else
+#define BUILD_SMR(s,mantissa)       ((OPJ_INT32)((s) | ((OPJ_UINT32)(mantissa) << 1)))
+#define UPDATE_MANTISSA_FROM_SMR(smr, mantissa) \
+                                    ((((OPJ_UINT32)(smr)) & 0x1) | ((OPJ_UINT32)(mantissa) << 1))
+#define GET_SIGN_FROM_SMR(smr)      (((OPJ_UINT32)(smr)) & 1)
+#define GET_MANTISSA_FROM_SMR(smr)  (((OPJ_UINT32)(smr)) >> 1)
+#endif
+#define GET_FROM_SMR(smr)           (GET_SIGN_FROM_SMR(smr) ? -(OPJ_INT32)GET_MANTISSA_FROM_SMR(smr) : (OPJ_INT32)GET_MANTISSA_FROM_SMR(smr))
 
 /** @name Exported functions */
 /*@{*/
