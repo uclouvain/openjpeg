@@ -1303,34 +1303,29 @@ static void opj_t1_enc_clnpass_step(
     OPJ_INT32 *nmsedec,
     OPJ_UINT32 agg,
     OPJ_UINT32 runlen,
-    OPJ_UINT32 x,
-    OPJ_UINT32 y,
+    OPJ_UINT32 lim,
     OPJ_UINT32 cblksty)
 {
     OPJ_INT32 v;
     OPJ_UINT32 ci;
     opj_mqc_t *mqc = t1->mqc;   /* MQC component */
 
-    OPJ_UINT32 lim;
-    if ((cblksty & J2K_CCP_CBLKSTY_VSC) == 0) {
-        const OPJ_UINT32 check = (T1_SIGMA_4 | T1_SIGMA_7 | T1_SIGMA_10 | T1_SIGMA_13 |
-                                  T1_PI_0 | T1_PI_1 | T1_PI_2 | T1_PI_3);
+    const OPJ_UINT32 check = (T1_SIGMA_4 | T1_SIGMA_7 | T1_SIGMA_10 | T1_SIGMA_13 |
+                              T1_PI_0 | T1_PI_1 | T1_PI_2 | T1_PI_3);
 
-        if ((*flagsp & check) == check) {
-            if (runlen == 0) {
-                *flagsp &= ~(T1_PI_0 | T1_PI_1 | T1_PI_2 | T1_PI_3);
-            } else if (runlen == 1) {
-                *flagsp &= ~(T1_PI_1 | T1_PI_2 | T1_PI_3);
-            } else if (runlen == 2) {
-                *flagsp &= ~(T1_PI_2 | T1_PI_3);
-            } else if (runlen == 3) {
-                *flagsp &= ~(T1_PI_3);
-            }
-            return;
+    if ((*flagsp & check) == check) {
+        if (runlen == 0) {
+            *flagsp &= ~(T1_PI_0 | T1_PI_1 | T1_PI_2 | T1_PI_3);
+        } else if (runlen == 1) {
+            *flagsp &= ~(T1_PI_1 | T1_PI_2 | T1_PI_3);
+        } else if (runlen == 2) {
+            *flagsp &= ~(T1_PI_2 | T1_PI_3);
+        } else if (runlen == 3) {
+            *flagsp &= ~(T1_PI_3);
         }
+        return;
     }
 
-    lim = 4U < (t1->h - y) ? 4U : (t1->h - y);
     for (ci = runlen; ci < lim; ++ci) {
         OPJ_UINT32 vsc;
         OPJ_UINT32 vsc_mask;
@@ -1514,11 +1509,15 @@ static void opj_t1_enc_clnpass(
 
     opj_mqc_t *mqc = t1->mqc;   /* MQC component */
 
+    const OPJ_UINT32 agg_mask = (cblksty & J2K_CCP_CBLKSTY_VSC) ?
+                                ~(T1_SIGMA_15 | T1_SIGMA_16 | T1_SIGMA_17 | T1_CHI_5) :
+                                ~0U;
+
     *nmsedec = 0;
 #ifdef DEBUG_ENC_CLN
     printf("enc_clnpass: bpno=%d\n", bpno);
 #endif
-    for (k = 0; k < t1->h; k += 4) {
+    for (k = 0; k < (t1->h & ~3U); k += 4) {
 #ifdef DEBUG_ENC_CLN
         printf(" k=%d\n", k);
 #endif
@@ -1526,16 +1525,7 @@ static void opj_t1_enc_clnpass(
 #ifdef DEBUG_ENC_CLN
             printf("  i=%d\n", i);
 #endif
-            if (k + 3 < t1->h) {
-                if (cblksty & J2K_CCP_CBLKSTY_VSC) {
-                    agg = !(ENC_FLAGS(i, k) & ~(T1_SIGMA_15 | T1_SIGMA_16 | T1_SIGMA_17 |
-                                                T1_CHI_5));
-                } else {
-                    agg = !ENC_FLAGS(i, k);
-                }
-            } else {
-                agg = 0;
-            }
+            agg = !(ENC_FLAGS(i, k) & agg_mask);
 #ifdef DEBUG_ENC_CLN
             printf("   agg=%d\n", agg);
 #endif
@@ -1566,8 +1556,32 @@ static void opj_t1_enc_clnpass(
                 nmsedec,
                 agg,
                 runlen,
-                i,
-                k,
+                4U,
+                cblksty);
+        }
+    }
+    if (k < t1->h) {
+        agg = 0;
+        runlen = 0;
+#ifdef DEBUG_ENC_CLN
+        printf(" k=%d\n", k);
+#endif
+        for (i = 0; i < t1->w; ++i) {
+#ifdef DEBUG_ENC_CLN
+            printf("  i=%d\n", i);
+            printf("   agg=%d\n", agg);
+#endif
+            opj_t1_enc_clnpass_step(
+                t1,
+                &ENC_FLAGS(i, k),
+                &t1->data[((k + runlen) * t1->data_stride) + i],
+                orient,
+                bpno,
+                one,
+                nmsedec,
+                agg,
+                runlen,
+                t1->h - k,
                 cblksty);
         }
     }
