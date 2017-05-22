@@ -72,9 +72,11 @@ in T1.C are used by some function in TCD.C.
 #define T1_SGN_W 0x0800U
 #define T1_SGN (T1_SGN_N|T1_SGN_E|T1_SGN_S|T1_SGN_W)
 
+#ifdef CONSISTENCY_CHECK
 #define T1_SIG    0x1000U /**< No longer used by decoder */
-#define T1_REFINE 0x2000U /**< No longer used by decoder */
 #define T1_VISIT  0x4000U /**< No longer used by decoder */
+#endif
+
 /* END of flags that apply to opj_flag_t */
 
 #define T1_NUMCTXS_ZC  9

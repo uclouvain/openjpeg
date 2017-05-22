@@ -57,7 +57,6 @@ static OPJ_BYTE opj_t1_enc_getctxno_sc(OPJ_UINT32 fX, OPJ_UINT32 pfX,
                                        OPJ_UINT32 nfX, OPJ_UINT32 ci);
 static OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f);
 static INLINE OPJ_UINT32 opj_t1_enc_getctxno_mag(OPJ_UINT32 f);
-static INLINE OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f);
 static OPJ_BYTE opj_t1_enc_getspb(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX,
                                   OPJ_UINT32 ci);
 static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f);
@@ -309,13 +308,6 @@ static INLINE OPJ_UINT32 opj_t1_enc_getctxno_mag(OPJ_UINT32 f)
     return tmp2;
 }
 
-static OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f)
-{
-    OPJ_UINT32 tmp1 = (f & T1_SIG_OTH) ? T1_CTXNO_MAG + 1 : T1_CTXNO_MAG;
-    OPJ_UINT32 tmp2 = (f & T1_REFINE) ? T1_CTXNO_MAG + 2 : tmp1;
-    return (tmp2);
-}
-
 static OPJ_BYTE opj_t1_enc_getspb(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX,
                                   OPJ_UINT32 ci)
 {
@@ -441,7 +433,9 @@ static INLINE void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s,
     np[1]  |= T1_SIG_SW;
 
     flagsp[-1] |= (opj_flag_t)(flag_N << 1U);
+#ifdef CONSISTENCY_CHECK
     flagsp[0]  |= T1_SIG;
+#endif
     flagsp[1]  |= (opj_flag_t)(flag_N << 3U);
 
     sp[-1] |= T1_SIG_NE;
@@ -1582,6 +1576,14 @@ static void opj_t1_enc_clnpass(
 
 #define MACRO_t1_flags_internal(x,y,flags_stride) t1->flags[((x)*(flags_stride))+(y)]
 
+#ifdef CONSISTENCY_CHECK
+#define REMOVE_VISIT_FLAG(flagptr) *(flagptr) &= (opj_flag_t)~T1_VISIT
+#define T1_SIG_OR_VISIT            (T1_SIG | T1_VISIT)
+#else
+#define REMOVE_VISIT_FLAG(flagptr) do {} while(0)
+#define T1_SIG_OR_VISIT            0
+#endif
+
 #define opj_t1_dec_clnpass_internal(consistency_check, t1, bpno, cblksty, w, h, flags_stride) \
 { \
     OPJ_INT32 one, half, oneplushalf, agg, runlen, vsc; \
@@ -1652,7 +1654,7 @@ static void opj_t1_enc_clnpass(
                     assert( agg == !((MACRO_t1_flags_internal(1 + k, 1 + i,flags_stride) | \
                                       MACRO_t1_flags_internal(1 + k + 1, 1 + i,flags_stride) | \
                                       MACRO_t1_flags_internal(1 + k + 2, 1 + i,flags_stride) | \
-                                      MACRO_t1_flags_internal(1 + k + 3, 1 + i,flags_stride)) & (T1_SIG | T1_VISIT | T1_SIG_OTH)) ); \
+                                      MACRO_t1_flags_internal(1 + k + 3, 1 + i,flags_stride)) & (T1_SIG_OR_VISIT | T1_SIG_OTH)) ); \
                 } \
                 if (agg) { \
                     opj_mqc_setcurctx(mqc, T1_CTXNO_AGG); \
@@ -1675,32 +1677,32 @@ static void opj_t1_enc_clnpass(
                     } \
                 } else { \
                     flags2 += flags_stride; \
-                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
+                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) == (!(*flags2 & (T1_SIG_OR_VISIT))) ); } \
                     if (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) {\
                         opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 0U, flags_stride); \
                     } \
-                    if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
+                    if( consistency_check ) REMOVE_VISIT_FLAG(*flags2); \
                     data2 += w; \
                     flags2 += flags_stride; \
-                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
+                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) == (!(*flags2 & (T1_SIG_OR_VISIT))) ); } \
                     if (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) {\
                         opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 1U, flags_stride); \
                     } \
-                    if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
+                    if( consistency_check ) REMOVE_VISIT_FLAG(*flags2); \
                     data2 += w; \
                     flags2 += flags_stride; \
-                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
+                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) == (!(*flags2 & (T1_SIG_OR_VISIT))) ); } \
                     if (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) {\
                         opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 2U, flags_stride); \
                     } \
-                    if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
+                    if( consistency_check ) REMOVE_VISIT_FLAG(*flags2); \
                     data2 += w; \
                     flags2 += flags_stride; \
-                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
+                    if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) == (!(*flags2 & (T1_SIG_OR_VISIT))) ); } \
                     if (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) {\
                         opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 3U, flags_stride); \
                     } \
-                    if( consistency_check ) *flags2 &= (opj_flag_t)~T1_VISIT; \
+                    if( consistency_check ) REMOVE_VISIT_FLAG(*flags2); \
                     data2 += w; \
                 } \
                 *colflags2 &= (opj_colflag_t)~(T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_VISIT_ROW_3); \
@@ -2642,73 +2644,3 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
         pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);
     }
 }
-
-#if 0
-static void opj_t1_dec_refpass_step(opj_t1_t *t1,
-                                    opj_flag_t *flagsp,
-                                    OPJ_INT32 *datap,
-                                    OPJ_INT32 poshalf,
-                                    OPJ_INT32 neghalf,
-                                    OPJ_BYTE type,
-                                    OPJ_UINT32 vsc)
-{
-    OPJ_INT32  t;
-    OPJ_UINT32 v, flag;
-
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
-    opj_raw_t *raw = t1->raw;   /* RAW component */
-
-    flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) :
-           (*flagsp);
-    if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
-        opj_mqc_setcurctx(mqc, opj_t1_getctxno_mag(flag));  /* ESSAI */
-        if (type == T1_TYPE_RAW) {
-            v = opj_raw_decode(raw);
-        } else {
-            v = opj_mqc_decode(mqc);
-        }
-        t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
-        *flagsp |= T1_REFINE;
-    }
-}               /* VSC and  BYPASS by Antonin  */
-#endif
-
-
-
-#if 0
-static void opj_t1_dec_sigpass_step(opj_t1_t *t1,
-                                    opj_flag_t *flagsp,
-                                    OPJ_INT32 *datap,
-                                    OPJ_UINT32 orient,
-                                    OPJ_INT32 oneplushalf,
-                                    OPJ_BYTE type,
-                                    OPJ_UINT32 vsc)
-{
-    OPJ_UINT32 v, flag;
-
-    opj_raw_t *raw = t1->raw;   /* RAW component */
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
-
-    flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) :
-           (*flagsp);
-    if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
-        if (type == T1_TYPE_RAW) {
-            if (opj_raw_decode(raw)) {
-                v = opj_raw_decode(raw);    /* ESSAI */
-                *datap = v ? -oneplushalf : oneplushalf;
-                opj_t1_updateflags(flagsp, v, t1->flags_stride);
-            }
-        } else {
-            opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));
-            if (opj_mqc_decode(mqc)) {
-                opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
-                v = opj_mqc_decode(mqc) ^ opj_t1_getspb(flag);
-                *datap = v ? -oneplushalf : oneplushalf;
-                opj_t1_updateflags(flagsp, v, t1->flags_stride);
-            }
-        }
-        *flagsp |= T1_VISIT;
-    }
-}               /* VSC and  BYPASS by Antonin */
-#endif
