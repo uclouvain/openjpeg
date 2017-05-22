@@ -817,6 +817,26 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
     }
 }                               /* VSC and  BYPASS by Antonin  */
 
+static INLINE void opj_t1_dec_refpass_step_mqc_4_at_context16(
+    opj_t1_t *t1,
+    OPJ_INT32 *datap,
+    OPJ_INT32 poshalf,
+    OPJ_INT32 neghalf,
+    OPJ_UINT32 w)
+{
+    OPJ_INT32 i, v, t;
+
+    opj_mqc_t *mqc = t1->mqc;       /* MQC component */
+    opj_mqc_setcurctx(mqc, T1_CTXNO_MAG + 2);
+
+    for (i = 0; i < 4; i++) {
+        v = opj_mqc_decode(mqc);
+        t = v ? poshalf : neghalf;
+        *datap += *datap < 0 ? -t : t;
+        datap += w;
+    }
+}
+
 static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
     opj_t1_t *t1,
     opj_flag_t *flagsp,
@@ -922,7 +942,28 @@ static void opj_t1_dec_refpass_raw(
                         OPJ_INT32 *data2 = data1 + i; \
                         opj_flag_t *flags2 = flags1 + i; \
                         opj_colflag_t *colflags2 = colflags1 + i; \
-                        if( *colflags2 == 0 ) continue; \
+                        if ((*colflags2 & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0 | \
+                                           T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1 | \
+                                           T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2 | \
+                                           T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3 )) == 0) \
+                        { \
+                            /* No sample in this column is eligible to refpass */ \
+                            continue; \
+                        } \
+                        if ((*colflags2 & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0 | T1_COLFLAG_REFINE_ROW_0 | \
+                                           T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1 | T1_COLFLAG_REFINE_ROW_1 | \
+                                           T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2 | T1_COLFLAG_REFINE_ROW_2 | \
+                                           T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3 | T1_COLFLAG_REFINE_ROW_3 )) \
+                                == (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_REFINE_ROW_0 | \
+                                    T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_REFINE_ROW_1 | \
+                                    T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_REFINE_ROW_2 | \
+                                    T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_REFINE_ROW_3 )) \
+                        { \
+                            /* In the lowest bit planes this can be 6-8% of cases. */ \
+                            /* See https://github.com/uclouvain/openjpeg/issues/932 */ \
+                            opj_t1_dec_refpass_step_mqc_4_at_context16(t1, data2, poshalf, neghalf, w); \
+                            continue; \
+                        } \
                         flags2 += flags_stride; \
                         opj_t1_dec_refpass_step_mqc(t1, flags2, colflags2, data2, poshalf, neghalf, 0U); \
                         data2 += w; \
