@@ -12,6 +12,7 @@
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2012, Carl Hetherington
+ * Copyright (c) 2017, IntoPIX SA <support@intopix.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -122,6 +123,14 @@ in T1.C are used by some function in TCD.C.
  *  These #defines declare the layout of a 32-bit flags word.
  *
  *  This is currently done for encoding only.
+ *  The values must NOT be changed, otherwise this is going to break a lot of
+ *  assumptions.
+ */
+
+/* SIGMA: significance state (3 cols x 6 rows)
+ * CHI:   state for negative sample value (1 col x 6 rows)
+ * MU:    state for visited in refinement pass (1 col x 4 rows)
+ * PI:    state for visited in significance pass (1 col * 4 rows)
  */
 
 #define T1_SIGMA_0  (1U << 0)
@@ -161,7 +170,6 @@ in T1.C are used by some function in TCD.C.
 #define T1_PI_3     (1U << 30)
 #define T1_CHI_5    (1U << 31)
 
-
 /** As an example, the bits T1_SIGMA_3, T1_SIGMA_4 and T1_SIGMA_5
  *  indicate the significance state of the west neighbour of data point zero
  *  of our four, the point itself, and its east neighbour respectively.
@@ -197,6 +205,7 @@ in T1.C are used by some function in TCD.C.
 #define T1_CHI_THIS_I T1_CHI_1_I
 #define T1_MU_THIS    T1_MU_0
 #define T1_PI_THIS    T1_PI_0
+#define T1_CHI_S      T1_CHI_2
 
 #define T1_LUT_SGN_W (1U << 0)
 #define T1_LUT_SIG_N (1U << 1)
