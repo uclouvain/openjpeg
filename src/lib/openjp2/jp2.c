@@ -44,6 +44,8 @@
 
 #define OPJ_BOX_SIZE    1024
 
+#define OPJ_UNUSED(x) (void)x
+
 /** @name Local static functions */
 /*@{*/
 
@@ -1818,6 +1820,8 @@ static OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
     assert(jp2 != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(jp2);
+
     /* write box length */
     opj_write_bytes(l_signature_data, 12, 4);
     /* writes box type */
@@ -2159,6 +2163,8 @@ static OPJ_BOOL opj_jp2_default_validation(opj_jp2_t * jp2,
     assert(jp2 != 00);
     assert(cio != 00);
     assert(p_manager != 00);
+
+    OPJ_UNUSED(p_manager);
 
     /* JPEG2000 codec validation */
 
@@ -2825,6 +2831,9 @@ static OPJ_BOOL opj_jp2_setup_decoding_validation(opj_jp2_t *jp2,
     /* preconditions */
     assert(jp2 != 00);
     assert(p_manager != 00);
+
+    OPJ_UNUSED(jp2);
+    OPJ_UNUSED(p_manager);
 
     /* DEVELOPER CORNER, add your custom validation procedure */
 

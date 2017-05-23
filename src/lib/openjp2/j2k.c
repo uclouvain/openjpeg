@@ -48,6 +48,8 @@
 /** @name Local static functions */
 /*@{*/
 
+#define OPJ_UNUSED(x) (void)x
+
 /**
  * Sets up the procedures to do on reading header. Developpers wanting to extend the library can add their own reading procedures.
  */
@@ -1791,6 +1793,9 @@ static OPJ_BOOL opj_j2k_calculate_tp(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(p_j2k);
+    OPJ_UNUSED(p_manager);
+
     l_nb_tiles = cp->tw * cp->th;
     * p_nb_tiles = 0;
     tcp = cp->tcps;
@@ -2505,7 +2510,11 @@ static OPJ_BOOL opj_j2k_read_com(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_manager != 00);
     assert(p_header_data != 00);
-    (void)p_header_size;
+
+    OPJ_UNUSED(p_j2k);
+    OPJ_UNUSED(p_header_data);
+    OPJ_UNUSED(p_header_size);
+    OPJ_UNUSED(p_manager);
 
     return OPJ_TRUE;
 }
@@ -3284,6 +3293,8 @@ static void opj_j2k_write_poc_in_memory(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(p_manager);
+
     l_tcp = &p_j2k->m_cp.tcps[p_j2k->m_current_tile_number];
     l_tccp = &l_tcp->tccps[0];
     l_image = p_j2k->m_private_image;
@@ -3523,6 +3534,8 @@ static OPJ_BOOL opj_j2k_read_crg(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(p_header_data);
+
     l_nb_comp = p_j2k->m_private_image->numcomps;
 
     if (p_header_size != l_nb_comp * 4) {
@@ -3563,6 +3576,8 @@ static OPJ_BOOL opj_j2k_read_tlm(opj_j2k_t *p_j2k,
     assert(p_header_data != 00);
     assert(p_j2k != 00);
     assert(p_manager != 00);
+
+    OPJ_UNUSED(p_j2k);
 
     if (p_header_size < 2) {
         opj_event_msg(p_manager, EVT_ERROR, "Error reading TLM marker\n");
@@ -3620,6 +3635,9 @@ static OPJ_BOOL opj_j2k_read_plm(opj_j2k_t *p_j2k,
     assert(p_header_data != 00);
     assert(p_j2k != 00);
     assert(p_manager != 00);
+
+    OPJ_UNUSED(p_j2k);
+    OPJ_UNUSED(p_header_data);
 
     if (p_header_size < 1) {
         opj_event_msg(p_manager, EVT_ERROR, "Error reading PLM marker\n");
@@ -3692,6 +3710,8 @@ static OPJ_BOOL opj_j2k_read_plt(opj_j2k_t *p_j2k,
     assert(p_header_data != 00);
     assert(p_j2k != 00);
     assert(p_manager != 00);
+
+    OPJ_UNUSED(p_j2k);
 
     if (p_header_size < 1) {
         opj_event_msg(p_manager, EVT_ERROR, "Error reading PLT marker\n");
@@ -4156,6 +4176,9 @@ static OPJ_BOOL opj_j2k_write_sot(opj_j2k_t *p_j2k,
     assert(p_manager != 00);
     assert(p_stream != 00);
 
+    OPJ_UNUSED(p_stream);
+    OPJ_UNUSED(p_manager);
+
     opj_write_bytes(p_data, J2K_MS_SOT,
                     2);                                 /* SOT */
     p_data += 2;
@@ -4519,6 +4542,8 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_manager != 00);
     assert(p_stream != 00);
+
+    OPJ_UNUSED(p_stream);
 
     opj_write_bytes(p_data, J2K_MS_SOD,
                     2);                                 /* SOD */
@@ -4916,6 +4941,8 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
     assert(p_manager != 00);
     assert(p_stream != 00);
 
+    OPJ_UNUSED(p_manager);
+
     l_cp = &(p_j2k->m_cp);
     l_image = p_j2k->m_private_image;
     l_tcp = l_cp->tcps;
@@ -5124,6 +5151,8 @@ static OPJ_BOOL opj_j2k_get_end_header(opj_j2k_t *p_j2k,
     assert(p_manager != 00);
     assert(p_stream != 00);
 
+    OPJ_UNUSED(p_manager);
+
     p_j2k->cstr_index->main_head_end = opj_stream_tell(p_stream);
 
     return OPJ_TRUE;
@@ -5263,6 +5292,8 @@ static OPJ_BOOL opj_j2k_write_epc(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_manager != 00);
     assert(p_stream != 00);
+
+    OPJ_UNUSED(p_manager);
 
     l_cstr_index = p_j2k->cstr_index;
     if (l_cstr_index) {
@@ -7291,6 +7322,9 @@ static OPJ_BOOL opj_j2k_mct_validation(opj_j2k_t * p_j2k,
     assert(p_stream != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(p_stream);
+    OPJ_UNUSED(p_manager);
+
     if ((p_j2k->m_cp.rsiz & 0x8200) == 0x8200) {
         OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
         opj_tcp_t * l_tcp = p_j2k->m_cp.tcps;
@@ -7510,6 +7544,8 @@ static OPJ_BOOL opj_j2k_encoding_validation(opj_j2k_t * p_j2k,
     assert(p_stream != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(p_stream);
+
     /* STATE checking */
     /* make sure the state is at 0 */
     l_is_valid &= (p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_NONE);
@@ -7559,6 +7595,9 @@ static OPJ_BOOL opj_j2k_decoding_validation(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_stream != 00);
     assert(p_manager != 00);
+
+    OPJ_UNUSED(p_stream);
+    OPJ_UNUSED(p_manager);
 
     /* STATE checking */
     /* make sure the state is at 0 */
@@ -7812,6 +7851,8 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd(opj_j2k_t * p_j2k,
     assert(p_j2k != 00);
     assert(p_stream != 00);
     assert(p_manager != 00);
+
+    OPJ_UNUSED(p_stream);
 
     l_image = p_j2k->m_private_image;
     l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
@@ -11442,6 +11483,9 @@ static OPJ_BOOL opj_j2k_end_encoding(opj_j2k_t *p_j2k,
     assert(p_manager != 00);
     assert(p_stream != 00);
 
+    OPJ_UNUSED(p_stream);
+    OPJ_UNUSED(p_manager);
+
     opj_tcd_destroy(p_j2k->m_tcd);
     p_j2k->m_tcd = 00;
 
@@ -11474,6 +11518,9 @@ static OPJ_BOOL opj_j2k_destroy_header_memory(opj_j2k_t * p_j2k,
     assert(p_stream != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(p_stream);
+    OPJ_UNUSED(p_manager);
+
     if (p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
         opj_free(p_j2k->m_specific_param.m_encoder.m_header_tile_data);
         p_j2k->m_specific_param.m_encoder.m_header_tile_data = 0;
@@ -11495,6 +11542,8 @@ static OPJ_BOOL opj_j2k_init_info(opj_j2k_t *p_j2k,
     assert(p_manager != 00);
     assert(p_stream != 00);
     (void)l_cstr_info;
+
+    OPJ_UNUSED(p_stream);
 
     /* TODO mergeV2: check this part which use cstr_info */
     /*l_cstr_info = p_j2k->cstr_info;
@@ -11556,6 +11605,8 @@ static OPJ_BOOL opj_j2k_create_tcd(opj_j2k_t *p_j2k,
     assert(p_j2k != 00);
     assert(p_manager != 00);
     assert(p_stream != 00);
+
+    OPJ_UNUSED(p_stream);
 
     p_j2k->m_tcd = opj_tcd_create(OPJ_FALSE);
 
