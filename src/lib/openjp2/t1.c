@@ -374,6 +374,7 @@ static INLINE void opj_t1_enc_updateflags(opj_flag_enc_t *flagsp, OPJ_UINT32 ci,
         switch (ci) {
         case 0U: {
             *flagsp |= T1_CHI_1;
+            north = flagsp - stride;
             *north |= T1_CHI_5;
             break;
         }
@@ -385,6 +386,7 @@ static INLINE void opj_t1_enc_updateflags(opj_flag_enc_t *flagsp, OPJ_UINT32 ci,
             break;
         case 3: {
             *flagsp |= T1_CHI_4;
+            south = flagsp + stride;
             *south |= T1_CHI_0;
             break;
         }
@@ -478,7 +480,7 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
         OPJ_UINT32 vsc
                                           )
 {
-    OPJ_INT32 v;
+    OPJ_UINT32 v;
 
     opj_mqc_t *mqc = t1->mqc;   /* MQC component */
 
@@ -509,7 +511,8 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
                                 ci);
             OPJ_UINT32 ctxt2 = opj_t1_enc_getctxno_sc(lu);
             v = *datap < 0 ? 1 : 0;
-            *nmsedec += opj_t1_getnmsedec_sig(opj_int_abs(*datap), bpno);
+            *nmsedec += opj_t1_getnmsedec_sig((OPJ_UINT32)opj_int_abs(*datap),
+                                              (OPJ_UINT32)bpno);
 #ifdef DEBUG_ENC_SIG
             fprintf(stderr, "   ctxt2=%d\n", ctxt2);
 #endif
@@ -897,7 +900,7 @@ static INLINE void opj_t1_enc_refpass_step(opj_t1_t *t1,
         OPJ_UINT32 vsc
                                           )
 {
-    OPJ_INT32 v;
+    OPJ_UINT32 v;
 
     opj_mqc_t *mqc = t1->mqc;   /* MQC component */
 
@@ -909,7 +912,8 @@ static INLINE void opj_t1_enc_refpass_step(opj_t1_t *t1,
 
     if ((shift_flags & (T1_SIGMA_THIS | T1_PI_THIS)) == T1_SIGMA_THIS) {
         OPJ_UINT32 ctxt = opj_t1_enc_getctxno_mag(shift_flags);
-        *nmsedec += opj_t1_getnmsedec_ref(opj_int_abs(*datap), bpno);
+        *nmsedec += opj_t1_getnmsedec_ref((OPJ_UINT32)opj_int_abs(*datap),
+                                          (OPJ_UINT32)bpno);
         v = opj_int_abs(*datap) & one ? 1 : 0;
 #ifdef DEBUG_ENC_REF
         fprintf(stderr, "  ctxt=%d\n", ctxt);
@@ -1286,7 +1290,7 @@ static void opj_t1_enc_clnpass_step(
     OPJ_UINT32 lim,
     OPJ_UINT32 cblksty)
 {
-    OPJ_INT32 v;
+    OPJ_UINT32 v;
     OPJ_UINT32 ci;
     opj_mqc_t *mqc = t1->mqc;   /* MQC component */
 
@@ -1338,7 +1342,8 @@ LABEL_PARTIAL:
                          *flagsp & vsc_mask,
                          flagsp[-1] & vsc_mask, flagsp[1] & vsc_mask,
                          ci);
-                *nmsedec += opj_t1_getnmsedec_sig(opj_int_abs(*datap), bpno);
+                *nmsedec += opj_t1_getnmsedec_sig((OPJ_UINT32)opj_int_abs(*datap),
+                                                  (OPJ_UINT32)bpno);
                 ctxt2 = opj_t1_enc_getctxno_sc(lu);
 #ifdef DEBUG_ENC_CLN
                 printf("   ctxt2=%d\n", ctxt2);
@@ -1873,6 +1878,8 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 
     if (!t1->encoder) {
 
+        size_t colflags_size;
+
         if (flagssize > (size_t)t1->flagssize) {
             /* Overflow check */
             if (flagssize > (SIZE_MAX / sizeof(opj_flag_t))) {
@@ -1898,8 +1905,8 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 
         memset(t1->flags, 0, flagssize * sizeof(opj_flag_t));
 
-        size_t colflags_size = ((((size_t)h + 3U) / 4U) +
-                                2U); /* Can't overflow, h checked against UINT32_MAX - 3U */
+        colflags_size = ((((size_t)h + 3U) / 4U) +
+                         2U); /* Can't overflow, h checked against UINT32_MAX - 3U */
 
         /* Overflow check */
         if (colflags_size > (SIZE_MAX / (size_t)t1->flags_stride)) {
