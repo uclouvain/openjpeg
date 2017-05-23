@@ -53,13 +53,9 @@
 
 static INLINE OPJ_BYTE opj_t1_enc_getctxno_zc(OPJ_UINT32 f, OPJ_UINT32 orient);
 static INLINE OPJ_BYTE opj_t1_getctxno_zc(opj_mqc_t *mqc, OPJ_UINT32 f);
-static OPJ_BYTE opj_t1_enc_getctxno_sc(OPJ_UINT32 fX, OPJ_UINT32 pfX,
-                                       OPJ_UINT32 nfX, OPJ_UINT32 ci);
-static OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f);
+static INLINE OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f);
 static INLINE OPJ_UINT32 opj_t1_enc_getctxno_mag(OPJ_UINT32 f);
-static OPJ_BYTE opj_t1_enc_getspb(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX,
-                                  OPJ_UINT32 ci);
-static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f);
+static INLINE OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f);
 static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos);
 static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos);
 static INLINE void opj_t1_enc_updateflags(opj_flag_enc_t *flagsp, OPJ_UINT32 ci,
@@ -266,50 +262,10 @@ static OPJ_BYTE opj_t1_getctxno_zc(opj_mqc_t *mqc, OPJ_UINT32 f)
     return mqc->lut_ctxno_zc_orient[(f & T1_SIG_OTH)];
 }
 
-
-static OPJ_BYTE opj_t1_enc_getctxno_sc(OPJ_UINT32 fX, OPJ_UINT32 pfX,
-                                       OPJ_UINT32 nfX, OPJ_UINT32 ci)
-{
-    /*
-      0 pfX T1_CHI_THIS           T1_LUT_CTXNO_SGN_W
-      1 tfX T1_SIGMA_1            T1_LUT_CTXNO_SIG_N
-      2 nfX T1_CHI_THIS           T1_LUT_CTXNO_SGN_E
-      3 tfX T1_SIGMA_3            T1_LUT_CTXNO_SIG_W
-      4  fX T1_CHI_(THIS - 1)     T1_LUT_CTXNO_SGN_N
-      5 tfX T1_SIGMA_5            T1_LUT_CTXNO_SIG_E
-      6  fX T1_CHI_(THIS + 1)     T1_LUT_CTXNO_SGN_S
-      7 tfX T1_SIGMA_7            T1_LUT_CTXNO_SIG_S
-    */
-
-    OPJ_UINT32 lu = (fX >> (ci * 3)) & (T1_SIGMA_1 | T1_SIGMA_3 | T1_SIGMA_5 |
-                                        T1_SIGMA_7);
-
-    lu |= (pfX >> (T1_CHI_THIS_I      + (ci * 3U))) & (1U << 0);
-    lu |= (nfX >> (T1_CHI_THIS_I - 2U + (ci * 3U))) & (1U << 2);
-    if (ci == 0U) {
-        lu |= (fX >> (T1_CHI_0_I - 4U)) & (1U << 4);
-    } else {
-        lu |= (fX >> (T1_CHI_1_I - 4U + ((ci - 1U) * 3U))) & (1U << 4);
-    }
-    lu |= (fX >> (T1_CHI_2_I - 6U + (ci * 3U))) & (1U << 6);
-
-    return lut_enc_ctxno_sc[lu];
-}
-
-static OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f)
-{
-    return lut_ctxno_sc[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
-}
-
-static INLINE OPJ_UINT32 opj_t1_enc_getctxno_mag(OPJ_UINT32 f)
-{
-    OPJ_UINT32 tmp = (f & T1_SIGMA_NEIGHBOURS) ? T1_CTXNO_MAG + 1 : T1_CTXNO_MAG;
-    OPJ_UINT32 tmp2 = (f & T1_MU_0) ? T1_CTXNO_MAG + 2 : tmp;
-    return tmp2;
-}
-
-static OPJ_BYTE opj_t1_enc_getspb(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX,
-                                  OPJ_UINT32 ci)
+static INLINE OPJ_UINT32 opj_t1_enc_getctxtno_sc_or_spb_index(OPJ_UINT32 fX,
+        OPJ_UINT32 pfX,
+        OPJ_UINT32 nfX,
+        OPJ_UINT32 ci)
 {
     /*
       0 pfX T1_CHI_THIS           T1_LUT_SGN_W
@@ -322,8 +278,8 @@ static OPJ_BYTE opj_t1_enc_getspb(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX,
       7 tfX T1_SIGMA_7            T1_LUT_SIG_S
     */
 
-    int lu = (fX >> (ci * 3U)) & (T1_SIGMA_1 | T1_SIGMA_3 | T1_SIGMA_5 |
-                                  T1_SIGMA_7);
+    OPJ_UINT32 lu = (fX >> (ci * 3U)) & (T1_SIGMA_1 | T1_SIGMA_3 | T1_SIGMA_5 |
+                                         T1_SIGMA_7);
 
     lu |= (pfX >> (T1_CHI_THIS_I      + (ci * 3U))) & (1U << 0);
     lu |= (nfX >> (T1_CHI_THIS_I - 2U + (ci * 3U))) & (1U << 2);
@@ -333,11 +289,32 @@ static OPJ_BYTE opj_t1_enc_getspb(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX,
         lu |= (fX >> (T1_CHI_1_I - 4U + ((ci - 1U) * 3U))) & (1U << 4);
     }
     lu |= (fX >> (T1_CHI_2_I - 6U + (ci * 3U))) & (1U << 6);
+    return lu;
+}
 
+static INLINE OPJ_BYTE opj_t1_enc_getctxno_sc(OPJ_UINT32 lu)
+{
+    return lut_enc_ctxno_sc[lu];
+}
+
+static INLINE  OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f)
+{
+    return lut_ctxno_sc[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
+}
+
+static INLINE OPJ_UINT32 opj_t1_enc_getctxno_mag(OPJ_UINT32 f)
+{
+    OPJ_UINT32 tmp = (f & T1_SIGMA_NEIGHBOURS) ? T1_CTXNO_MAG + 1 : T1_CTXNO_MAG;
+    OPJ_UINT32 tmp2 = (f & T1_MU_0) ? T1_CTXNO_MAG + 2 : tmp;
+    return tmp2;
+}
+
+static INLINE OPJ_BYTE opj_t1_enc_getspb(OPJ_UINT32 lu)
+{
     return lut_enc_spb[lu];
 }
 
-static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f)
+static INLINE OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f)
 {
     return lut_spb[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
 }
@@ -524,9 +501,13 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
             opj_mqc_encode(mqc, v);
         }
         if (v) {
-            OPJ_UINT32 ctxt2 = opj_t1_enc_getctxno_sc(*flagsp & vsc_mask,
-                               flagsp[-1] & vsc_mask, flagsp[1] & vsc_mask,
-                               ci);
+            /* Note: using flags instead of *flagsp & vsc_mask result */
+            /* in slow down. Probably because of register pressure */
+            OPJ_UINT32 lu = opj_t1_enc_getctxtno_sc_or_spb_index(
+                                *flagsp & vsc_mask,
+                                flagsp[-1] & vsc_mask, flagsp[1] & vsc_mask,
+                                ci);
+            OPJ_UINT32 ctxt2 = opj_t1_enc_getctxno_sc(lu);
             v = *datap < 0 ? 1 : 0;
             *nmsedec += opj_t1_getnmsedec_sig(opj_int_abs(*datap), bpno);
 #ifdef DEBUG_ENC_SIG
@@ -536,8 +517,7 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
             if (type == T1_TYPE_RAW) {  /* BYPASS/LAZY MODE */
                 opj_mqc_bypass_enc(mqc, v);
             } else {
-                OPJ_UINT32 spb = opj_t1_enc_getspb(*flagsp & vsc_mask,
-                                                   flagsp[-1] & vsc_mask, flagsp[1] & vsc_mask, ci);
+                OPJ_UINT32 spb = opj_t1_enc_getspb(lu);
 #ifdef DEBUG_ENC_SIG
                 fprintf(stderr, "   spb=%d\n", spb);
 #endif
@@ -1334,12 +1314,11 @@ static void opj_t1_enc_clnpass_step(
         vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (ci == lim - 1)) ? 1 : 0;
         vsc_mask = vsc ? ~((T1_SIGMA_SW | T1_SIGMA_S | T1_SIGMA_SE | T1_CHI_S) <<
                            (ci * 3U)) : ~0U;
+        flags = *flagsp & vsc_mask;
 
         if ((agg != 0) && (ci == runlen)) {
             goto LABEL_PARTIAL;
         }
-
-        flags = *flagsp & vsc_mask;
 
         if (!(flags & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U)))) {
             OPJ_UINT32 ctxt1 = opj_t1_enc_getctxno_zc(flags >> (ci * 3U), orient);
@@ -1351,19 +1330,23 @@ static void opj_t1_enc_clnpass_step(
             opj_mqc_encode(mqc, v);
             if (v) {
                 OPJ_UINT32 ctxt2, spb;
+                OPJ_UINT32 lu;
 LABEL_PARTIAL:
+                /* Note: using flags instead of *flagsp & vsc_mask result */
+                /* in slow down. Probably because of register pressure */
+                lu = opj_t1_enc_getctxtno_sc_or_spb_index(
+                         *flagsp & vsc_mask,
+                         flagsp[-1] & vsc_mask, flagsp[1] & vsc_mask,
+                         ci);
                 *nmsedec += opj_t1_getnmsedec_sig(opj_int_abs(*datap), bpno);
-                ctxt2 = opj_t1_enc_getctxno_sc(*flagsp & vsc_mask,
-                                               flagsp[-1] & vsc_mask, flagsp[1] & vsc_mask,
-                                               ci);
+                ctxt2 = opj_t1_enc_getctxno_sc(lu);
 #ifdef DEBUG_ENC_CLN
                 printf("   ctxt2=%d\n", ctxt2);
 #endif
                 opj_mqc_setcurctx(mqc, ctxt2);
 
                 v = *datap < 0 ? 1 : 0;
-                spb = opj_t1_enc_getspb(*flagsp & vsc_mask,
-                                        flagsp[-1] & vsc_mask, flagsp[1] & vsc_mask, ci);
+                spb = opj_t1_enc_getspb(lu);
 #ifdef DEBUG_ENC_CLN
                 printf("   spb=%d\n", spb);
 #endif
