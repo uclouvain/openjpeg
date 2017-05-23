@@ -358,7 +358,7 @@ static INLINE void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s,
     flagsp[1]  |= (opj_flag_t)(flag_N << 3U);
 
     sp[-1] |= T1_SIG_NE;
-    sp[0]  |= (opj_flag_t)flag_N;
+    sp[0]  = (opj_flag_t)(sp[0] | flag_N);
     sp[1]  |= T1_SIG_NW;
 }
 
@@ -472,7 +472,8 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
 #ifdef CONSISTENCY_CHECK
         *flagsp |= T1_VISIT;
 #endif
-        *colflagsp |= (opj_colflag_t)(T1_COLFLAG_VISIT_ROW_0 << (T1_COLFLAG_RBS * row));
+        *colflagsp = (opj_colflag_t)(*colflagsp | (T1_COLFLAG_VISIT_ROW_0 <<
+                                     (T1_COLFLAG_RBS * row)));
     }
 }
 
@@ -508,7 +509,8 @@ static INLINE void opj_t1_dec_sigpass_step_mqc(
 #ifdef CONSISTENCY_CHECK
         *flagsp |= T1_VISIT;
 #endif
-        *colflagsp |= (opj_colflag_t)(T1_COLFLAG_VISIT_ROW_0 << (T1_COLFLAG_RBS * row));
+        *colflagsp = (opj_colflag_t)(*colflagsp | (T1_COLFLAG_VISIT_ROW_0 <<
+                                     (T1_COLFLAG_RBS * row)));
     }
 }                               /* VSC and  BYPASS by Antonin */
 
@@ -540,7 +542,8 @@ static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
 #ifdef CONSISTENCY_CHECK
         *flagsp |= T1_VISIT;
 #endif
-        *colflagsp |= (opj_colflag_t)(T1_COLFLAG_VISIT_ROW_0 << (T1_COLFLAG_RBS * row));
+        *colflagsp = (opj_colflag_t)(*colflagsp | (T1_COLFLAG_VISIT_ROW_0 <<
+                                     (T1_COLFLAG_RBS * row)));
     }
 }                               /* VSC and  BYPASS by Antonin */
 
@@ -772,8 +775,8 @@ static INLINE void opj_t1_dec_refpass_step_raw(
         v = (OPJ_INT32)opj_raw_decode(raw);
         t = v ? poshalf : neghalf;
         *datap += *datap < 0 ? -t : t;
-        *colflagsp |= (opj_colflag_t)(T1_COLFLAG_REFINE_ROW_0 <<
-                                      (T1_COLFLAG_RBS * row));
+        *colflagsp = (opj_colflag_t)(*colflagsp | (T1_COLFLAG_REFINE_ROW_0 <<
+                                     (T1_COLFLAG_RBS * row)));
     }
 }                               /* VSC and  BYPASS by Antonin  */
 
@@ -812,8 +815,8 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
         v = opj_mqc_decode(mqc);
         t = v ? poshalf : neghalf;
         *datap += *datap < 0 ? -t : t;
-        *colflagsp |= (opj_colflag_t)(T1_COLFLAG_REFINE_ROW_0 <<
-                                      (T1_COLFLAG_RBS * row));
+        *colflagsp = (opj_colflag_t)(*colflagsp | (T1_COLFLAG_REFINE_ROW_0 <<
+                                     (T1_COLFLAG_RBS * row)));
     }
 }                               /* VSC and  BYPASS by Antonin  */
 
@@ -844,8 +847,8 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
         v = (OPJ_UINT32)opj_mqc_decode(mqc);
         t = v ? poshalf : neghalf;
         *datap += *datap < 0 ? -t : t;
-        *colflagsp |= (opj_colflag_t)(T1_COLFLAG_REFINE_ROW_0 <<
-                                      (T1_COLFLAG_RBS * row));
+        *colflagsp = (opj_colflag_t)(*colflagsp | (T1_COLFLAG_REFINE_ROW_0 <<
+                                     (T1_COLFLAG_RBS * row)));
     }
 }                               /* VSC and  BYPASS by Antonin  */
 
