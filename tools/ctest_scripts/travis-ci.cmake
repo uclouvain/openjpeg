@@ -19,7 +19,7 @@ if("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows")
 	set( JPYLYZER_EXT          "exe"  )
 else()
 	set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
-	set( CCFLAGS_WARNING "-Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement")
+	set( CCFLAGS_WARNING "-Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement -Werror=declaration-after-statement")
 	set( JPYLYZER_EXT          "py"  )
 endif()
 
