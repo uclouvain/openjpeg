@@ -66,6 +66,8 @@ typedef struct opj_raw {
     OPJ_BYTE *end;
 } opj_raw_t;
 
+#include "raw_inl.h"
+
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
@@ -97,7 +99,7 @@ Decode a symbol using raw-decoder. Cfr p.506 TAUBMAN
 @param raw RAW handle
 @return Returns the decoded symbol (0 or 1)
 */
-OPJ_UINT32 opj_raw_decode(opj_raw_t *raw);
+static INLINE OPJ_UINT32 opj_raw_decode(opj_raw_t *raw);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
