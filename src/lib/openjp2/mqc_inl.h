@@ -43,14 +43,14 @@ FIXME DOC
 @param mqc MQC handle
 @return
 */
-static INLINE OPJ_INT32 opj_mqc_mpsexchange(opj_mqc_t *const mqc)
+static INLINE OPJ_UINT32 opj_mqc_mpsexchange(opj_mqc_t *const mqc)
 {
-    OPJ_INT32 d;
+    OPJ_UINT32 d;
     if (mqc->a < (*mqc->curctx)->qeval) {
-        d = (OPJ_INT32)(1 - (*mqc->curctx)->mps);
+        d = !((*mqc->curctx)->mps);
         *mqc->curctx = (*mqc->curctx)->nlps;
     } else {
-        d = (OPJ_INT32)(*mqc->curctx)->mps;
+        d = (*mqc->curctx)->mps;
         *mqc->curctx = (*mqc->curctx)->nmps;
     }
 
@@ -62,16 +62,16 @@ FIXME DOC
 @param mqc MQC handle
 @return
 */
-static INLINE OPJ_INT32 opj_mqc_lpsexchange(opj_mqc_t *const mqc)
+static INLINE OPJ_UINT32 opj_mqc_lpsexchange(opj_mqc_t *const mqc)
 {
-    OPJ_INT32 d;
+    OPJ_UINT32 d;
     if (mqc->a < (*mqc->curctx)->qeval) {
         mqc->a = (*mqc->curctx)->qeval;
-        d = (OPJ_INT32)(*mqc->curctx)->mps;
+        d = (*mqc->curctx)->mps;
         *mqc->curctx = (*mqc->curctx)->nmps;
     } else {
         mqc->a = (*mqc->curctx)->qeval;
-        d = (OPJ_INT32)(1 - (*mqc->curctx)->mps);
+        d = !((*mqc->curctx)->mps);
         *mqc->curctx = (*mqc->curctx)->nlps;
     }
 
@@ -136,13 +136,13 @@ Decode a symbol
 @param mqc MQC handle
 @return Returns the decoded symbol (0 or 1)
 */
-static INLINE OPJ_INT32 opj_mqc_decode(opj_mqc_t *const mqc)
+static INLINE OPJ_UINT32 opj_mqc_decode(opj_mqc_t *const mqc)
 {
     /* Implements ISO 15444-1 C.3.2 Decoding a decision (DECODE) */
     /* Note: alternate "J.2 - Decoding an MPS or an LPS in the */
     /* software-conventions decoder" has been tried, but does not bring any */
     /* improvement. See https://github.com/uclouvain/openjpeg/issues/921 */
-    OPJ_INT32 d;
+    OPJ_UINT32 d;
     mqc->a -= (*mqc->curctx)->qeval;
     if ((mqc->c >> 16) < (*mqc->curctx)->qeval) {
         d = opj_mqc_lpsexchange(mqc);
@@ -153,7 +153,7 @@ static INLINE OPJ_INT32 opj_mqc_decode(opj_mqc_t *const mqc)
             d = opj_mqc_mpsexchange(mqc);
             opj_mqc_renormd(mqc);
         } else {
-            d = (OPJ_INT32)(*mqc->curctx)->mps;
+            d = (*mqc->curctx)->mps;
         }
     }
 

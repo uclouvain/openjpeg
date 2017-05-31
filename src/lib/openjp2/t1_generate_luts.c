@@ -39,87 +39,7 @@
 
 #include "opj_includes.h"
 
-static int t1_init_ctxno_zc(unsigned int f, unsigned int orient)
-{
-    int h, v, d, n, t, hv;
-    h = ((f & T1_SIG_W) != 0) + ((f & T1_SIG_E) != 0);
-    v = ((f & T1_SIG_N) != 0) + ((f & T1_SIG_S) != 0);
-    d = ((f & T1_SIG_NW) != 0) + ((f & T1_SIG_NE) != 0) + ((
-                f & T1_SIG_SE) != 0) + ((f & T1_SIG_SW) != 0);
-    n = 0;
-    t = 0;
-    hv = 0;
-
-    switch (orient) {
-    case 2:
-        t = h;
-        h = v;
-        v = t;
-    /* fall through */
-    case 0:
-    case 1:
-        if (!h) {
-            if (!v) {
-                if (!d) {
-                    n = 0;
-                } else if (d == 1) {
-                    n = 1;
-                } else {
-                    n = 2;
-                }
-            } else if (v == 1) {
-                n = 3;
-            } else {
-                n = 4;
-            }
-        } else if (h == 1) {
-            if (!v) {
-                if (!d) {
-                    n = 5;
-                } else {
-                    n = 6;
-                }
-            } else {
-                n = 7;
-            }
-        } else {
-            n = 8;
-        }
-        break;
-    case 3:
-        hv = h + v;
-        if (!d) {
-            if (!hv) {
-                n = 0;
-            } else if (hv == 1) {
-                n = 1;
-            } else {
-                n = 2;
-            }
-        } else if (d == 1) {
-            if (!hv) {
-                n = 3;
-            } else if (hv == 1) {
-                n = 4;
-            } else {
-                n = 5;
-            }
-        } else if (d == 2) {
-            if (!hv) {
-                n = 6;
-            } else {
-                n = 7;
-            }
-        } else {
-            n = 8;
-        }
-        break;
-    }
-
-    return (T1_CTXNO_ZC + n);
-}
-
-static int t1_init_enc_ctxno_zc(int f, int orient)
+static int t1_init_ctxno_zc(int f, int orient)
 {
     int h, v, d, n, t, hv;
     n = 0;
@@ -196,51 +116,7 @@ static int t1_init_enc_ctxno_zc(int f, int orient)
     return (T1_CTXNO_ZC + n);
 }
 
-static int t1_init_ctxno_sc(unsigned int f)
-{
-    int hc, vc, n;
-    n = 0;
-
-    hc = opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-                      T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
-                     1) - opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-                                       (T1_SIG_E | T1_SGN_E)) +
-                                      ((f & (T1_SIG_W | T1_SGN_W)) ==
-                                       (T1_SIG_W | T1_SGN_W)), 1);
-
-    vc = opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-                      T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
-                     1) - opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-                                       (T1_SIG_N | T1_SGN_N)) +
-                                      ((f & (T1_SIG_S | T1_SGN_S)) ==
-                                       (T1_SIG_S | T1_SGN_S)), 1);
-
-    if (hc < 0) {
-        hc = -hc;
-        vc = -vc;
-    }
-    if (!hc) {
-        if (vc == -1) {
-            n = 1;
-        } else if (!vc) {
-            n = 0;
-        } else {
-            n = 1;
-        }
-    } else if (hc == 1) {
-        if (vc == -1) {
-            n = 2;
-        } else if (!vc) {
-            n = 3;
-        } else {
-            n = 4;
-        }
-    }
-
-    return (T1_CTXNO_SC + n);
-}
-
-static int t1_init_enc_ctxno_sc(int f)
+static int t1_init_ctxno_sc(int f)
 {
     int hc, vc, n;
     n = 0;
@@ -284,34 +160,7 @@ static int t1_init_enc_ctxno_sc(int f)
     return (T1_CTXNO_SC + n);
 }
 
-static int t1_init_spb(unsigned int f)
-{
-    int hc, vc, n;
-
-    hc = opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-                      T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
-                     1) - opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-                                       (T1_SIG_E | T1_SGN_E)) +
-                                      ((f & (T1_SIG_W | T1_SGN_W)) ==
-                                       (T1_SIG_W | T1_SGN_W)), 1);
-
-    vc = opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-                      T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
-                     1) - opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-                                       (T1_SIG_N | T1_SGN_N)) +
-                                      ((f & (T1_SIG_S | T1_SGN_S)) ==
-                                       (T1_SIG_S | T1_SGN_S)), 1);
-
-    if (!hc && !vc) {
-        n = 0;
-    } else {
-        n = (!(hc > 0 || (!hc && vc > 0)));
-    }
-
-    return n;
-}
-
-static int t1_init_enc_spb(int f)
+static int t1_init_spb(int f)
 {
     int hc, vc, n;
 
@@ -358,8 +207,7 @@ int main(int argc, char **argv)
     unsigned int i, j;
     double u, v, t;
 
-    int lut_ctxno_zc[1024];
-    int lut_enc_ctxno_zc[2048];
+    int lut_ctxno_zc[2048];
     int lut_nmsedec_sig[1 << T1_NMSEDEC_BITS];
     int lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS];
     int lut_nmsedec_ref[1 << T1_NMSEDEC_BITS];
@@ -370,30 +218,6 @@ int main(int argc, char **argv)
     printf("/* This file was automatically generated by t1_generate_luts.c */\n\n");
 
     /* lut_ctxno_zc */
-    for (j = 0U; j < 4U; ++j) {
-        for (i = 0U; i < 256U; ++i) {
-            unsigned int orient = j;
-            if (orient == 2U) {
-                orient = 1U;
-            } else if (orient == 1U) {
-                orient = 2U;
-            }
-            lut_ctxno_zc[(orient << 8) | i] = t1_init_ctxno_zc(i, j);
-        }
-    }
-
-    printf("static const OPJ_BYTE lut_ctxno_zc[1024] = {\n    ");
-    for (i = 0U; i < 1023U; ++i) {
-        printf("%i,", lut_ctxno_zc[i]);
-        if (!((i + 1U) & 0x1fU)) {
-            printf("\n    ");
-        } else {
-            printf(" ");
-        }
-    }
-    printf("%i\n};\n\n", lut_ctxno_zc[1023]);
-
-    /* lut_enc_ctxno_zc */
     for (j = 0; j < 4; ++j) {
         for (i = 0; i < 512; ++i) {
             int orient = j;
@@ -402,68 +226,44 @@ int main(int argc, char **argv)
             } else if (orient == 1) {
                 orient = 2;
             }
-            lut_enc_ctxno_zc[(orient << 9) | i] = t1_init_enc_ctxno_zc(i, j);
+            lut_ctxno_zc[(orient << 9) | i] = t1_init_ctxno_zc(i, j);
         }
     }
 
-    printf("static const OPJ_BYTE lut_enc_ctxno_zc[2048] = {\n    ");
+    printf("static const OPJ_BYTE lut_ctxno_zc[2048] = {\n    ");
     for (i = 0; i < 2047; ++i) {
-        printf("%i,", lut_enc_ctxno_zc[i]);
+        printf("%i,", lut_ctxno_zc[i]);
         if (!((i + 1) & 0x1f)) {
             printf("\n    ");
         } else {
             printf(" ");
         }
     }
-    printf("%i\n};\n\n", lut_enc_ctxno_zc[2047]);
+    printf("%i\n};\n\n", lut_ctxno_zc[2047]);
 
     /* lut_ctxno_sc */
     printf("static const OPJ_BYTE lut_ctxno_sc[256] = {\n    ");
-    for (i = 0U; i < 255U; ++i) {
-        printf("0x%x,", t1_init_ctxno_sc(i << 4));
-        if (!((i + 1U) & 0xfU)) {
-            printf("\n    ");
-        } else {
-            printf(" ");
-        }
-    }
-    printf("0x%x\n};\n\n", t1_init_ctxno_sc(255U << 4));
-
-    /* lut_enc_ctxno_sc */
-    printf("static const OPJ_BYTE lut_enc_ctxno_sc[256] = {\n    ");
     for (i = 0; i < 255; ++i) {
-        printf("0x%x,", t1_init_enc_ctxno_sc(i));
+        printf("0x%x,", t1_init_ctxno_sc(i));
         if (!((i + 1) & 0xf)) {
             printf("\n    ");
         } else {
             printf(" ");
         }
     }
-    printf("0x%x\n};\n\n", t1_init_enc_ctxno_sc(255));
+    printf("0x%x\n};\n\n", t1_init_ctxno_sc(255));
 
     /* lut_spb */
     printf("static const OPJ_BYTE lut_spb[256] = {\n    ");
-    for (i = 0U; i < 255U; ++i) {
-        printf("%i,", t1_init_spb(i << 4));
-        if (!((i + 1U) & 0x1fU)) {
-            printf("\n    ");
-        } else {
-            printf(" ");
-        }
-    }
-    printf("%i\n};\n\n", t1_init_spb(255U << 4));
-
-    /* lut_enc_spb */
-    printf("static const OPJ_BYTE lut_enc_spb[256] = {\n    ");
     for (i = 0; i < 255; ++i) {
-        printf("%i,", t1_init_enc_spb(i));
+        printf("%i,", t1_init_spb(i));
         if (!((i + 1) & 0x1f)) {
             printf("\n    ");
         } else {
             printf(" ");
         }
     }
-    printf("%i\n};\n\n", t1_init_enc_spb(255));
+    printf("%i\n};\n\n", t1_init_spb(255));
 
     /* FIXME FIXME FIXME */
     /* fprintf(stdout,"nmsedec luts:\n"); */

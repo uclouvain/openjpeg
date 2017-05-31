@@ -52,33 +52,6 @@ in T1.C are used by some function in TCD.C.
 /* ----------------------------------------------------------------------- */
 #define T1_NMSEDEC_BITS 7
 
-/* CAUTION: the value of those constants must not be changed, otherwise the */
-/* optimization of opj_t1_updateflags() will break! */
-/* BEGINNING of flags that apply to opj_flag_t */
-#define T1_SIG_NE 0x0001U /**< Context orientation : North-East direction */
-#define T1_SIG_SE 0x0002U /**< Context orientation : South-East direction */
-#define T1_SIG_SW 0x0004U /**< Context orientation : South-West direction */
-#define T1_SIG_NW 0x0008U /**< Context orientation : North-West direction */
-#define T1_SIG_N 0x0010U  /**< Context orientation : North direction */
-#define T1_SIG_E 0x0020U  /**< Context orientation : East direction */
-#define T1_SIG_S 0x0040U  /**< Context orientation : South direction */
-#define T1_SIG_W 0x0080U  /**< Context orientation : West direction */
-#define T1_SIG_OTH (T1_SIG_N|T1_SIG_NE|T1_SIG_E|T1_SIG_SE|T1_SIG_S|T1_SIG_SW|T1_SIG_W|T1_SIG_NW)
-#define T1_SIG_PRIM (T1_SIG_N|T1_SIG_E|T1_SIG_S|T1_SIG_W)
-
-#define T1_SGN_N 0x0100U
-#define T1_SGN_E 0x0200U
-#define T1_SGN_S 0x0400U
-#define T1_SGN_W 0x0800U
-#define T1_SGN (T1_SGN_N|T1_SGN_E|T1_SGN_S|T1_SGN_W)
-
-#ifdef CONSISTENCY_CHECK
-#define T1_SIG    0x1000U /**< No longer used by decoder */
-#define T1_VISIT  0x4000U /**< No longer used by decoder */
-#endif
-
-/* END of flags that apply to opj_flag_t */
-
 #define T1_NUMCTXS_ZC  9
 #define T1_NUMCTXS_SC  5
 #define T1_NUMCTXS_MAG 3
@@ -97,27 +70,7 @@ in T1.C are used by some function in TCD.C.
 #define T1_TYPE_MQ 0    /**< Normal coding using entropy coder */
 #define T1_TYPE_RAW 1   /**< No encoding the information is store under raw format in codestream (mode switch RAW)*/
 
-/* Those flags are used by opj_colflag_t */
-#define T1_COLFLAG_RBS              4U /* RBS = Row Bit Shift */
-#define T1_COLFLAG_SIG_OTHER_ROW_0 (1U << 0U)  /**< This sample has at least one significant neighbour */
-#define T1_COLFLAG_SIG_ROW_0       (1U << 1U)  /**< This sample is significant */
-#define T1_COLFLAG_VISIT_ROW_0     (1U << 2U)  /**< This sample has been visited */
-#define T1_COLFLAG_REFINE_ROW_0    (1U << 3U)  /**< This sample has been refined */
-#define T1_COLFLAG_SIG_OTHER_ROW_1 (T1_COLFLAG_SIG_OTHER_ROW_0 << (1U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_SIG_ROW_1       (T1_COLFLAG_SIG_ROW_0       << (1U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_VISIT_ROW_1     (T1_COLFLAG_VISIT_ROW_0     << (1U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_REFINE_ROW_1    (T1_COLFLAG_REFINE_ROW_0    << (1U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_SIG_OTHER_ROW_2 (T1_COLFLAG_SIG_OTHER_ROW_0 << (2U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_SIG_ROW_2       (T1_COLFLAG_SIG_ROW_0       << (2U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_VISIT_ROW_2     (T1_COLFLAG_VISIT_ROW_0     << (2U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_REFINE_ROW_2    (T1_COLFLAG_REFINE_ROW_0    << (2U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_SIG_OTHER_ROW_3 (T1_COLFLAG_SIG_OTHER_ROW_0 << (3U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_SIG_ROW_3       (T1_COLFLAG_SIG_ROW_0       << (3U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_VISIT_ROW_3     (T1_COLFLAG_VISIT_ROW_0     << (3U * T1_COLFLAG_RBS))
-#define T1_COLFLAG_REFINE_ROW_3    (T1_COLFLAG_REFINE_ROW_0    << (3U * T1_COLFLAG_RBS))
-
-
-/* BEGINNING of flags that apply to opj_flag_enc_t */
+/* BEGINNING of flags that apply to opj_flag_t */
 /** We hold the state of individual data points for the T1 encoder using
  *  a single 32-bit flags word to hold the state of 4 data points.  This corresponds
  *  to the 4-point-high columns that the data is processed in.
@@ -217,16 +170,12 @@ in T1.C are used by some function in TCD.C.
 #define T1_LUT_SIG_E (1U << 5)
 #define T1_LUT_SGN_S (1U << 6)
 #define T1_LUT_SIG_S (1U << 7)
-/* END of flags that apply to opj_flag_enc_t */
+/* END of flags that apply to opj_flag_t */
 
 /* ----------------------------------------------------------------------- */
 
-typedef OPJ_UINT16 opj_flag_t;
-
 /** Flags for 4 consecutive rows of a column */
-typedef OPJ_UINT16 opj_colflag_t;
-
-typedef OPJ_UINT32 opj_flag_enc_t;
+typedef OPJ_UINT32 opj_flag_t;
 
 /**
 Tier-1 coding (coding of code-block coefficients)
@@ -239,26 +188,21 @@ typedef struct opj_t1 {
     opj_raw_t *raw;
 
     OPJ_INT32  *data;
-    /** Flags used by decoder */
-    opj_flag_t *flags;
-    /** Addition flag array such that colflags[1+0] is for state of col=0,row=0..3,
-       colflags[1+1] for col=1, row=0..3, colflags[1+flags_stride] for col=0,row=4..7, ...
+    /** Flags used by decoder and encoder.
+     * Such that flags[1+0] is for state of col=0,row=0..3,
+       flags[1+1] for col=1, row=0..3, flags[1+flags_stride] for col=0,row=4..7, ...
        This array avoids too much cache trashing when processing by 4 vertical samples
        as done in the various decoding steps. */
-    opj_colflag_t* colflags;
-    /** Flags used by encoder */
-    opj_flag_enc_t *enc_flags;
+    opj_flag_t *flags;
+
     OPJ_UINT32 w;
     OPJ_UINT32 h;
     OPJ_UINT32 datasize;
     OPJ_UINT32 flagssize;
     OPJ_UINT32 flags_stride;
-    OPJ_UINT32 colflags_size;
     OPJ_UINT32 data_stride;
     OPJ_BOOL   encoder;
 } opj_t1_t;
-
-#define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
 
 /** @name Exported functions */
 /*@{*/
