@@ -630,28 +630,91 @@ static void opj_t1_dec_sigpass_raw(
     OPJ_INT32 bpno,
     OPJ_INT32 cblksty)
 {
-    OPJ_INT32 one, half, oneplushalf, vsc;
+    OPJ_INT32 one, half, oneplushalf;
     OPJ_UINT32 i, j, k;
     opj_flag_t *flagsp = &T1_FLAGS(0, 0);
     one = 1 << bpno;
     half = one >> 1;
     oneplushalf = one | half;
-    for (k = 0; k < t1->h; k += 4) {
-        for (i = 0; i < t1->w; ++i) {
-            opj_flag_t *flagsp2 = flagsp + i;
-            for (j = k; j < k + 4 && j < t1->h; ++j) {
-                vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 ||
-                        j == t1->h - 1)) ? 1 : 0;
+    if ((cblksty & J2K_CCP_CBLKSTY_VSC)) {
+        OPJ_INT32 *data1 = t1->data;
+        for (k = 0; k < t1->h; k += 4) {
+            for (i = 0; i < t1->w; ++i) {
+                OPJ_INT32* data2 = data1 + i;
+                opj_flag_t *flagsp2 = flagsp + i;
+                for (j = k; j < k + 4 && j < t1->h; ++j) {
+                    OPJ_INT32 vsc = (j == k + 3 || j == t1->h - 1) ? 1 : 0;
+                    opj_t1_dec_sigpass_step_raw(
+                        t1,
+                        flagsp2,
+                        data2,
+                        oneplushalf,
+                        vsc,
+                        j - k);
+                    data2 += t1->w;
+                }
+            }
+            data1 += t1->w << 2;
+            flagsp += t1->flags_stride;
+        }
+    } else {
+        OPJ_INT32 *data1 = t1->data;
+        for (k = 0; k < (t1->h & ~3U); k += 4) {
+            for (i = 0; i < t1->w; ++i) {
+                OPJ_INT32* data2 = data1 + i;
+                opj_flag_t *flagsp2 = flagsp + i;
                 opj_t1_dec_sigpass_step_raw(
                     t1,
                     flagsp2,
-                    &t1->data[(j * t1->w) + i],
+                    data2,
                     oneplushalf,
-                    vsc,
-                    j - k);
+                    0, /* vsc */
+                    0U);
+                data2 += t1->w;
+                opj_t1_dec_sigpass_step_raw(
+                    t1,
+                    flagsp2,
+                    data2,
+                    oneplushalf,
+                    0, /* vsc */
+                    1U);
+                data2 += t1->w;
+                opj_t1_dec_sigpass_step_raw(
+                    t1,
+                    flagsp2,
+                    data2,
+                    oneplushalf,
+                    0, /* vsc */
+                    2U);
+                data2 += t1->w;
+                opj_t1_dec_sigpass_step_raw(
+                    t1,
+                    flagsp2,
+                    data2,
+                    oneplushalf,
+                    0, /* vsc */
+                    3U);
+                data2 += t1->w;
+            }
+            data1 += t1->w << 2;
+            flagsp += t1->flags_stride;
+        }
+        if (k < t1->h) {
+            for (i = 0; i < t1->w; ++i) {
+                OPJ_INT32* data2 = data1 + i;
+                opj_flag_t *flagsp2 = flagsp + i;
+                for (j = 0; j < t1->h - k; ++j) {
+                    opj_t1_dec_sigpass_step_raw(
+                        t1,
+                        flagsp2,
+                        data2,
+                        oneplushalf,
+                        0, /* vsc */
+                        j);
+                    data2 += t1->w;
+                }
             }
         }
-        flagsp += t1->flags_stride;
     }
 }
 
@@ -798,13 +861,14 @@ static INLINE void opj_t1_dec_refpass_step_raw(
     OPJ_INT32 neghalf,
     OPJ_UINT32 ci)
 {
-    OPJ_INT32 v, t;
+    OPJ_UINT32 v;
+    OPJ_INT32 t;
 
     opj_raw_t *raw = t1->raw;       /* RAW component */
 
     if ((*flagsp & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) ==
             (T1_SIGMA_THIS << (ci * 3U))) {
-        v = (OPJ_INT32)opj_raw_decode(raw);
+        v = opj_raw_decode(raw);
         t = v ? poshalf : neghalf;
         *datap += *datap < 0 ? -t : t;
         *flagsp |= T1_MU_THIS << (ci * 3U);
@@ -981,23 +1045,61 @@ static void opj_t1_dec_refpass_raw(
 {
     OPJ_INT32 one, poshalf, neghalf;
     OPJ_UINT32 i, j, k;
+    OPJ_INT32 *data1 = t1->data;
     opj_flag_t *flagsp1 = &T1_FLAGS(0, 0);
     one = 1 << bpno;
     poshalf = one >> 1;
     neghalf = bpno > 0 ? -poshalf : -1;
-    for (k = 0; k < t1->h; k += 4) {
+    for (k = 0; k < (t1->h & ~3U); k += 4) {
         for (i = 0; i < t1->w; ++i) {
+            OPJ_INT32 *data2 = data1 + i;
             opj_flag_t *flagsp2 = flagsp1 + i;
-            for (j = k; j < k + 4 && j < t1->h; ++j) {
+            opj_t1_dec_refpass_step_raw(
+                t1,
+                flagsp2,
+                data2,
+                poshalf,
+                neghalf, 0U);
+            data2 += t1->w;
+            opj_t1_dec_refpass_step_raw(
+                t1,
+                flagsp2,
+                data2,
+                poshalf,
+                neghalf, 1U);
+            data2 += t1->w;
+            opj_t1_dec_refpass_step_raw(
+                t1,
+                flagsp2,
+                data2,
+                poshalf,
+                neghalf, 2U);
+            data2 += t1->w;
+            opj_t1_dec_refpass_step_raw(
+                t1,
+                flagsp2,
+                data2,
+                poshalf,
+                neghalf, 3U);
+            data2 += t1->w;
+        }
+        data1 += t1->w << 2;
+        flagsp1 += t1->flags_stride;
+    }
+    if (k < t1->h) {
+        for (i = 0; i < t1->w; ++i) {
+            OPJ_INT32 *data2 = data1 + i;
+            opj_flag_t *flagsp2 = flagsp1 + i;
+            for (j = k; j < t1->h; ++j) {
                 opj_t1_dec_refpass_step_raw(
                     t1,
                     flagsp2,
-                    &t1->data[(j * t1->w) + i],
+                    data2,
                     poshalf,
                     neghalf, j - k);
+                data2 += t1->w;
             }
         }
-        flagsp1 += t1->flags_stride;
     }
 }
 
