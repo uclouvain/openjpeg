@@ -272,19 +272,6 @@ static void opj_mqc_setbits(opj_mqc_t *mqc)
 ==========================================================
 */
 
-opj_mqc_t* opj_mqc_create(void)
-{
-    opj_mqc_t *mqc = (opj_mqc_t*)opj_malloc(sizeof(opj_mqc_t));
-    return mqc;
-}
-
-void opj_mqc_destroy(opj_mqc_t *mqc)
-{
-    if (mqc) {
-        opj_free(mqc);
-    }
-}
-
 OPJ_UINT32 opj_mqc_numbytes(opj_mqc_t *mqc)
 {
     const ptrdiff_t diff = mqc->bp - mqc->start;

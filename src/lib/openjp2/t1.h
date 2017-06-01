@@ -183,9 +183,9 @@ Tier-1 coding (coding of code-block coefficients)
 typedef struct opj_t1 {
 
     /** MQC component */
-    opj_mqc_t *mqc;
+    opj_mqc_t mqc;
     /** RAW component */
-    opj_raw_t *raw;
+    opj_raw_t raw;
 
     OPJ_INT32  *data;
     /** Flags used by decoder and encoder.

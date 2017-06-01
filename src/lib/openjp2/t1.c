@@ -379,7 +379,7 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
 {
     OPJ_UINT32 v;
 
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_UINT32 vsc_mask = vsc ? ~((T1_SIGMA_SW | T1_SIGMA_S | T1_SIGMA_SE |
                                    T1_CHI_S) << (ci * 3U)) : ~0U;
@@ -437,7 +437,7 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
     OPJ_UINT32 ci)
 {
     OPJ_UINT32 v;
-    opj_raw_t *raw = t1->raw;       /* RAW component */
+    opj_raw_t *raw = &(t1->raw);       /* RAW component */
 
     OPJ_UINT32 vsc_mask = vsc ? ~((T1_SIGMA_SW | T1_SIGMA_S | T1_SIGMA_SE |
                                    T1_CHI_S) << (ci * 3U)) : ~0U;
@@ -464,7 +464,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc(
 {
     OPJ_UINT32 v;
 
-    opj_mqc_t *mqc = t1->mqc;       /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);       /* MQC component */
     OPJ_UINT32 const flags = *flagsp;
 
     if ((flags & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) == 0U &&
@@ -497,7 +497,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
 {
     OPJ_UINT32 v;
 
-    opj_mqc_t *mqc = t1->mqc;       /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);       /* MQC component */
 
     OPJ_UINT32 vsc_mask = vsc ? ~((T1_SIGMA_SW | T1_SIGMA_S | T1_SIGMA_SE |
                                    T1_CHI_S) << (ci * 3U)) : ~0U;
@@ -829,7 +829,7 @@ static INLINE void opj_t1_enc_refpass_step(opj_t1_t *t1,
 {
     OPJ_UINT32 v;
 
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_UINT32 const shift_flags =
         vsc ?
@@ -867,7 +867,7 @@ static INLINE void opj_t1_dec_refpass_step_raw(
     OPJ_UINT32 v;
     OPJ_INT32 t;
 
-    opj_raw_t *raw = t1->raw;       /* RAW component */
+    opj_raw_t *raw = &(t1->raw);       /* RAW component */
 
     if ((*flagsp & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) ==
             (T1_SIGMA_THIS << (ci * 3U))) {
@@ -889,7 +889,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
     OPJ_UINT32 v;
     OPJ_INT32 t;
 
-    opj_mqc_t *mqc = t1->mqc;       /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);       /* MQC component */
 
     if ((*flagsp & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) ==
             (T1_SIGMA_THIS << (ci * 3U))) {
@@ -914,7 +914,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
     OPJ_UINT32 v;
     OPJ_INT32 t;
 
-    opj_mqc_t *mqc = t1->mqc;       /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);       /* MQC component */
 
     OPJ_UINT32 const shift_flags =
         vsc ?
@@ -1223,7 +1223,7 @@ static void opj_t1_enc_clnpass_step(
 {
     OPJ_UINT32 v;
     OPJ_UINT32 ci;
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     const OPJ_UINT32 check = (T1_SIGMA_4 | T1_SIGMA_7 | T1_SIGMA_10 | T1_SIGMA_13 |
                               T1_PI_0 | T1_PI_1 | T1_PI_2 | T1_PI_3);
@@ -1304,7 +1304,7 @@ static void opj_t1_dec_clnpass_step_partial(
     OPJ_UINT32 ci)
 {
     OPJ_UINT32 v;
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_UINT32 lu = opj_t1_getctxtno_sc_or_spb_index(
                         *flagsp, flagsp[-1], flagsp[1],
@@ -1325,7 +1325,7 @@ static void opj_t1_dec_clnpass_step(
 {
     OPJ_UINT32 v;
 
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
     if (!(*flagsp & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U)))) {
         OPJ_UINT32 ctxt1 = opj_t1_getctxno_zc(mqc, *flagsp >> (ci * 3U));
         opj_mqc_setcurctx(mqc, ctxt1);
@@ -1352,7 +1352,7 @@ static void opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(
 {
     OPJ_UINT32 v;
 
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_UINT32 ctxt1 = opj_t1_getctxno_zc(mqc, *flagsp >> (ci * 3U));
     opj_mqc_setcurctx(mqc, ctxt1);
@@ -1378,7 +1378,7 @@ static void opj_t1_dec_clnpass_step_vsc(
 {
     OPJ_UINT32 v;
 
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_UINT32 vsc_mask = vsc ? ~((T1_SIGMA_SW | T1_SIGMA_S | T1_SIGMA_SE |
                                    T1_CHI_S) <<
@@ -1416,7 +1416,7 @@ static void opj_t1_enc_clnpass(
     const OPJ_INT32 one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
     OPJ_UINT32 agg, runlen;
 
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     const OPJ_UINT32 agg_mask = (cblksty & J2K_CCP_CBLKSTY_VSC) ?
                                 ~(T1_SIGMA_15 | T1_SIGMA_16 | T1_SIGMA_17 | T1_CHI_5) :
@@ -1501,7 +1501,7 @@ static void opj_t1_enc_clnpass(
     OPJ_UINT32 i, j, k; \
     OPJ_INT32 segsym = cblksty & J2K_CCP_CBLKSTY_SEGSYM; \
      \
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */ \
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */ \
      \
     one = 1 << bpno; \
     half = one >> 1; \
@@ -1820,18 +1820,6 @@ opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
         return 00;
     }
 
-    /* create MQC and RAW handles */
-    l_t1->mqc = opj_mqc_create();
-    if (! l_t1->mqc) {
-        opj_t1_destroy(l_t1);
-        return 00;
-    }
-
-    l_t1->raw = opj_raw_create();
-    if (! l_t1->raw) {
-        opj_t1_destroy(l_t1);
-        return 00;
-    }
     l_t1->encoder = isEncoder;
 
     return l_t1;
@@ -1848,12 +1836,6 @@ void opj_t1_destroy(opj_t1_t *p_t1)
     if (! p_t1) {
         return;
     }
-
-    /* destroy MQC and RAW handles */
-    opj_mqc_destroy(p_t1->mqc);
-    p_t1->mqc = 00;
-    opj_raw_destroy(p_t1->raw);
-    p_t1->raw = 00;
 
     /* encoder uses tile buffer, so no need to free */
     if (!p_t1->encoder && p_t1->data) {
@@ -2047,8 +2029,8 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                                    OPJ_UINT32 roishift,
                                    OPJ_UINT32 cblksty)
 {
-    opj_raw_t *raw = t1->raw;   /* RAW component */
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_raw_t *raw = &(t1->raw);   /* RAW component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_INT32 bpno_plus_one;
     OPJ_UINT32 passtype;
@@ -2301,7 +2283,7 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 {
     OPJ_FLOAT64 cumwmsedec = 0.0;
 
-    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+    opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_UINT32 passno;
     OPJ_INT32 bpno;

@@ -48,19 +48,6 @@
 ==========================================================
 */
 
-opj_raw_t* opj_raw_create(void)
-{
-    opj_raw_t *raw = (opj_raw_t*)opj_malloc(sizeof(opj_raw_t));
-    return raw;
-}
-
-void opj_raw_destroy(opj_raw_t *raw)
-{
-    if (raw) {
-        opj_free(raw);
-    }
-}
-
 OPJ_UINT32 opj_raw_numbytes(opj_raw_t *raw)
 {
     const ptrdiff_t diff = raw->bp - raw->start;
