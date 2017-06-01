@@ -44,7 +44,7 @@
 /** @defgroup T1 T1 - Implementation of the tier-1 coding */
 /*@{*/
 
-#define T1_FLAGS(x, y) (t1->flags[x + 1 + ((y / 4) + 1) * t1->flags_stride])
+#define T1_FLAGS(x, y) (t1->flags[x + 1 + ((y / 4) + 1) * (t1->w+2)])
 
 /** @name Local static functions */
 /*@{*/
@@ -422,7 +422,7 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
 #endif
                 opj_mqc_encode(mqc, v ^ spb);
             }
-            opj_t1_update_flags(flagsp, ci, v, t1->flags_stride);
+            opj_t1_update_flags(flagsp, ci, v, t1->w + 2);
         }
         *flagsp |= T1_PI_THIS << (ci * 3U);
     }
@@ -448,7 +448,7 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
         if (opj_raw_decode(raw)) {
             v = opj_raw_decode(raw);
             *datap = v ? -oneplushalf : oneplushalf;
-            opj_t1_update_flags(flagsp, ci, v, t1->flags_stride);
+            opj_t1_update_flags(flagsp, ci, v, t1->w + 2);
         }
         *flagsp |= T1_PI_THIS << (ci * 3U);
     }
@@ -517,7 +517,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
             opj_mqc_setcurctx(mqc, ctxt2);
             v = opj_mqc_decode(mqc) ^ spb;
             *datap = v ? -oneplushalf : oneplushalf;
-            opj_t1_update_flags(flagsp, ci, v, t1->flags_stride);
+            opj_t1_update_flags(flagsp, ci, v, t1->w + 2);
         }
         *flagsp |= T1_PI_THIS << (ci * 3U);
     }
@@ -534,7 +534,7 @@ static void opj_t1_enc_sigpass(opj_t1_t *t1,
     OPJ_UINT32 i, k;
     OPJ_INT32 const one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
     opj_flag_t* f = &T1_FLAGS(0, 0);
-    OPJ_UINT32 const extra = t1->flags_stride - t1->w;
+    OPJ_UINT32 const extra = 2;
 
     *nmsedec = 0;
 #ifdef DEBUG_ENC_SIG
@@ -641,31 +641,30 @@ static void opj_t1_dec_sigpass_raw(
         for (k = 0; k < t1->h; k += 4) {
             for (i = 0; i < t1->w; ++i) {
                 OPJ_INT32* data2 = data1 + i;
-                opj_flag_t *flagsp2 = flagsp + i;
                 for (j = k; j < k + 4 && j < t1->h; ++j) {
                     OPJ_INT32 vsc = (j == k + 3 || j == t1->h - 1) ? 1 : 0;
                     opj_t1_dec_sigpass_step_raw(
                         t1,
-                        flagsp2,
+                        flagsp,
                         data2,
                         oneplushalf,
                         vsc,
                         j - k);
                     data2 += t1->w;
                 }
+                flagsp ++;
             }
             data1 += t1->w << 2;
-            flagsp += t1->flags_stride;
+            flagsp += 2;
         }
     } else {
         OPJ_INT32 *data1 = t1->data;
         for (k = 0; k < (t1->h & ~3U); k += 4) {
             for (i = 0; i < t1->w; ++i) {
                 OPJ_INT32* data2 = data1 + i;
-                opj_flag_t *flagsp2 = flagsp + i;
                 opj_t1_dec_sigpass_step_raw(
                     t1,
-                    flagsp2,
+                    flagsp,
                     data2,
                     oneplushalf,
                     0, /* vsc */
@@ -673,7 +672,7 @@ static void opj_t1_dec_sigpass_raw(
                 data2 += t1->w;
                 opj_t1_dec_sigpass_step_raw(
                     t1,
-                    flagsp2,
+                    flagsp,
                     data2,
                     oneplushalf,
                     0, /* vsc */
@@ -681,7 +680,7 @@ static void opj_t1_dec_sigpass_raw(
                 data2 += t1->w;
                 opj_t1_dec_sigpass_step_raw(
                     t1,
-                    flagsp2,
+                    flagsp,
                     data2,
                     oneplushalf,
                     0, /* vsc */
@@ -689,30 +688,31 @@ static void opj_t1_dec_sigpass_raw(
                 data2 += t1->w;
                 opj_t1_dec_sigpass_step_raw(
                     t1,
-                    flagsp2,
+                    flagsp,
                     data2,
                     oneplushalf,
                     0, /* vsc */
                     3U);
                 data2 += t1->w;
+                flagsp ++;
             }
             data1 += t1->w << 2;
-            flagsp += t1->flags_stride;
+            flagsp += 2;
         }
         if (k < t1->h) {
             for (i = 0; i < t1->w; ++i) {
                 OPJ_INT32* data2 = data1 + i;
-                opj_flag_t *flagsp2 = flagsp + i;
                 for (j = 0; j < t1->h - k; ++j) {
                     opj_t1_dec_sigpass_step_raw(
                         t1,
-                        flagsp2,
+                        flagsp,
                         data2,
                         oneplushalf,
                         0, /* vsc */
                         j);
                     data2 += t1->w;
                 }
+                flagsp ++;
             }
         }
     }
@@ -723,34 +723,35 @@ static void opj_t1_dec_sigpass_raw(
         OPJ_INT32 one, half, oneplushalf; \
         OPJ_UINT32 i, j, k; \
         OPJ_INT32 *data1 = t1->data; \
-        opj_flag_t *flagsp1 = &t1->flags[flags_stride + 1]; \
+        opj_flag_t *flagsp = &t1->flags[flags_stride + 1]; \
         one = 1 << bpno; \
         half = one >> 1; \
         oneplushalf = one | half; \
         for (k = 0; k < (h & ~3u); k += 4) { \
                 for (i = 0; i < w; ++i) { \
                         OPJ_INT32 *data2 = data1 + i; \
-                        opj_flag_t *flagsp2 = flagsp1 + i; \
-                        if( *flagsp2 == 0 ) continue; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flagsp2, data2, oneplushalf, 0U, flags_stride); \
-                        data2 += w; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flagsp2, data2, oneplushalf, 1U, flags_stride); \
-                        data2 += w; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flagsp2, data2, oneplushalf, 2U, flags_stride); \
-                        data2 += w; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flagsp2, data2, oneplushalf, 3U, flags_stride); \
-                        data2 += w; \
+                        if( *flagsp != 0 ) { \
+                            opj_t1_dec_sigpass_step_mqc(t1, flagsp, data2, oneplushalf, 0U, flags_stride); \
+                            data2 += w; \
+                            opj_t1_dec_sigpass_step_mqc(t1, flagsp, data2, oneplushalf, 1U, flags_stride); \
+                            data2 += w; \
+                            opj_t1_dec_sigpass_step_mqc(t1, flagsp, data2, oneplushalf, 2U, flags_stride); \
+                            data2 += w; \
+                            opj_t1_dec_sigpass_step_mqc(t1, flagsp, data2, oneplushalf, 3U, flags_stride); \
+                            data2 += w; \
+                        } \
+                        flagsp ++; \
                 } \
                 data1 += w << 2; \
-                flagsp1 += flags_stride; \
+                flagsp += 2; \
         } \
         for (i = 0; i < w; ++i) { \
                 OPJ_INT32 *data2 = data1 + i; \
-                opj_flag_t *flagsp2 = flagsp1 + i; \
                 for (j = k; j < h; ++j) { \
-                        opj_t1_dec_sigpass_step_mqc(t1, flagsp2, data2, oneplushalf, j - k, flags_stride); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flagsp, data2, oneplushalf, j - k, flags_stride); \
                         data2 += w; \
                 } \
+                flagsp ++; \
         } \
 }
 
@@ -765,7 +766,7 @@ static void opj_t1_dec_sigpass_mqc_generic(
     opj_t1_t *t1,
     OPJ_INT32 bpno)
 {
-    opj_t1_dec_sigpass_mqc_internal(t1, bpno, t1->w, t1->h, t1->flags_stride);
+    opj_t1_dec_sigpass_mqc_internal(t1, bpno, t1->w, t1->h, t1->w + 2);
 }
 
 static void opj_t1_dec_sigpass_mqc_vsc(
@@ -775,38 +776,40 @@ static void opj_t1_dec_sigpass_mqc_vsc(
     OPJ_INT32 one, half, oneplushalf, vsc;
     OPJ_UINT32 i, j, k;
     OPJ_INT32 *data1 = t1->data;
-    opj_flag_t *flagsp1 = &T1_FLAGS(0, 0);
+    opj_flag_t *flagsp = &T1_FLAGS(0, 0);
     one = 1 << bpno;
     half = one >> 1;
     oneplushalf = one | half;
     for (k = 0; k < (t1->h & ~3U); k += 4U) {
         for (i = 0; i < t1->w; ++i) {
             OPJ_INT32 *data2 = data1 + i;
-            opj_flag_t *flagsp2 = flagsp1 + i;
-            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp2, data2, oneplushalf, 0, 0U);
+            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp, data2, oneplushalf, 0, 0U);
             data2 += t1->w;
-            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp2, data2, oneplushalf, 0, 1U);
+            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp, data2, oneplushalf, 0, 1U);
             data2 += t1->w;
-            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp2, data2, oneplushalf, 0, 2U);
+            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp, data2, oneplushalf, 0, 2U);
             data2 += t1->w;
-            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp2, data2, oneplushalf, 1, 3U);
+            opj_t1_dec_sigpass_step_mqc_vsc(t1, flagsp, data2, oneplushalf, 1, 3U);
             data2 += t1->w;
+            flagsp ++;
         }
         data1 += t1->w << 2;
-        flagsp1 += t1->flags_stride;
+        flagsp += 2;
     }
     for (i = 0; i < t1->w; ++i) {
-        opj_flag_t *flagsp2 = flagsp1 + i;
+        OPJ_INT32 *data2 = data1 + i;
         for (j = k; j < t1->h; ++j) {
             vsc = (j == t1->h - 1) ? 1 : 0;
             opj_t1_dec_sigpass_step_mqc_vsc(
                 t1,
-                flagsp2,
-                &t1->data[(j * t1->w) + i],
+                flagsp,
+                data2,
                 oneplushalf,
                 vsc,
                 j - k);
+            data2 += t1->w;
         }
+        flagsp ++;
     }
 }
 
@@ -940,7 +943,7 @@ static void opj_t1_enc_refpass(
     OPJ_UINT32 i, k;
     const OPJ_INT32 one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
     opj_flag_t* f = &T1_FLAGS(0, 0);
-    const OPJ_UINT32 extra = t1->flags_stride - t1->w;
+    const OPJ_UINT32 extra = 2U;
 
     *nmsedec = 0;
 #ifdef DEBUG_ENC_REF
@@ -1046,59 +1049,59 @@ static void opj_t1_dec_refpass_raw(
     OPJ_INT32 one, poshalf, neghalf;
     OPJ_UINT32 i, j, k;
     OPJ_INT32 *data1 = t1->data;
-    opj_flag_t *flagsp1 = &T1_FLAGS(0, 0);
+    opj_flag_t *flagsp = &T1_FLAGS(0, 0);
     one = 1 << bpno;
     poshalf = one >> 1;
     neghalf = bpno > 0 ? -poshalf : -1;
     for (k = 0; k < (t1->h & ~3U); k += 4) {
         for (i = 0; i < t1->w; ++i) {
             OPJ_INT32 *data2 = data1 + i;
-            opj_flag_t *flagsp2 = flagsp1 + i;
             opj_t1_dec_refpass_step_raw(
                 t1,
-                flagsp2,
+                flagsp,
                 data2,
                 poshalf,
                 neghalf, 0U);
             data2 += t1->w;
             opj_t1_dec_refpass_step_raw(
                 t1,
-                flagsp2,
+                flagsp,
                 data2,
                 poshalf,
                 neghalf, 1U);
             data2 += t1->w;
             opj_t1_dec_refpass_step_raw(
                 t1,
-                flagsp2,
+                flagsp,
                 data2,
                 poshalf,
                 neghalf, 2U);
             data2 += t1->w;
             opj_t1_dec_refpass_step_raw(
                 t1,
-                flagsp2,
+                flagsp,
                 data2,
                 poshalf,
                 neghalf, 3U);
             data2 += t1->w;
+            flagsp ++;
         }
         data1 += t1->w << 2;
-        flagsp1 += t1->flags_stride;
+        flagsp += 2;
     }
     if (k < t1->h) {
         for (i = 0; i < t1->w; ++i) {
             OPJ_INT32 *data2 = data1 + i;
-            opj_flag_t *flagsp2 = flagsp1 + i;
             for (j = k; j < t1->h; ++j) {
                 opj_t1_dec_refpass_step_raw(
                     t1,
-                    flagsp2,
+                    flagsp,
                     data2,
                     poshalf,
                     neghalf, j - k);
                 data2 += t1->w;
             }
+            flagsp ++;
         }
     }
 }
@@ -1108,34 +1111,35 @@ static void opj_t1_dec_refpass_raw(
         OPJ_INT32 one, poshalf, neghalf; \
         OPJ_UINT32 i, j, k; \
         OPJ_INT32 *data1 = t1->data; \
-        opj_flag_t *flagsp1 = &t1->flags[flags_stride + 1]; \
+        opj_flag_t *flagsp = &t1->flags[flags_stride + 1]; \
         one = 1 << bpno; \
         poshalf = one >> 1; \
         neghalf = bpno > 0 ? -poshalf : -1; \
         for (k = 0; k < (h & ~3u); k += 4) { \
                 for (i = 0; i < w; ++i) { \
                         OPJ_INT32 *data2 = data1 + i; \
-                        opj_flag_t *flagsp2 = flagsp1 + i; \
-                        if( *flagsp2 == 0 ) continue; \
-                        opj_t1_dec_refpass_step_mqc(t1, flagsp2, data2, poshalf, neghalf, 0U); \
-                        data2 += w; \
-                        opj_t1_dec_refpass_step_mqc(t1, flagsp2, data2, poshalf, neghalf, 1U); \
-                        data2 += w; \
-                        opj_t1_dec_refpass_step_mqc(t1, flagsp2, data2, poshalf, neghalf, 2U); \
-                        data2 += w; \
-                        opj_t1_dec_refpass_step_mqc(t1, flagsp2, data2, poshalf, neghalf, 3U); \
-                        data2 += w; \
+                        if( *flagsp != 0 ) { \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 0U); \
+                            data2 += w; \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 1U); \
+                            data2 += w; \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 2U); \
+                            data2 += w; \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 3U); \
+                            data2 += w; \
+                        } \
+                        flagsp ++; \
                 } \
                 data1 += w << 2; \
-                flagsp1 += flags_stride; \
+                flagsp += 2; \
         } \
         for (i = 0; i < w; ++i) { \
                 OPJ_INT32 *data2 = data1 + i; \
-                opj_flag_t *flagsp2 = flagsp1 + i; \
                 for (j = k; j < h; ++j) { \
-                        opj_t1_dec_refpass_step_mqc(t1, flagsp2, data2, poshalf, neghalf, j - k); \
+                        opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, j - k); \
                         data2 += w; \
                 } \
+                flagsp ++; \
         } \
 }
 
@@ -1150,7 +1154,7 @@ static void opj_t1_dec_refpass_mqc_generic(
     opj_t1_t *t1,
     OPJ_INT32 bpno)
 {
-    opj_t1_dec_refpass_mqc_internal(t1, bpno, t1->w, t1->h, t1->flags_stride);
+    opj_t1_dec_refpass_mqc_internal(t1, bpno, t1->w, t1->h, t1->w + 2U);
 }
 
 static void opj_t1_dec_refpass_mqc_vsc(
@@ -1161,42 +1165,44 @@ static void opj_t1_dec_refpass_mqc_vsc(
     OPJ_UINT32 i, j, k;
     OPJ_INT32 vsc;
     OPJ_INT32 *data1 = t1->data;
-    opj_flag_t *flagsp1 = &T1_FLAGS(0, 0);
+    opj_flag_t *flagsp = &T1_FLAGS(0, 0);
     one = 1 << bpno;
     poshalf = one >> 1;
     neghalf = bpno > 0 ? -poshalf : -1;
     for (k = 0; k < (t1->h & ~(OPJ_UINT32)3U); k += 4U) {
         for (i = 0; i < t1->w; ++i) {
             OPJ_INT32 *data2 = data1 + i;
-            opj_flag_t *flagsp2 = flagsp1 + i;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp2, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
                                             0, 0U);
             data2 += t1->w;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp2, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
                                             0, 1U);
             data2 += t1->w;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp2, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
                                             0, 2U);
             data2 += t1->w;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp2, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
                                             1, 3U);
             data2 += t1->w;
+            flagsp ++;
         }
         data1 += t1->w << 2;
-        flagsp1 += t1->flags_stride;
+        flagsp += 2U;
     }
     for (i = 0; i < t1->w; ++i) {
-        opj_flag_t *flagsp2 = flagsp1 + i;
+        OPJ_INT32 *data2 = data1 + i;
         for (j = k; j < t1->h; ++j) {
             vsc = (j == t1->h - 1) ? 1 : 0;
             opj_t1_dec_refpass_step_mqc_vsc(
                 t1,
-                flagsp2,
-                &t1->data[(j * t1->w) + i],
+                flagsp,
+                data2,
                 poshalf, neghalf,
                 vsc,
                 j - k);
+            data2 += t1->w;
         }
+        flagsp ++;
     }
 }
 
@@ -1281,7 +1287,7 @@ LABEL_PARTIAL:
                 printf("   spb=%d\n", spb);
 #endif
                 opj_mqc_encode(mqc, v ^ spb);
-                opj_t1_update_flags(flagsp, ci, v, t1->flags_stride);
+                opj_t1_update_flags(flagsp, ci, v, t1->w + 2U);
             }
         }
         *flagsp &= ~(T1_PI_THIS << (3U * ci));
@@ -1306,7 +1312,7 @@ static void opj_t1_dec_clnpass_step_partial(
     opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(lu));
     v = opj_mqc_decode(mqc) ^ opj_t1_getspb(lu);
     *datap = v ? -oneplushalf : oneplushalf;
-    opj_t1_update_flags(flagsp, ci, v, t1->flags_stride);
+    opj_t1_update_flags(flagsp, ci, v, t1->w + 2U);
     /* *flagsp &= ~(T1_PI_THIS << (3U * ci)); */
 }
 
@@ -1330,7 +1336,7 @@ static void opj_t1_dec_clnpass_step(
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(lu));
             v = opj_mqc_decode(mqc) ^ opj_t1_getspb(lu);
             *datap = v ? -oneplushalf : oneplushalf;
-            opj_t1_update_flags(flagsp, ci, v, t1->flags_stride);
+            opj_t1_update_flags(flagsp, ci, v, t1->w + 2U);
         }
     }
     /* *flagsp &= ~(T1_PI_THIS << (3U * ci)); */
@@ -1394,7 +1400,7 @@ LABEL_PARTIAL:
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(lu));
             v = opj_mqc_decode(mqc) ^ opj_t1_getspb(lu);
             *datap = v ? -oneplushalf : oneplushalf;
-            opj_t1_update_flags(flagsp, ci, v, t1->flags_stride);
+            opj_t1_update_flags(flagsp, ci, v, t1->w + 2U);
         }
     }
     /* *flagsp &= ~(T1_PI_THIS << (3U * ci)); */
@@ -1623,7 +1629,7 @@ static void opj_t1_dec_clnpass_generic(
     OPJ_INT32 cblksty)
 {
     opj_t1_dec_clnpass_internal(t1, bpno, cblksty, t1->w, t1->h,
-                                t1->flags_stride);
+                                t1->w + 2U);
 }
 
 
@@ -1665,6 +1671,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
     OPJ_UINT32 h)
 {
     size_t flagssize;
+    OPJ_UINT32 flags_stride;
 
     /* encoder uses tile buffer, so no need to allocate */
     if (!t1->encoder) {
@@ -1713,7 +1720,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
         /* FIXME event manager error callback */
         return OPJ_FALSE;
     }
-    t1->flags_stride = w + 2U; /* can't be 0U */
+    flags_stride = w + 2U; /* can't be 0U */
 
 #if (SIZE_MAX - 3U) < 0xFFFFFFFFU /* UINT32_MAX */
     /* Overflow check */
@@ -1725,11 +1732,11 @@ static OPJ_BOOL opj_t1_allocate_buffers(
     flagssize = (h + 3U) / 4U + 2U;
 
     /* Overflow check */
-    if (flagssize > (SIZE_MAX / (size_t)t1->flags_stride)) {
+    if (flagssize > (SIZE_MAX / (size_t)flags_stride)) {
         /* FIXME event manager error callback */
         return OPJ_FALSE;
     }
-    flagssize *= (size_t)t1->flags_stride;
+    flagssize *= (size_t)flags_stride;
     {
         /* BIG FAT XXX */
         opj_flag_t* p;
@@ -1763,20 +1770,20 @@ static OPJ_BOOL opj_t1_allocate_buffers(
         memset(t1->flags, 0, flagssize * sizeof(opj_flag_t));
 
         p = &t1->flags[0];
-        for (x = 0; x < t1->flags_stride; ++x) {
+        for (x = 0; x < flags_stride; ++x) {
             /* magic value to hopefully stop any passes being interested in this entry */
             *p++ = (T1_PI_0 | T1_PI_1 | T1_PI_2 | T1_PI_3);
         }
 
-        p = &t1->flags[((flags_height + 1) * t1->flags_stride)];
-        for (x = 0; x < t1->flags_stride; ++x) {
+        p = &t1->flags[((flags_height + 1) * flags_stride)];
+        for (x = 0; x < flags_stride; ++x) {
             /* magic value to hopefully stop any passes being interested in this entry */
             *p++ = (T1_PI_0 | T1_PI_1 | T1_PI_2 | T1_PI_3);
         }
 
         if (h % 4) {
             OPJ_UINT32 v = 0;
-            p = &t1->flags[((flags_height) * t1->flags_stride)];
+            p = &t1->flags[((flags_height) * flags_stride)];
             if (h % 4 == 1) {
                 v |= T1_PI_1 | T1_PI_2 | T1_PI_3;
             } else if (h % 4 == 2) {
@@ -1784,7 +1791,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
             } else if (h % 4 == 3) {
                 v |= T1_PI_3;
             }
-            for (x = 0; x < t1->flags_stride; ++x) {
+            for (x = 0; x < flags_stride; ++x) {
                 *p++ = v;
             }
         }

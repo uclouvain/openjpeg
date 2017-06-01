@@ -199,7 +199,6 @@ typedef struct opj_t1 {
     OPJ_UINT32 h;
     OPJ_UINT32 datasize;
     OPJ_UINT32 flagssize;
-    OPJ_UINT32 flags_stride;
     OPJ_UINT32 data_stride;
     OPJ_BOOL   encoder;
 } opj_t1_t;
