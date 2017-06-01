@@ -135,21 +135,18 @@ static INLINE void  opj_t1_dec_refpass_step_raw(
     opj_flag_t *flagsp,
     OPJ_INT32 *datap,
     OPJ_INT32 poshalf,
-    OPJ_INT32 neghalf,
     OPJ_UINT32 row);
 static INLINE void opj_t1_dec_refpass_step_mqc(
     opj_t1_t *t1,
     opj_flag_t *flagsp,
     OPJ_INT32 *datap,
     OPJ_INT32 poshalf,
-    OPJ_INT32 neghalf,
     OPJ_UINT32 row);
 static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
     opj_t1_t *t1,
     opj_flag_t *flagsp,
     OPJ_INT32 *datap,
     OPJ_INT32 poshalf,
-    OPJ_INT32 neghalf,
     OPJ_INT32 vsc,
     OPJ_UINT32 row);
 
@@ -861,19 +858,16 @@ static INLINE void opj_t1_dec_refpass_step_raw(
     opj_flag_t *flagsp,
     OPJ_INT32 *datap,
     OPJ_INT32 poshalf,
-    OPJ_INT32 neghalf,
     OPJ_UINT32 ci)
 {
     OPJ_UINT32 v;
-    OPJ_INT32 t;
 
     opj_raw_t *raw = &(t1->raw);       /* RAW component */
 
     if ((*flagsp & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) ==
             (T1_SIGMA_THIS << (ci * 3U))) {
         v = opj_raw_decode(raw);
-        t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
+        *datap += (v ^ (*datap < 0)) ? poshalf : -poshalf;
         *flagsp |= T1_MU_THIS << (ci * 3U);
     }
 }
@@ -883,11 +877,9 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
     opj_flag_t *flagsp,
     OPJ_INT32 *datap,
     OPJ_INT32 poshalf,
-    OPJ_INT32 neghalf,
     OPJ_UINT32 ci)
 {
     OPJ_UINT32 v;
-    OPJ_INT32 t;
 
     opj_mqc_t *mqc = &(t1->mqc);       /* MQC component */
 
@@ -896,8 +888,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc(
         OPJ_UINT32 ctxt = opj_t1_getctxno_mag(*flagsp >> (ci * 3U));
         opj_mqc_setcurctx(mqc, ctxt);
         v = opj_mqc_decode(mqc);
-        t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
+        *datap += (v ^ (*datap < 0)) ? poshalf : -poshalf;
         *flagsp |= T1_MU_THIS << (ci * 3U);
     }
 }
@@ -907,12 +898,10 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
     opj_flag_t *flagsp,
     OPJ_INT32 *datap,
     OPJ_INT32 poshalf,
-    OPJ_INT32 neghalf,
     OPJ_INT32 vsc,
     OPJ_UINT32 ci)
 {
     OPJ_UINT32 v;
-    OPJ_INT32 t;
 
     opj_mqc_t *mqc = &(t1->mqc);       /* MQC component */
 
@@ -927,8 +916,7 @@ static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
         OPJ_UINT32 ctxt = opj_t1_getctxno_mag(shift_flags);
         opj_mqc_setcurctx(mqc, ctxt);
         v = opj_mqc_decode(mqc);
-        t = v ? poshalf : neghalf;
-        *datap += *datap < 0 ? -t : t;
+        *datap += (v ^ (*datap < 0)) ? poshalf : -poshalf;
         *flagsp |= T1_MU_THIS << (ci * 3U);
     }
 }
@@ -1046,13 +1034,12 @@ static void opj_t1_dec_refpass_raw(
     opj_t1_t *t1,
     OPJ_INT32 bpno)
 {
-    OPJ_INT32 one, poshalf, neghalf;
+    OPJ_INT32 one, poshalf;
     OPJ_UINT32 i, j, k;
     OPJ_INT32 *data1 = t1->data;
     opj_flag_t *flagsp = &T1_FLAGS(0, 0);
     one = 1 << bpno;
     poshalf = one >> 1;
-    neghalf = bpno > 0 ? -poshalf : -1;
     for (k = 0; k < (t1->h & ~3U); k += 4) {
         for (i = 0; i < t1->w; ++i) {
             OPJ_INT32 *data2 = data1 + i;
@@ -1061,28 +1048,28 @@ static void opj_t1_dec_refpass_raw(
                 flagsp,
                 data2,
                 poshalf,
-                neghalf, 0U);
+                0U);
             data2 += t1->w;
             opj_t1_dec_refpass_step_raw(
                 t1,
                 flagsp,
                 data2,
                 poshalf,
-                neghalf, 1U);
+                1U);
             data2 += t1->w;
             opj_t1_dec_refpass_step_raw(
                 t1,
                 flagsp,
                 data2,
                 poshalf,
-                neghalf, 2U);
+                2U);
             data2 += t1->w;
             opj_t1_dec_refpass_step_raw(
                 t1,
                 flagsp,
                 data2,
                 poshalf,
-                neghalf, 3U);
+                3U);
             data2 += t1->w;
             flagsp ++;
         }
@@ -1098,7 +1085,7 @@ static void opj_t1_dec_refpass_raw(
                     flagsp,
                     data2,
                     poshalf,
-                    neghalf, j - k);
+                    j - k);
                 data2 += t1->w;
             }
             flagsp ++;
@@ -1108,24 +1095,23 @@ static void opj_t1_dec_refpass_raw(
 
 #define opj_t1_dec_refpass_mqc_internal(t1, bpno, w, h, flags_stride) \
 { \
-        OPJ_INT32 one, poshalf, neghalf; \
+        OPJ_INT32 one, poshalf; \
         OPJ_UINT32 i, j, k; \
         OPJ_INT32 *data1 = t1->data; \
         opj_flag_t *flagsp = &t1->flags[flags_stride + 1]; \
         one = 1 << bpno; \
         poshalf = one >> 1; \
-        neghalf = bpno > 0 ? -poshalf : -1; \
         for (k = 0; k < (h & ~3u); k += 4) { \
                 for (i = 0; i < w; ++i) { \
                         OPJ_INT32 *data2 = data1 + i; \
                         if( *flagsp != 0 ) { \
-                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 0U); \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, 0U); \
                             data2 += w; \
-                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 1U); \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, 1U); \
                             data2 += w; \
-                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 2U); \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, 2U); \
                             data2 += w; \
-                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, 3U); \
+                            opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, 3U); \
                             data2 += w; \
                         } \
                         flagsp ++; \
@@ -1136,7 +1122,7 @@ static void opj_t1_dec_refpass_raw(
         for (i = 0; i < w; ++i) { \
                 OPJ_INT32 *data2 = data1 + i; \
                 for (j = k; j < h; ++j) { \
-                        opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, neghalf, j - k); \
+                        opj_t1_dec_refpass_step_mqc(t1, flagsp, data2, poshalf, j - k); \
                         data2 += w; \
                 } \
                 flagsp ++; \
@@ -1161,27 +1147,26 @@ static void opj_t1_dec_refpass_mqc_vsc(
     opj_t1_t *t1,
     OPJ_INT32 bpno)
 {
-    OPJ_INT32 one, poshalf, neghalf;
+    OPJ_INT32 one, poshalf;
     OPJ_UINT32 i, j, k;
     OPJ_INT32 vsc;
     OPJ_INT32 *data1 = t1->data;
     opj_flag_t *flagsp = &T1_FLAGS(0, 0);
     one = 1 << bpno;
     poshalf = one >> 1;
-    neghalf = bpno > 0 ? -poshalf : -1;
     for (k = 0; k < (t1->h & ~(OPJ_UINT32)3U); k += 4U) {
         for (i = 0; i < t1->w; ++i) {
             OPJ_INT32 *data2 = data1 + i;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf,
                                             0, 0U);
             data2 += t1->w;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf,
                                             0, 1U);
             data2 += t1->w;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf,
                                             0, 2U);
             data2 += t1->w;
-            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf, neghalf,
+            opj_t1_dec_refpass_step_mqc_vsc(t1, flagsp, data2, poshalf,
                                             1, 3U);
             data2 += t1->w;
             flagsp ++;
@@ -1197,7 +1182,7 @@ static void opj_t1_dec_refpass_mqc_vsc(
                 t1,
                 flagsp,
                 data2,
-                poshalf, neghalf,
+                poshalf,
                 vsc,
                 j - k);
             data2 += t1->w;
