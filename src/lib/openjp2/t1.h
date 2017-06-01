@@ -124,6 +124,7 @@ in T1.C are used by some function in TCD.C.
 #define T1_MU_3     (1U << 29)
 #define T1_PI_3     (1U << 30)
 #define T1_CHI_5    (1U << 31)
+#define T1_CHI_5_I  31
 
 /** As an example, the bits T1_SIGMA_3, T1_SIGMA_4 and T1_SIGMA_5
  *  indicate the significance state of the west neighbour of data point zero

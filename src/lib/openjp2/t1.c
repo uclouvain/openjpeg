@@ -306,57 +306,29 @@ static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos)
 static INLINE void opj_t1_update_flags(opj_flag_t *flagsp, OPJ_UINT32 ci,
                                        OPJ_UINT32 s, OPJ_UINT32 stride)
 {
-    /* set up to point to the north and south data points' flags words, if required */
-    opj_flag_t* north;
-    opj_flag_t* south;
+    /* east */
+    flagsp[-1] |= T1_SIGMA_5 << (3U * ci);
 
     /* mark target as significant */
-    *flagsp |= T1_SIGMA_4 << (3U * ci);
+    *flagsp |= ((s << T1_CHI_1_I) | T1_SIGMA_4) << (3U * ci);
+
+    /* west */
+    flagsp[1] |= T1_SIGMA_3 << (3U * ci);
 
     /* north-west, north, north-east */
     if (ci == 0U) {
-        north = flagsp - stride;
-        *north |= T1_SIGMA_16;
+        opj_flag_t* north = flagsp - stride;
+        *north |= (s << T1_CHI_5_I) | T1_SIGMA_16;
         north[-1] |= T1_SIGMA_17;
         north[1] |= T1_SIGMA_15;
     }
 
     /* south-west, south, south-east */
     if (ci == 3U) {
-        south = flagsp + stride;
-        *south |= T1_SIGMA_1;
+        opj_flag_t* south = flagsp + stride;
+        *south |= (s << T1_CHI_0_I) | T1_SIGMA_1;
         south[-1] |= T1_SIGMA_2;
         south[1] |= T1_SIGMA_0;
-    }
-
-    /* east */
-    flagsp[-1] |= T1_SIGMA_5 << (3U * ci);
-
-    /* west */
-    flagsp[1] |= T1_SIGMA_3 << (3U * ci);
-
-    if (s) {
-        switch (ci) {
-        case 0U: {
-            *flagsp |= T1_CHI_1;
-            north = flagsp - stride;
-            *north |= T1_CHI_5;
-            break;
-        }
-        case 1:
-            *flagsp |= T1_CHI_2;
-            break;
-        case 2:
-            *flagsp |= T1_CHI_3;
-            break;
-        case 3: {
-            *flagsp |= T1_CHI_4;
-            south = flagsp + stride;
-            *south |= T1_CHI_0;
-            break;
-        }
-
-        }
     }
 }
 
