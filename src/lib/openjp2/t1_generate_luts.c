@@ -39,7 +39,7 @@
 
 #include "opj_includes.h"
 
-static int t1_init_ctxno_zc(int f, int orient)
+static int t1_init_ctxno_zc(OPJ_UINT32 f, OPJ_UINT32 orient)
 {
     int h, v, d, n, t, hv;
     n = 0;
@@ -116,7 +116,7 @@ static int t1_init_ctxno_zc(int f, int orient)
     return (T1_CTXNO_ZC + n);
 }
 
-static int t1_init_ctxno_sc(int f)
+static int t1_init_ctxno_sc(OPJ_UINT32 f)
 {
     int hc, vc, n;
     n = 0;
@@ -160,7 +160,7 @@ static int t1_init_ctxno_sc(int f)
     return (T1_CTXNO_SC + n);
 }
 
-static int t1_init_spb(int f)
+static int t1_init_spb(OPJ_UINT32 f)
 {
     int hc, vc, n;
 
@@ -220,7 +220,7 @@ int main(int argc, char **argv)
     /* lut_ctxno_zc */
     for (j = 0; j < 4; ++j) {
         for (i = 0; i < 512; ++i) {
-            int orient = j;
+            OPJ_UINT32 orient = j;
             if (orient == 2) {
                 orient = 1;
             } else if (orient == 1) {
