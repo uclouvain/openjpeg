@@ -376,14 +376,14 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
     OPJ_UINT32 ci)
 {
     OPJ_UINT32 v;
-    opj_raw_t *raw = &(t1->raw);       /* RAW component */
+    opj_mqc_t *mqc = &(t1->mqc);       /* RAW component */
 
     OPJ_UINT32 const flags = *flagsp;
 
     if ((flags & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) == 0U &&
             (flags & (T1_SIGMA_NEIGHBOURS << (ci * 3U))) != 0U) {
-        if (opj_raw_decode(raw)) {
-            v = opj_raw_decode(raw);
+        if (opj_mqc_raw_decode(mqc)) {
+            v = opj_mqc_raw_decode(mqc);
             *datap = v ? -oneplushalf : oneplushalf;
             opj_t1_update_flags(flagsp, ci, v, t1->w + 2, vsc);
         }
@@ -747,11 +747,11 @@ static INLINE void opj_t1_dec_refpass_step_raw(
 {
     OPJ_UINT32 v;
 
-    opj_raw_t *raw = &(t1->raw);       /* RAW component */
+    opj_mqc_t *mqc = &(t1->mqc);       /* RAW component */
 
     if ((*flagsp & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) ==
             (T1_SIGMA_THIS << (ci * 3U))) {
-        v = opj_raw_decode(raw);
+        v = opj_mqc_raw_decode(mqc);
         *datap += (v ^ (*datap < 0)) ? poshalf : -poshalf;
         *flagsp |= T1_MU_THIS << (ci * 3U);
     }
@@ -1793,7 +1793,6 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                                    OPJ_UINT32 roishift,
                                    OPJ_UINT32 cblksty)
 {
-    opj_raw_t *raw = &(t1->raw);   /* RAW component */
     opj_mqc_t *mqc = &(t1->mqc);   /* MQC component */
 
     OPJ_INT32 bpno_plus_one;
@@ -1829,12 +1828,11 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
             continue;
         }
         if (type == T1_TYPE_RAW) {
-            opj_raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
+            opj_mqc_raw_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len,
+                                 OPJ_COMMON_CBLK_DATA_EXTRA);
         } else {
-            if (OPJ_FALSE == opj_mqc_init_dec(mqc, (*seg->data) + seg->dataindex,
-                                              seg->len)) {
-                return OPJ_FALSE;
-            }
+            opj_mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len,
+                             OPJ_COMMON_CBLK_DATA_EXTRA);
         }
 
         for (passno = 0; (passno < seg->real_num_passes) &&
@@ -1870,7 +1868,10 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                 bpno_plus_one--;
             }
         }
+
+        opq_mqc_finish_dec(mqc);
     }
+
     return OPJ_TRUE;
 }
 

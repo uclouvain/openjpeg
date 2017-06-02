@@ -65,15 +65,46 @@
     } \
 }
 
+
+/**
+Decode a symbol using raw-decoder. Cfr p.506 TAUBMAN
+@param mqc MQC handle
+@return Returns the decoded symbol (0 or 1)
+*/
+static INLINE OPJ_UINT32 opj_mqc_raw_decode(opj_mqc_t *mqc)
+{
+    OPJ_UINT32 d;
+    if (mqc->ct == 0) {
+        /* Given opj_mqc_raw_init_dec() we know that at some point we will */
+        /* have a 0xFF 0xFF artificial marker */
+        if (mqc->c == 0xff) {
+            if (*mqc->bp  > 0x8f) {
+                mqc->c = 0xff;
+                mqc->ct = 8;
+            } else {
+                mqc->c = *mqc->bp;
+                mqc->bp ++;
+                mqc->ct = 7;
+            }
+        } else {
+            mqc->c = *mqc->bp;
+            mqc->bp ++;
+            mqc->ct = 8;
+        }
+    }
+    mqc->ct--;
+    d = ((OPJ_UINT32)mqc->c >> mqc->ct) & 0x01U;
+
+    return d;
+}
+
+
 #define opj_mqc_bytein_macro(mqc, c, ct) \
 { \
-    if (mqc->bp != mqc->end) { \
         OPJ_UINT32 l_c;  \
-        if (mqc->bp + 1 != mqc->end) { \
-            l_c = *(mqc->bp + 1); \
-        } else { \
-            l_c = 0xff; \
-        } \
+        /* Given opj_mqc_init_dec() we know that at some point we will */ \
+        /* have a 0xFF 0xFF artificial marker */ \
+        l_c = *(mqc->bp + 1); \
         if (*mqc->bp == 0xff) { \
             if (l_c > 0x8f) { \
                 c += 0xff00; \
@@ -88,10 +119,6 @@
             c += l_c << 8; \
             ct = 8; \
         } \
-    } else { \
-        c += 0xff00; \
-        ct = 8; \
-    } \
 }
 
 /* For internal use of opj_mqc_decode_macro() */

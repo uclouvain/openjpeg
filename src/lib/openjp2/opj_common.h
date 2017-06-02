@@ -4,11 +4,7 @@
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
- * Copyright (c) 2002-2014, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2014, Professor Benoit Macq
- * Copyright (c) 2003-2007, Francois-Olivier Devaux
- * Copyright (c) 2003-2014, Antonin Descampe
- * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2017, IntoPIX SA <support@intopix.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,34 +28,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-#include "opj_includes.h"
-
-/*
-==========================================================
-   local functions
-==========================================================
-*/
-
+#ifndef OPJ_COMMMON_H
+#define OPJ_COMMMON_H
 
 /*
-==========================================================
-   RAW encoding interface
-==========================================================
+ ==========================================================
+   Common constants shared among several modules
+ ==========================================================
 */
+#define OPJ_COMMON_DEFAULT_CBLK_DATA_SIZE 8192
+#define OPJ_COMMON_CBLK_DATA_EXTRA        2    /**< Margin for a fake FFFF marker */
 
-OPJ_UINT32 opj_raw_numbytes(opj_raw_t *raw)
-{
-    const ptrdiff_t diff = raw->bp - raw->start;
-    assert(diff <= (ptrdiff_t)0xffffffff && diff >= 0);   /* UINT32_MAX */
-    return (OPJ_UINT32)diff;
-}
-
-void opj_raw_init_dec(opj_raw_t *raw, OPJ_BYTE *bp, OPJ_UINT32 len)
-{
-    raw->start = bp;
-    raw->lenmax = len;
-    raw->len = 0;
-    raw->c = 0;
-    raw->ct = 0;
-}
+#endif /* OPJ_COMMMON_H */

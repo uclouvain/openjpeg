@@ -38,6 +38,8 @@
 
 #include "opj_includes.h"
 
+#include <assert.h>
+
 /** @defgroup MQC MQC - Implementation of an MQ-Coder */
 /*@{*/
 
@@ -423,17 +425,35 @@ void opj_mqc_segmark_enc(opj_mqc_t *mqc)
     }
 }
 
-OPJ_BOOL opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len)
+static void opj_mqc_init_dec_common(opj_mqc_t *mqc,
+                                    OPJ_BYTE *bp,
+                                    OPJ_UINT32 len,
+                                    OPJ_UINT32 extra_writable_bytes)
+{
+    (void)extra_writable_bytes;
+
+    assert(extra_writable_bytes >= OPJ_COMMON_CBLK_DATA_EXTRA);
+    mqc->start = bp;
+    mqc->end = bp + len;
+    /* Insert an artificial 0xFF 0xFF marker at end of the code block */
+    /* data so that the bytein routines stop on it. This saves us comparing */
+    /* the bp and end pointers */
+    /* But before inserting it, backup th bytes we will overwrite */
+    memcpy(mqc->backup, mqc->end, OPJ_COMMON_CBLK_DATA_EXTRA);
+    mqc->end[0] = 0xFF;
+    mqc->end[1] = 0xFF;
+    mqc->bp = bp;
+}
+void opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len,
+                      OPJ_UINT32 extra_writable_bytes)
 {
     /* Implements ISO 15444-1 C.3.5 Initialization of the decoder (INITDEC) */
     /* Note: alternate "J.1 - Initialization of the software-conventions */
     /* decoder" has been tried, but does */
     /* not bring any improvement. */
     /* See https://github.com/uclouvain/openjpeg/issues/921 */
+    opj_mqc_init_dec_common(mqc, bp, len, extra_writable_bytes);
     opj_mqc_setcurctx(mqc, 0);
-    mqc->start = bp;
-    mqc->end = bp + len;
-    mqc->bp = bp;
     if (len == 0) {
         mqc->c = 0xff << 16;
     } else {
@@ -444,7 +464,22 @@ OPJ_BOOL opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len)
     mqc->c <<= 7;
     mqc->ct -= 7;
     mqc->a = 0x8000;
-    return OPJ_TRUE;
+}
+
+
+void opj_mqc_raw_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len,
+                          OPJ_UINT32 extra_writable_bytes)
+{
+    opj_mqc_init_dec_common(mqc, bp, len, extra_writable_bytes);
+    mqc->c = 0;
+    mqc->ct = 0;
+}
+
+
+void opq_mqc_finish_dec(opj_mqc_t *mqc)
+{
+    /* Restore the bytes overwritten by opj_mqc_init_dec_common() */
+    memcpy(mqc->end, mqc->backup, OPJ_COMMON_CBLK_DATA_EXTRA);
 }
 
 void opj_mqc_resetstates(opj_mqc_t *mqc)

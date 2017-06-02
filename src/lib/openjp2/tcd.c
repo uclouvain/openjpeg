@@ -39,6 +39,7 @@
  */
 
 #include "opj_includes.h"
+#include "opj_common.h"
 
 /* ----------------------------------------------------------------------- */
 
@@ -1185,11 +1186,11 @@ static OPJ_BOOL opj_tcd_code_block_dec_allocate(opj_tcd_cblk_dec_t *
 {
     if (! p_code_block->data) {
 
-        p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_J2K_DEFAULT_CBLK_DATA_SIZE);
+        p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_COMMON_DEFAULT_CBLK_DATA_SIZE);
         if (! p_code_block->data) {
             return OPJ_FALSE;
         }
-        p_code_block->data_max_size = OPJ_J2K_DEFAULT_CBLK_DATA_SIZE;
+        p_code_block->data_max_size = OPJ_COMMON_DEFAULT_CBLK_DATA_SIZE;
         /*fprintf(stderr, "Allocate 8192 elements of code_block->data\n");*/
 
         p_code_block->segs = (opj_tcd_seg_t *) opj_calloc(OPJ_J2K_DEFAULT_NB_SEGS,
