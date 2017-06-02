@@ -542,66 +542,59 @@ static void opj_t1_dec_sigpass_raw(
 {
     OPJ_INT32 one, half, oneplushalf;
     OPJ_UINT32 i, j, k;
-    OPJ_INT32 *data1 = t1->data;
+    OPJ_INT32 *data = t1->data;
     opj_flag_t *flagsp = &T1_FLAGS(0, 0);
+    const OPJ_UINT32 l_w = t1->w;
     one = 1 << bpno;
     half = one >> 1;
     oneplushalf = one | half;
 
-    for (k = 0; k < (t1->h & ~3U); k += 4) {
-        for (i = 0; i < t1->w; ++i) {
-            OPJ_INT32* data2 = data1 + i;
-            opj_t1_dec_sigpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                oneplushalf,
-                cblksty & J2K_CCP_CBLKSTY_VSC, /* vsc */
-                0U);
-            data2 += t1->w;
-            opj_t1_dec_sigpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                oneplushalf,
-                OPJ_FALSE, /* vsc */
-                1U);
-            data2 += t1->w;
-            opj_t1_dec_sigpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                oneplushalf,
-                OPJ_FALSE, /* vsc */
-                2U);
-            data2 += t1->w;
-            opj_t1_dec_sigpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                oneplushalf,
-                OPJ_FALSE, /* vsc */
-                3U);
-            data2 += t1->w;
-            flagsp ++;
+    for (k = 0; k < (t1->h & ~3U); k += 4, flagsp += 2, data += 3 * l_w) {
+        for (i = 0; i < l_w; ++i, ++flagsp, ++data) {
+            opj_flag_t flags = *flagsp;
+            if (flags != 0) {
+                opj_t1_dec_sigpass_step_raw(
+                    t1,
+                    flagsp,
+                    data,
+                    oneplushalf,
+                    cblksty & J2K_CCP_CBLKSTY_VSC, /* vsc */
+                    0U);
+                opj_t1_dec_sigpass_step_raw(
+                    t1,
+                    flagsp,
+                    data + l_w,
+                    oneplushalf,
+                    OPJ_FALSE, /* vsc */
+                    1U);
+                opj_t1_dec_sigpass_step_raw(
+                    t1,
+                    flagsp,
+                    data + 2 * l_w,
+                    oneplushalf,
+                    OPJ_FALSE, /* vsc */
+                    2U);
+                opj_t1_dec_sigpass_step_raw(
+                    t1,
+                    flagsp,
+                    data + 3 * l_w,
+                    oneplushalf,
+                    OPJ_FALSE, /* vsc */
+                    3U);
+            }
         }
-        data1 += t1->w << 2;
-        flagsp += 2;
     }
     if (k < t1->h) {
-        for (i = 0; i < t1->w; ++i) {
-            OPJ_INT32* data2 = data1 + i;
+        for (i = 0; i < l_w; ++i, ++flagsp, ++data) {
             for (j = 0; j < t1->h - k; ++j) {
                 opj_t1_dec_sigpass_step_raw(
                     t1,
                     flagsp,
-                    data2,
+                    data + j * l_w,
                     oneplushalf,
                     cblksty & J2K_CCP_CBLKSTY_VSC, /* vsc */
                     j);
-                data2 += t1->w;
             }
-            flagsp ++;
         }
     }
 }
@@ -898,59 +891,52 @@ static void opj_t1_dec_refpass_raw(
 {
     OPJ_INT32 one, poshalf;
     OPJ_UINT32 i, j, k;
-    OPJ_INT32 *data1 = t1->data;
+    OPJ_INT32 *data = t1->data;
     opj_flag_t *flagsp = &T1_FLAGS(0, 0);
+    const OPJ_UINT32 l_w = t1->w;
     one = 1 << bpno;
     poshalf = one >> 1;
-    for (k = 0; k < (t1->h & ~3U); k += 4) {
-        for (i = 0; i < t1->w; ++i) {
-            OPJ_INT32 *data2 = data1 + i;
-            opj_t1_dec_refpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                poshalf,
-                0U);
-            data2 += t1->w;
-            opj_t1_dec_refpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                poshalf,
-                1U);
-            data2 += t1->w;
-            opj_t1_dec_refpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                poshalf,
-                2U);
-            data2 += t1->w;
-            opj_t1_dec_refpass_step_raw(
-                t1,
-                flagsp,
-                data2,
-                poshalf,
-                3U);
-            data2 += t1->w;
-            flagsp ++;
-        }
-        data1 += t1->w << 2;
-        flagsp += 2;
-    }
-    if (k < t1->h) {
-        for (i = 0; i < t1->w; ++i) {
-            OPJ_INT32 *data2 = data1 + i;
-            for (j = k; j < t1->h; ++j) {
+    for (k = 0; k < (t1->h & ~3U); k += 4, flagsp += 2, data += 3 * l_w) {
+        for (i = 0; i < l_w; ++i, ++flagsp, ++data) {
+            opj_flag_t flags = *flagsp;
+            if (flags != 0) {
                 opj_t1_dec_refpass_step_raw(
                     t1,
                     flagsp,
-                    data2,
+                    data,
                     poshalf,
-                    j - k);
-                data2 += t1->w;
+                    0U);
+                opj_t1_dec_refpass_step_raw(
+                    t1,
+                    flagsp,
+                    data + l_w,
+                    poshalf,
+                    1U);
+                opj_t1_dec_refpass_step_raw(
+                    t1,
+                    flagsp,
+                    data + 2 * l_w,
+                    poshalf,
+                    2U);
+                opj_t1_dec_refpass_step_raw(
+                    t1,
+                    flagsp,
+                    data + 3 * l_w,
+                    poshalf,
+                    3U);
             }
-            flagsp ++;
+        }
+    }
+    if (k < t1->h) {
+        for (i = 0; i < l_w; ++i, ++flagsp, ++data) {
+            for (j = 0; j < t1->h - k; ++j) {
+                opj_t1_dec_refpass_step_raw(
+                    t1,
+                    flagsp,
+                    data + j * l_w,
+                    poshalf,
+                    j);
+            }
         }
     }
 }
