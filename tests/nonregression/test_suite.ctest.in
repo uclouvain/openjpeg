@@ -149,7 +149,20 @@ opj_compress -i @INPUT_NR_PATH@/flower-minisblack-15.tif -o @TEMP_PATH@/flower-m
 # issue 843 Crash with invalid ppm file
 !opj_compress -i @INPUT_NR_PATH@/issue843.ppm -o @TEMP_PATH@/issue843.ppm.jp2
 
+# Test all 6 coding options individually
 opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_vsc.j2k -M 8
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass.j2k -M 1
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_reset.j2k -M 2
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_termall.j2k -M 4
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_pterm.j2k -M 16
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_segsym.j2k -M 32
+
+# Test a few combinations of coding options
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_termall.j2k -M 5
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_pterm.j2k -M 17
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_termall_pterm.j2k -M 20
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_termall_pterm.j2k -M 21
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_vsc_reset_termall_pterm_segsym.j2k -M 63
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
