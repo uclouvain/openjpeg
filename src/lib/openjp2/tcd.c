@@ -1162,7 +1162,8 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data(opj_tcd_cblk_enc_t *
 
     if (l_data_size > p_code_block->data_size) {
         if (p_code_block->data) {
-            opj_free(p_code_block->data - 1); /* again, why -1 */
+            /* We refer to data - 1 since below we incremented it */
+            opj_free(p_code_block->data - 1);
         }
         p_code_block->data = (OPJ_BYTE*) opj_malloc(l_data_size + 1);
         if (! p_code_block->data) {
@@ -1171,6 +1172,10 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data(opj_tcd_cblk_enc_t *
         }
         p_code_block->data_size = l_data_size;
 
+        /* We reserve the initial byte as a fake byte to a non-FF value */
+        /* and increment the data pointer, so that opj_mqc_init_enc() */
+        /* can do bp = data - 1, and opj_mqc_byteout() can safely dereference */
+        /* it. */
         p_code_block->data[0] = 0;
         p_code_block->data += 1; /*why +1 ?*/
     }
@@ -1914,6 +1919,8 @@ static void opj_tcd_code_block_enc_deallocate(opj_tcd_precinct_t * p_precinct)
 
         for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno)  {
             if (l_code_block->data) {
+                /* We refer to data - 1 since below we incremented it */
+                /* in opj_tcd_code_block_enc_allocate_data() */
                 opj_free(l_code_block->data - 1);
                 l_code_block->data = 00;
             }

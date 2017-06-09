@@ -2089,6 +2089,37 @@ OPJ_BOOL opj_t1_encode_cblks(opj_t1_t *t1,
     return OPJ_TRUE;
 }
 
+/* Returns whether the pass (bpno, passtype) is terminated */
+static int opj_t1_enc_is_term_pass(opj_tcd_cblk_enc_t* cblk,
+                                   OPJ_UINT32 cblksty,
+                                   OPJ_INT32 bpno,
+                                   OPJ_UINT32 passtype)
+{
+    /* Is it the last cleanup pass ? */
+    if (passtype == 2 && bpno == 0) {
+        return OPJ_TRUE;
+    }
+
+    if (cblksty & J2K_CCP_CBLKSTY_TERMALL) {
+        return OPJ_TRUE;
+    }
+
+    if ((cblksty & J2K_CCP_CBLKSTY_LAZY)) {
+        /* For bypass arithmetic bypass, terminate the 4th cleanup pass */
+        if ((bpno == ((OPJ_INT32)cblk->numbps - 4)) && (passtype == 2)) {
+            return OPJ_TRUE;
+        }
+        /* and beyond terminate all the magnitude refinement passes (in raw) */
+        /* and cleanup passes (in MQC) */
+        if ((bpno < ((OPJ_INT32)(cblk->numbps) - 4)) && (passtype > 0)) {
+            return OPJ_TRUE;
+        }
+    }
+
+    return OPJ_FALSE;
+}
+
+
 /** mod fixed_quality */
 static void opj_t1_encode_cblk(opj_t1_t *t1,
                                opj_tcd_cblk_enc_t* cblk,
@@ -2116,6 +2147,11 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
     OPJ_BYTE type = T1_TYPE_MQ;
     OPJ_FLOAT64 tempwmsedec;
 
+#ifdef EXTRA_DEBUG
+    printf("encode_cblk(x=%d,y=%d,x1=%d,y1=%d,orient=%d,compno=%d,level=%d\n",
+           cblk->x0, cblk->y0, cblk->x1, cblk->y1, orient, compno, level);
+#endif
+
     mqc->lut_ctxno_zc_orient = lut_ctxno_zc + orient * 256;
 
     max = 0;
@@ -2140,9 +2176,17 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 
     for (passno = 0; bpno >= 0; ++passno) {
         opj_tcd_pass_t *pass = &cblk->passes[passno];
-        OPJ_UINT32 correction = 3;
         type = ((bpno < ((OPJ_INT32)(cblk->numbps) - 4)) && (passtype < 2) &&
                 (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
+
+        /* If the previous pass was terminating, we need to reset the encoder */
+        if (passno > 0 && cblk->passes[passno - 1].term) {
+            if (type == T1_TYPE_RAW) {
+                opj_mqc_bypass_init_enc(mqc);
+            } else {
+                opj_mqc_restart_init_enc(mqc);
+            }
+        }
 
         switch (passtype) {
         case 0:
@@ -2165,35 +2209,32 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
                                         stepsize, numcomps, mct_norms, mct_numcomps) ;
         cumwmsedec += tempwmsedec;
         tile->distotile += tempwmsedec;
+        pass->distortiondec = cumwmsedec;
 
-        /* Code switch "RESTART" (i.e. TERMALL) */
-        if ((cblksty & J2K_CCP_CBLKSTY_TERMALL) && !((passtype == 2) &&
-                (bpno - 1 < 0))) {
+        if (opj_t1_enc_is_term_pass(cblk, cblksty, bpno, passtype)) {
+            /* If it is a terminated pass, terminate it */
             if (type == T1_TYPE_RAW) {
-                opj_mqc_flush(mqc);
-                correction = 1;
-                /* correction = mqc_bypass_flush_enc(); */
-            } else {            /* correction = mqc_restart_enc(); */
-                opj_mqc_flush(mqc);
-                correction = 1;
+                opj_mqc_bypass_flush_enc(mqc, cblksty & J2K_CCP_CBLKSTY_PTERM);
+            } else {
+                if (cblksty & J2K_CCP_CBLKSTY_PTERM) {
+                    opj_mqc_erterm_enc(mqc);
+                } else {
+                    opj_mqc_flush(mqc);
+                }
             }
             pass->term = 1;
+            pass->rate = opj_mqc_numbytes(mqc);
         } else {
-            if (((bpno < ((OPJ_INT32)(cblk->numbps) - 4) && (passtype > 0))
-                    || ((bpno == ((OPJ_INT32)cblk->numbps - 4)) && (passtype == 2))) &&
-                    (cblksty & J2K_CCP_CBLKSTY_LAZY)) {
-                if (type == T1_TYPE_RAW) {
-                    opj_mqc_flush(mqc);
-                    correction = 1;
-                    /* correction = mqc_bypass_flush_enc(); */
-                } else {        /* correction = mqc_restart_enc(); */
-                    opj_mqc_flush(mqc);
-                    correction = 1;
-                }
-                pass->term = 1;
+            /* Non terminated pass */
+            OPJ_UINT32 rate_extra_bytes;
+            if (type == T1_TYPE_RAW) {
+                rate_extra_bytes = opj_mqc_bypass_get_extra_bytes(
+                                       mqc, (cblksty & J2K_CCP_CBLKSTY_PTERM));
             } else {
-                pass->term = 0;
+                rate_extra_bytes = 3;
             }
+            pass->term = 0;
+            pass->rate = opj_mqc_numbytes(mqc) + rate_extra_bytes;
         }
 
         if (++passtype == 3) {
@@ -2201,45 +2242,54 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
             bpno--;
         }
 
-        if (pass->term && bpno > 0) {
-            type = ((bpno < ((OPJ_INT32)(cblk->numbps) - 4)) && (passtype < 2) &&
-                    (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
-            if (type == T1_TYPE_RAW) {
-                opj_mqc_bypass_init_enc(mqc);
-            } else {
-                opj_mqc_restart_init_enc(mqc);
-            }
-        }
-
-        pass->distortiondec = cumwmsedec;
-        pass->rate = opj_mqc_numbytes(mqc) + correction;    /* FIXME */
-
         /* Code-switch "RESET" */
         if (cblksty & J2K_CCP_CBLKSTY_RESET) {
             opj_mqc_reset_enc(mqc);
         }
     }
 
-    /* Code switch "ERTERM" (i.e. PTERM) */
-    if (cblksty & J2K_CCP_CBLKSTY_PTERM) {
-        opj_mqc_erterm_enc(mqc);
-    } else /* Default coding */ if (!(cblksty & J2K_CCP_CBLKSTY_LAZY)) {
-        opj_mqc_flush(mqc);
-    }
-
     cblk->totalpasses = passno;
+
+    if (cblk->totalpasses) {
+        /* Make sure that pass rates are increasing */
+        OPJ_UINT32 last_pass_rate = opj_mqc_numbytes(mqc);
+        for (passno = cblk->totalpasses; passno > 0;) {
+            opj_tcd_pass_t *pass = &cblk->passes[--passno];
+            if (pass->rate > last_pass_rate) {
+                pass->rate = last_pass_rate;
+            } else {
+                last_pass_rate = pass->rate;
+            }
+        }
+    }
 
     for (passno = 0; passno < cblk->totalpasses; passno++) {
         opj_tcd_pass_t *pass = &cblk->passes[passno];
-        if (pass->rate > opj_mqc_numbytes(mqc)) {
-            pass->rate = opj_mqc_numbytes(mqc);
-        }
-        /*Preventing generation of FF as last data byte of a pass*/
-        if ((pass->rate > 1) && (cblk->data[pass->rate - 1] == 0xFF)) {
+
+        /* Prevent generation of FF as last data byte of a pass*/
+        /* For terminating passes, the flushing procedure ensured this already */
+        assert(pass->rate > 0);
+        if ((cblk->data[pass->rate - 1] == 0xFF)) {
             pass->rate--;
         }
         pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);
     }
+
+#ifdef EXTRA_DEBUG
+    printf(" len=%d\n", (cblk->totalpasses) ? opj_mqc_numbytes(mqc) : 0);
+
+    /* Check that there not 0xff >=0x90 sequences */
+    if (cblk->totalpasses) {
+        OPJ_UINT32 i;
+        OPJ_UINT32 len = opj_mqc_numbytes(mqc);
+        for (i = 1; i < len; ++i) {
+            if (cblk->data[i - 1] == 0xff && cblk->data[i] >= 0x90) {
+                printf("0xff %02x at offset %d\n", cblk->data[i], i - 1);
+                abort();
+            }
+        }
+    }
+#endif
 }
 
 #if 0
