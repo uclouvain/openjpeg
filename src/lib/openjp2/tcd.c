@@ -245,6 +245,11 @@ void opj_tcd_makelayer(opj_tcd_t *tcd,
             for (bandno = 0; bandno < res->numbands; bandno++) {
                 opj_tcd_band_t *band = &res->bands[bandno];
 
+                /* Skip empty bands */
+                if (opj_tcd_is_band_empty(band)) {
+                    continue;
+                }
+
                 for (precno = 0; precno < res->pw * res->ph; precno++) {
                     opj_tcd_precinct_t *prc = &band->precincts[precno];
 
@@ -347,6 +352,11 @@ void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno,
             for (bandno = 0; bandno < res->numbands; bandno++) {
                 opj_tcd_band_t *band = &res->bands[bandno];
 
+                /* Skip empty bands */
+                if (opj_tcd_is_band_empty(band)) {
+                    continue;
+                }
+
                 for (precno = 0; precno < res->pw * res->ph; precno++) {
                     opj_tcd_precinct_t *prc = &band->precincts[precno];
 
@@ -446,6 +456,11 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
 
             for (bandno = 0; bandno < res->numbands; bandno++) {
                 opj_tcd_band_t *band = &res->bands[bandno];
+
+                /* Skip empty bands */
+                if (opj_tcd_is_band_empty(band)) {
+                    continue;
+                }
 
                 for (precno = 0; precno < res->pw * res->ph; precno++) {
                     opj_tcd_precinct_t *prc = &band->precincts[precno];
@@ -906,7 +921,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
             cblkheightexpn = opj_uint_min(l_tccp->cblkh, cbgheightexpn);
             l_band = l_res->bands;
 
-            for (bandno = 0; bandno < l_res->numbands; ++bandno) {
+            for (bandno = 0; bandno < l_res->numbands; ++bandno, ++l_band, ++l_step_size) {
                 OPJ_INT32 numbps;
                 /*fprintf(stderr, "\t\t\tband_no=%d/%d\n", bandno, l_res->numbands );*/
 
@@ -931,6 +946,16 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                                                        l_level_no), (OPJ_INT32)(l_level_no + 1));
                     l_band->y1 = opj_int64_ceildivpow2(l_tilec->y1 - ((OPJ_INT64)l_y0b <<
                                                        l_level_no), (OPJ_INT32)(l_level_no + 1));
+                }
+
+                if (isEncoder) {
+                    /* Skip empty bands */
+                    if (opj_tcd_is_band_empty(l_band)) {
+                        /* Do not zero l_band->precints to avoid leaks */
+                        /* but make sure we don't use it later, since */
+                        /* it will point to precincts of previous bands... */
+                        continue;
+                    }
                 }
 
                 /** avoid an if with storing function pointer */
@@ -1099,8 +1124,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                     }
                     ++l_current_precinct;
                 } /* precno */
-                ++l_band;
-                ++l_step_size;
             } /* bandno */
             ++l_res;
         } /* resno */
@@ -2279,4 +2302,9 @@ OPJ_BOOL opj_tcd_copy_tile_data(opj_tcd_t *p_tcd,
     }
 
     return OPJ_TRUE;
+}
+
+OPJ_BOOL opj_tcd_is_band_empty(opj_tcd_band_t* band)
+{
+    return (band->x1 - band->x0 == 0) || (band->y1 - band->y0 == 0);
 }

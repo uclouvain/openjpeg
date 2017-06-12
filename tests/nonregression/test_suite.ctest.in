@@ -164,6 +164,11 @@ opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_termall_p
 opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_termall_pterm.j2k -M 21
 opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_vsc_reset_termall_pterm_segsym.j2k -M 63
 
+# Test fix for #891/#892 (tiles smaller than decomposition levels)
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_empty_band.j2k -t 2591,1943 -n 2
+# Same rate as Bretagne2_4.j2k
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_empty_band_r800.j2k -t 2591,1943 -n 2 -r 800
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx

@@ -2008,8 +2008,14 @@ OPJ_BOOL opj_t1_encode_cblks(opj_t1_t *t1,
 
             for (bandno = 0; bandno < res->numbands; ++bandno) {
                 opj_tcd_band_t* OPJ_RESTRICT band = &res->bands[bandno];
-                OPJ_INT32 bandconst = 8192 * 8192 / ((OPJ_INT32) floor(band->stepsize * 8192));
+                OPJ_INT32 bandconst;
 
+                /* Skip empty bands */
+                if (opj_tcd_is_band_empty(band)) {
+                    continue;
+                }
+
+                bandconst = 8192 * 8192 / ((OPJ_INT32) floor(band->stepsize * 8192));
                 for (precno = 0; precno < res->pw * res->ph; ++precno) {
                     opj_tcd_precinct_t *prc = &band->precincts[precno];
 

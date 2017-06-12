@@ -633,9 +633,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
     if (!layno) {
         band = res->bands;
 
-        for (bandno = 0; bandno < res->numbands; ++bandno) {
-            opj_tcd_precinct_t *prc = &band->precincts[precno];
+        for (bandno = 0; bandno < res->numbands; ++bandno, ++band) {
+            opj_tcd_precinct_t *prc;
 
+            /* Skip empty bands */
+            if (opj_tcd_is_band_empty(band)) {
+                continue;
+            }
+
+            prc = &band->precincts[precno];
             opj_tgt_reset(prc->incltree);
             opj_tgt_reset(prc->imsbtree);
 
@@ -646,7 +652,6 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
                 cblk->numpasses = 0;
                 opj_tgt_setvalue(prc->imsbtree, cblkno, band->numbps - (OPJ_INT32)cblk->numbps);
             }
-            ++band;
         }
     }
 
@@ -660,9 +665,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
     /* Writing Packet header */
     band = res->bands;
-    for (bandno = 0; bandno < res->numbands; ++bandno)      {
-        opj_tcd_precinct_t *prc = &band->precincts[precno];
+    for (bandno = 0; bandno < res->numbands; ++bandno, ++band)      {
+        opj_tcd_precinct_t *prc;
 
+        /* Skip empty bands */
+        if (opj_tcd_is_band_empty(band)) {
+            continue;
+        }
+
+        prc = &band->precincts[precno];
         l_nb_blocks = prc->cw * prc->ch;
         cblk = prc->cblks.enc;
 
@@ -745,8 +756,6 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
             ++cblk;
         }
-
-        ++band;
     }
 
     if (!opj_bio_flush(bio)) {
@@ -780,9 +789,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
     /* Writing the packet body */
     band = res->bands;
-    for (bandno = 0; bandno < res->numbands; bandno++) {
-        opj_tcd_precinct_t *prc = &band->precincts[precno];
+    for (bandno = 0; bandno < res->numbands; bandno++, ++band) {
+        opj_tcd_precinct_t *prc;
 
+        /* Skip empty bands */
+        if (opj_tcd_is_band_empty(band)) {
+            continue;
+        }
+
+        prc = &band->precincts[precno];
         l_nb_blocks = prc->cw * prc->ch;
         cblk = prc->cblks.enc;
 
@@ -815,7 +830,6 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
             ++cblk;
             /* INDEX >> */
         }
-        ++band;
     }
 
     assert(c >= dest);
@@ -902,7 +916,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
         /* reset tagtrees */
         for (bandno = 0; bandno < l_res->numbands; ++bandno) {
-            if (!((l_band->x1 - l_band->x0 == 0) || (l_band->y1 - l_band->y0 == 0))) {
+            if (!opj_tcd_is_band_empty(l_band)) {
                 opj_tcd_precinct_t *l_prc = &l_band->precincts[p_pi->precno];
                 if (!(p_pi->precno < (l_band->precincts_data_size / sizeof(
                                           opj_tcd_precinct_t)))) {
@@ -1011,11 +1025,10 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
     }
 
     l_band = l_res->bands;
-    for (bandno = 0; bandno < l_res->numbands; ++bandno) {
+    for (bandno = 0; bandno < l_res->numbands; ++bandno, ++l_band) {
         opj_tcd_precinct_t *l_prc = &(l_band->precincts[p_pi->precno]);
 
-        if ((l_band->x1 - l_band->x0 == 0) || (l_band->y1 - l_band->y0 == 0)) {
-            ++l_band;
+        if (opj_tcd_is_band_empty(l_band)) {
             continue;
         }
 
@@ -1101,8 +1114,6 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
             ++l_cblk;
         }
-
-        ++l_band;
     }
 
     if (!opj_bio_inalign(l_bio)) {

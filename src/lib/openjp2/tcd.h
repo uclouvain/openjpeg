@@ -375,6 +375,12 @@ OPJ_BOOL opj_tcd_copy_tile_data(opj_tcd_t *p_tcd,
  */
 OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec);
 
+/** Returns whether a sub-band is empty (i.e. whether it has a null area)
+ * @param band Sub-band handle.
+ * @return OPJ_TRUE whether the sub-band is empty.
+ */
+OPJ_BOOL opj_tcd_is_band_empty(opj_tcd_band_t* band);
+
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
