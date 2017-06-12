@@ -611,6 +611,7 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
     opj_tcd_resolution_t *res = &tilec->resolutions[resno];
 
     opj_bio_t *bio = 00;    /* BIO component */
+    OPJ_BOOL packet_empty = OPJ_TRUE;
 
     /* <SOP 0xff91> */
     if (tcp->csty & J2K_CP_CSTY_SOP) {
@@ -661,11 +662,42 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
         return OPJ_FALSE;
     }
     opj_bio_init_enc(bio, c, length);
-    opj_bio_write(bio, 1, 1);           /* Empty header bit */
+
+    /* Check if the packet is empty */
+    /* Note: we could also skip that step and always write a packet header */
+    band = res->bands;
+    for (bandno = 0; bandno < res->numbands; ++bandno, ++band) {
+        opj_tcd_precinct_t *prc;
+        /* Skip empty bands */
+        if (opj_tcd_is_band_empty(band)) {
+            continue;
+        }
+
+        prc = &band->precincts[precno];
+        l_nb_blocks = prc->cw * prc->ch;
+        cblk = prc->cblks.enc;
+        for (cblkno = 0; cblkno < l_nb_blocks; cblkno++, ++cblk) {
+            opj_tcd_layer_t *layer = &cblk->layers[layno];
+
+            /* if cblk not included, go to the next cblk  */
+            if (!layer->numpasses) {
+                continue;
+            }
+            packet_empty = OPJ_FALSE;
+            break;
+        }
+        if (!packet_empty) {
+            break;
+        }
+    }
+
+    opj_bio_write(bio, packet_empty ? 0 : 1, 1);           /* Empty header bit */
+
 
     /* Writing Packet header */
     band = res->bands;
-    for (bandno = 0; bandno < res->numbands; ++bandno, ++band)      {
+    for (bandno = 0; !packet_empty &&
+            bandno < res->numbands; ++bandno, ++band)      {
         opj_tcd_precinct_t *prc;
 
         /* Skip empty bands */
@@ -789,7 +821,7 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
     /* Writing the packet body */
     band = res->bands;
-    for (bandno = 0; bandno < res->numbands; bandno++, ++band) {
+    for (bandno = 0; !packet_empty && bandno < res->numbands; bandno++, ++band) {
         opj_tcd_precinct_t *prc;
 
         /* Skip empty bands */
