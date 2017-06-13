@@ -38,6 +38,8 @@
  */
 
 #include "opj_includes.h"
+#include "opj_common.h"
+
 
 /** @defgroup T2 T2 - Implementation of a tier-2 coding */
 /*@{*/
@@ -1276,7 +1278,8 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
 
 #endif /* USE_JPWL */
                 /* Check possible overflow on size */
-                if ((l_cblk->data_current_size + l_seg->newlen) < l_cblk->data_current_size) {
+                if ((l_cblk->data_current_size + l_seg->newlen + OPJ_COMMON_CBLK_DATA_EXTRA) <
+                        l_cblk->data_current_size) {
                     opj_event_msg(p_manager, EVT_ERROR,
                                   "read: segment too long (%d) with current size (%d > %d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                   l_seg->newlen, l_cblk->data_current_size, 0xFFFFFFFF - l_seg->newlen, cblkno,
@@ -1284,9 +1287,10 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                     return OPJ_FALSE;
                 }
                 /* Check if the cblk->data have allocated enough memory */
-                if ((l_cblk->data_current_size + l_seg->newlen) > l_cblk->data_max_size) {
+                if ((l_cblk->data_current_size + l_seg->newlen + OPJ_COMMON_CBLK_DATA_EXTRA) >
+                        l_cblk->data_max_size) {
                     OPJ_BYTE* new_cblk_data = (OPJ_BYTE*) opj_realloc(l_cblk->data,
-                                              l_cblk->data_current_size + l_seg->newlen);
+                                              l_cblk->data_current_size + l_seg->newlen + OPJ_COMMON_CBLK_DATA_EXTRA);
                     if (! new_cblk_data) {
                         opj_free(l_cblk->data);
                         l_cblk->data = NULL;
@@ -1294,7 +1298,8 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                         /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to realloc code block cata!\n"); */
                         return OPJ_FALSE;
                     }
-                    l_cblk->data_max_size = l_cblk->data_current_size + l_seg->newlen;
+                    l_cblk->data_max_size = l_cblk->data_current_size + l_seg->newlen +
+                                            OPJ_COMMON_CBLK_DATA_EXTRA;
                     l_cblk->data = new_cblk_data;
                 }
 

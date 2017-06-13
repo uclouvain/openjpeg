@@ -207,7 +207,6 @@ typedef unsigned int OPJ_BITFIELD;
 #include "jp2.h"
 
 #include "mqc.h"
-#include "raw.h"
 #include "bio.h"
 
 #include "pi.h"

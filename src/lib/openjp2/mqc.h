@@ -38,6 +38,9 @@
 
 #ifndef __MQC_H
 #define __MQC_H
+
+#include "opj_common.h"
+
 /**
 @file mqc.h
 @brief Implementation of an MQ-Coder (MQC)
@@ -69,15 +72,26 @@ typedef struct opj_mqc_state {
 MQ coder
 */
 typedef struct opj_mqc {
+    /** temporary buffer where bits are coded or decoded */
     OPJ_UINT32 c;
+    /** only used by MQ decoder */
     OPJ_UINT32 a;
+    /** number of bits already read or free to write */
     OPJ_UINT32 ct;
+    /** pointer to the current position in the buffer */
     OPJ_BYTE *bp;
+    /** pointer to the start of the buffer */
     OPJ_BYTE *start;
+    /** pointer to the end of the buffer */
     OPJ_BYTE *end;
+    /** Array of contexts */
     opj_mqc_state_t *ctxs[MQC_NUMCTXS];
+    /** Active context */
     opj_mqc_state_t **curctx;
-    const OPJ_BYTE *lut_ctxno_zc_orient; /* lut_ctxno_zc shifted by 256 * bandno */
+    /* lut_ctxno_zc shifted by (1 << 9) * bandno */
+    const OPJ_BYTE* lut_ctxno_zc_orient;
+    /** Original value of the 2 bytes at end[0] and end[1] */
+    OPJ_BYTE backup[OPJ_COMMON_CBLK_DATA_EXTRA];
 } opj_mqc_t;
 
 #include "mqc_inl.h"
@@ -85,16 +99,7 @@ typedef struct opj_mqc {
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
-/**
-Create a new MQC handle
-@return Returns a new MQC handle if successful, returns NULL otherwise
-*/
-opj_mqc_t* opj_mqc_create(void);
-/**
-Destroy a previously created MQC handle
-@param mqc MQC handle to destroy
-*/
-void opj_mqc_destroy(opj_mqc_t *mqc);
+
 /**
 Return the number of bytes written/read since initialisation
 @param mqc MQC handle
@@ -196,19 +201,66 @@ SEGMARK mode switch (SEGSYM)
 @param mqc MQC handle
 */
 void opj_mqc_segmark_enc(opj_mqc_t *mqc);
+
 /**
-Initialize the decoder
+Initialize the decoder for MQ decoding.
+
+opj_mqc_finish_dec() must be absolutely called after finishing the decoding
+passes, so as to restore the bytes temporarily overwritten.
+
 @param mqc MQC handle
 @param bp Pointer to the start of the buffer from which the bytes will be read
+          Note that OPJ_COMMON_CBLK_DATA_EXTRA bytes at the end of the buffer
+          will be temporarily overwritten with an artificial 0xFF 0xFF marker.
+          (they will be backuped in the mqc structure to be restored later)
+          So bp must be at least len + OPJ_COMMON_CBLK_DATA_EXTRA large, and
+          writable.
 @param len Length of the input buffer
+@param extra_writable_bytes Indicate how many bytes after len are writable.
+                            This is to indicate your consent that bp must be
+                            large enough.
 */
-OPJ_BOOL opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len);
+void opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len,
+                      OPJ_UINT32 extra_writable_bytes);
+
+/**
+Initialize the decoder for RAW decoding.
+
+opj_mqc_finish_dec() must be absolutely called after finishing the decoding
+passes, so as to restore the bytes temporarily overwritten.
+
+@param mqc MQC handle
+@param bp Pointer to the start of the buffer from which the bytes will be read
+          Note that OPJ_COMMON_CBLK_DATA_EXTRA bytes at the end of the buffer
+          will be temporarily overwritten with an artificial 0xFF 0xFF marker.
+          (they will be backuped in the mqc structure to be restored later)
+          So bp must be at least len + OPJ_COMMON_CBLK_DATA_EXTRA large, and
+          writable.
+@param len Length of the input buffer
+@param extra_writable_bytes Indicate how many bytes after len are writable.
+                            This is to indicate your consent that bp must be
+                            large enough.
+*/
+void opj_mqc_raw_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len,
+                          OPJ_UINT32 extra_writable_bytes);
+
+
+/**
+Terminate RAW/MQC decoding
+
+This restores the bytes temporarily overwritten by opj_mqc_init_dec()/
+opj_mqc_raw_init_dec()
+
+@param mqc MQC handle
+*/
+void opq_mqc_finish_dec(opj_mqc_t *mqc);
+
 /**
 Decode a symbol
 @param mqc MQC handle
 @return Returns the decoded symbol (0 or 1)
 */
-static INLINE OPJ_INT32 opj_mqc_decode(opj_mqc_t * const mqc);
+/*static INLINE OPJ_UINT32 opj_mqc_decode(opj_mqc_t * const mqc);*/
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
