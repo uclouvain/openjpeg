@@ -20,7 +20,172 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 53d46fc7330ed652db66aa37b498fbfa27be625c
+<pre class='wrap'>commit 9cbc9903c3034d1a101d0521402503ead0abcff0
+Merge: 2609fb8 9a9b069
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-13 12:09:52 +0200
+
+    Merge branch 't1_flag_optimizations'
+
+commit 2609fb8077125b5b31f1bcc2f98c12ff1e6572d7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-12 17:15:23 +0100
+
+    Packet header writing: set empty packet header bit to 0 when appropriate (small optimization)
+
+commit 73d1510d473b7dcfccfdee57e0e511e6791d5091
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-12 11:23:55 +0100
+
+    Encoder: fix packet writing of empty sub-bands (#891, #892)
+    
+    There are situations where, given a tile size, at a resolution level,
+    there are sub-bands with x0==x1 or y0==y1, that consequently don't have any
+    valid codeblocks, but the other sub-bands may be non-empty.
+    Given that we recycle the memory from one tile to another one, those
+    ghost codeblocks might be non-0 and thus candidate for packet inclusion.
+
+commit 81c5311758a0ae1f1aea349a6ee0bca2a238fa79
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-09 10:47:13 +0200
+
+    T1: fix BYPASS/LAZY, TERMALL/RESTART and PTERM/ERTERM encoding modes. (#674)
+    
+    There were a number of defects regarding when and how the termination of
+    passes had to done and the computation of their rate.
+
+commit 9a9b06911e164bdc854cf6b9c3bc5b6e751bf46d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-02 19:22:15 +0200
+
+    opj_t1_dec_sigpass_raw/opj_t1_dec_refpass_raw: harmonize style with mqc methods
+
+commit 532243f1fd9997db63ea7f6b199d21138ccf58a3
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-02 16:49:26 +0200
+
+    MQC/RAW decoder: use an artificial 0xFF 0xFF terminating marker.
+    
+    This saves comparing the current pointer with the end of buffer pointer.
+    This results at least in tiny speed improvement for raw decoding, and
+    smaller code size for MQC as well.
+    
+    This kills the remains of the raw.h/.c files that were only used for
+    decoding. Encoding using the mqc structure already.
+
+commit 9b39fc4bccb3e9e4e9a9f61c4dc672fb7f05d865
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-02 14:32:12 +0200
+
+    Fix documentation of opj_t1_decode_cblks()
+
+commit dde6cbabc0cb93102c2091c15d11dec1267d0fd8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-02 14:25:57 +0200
+
+    Simplify VSC handling: instead of masking out bits when reading the 4th row.
+    
+    Do not set them when updating flags of the 1st row
+
+commit 3d9940a35b8c566c1fb41db56018c91b511a976a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-02 11:52:16 +0200
+
+    Force inlining of mqc decoding and pass steps through heavy use of macros, so as to get better register allocation
+
+commit 7e8b502842075738c9a062a2f06dace3f35dd7cd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-02 09:36:25 +0200
+
+    t1_generate_luts.c: fix compiler warnings
+
+commit 2ba861c37cb5032d1fa90a7c9298f6e08a0f5413
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-01 19:42:03 +0200
+
+    Optimize opj_t1_update_flags()
+
+commit a0861855c11bcb8c93f399ca51e766b5c8ef9e33
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-01 17:02:50 +0200
+
+    T1: remove use of neghalf variable. It is useless since bpno is always &gt; 0
+
+commit 10410fe72ec2d20f2bbdfb68a383bce1df17f35d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-01 11:15:25 +0200
+
+    T1: avoid pointer indirection for mqc and raw members of opj_t1_t
+
+commit a5003787ffdbc4fb4a9b4e18187e9f69c36b9e9b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-01 10:23:30 +0200
+
+    T1: remove flags_stride variable from opj_t1_t
+
+commit 0ec842e1f1e6ebc80df5308cab457372456b204d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-31 19:45:03 +0200
+
+    Inline opj_raw_decode()
+
+commit aa7a8a4398b3792b4a52fb443d49d317a9a4984f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-31 17:15:27 +0200
+
+    T1: loop unrolling in dec_sigpass_raw and dec_refpass_raw
+
+commit 68557ff5036e68112bcbf194d2a7f48b1f58b752
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-31 14:35:56 +0200
+
+    T1: Transpose coder optimizations to decoder, and cleanup code
+
+commit 1957a498b68af12bfa8d382f96e54f8403bb2fb6
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-23 14:55:45 +0200
+
+    Fix compiler warnings
+
+commit 40c0f42def262ed76e2f0048d09aab9e0ee1af02
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-23 13:02:24 +0200
+
+    Factor index computation for lut_enc_ctxno_sc and lut_enc_spb
+
+commit d6907b93044108aacc6ab9281a7a9ab48546824c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-23 00:40:30 +0200
+
+    Optimize a bit opj_t1_enc_clnpass()
+
+commit c76a59213100bbec567a0c78b7b1b8ba82d1e1fa
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-22 23:30:30 +0200
+
+    T1: remove unused code in decoder
+
+commit 4068363ff5021608180f712823db55d9c0a551e6
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-22 18:42:46 +0200
+
+    T1: fix VSC mode in encoder
+
+commit cd12414c6b11295ae8540df2ef77eb9c624cd264
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-05-20 14:05:07 +0200
+
+    T1: use more compact flags to optimize cache usage in encoder passes. (#172)
+    
+    Ported from Carl Hetherington work (actually through Matthieu Darbois's port
+    on top of OpenJPEG 2.1.0)
+    
+    Can reduce total encoding time by 10-15%
+    
+    WARNING: VSC mode is not implemented, and so is a temporary regression
+    that must be fixed.
+
+commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-23 16:15:55 +0200
@@ -640,20 +805,6 @@ Date:   2016-08-06 13:04:56 +0200
 
     Update to lcms 2.8 (#808)
 
-commit 1509ccc51f8de0523821ffd2f3d1946b10e49614
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-08-06 12:51:40 +0200
-
-    Update to libpng 1.6.24 (#807)
-
-commit 5bb919a30e77ee2c96984883fe2cfb714b62bddc
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-08-06 12:26:46 +0200
-
-    Reenable clang-3.9 build on travis (#806)
-    
-    clang-3.9 is now available with apt add-on in travis-ci
-
 commit 54874194a88997c2492fe1206203047739266dff
 Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
 Date:   2016-07-27 10:09:54 +0200
@@ -671,155 +822,6 @@ Date:   2016-07-25 20:46:11 +0200
     uint32_t is defined as unsigned long in &lt;stdint.h&gt;. The definition of
     bit-fields with an integer type of  a specific size doesn't make sense
     anyway.
-
-commit b8bd1b0e07cf427b80eb0dc6823efebbdd1b8e5b
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-07-14 11:06:26 +0200
-
-    Add compilation test for standalone inclusion of openjpeg.h (#798)
-    
-    This ensures all openjpeg.h dependencies are met.
-    Fix #673
-
-commit e40c28c2e89c30ebb682fe2fabef10930e039c1f
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-07-14 10:49:17 +0200
-
-    jpwl: Remove non-portable data type u_int16_t (fix issue #796) (#797)
-    
-    The type casts which used this data type can be removed by changing
-    the signature of function swap16. As this function is called with
-    unsigned variables, this change is reasonable.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 18da6155b2b69472d36ef8b13fd82878966b451c
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-07-12 00:45:51 +0200
-
-    Fix dependency for pkg-config (issue #594) (#795)
-    
-    openjpeg provides libopenjp2.pc, so the require statements must refer to
-    libopenjp2 instead of openjp2.
-    Fixes #594
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit b3c422654fe847b765b7f2f1d662e43bac1a682c
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-07-06 00:26:37 +0200
-
-    Update ABI tracker script
-    
-    Disable previous version.
-
-commit 9db62b20111198429c4fa9650dda16e1ee326f3c
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-07-05 23:53:31 +0200
-
-    Update ABI tracker from 2.1 to 2.1.1
-
-commit 7948d83340e19f8520b4d1dc87a03fcc9613732e
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-07-05 23:33:00 +0200
-
-    update api/abi tracker
-
-commit 132c4a248b53510466381e348e45f52e1f5f4afd
-Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-07-05 22:12:11 +0200
-
-    Add version 2.1.1 to ABI tracker
-
-commit ed294598eacda0664ec8ebfa843ae242036f21f8
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-07-05 18:10:35 +0200
-
-    Trigger API/ABI update on website
-
-commit fef144283f070e24a0a8f9e86158ec6353e99cf1
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-07-05 16:49:10 +0200
-
-    Update INSTALL.md
-
-commit 4c5a1cc82584e263103fc48c8bd729985199c147
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-07-05 16:40:27 +0200
-
-    Update AUTHORS.md
-
-commit 7d3c7a345f05adbc9ca26d8ca7f6c7fffa5096be
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-26 23:51:32 +0200
-
-    Be robust to failed allocations of job structures
-
-commit 69497d35c0e35a1f9b789d016e9eb4946b8f0fab
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-25 21:39:21 +0200
-
-    opj_decompress: use clock_gettime() instead of getrusage() so as to get the time spent, and not to the total CPU time
-
-commit d67cd2220a291b54718f731052be4a9397f67077
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-25 19:08:04 +0200
-
-    opj_decompress: add a -threads &lt;num_threads&gt; option
-
-commit e3eb0a206d66cc873eccb57fc12a0497de400aca
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-25 18:39:41 +0200
-
-    .travis.yml: add a conf with OPJ_NUM_THREADS=2
-
-commit 57b216bb587aa7eba13afbbfd6a1fe5f04201b61
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-25 18:07:15 +0200
-
-    Use thread pool for DWT decoding
-
-commit 5fbb8b2645a085391b070162d8551aa960caab6a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-25 16:38:44 +0200
-
-    Use thread-pool for T1 decoding
-
-commit d4b7f03cfa4732132767188782683f3d957da912
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-25 16:36:47 +0200
-
-    Add opj_codec_set_threads() in public API and propagate resulting thread pool to tcd level
-    
-    By default, only the main thread is used. If opj_codec_set_threads() is not used,
-    but the OPJ_NUM_THREADS environment variable is set, its value will be
-    used to initialize the number of threads. The value can be either an integer
-    number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is called,
-    this function will override the behaviour of the environment variable.
-
-commit 54179fe1d53156c6b440166fe71a10f238a6ea56
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-25 16:34:52 +0200
-
-    Add threading and thread pool API
-
-commit 7092f7ea112fcc44e7426c462bf01a406b076620
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-23 16:00:04 +0200
-
-    Fix MSVC210 build issue (use of C99 declaration after statement) introduced in ba1edf6cd41415594729bc90ad3b0008af48251e
-
-commit 107eb31531ca688e2799406e69e9383efc13448f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-23 13:45:15 +0200
-
-    Improve perf of opj_t1_dec_sigpass_mqc_vsc() and opj_t1_dec_refpass_mqc_vsc() with loop unrolling
-
-commit 8371491a9968a31ce16d6ce37b775ef3c7d090c8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2016-05-23 11:44:54 +0200
-
-    Better inlining of opj_t1_updateflagscolflags() w.r.t. flags_stride
 
 ...</pre></div>
 
