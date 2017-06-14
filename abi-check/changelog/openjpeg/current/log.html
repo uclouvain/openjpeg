@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9cbc9903c3034d1a101d0521402503ead0abcff0
+<pre class='wrap'>commit 36dd87cea80ad56e0e3178221aa579a28f02a549
+Merge: 9cbc990 5f1e380
+Author: Antonin Descampe &lt;antonin@descampe.net&gt;
+Date:   2017-06-14 17:23:06 +0200
+
+    Merge pull request #928 from RussellMcOrmond/master
+    
+    Quiet mode for opj_decompress via -quiet long parameter.
+
+commit 9cbc9903c3034d1a101d0521402503ead0abcff0
 Merge: 2609fb8 9a9b069
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-13 12:09:52 +0200
@@ -222,6 +231,18 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-23 13:54:28 +0200
 
     t1.c: fix compiler warnings
+
+commit 5f1e380b5155577864a84c1e64f213b6d9f83334
+Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
+Date:   2017-05-16 09:31:07 -0400
+
+    Fixed formatting issues ASTYLE
+
+commit 9d8e1ecdeb99b1e4b4ffd19feb152c88fe4f83ba
+Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
+Date:   2017-05-15 14:39:54 -0400
+
+    Quiet mode for opj_decompress via -quiet long parameter.
 
 commit 83d7a6d4a44833e78321bfd367dc0f822a8d0945
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -798,30 +819,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-08-11 21:50:46 +0200
 
     [Win32] Use _beginthreadex instead of CreateThread()
-
-commit 4a2a8693e5a02207a8813b02a375abdc4e43c49b
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-08-06 13:04:56 +0200
-
-    Update to lcms 2.8 (#808)
-
-commit 54874194a88997c2492fe1206203047739266dff
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2016-07-27 10:09:54 +0200
-
-    Unified bit-field declaration, removed tabs.
-
-commit d2d35bf6c2119cd39a298f57b03bf9e17d36946b
-Author: Stephan Mühlstrasser &lt;stephan.muehlstrasser@web.de&gt;
-Date:   2016-07-25 20:46:11 +0200
-
-    Create separate type for bit-fields.
-    
-    The definition of bit-fields with type OPJ_UINT32 caused complilation errors
-    on IBM iSeries, because OPJ_UINT32 is defined as uint32_t, and
-    uint32_t is defined as unsigned long in &lt;stdint.h&gt;. The definition of
-    bit-fields with an integer type of  a specific size doesn't make sense
-    anyway.
 
 ...</pre></div>
 
