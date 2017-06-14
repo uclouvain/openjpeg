@@ -150,6 +150,8 @@ typedef struct opj_decompress_params {
     int split_pnm;
     /** number of threads */
     int num_threads;
+    /* Quiet */
+    int quiet;
 } opj_decompress_parameters;
 
 /* -------------------------------------------------------------------------- */
@@ -552,7 +554,8 @@ int parse_cmdline_decoder(int argc, char **argv,
         {"force-rgb", NO_ARG,  NULL, 1},
         {"upsample",  NO_ARG,  NULL, 1},
         {"split-pnm", NO_ARG,  NULL, 1},
-        {"threads",   REQ_ARG, NULL, 'T'}
+        {"threads",   REQ_ARG, NULL, 'T'},
+        {"quiet", NO_ARG,  NULL, 1},
     };
 
     const char optlist[] = "i:o:r:l:x:d:t:p:"
@@ -567,6 +570,7 @@ int parse_cmdline_decoder(int argc, char **argv,
     long_option[2].flag = &(parameters->force_rgb);
     long_option[3].flag = &(parameters->upsample);
     long_option[4].flag = &(parameters->split_pnm);
+    long_option[6].flag = &(parameters->quiet);
     totlen = sizeof(long_option);
     opj_reset_options_reading();
     img_fol->set_out_format = 0;
@@ -830,8 +834,10 @@ int parse_cmdline_decoder(int argc, char **argv,
                 token = strtok(NULL, ",");
             };
             parameters->jpwl_correct = OPJ_TRUE;
-            fprintf(stdout, "JPWL correction capability activated\n");
-            fprintf(stdout, "- expecting %d components\n", parameters->jpwl_exp_comps);
+            if (!(parameter->quiet)) {
+                fprintf(stdout, "JPWL correction capability activated\n");
+                fprintf(stdout, "- expecting %d components\n", parameters->jpwl_exp_comps);
+            }
         }
         break;
 #endif /* USE_JPWL */
@@ -975,6 +981,12 @@ static void info_callback(const char *msg, void *client_data)
 {
     (void)client_data;
     fprintf(stdout, "[INFO] %s", msg);
+}
+/**
+sample quiet callback expecting no client object
+*/
+static void quiet_callback(const char *msg, void *client_data)
+{
 }
 
 static void set_default_parameters(opj_decompress_parameters* parameters)
@@ -1293,6 +1305,7 @@ int main(int argc, char **argv)
         goto fin;
     }
 
+
     /* Initialize reading of directory */
     if (img_fol.set_imgdir == 1) {
         int it_image;
@@ -1325,7 +1338,7 @@ int main(int argc, char **argv)
             goto fin;
         }
         if (num_images == 0) {
-            fprintf(stdout, "Folder is empty\n");
+            fprintf(stderr, "Folder is empty\n");
             failed = 1;
             goto fin;
         }
@@ -1383,10 +1396,18 @@ int main(int argc, char **argv)
             continue;
         }
 
-        /* catch events using our callbacks and give a local context */
-        opj_set_info_handler(l_codec, info_callback, 00);
-        opj_set_warning_handler(l_codec, warning_callback, 00);
-        opj_set_error_handler(l_codec, error_callback, 00);
+        if (parameters.quiet) {
+            /* Set all callbacks to quiet */
+            opj_set_info_handler(l_codec, quiet_callback, 00);
+            opj_set_warning_handler(l_codec, quiet_callback, 00);
+            opj_set_error_handler(l_codec, quiet_callback, 00);
+        } else {
+            /* catch events using our callbacks and give a local context */
+            opj_set_info_handler(l_codec, info_callback, 00);
+            opj_set_warning_handler(l_codec, warning_callback, 00);
+            opj_set_error_handler(l_codec, error_callback, 00);
+        }
+
 
         t = opj_clock();
 
@@ -1460,7 +1481,9 @@ int main(int argc, char **argv)
                 failed = 1;
                 goto fin;
             }
-            fprintf(stdout, "tile %d is decoded!\n\n", parameters.tile_index);
+            if (!(parameters.quiet)) {
+                fprintf(stdout, "tile %d is decoded!\n\n", parameters.tile_index);
+            }
         }
 
         tCumulative += opj_clock() - t;
@@ -1574,7 +1597,7 @@ int main(int argc, char **argv)
             if (imagetopnm(image, parameters.outfile, parameters.split_pnm)) {
                 fprintf(stderr, "[ERROR] Outfile %s not generated\n", parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1583,7 +1606,7 @@ int main(int argc, char **argv)
             if (imagetopgx(image, parameters.outfile)) {
                 fprintf(stderr, "[ERROR] Outfile %s not generated\n", parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1592,7 +1615,7 @@ int main(int argc, char **argv)
             if (imagetobmp(image, parameters.outfile)) {
                 fprintf(stderr, "[ERROR] Outfile %s not generated\n", parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1601,7 +1624,7 @@ int main(int argc, char **argv)
             if (imagetotif(image, parameters.outfile)) {
                 fprintf(stderr, "[ERROR] Outfile %s not generated\n", parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1611,7 +1634,7 @@ int main(int argc, char **argv)
                 fprintf(stderr, "[ERROR] Error generating raw file. Outfile %s not generated\n",
                         parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1622,7 +1645,7 @@ int main(int argc, char **argv)
                         "[ERROR] Error generating rawl file. Outfile %s not generated\n",
                         parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1632,7 +1655,7 @@ int main(int argc, char **argv)
                 fprintf(stderr, "[ERROR] Error generating tga file. Outfile %s not generated\n",
                         parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1642,7 +1665,7 @@ int main(int argc, char **argv)
                 fprintf(stderr, "[ERROR] Error generating png file. Outfile %s not generated\n",
                         parameters.outfile);
                 failed = 1;
-            } else {
+            } else if (!(parameters.quiet)) {
                 fprintf(stdout, "[INFO] Generated Outfile %s\n", parameters.outfile);
             }
             break;
@@ -1685,7 +1708,7 @@ fin:
         }
         free(dirptr);
     }
-    if (numDecompressedImages) {
+    if (numDecompressedImages && !(parameters.quiet)) {
         fprintf(stdout, "decode time: %d ms\n",
                 (int)((tCumulative * 1000.0) / (OPJ_FLOAT64)numDecompressedImages));
     }
