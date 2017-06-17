@@ -345,7 +345,7 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
                                 flagsp[-1], flagsp[1],
                                 ci);
             OPJ_UINT32 ctxt2 = opj_t1_getctxno_sc(lu);
-            v = *datap < 0 ? 1 : 0;
+            v = *datap < 0 ? 1U : 0U;
             *nmsedec += opj_t1_getnmsedec_sig((OPJ_UINT32)opj_int_abs(*datap),
                                               (OPJ_UINT32)bpno);
 #ifdef DEBUG_ENC_SIG
@@ -1077,7 +1077,7 @@ LABEL_PARTIAL:
 #endif
                 opj_mqc_setcurctx(mqc, ctxt2);
 
-                v = *datap < 0 ? 1 : 0;
+                v = *datap < 0 ? 1U : 0U;
                 spb = opj_t1_getspb(lu);
 #ifdef DEBUG_ENC_CLN
                 printf("   spb=%d\n", spb);
@@ -1256,21 +1256,21 @@ static void opj_t1_enc_clnpass(
                                             l_w, 0, mqc, curctx, \
                                             v, a, c, ct, oneplushalf, vsc); \
                         partial = OPJ_FALSE; \
-                        /* falltrough */ \
+                        /* FALLTHRU */ \
                     case 1: \
                         opj_t1_dec_clnpass_step_macro(OPJ_FALSE, partial,\
                                             flags, flagsp, flags_stride, data, \
                                             l_w, 1, mqc, curctx, \
                                             v, a, c, ct, oneplushalf, OPJ_FALSE); \
                         partial = OPJ_FALSE; \
-                        /* falltrough */ \
+                        /* FALLTHRU */ \
                     case 2: \
                         opj_t1_dec_clnpass_step_macro(OPJ_FALSE, partial,\
                                             flags, flagsp, flags_stride, data, \
                                             l_w, 2, mqc, curctx, \
                                             v, a, c, ct, oneplushalf, OPJ_FALSE); \
                         partial = OPJ_FALSE; \
-                        /* falltrough */ \
+                        /* FALLTHRU */ \
                     case 3: \
                         opj_t1_dec_clnpass_step_macro(OPJ_FALSE, partial,\
                                             flags, flagsp, flags_stride, data, \
