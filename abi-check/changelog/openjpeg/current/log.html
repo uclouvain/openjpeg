@@ -20,7 +20,27 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 32b20b93e04d38303f736e975eb5f483fda01ca5
+<pre class='wrap'>commit 5c56933daf1da88aa6f2a8c8dc5fcc7b1d76cb00
+Merge: 32b20b9 8df2521
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-06-18 00:49:20 +0200
+
+    Merge pull request #955 from rouault/remove_opj_nosanitize
+    
+    Remove OPJ_NOSANITIZE in opj_bio_read() and opj_bio_write() (#761)
+
+commit 8df2521a6015af7f69a378811986ddb0b3bfbd3a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-17 19:15:00 +0200
+
+    Remove OPJ_NOSANITIZE in opj_bio_read() and opj_bio_write() (#761)
+    
+    Commit 29313eb5 introduced those flags to avoid issues with
+    -fsanitize=unsigned-integer-overflow
+    However it is better just to rewrite the loop to avoid such condition
+    to occur.
+
+commit 32b20b93e04d38303f736e975eb5f483fda01ca5
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-17 16:37:56 +0200
 
@@ -795,24 +815,6 @@ Date:   2016-09-06 01:31:15 +0200
     
     In case multiple ihdr box are present, only the first one shall be
     taken into account.
-
-commit ccd9ced49ea66f31b1d3d9dd07f4438fa94db328
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-06 00:50:44 +0200
-
-    Add overflow check in opj_j2k_update_image_data (#817)
-
-commit 9f24b078c7193e886f6cfb329d3469eb1facf68d
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-06 00:49:53 +0200
-
-    Change 'restrict' define to 'OPJ_RESTRICT' (#816)
-    
-    Visual Studio 2015 does not pass regression tests with `__restrict` so kept disabled for MSVC.
-    Need to check proper usage of OPJ_RESTRICT (if correct then there’s
-    probably a bug  in vc14)
-    
-    Closes #661
 
 ...</pre></div>
 
