@@ -1182,10 +1182,10 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
                 switch (j) {
                 case 3:
                     aj[k + (OPJ_INT32)w * 2] = h.wavelet[k].f[2];
-                    /* FALLTHRU */
+                /* FALLTHRU */
                 case 2:
                     aj[k + (OPJ_INT32)w  ] = h.wavelet[k].f[1];
-                    /* FALLTHRU */
+                /* FALLTHRU */
                 case 1:
                     aj[k               ] = h.wavelet[k].f[0];
                 }
