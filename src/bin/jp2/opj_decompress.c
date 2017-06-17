@@ -987,6 +987,8 @@ sample quiet callback expecting no client object
 */
 static void quiet_callback(const char *msg, void *client_data)
 {
+    (void)msg;
+    (void)client_data;
 }
 
 static void set_default_parameters(opj_decompress_parameters* parameters)
