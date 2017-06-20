@@ -253,6 +253,7 @@ if(BUILD_JPIP_SERVER)
 endif()
 add_subdirectory(src/lib)
 option(BUILD_LUTS_GENERATOR "Build utility to generate t1_luts.h" OFF)
+option(BUILD_BENCH_DWT "Build bench_dwt utility (development benchmark)" OFF)
 
 #-----------------------------------------------------------------------------
 # Build Applications
