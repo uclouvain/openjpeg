@@ -38,16 +38,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <assert.h>
+
+#define OPJ_SKIP_POISON
+#include "opj_includes.h"
+
 #ifdef __SSE__
 #include <xmmintrin.h>
 #endif
 #ifdef __SSE2__
 #include <emmintrin.h>
 #endif
+#ifdef __SSSE3__
+#include <tmmintrin.h>
+#endif
 
-#include <assert.h>
-
-#include "opj_includes.h"
+#if defined(__GNUC__)
+#pragma GCC poison malloc calloc realloc free
+#endif
 
 /** @defgroup DWT DWT - Implementation of a discrete wavelet transform */
 /*@{*/
@@ -668,15 +676,13 @@ static void opj_idwt53_v_cas1_8cols_SSE2(
 
     s1_0 = LOADU(in_even + stride);
     /* in_odd[0] - ((in_even[0] + s1 + 2) >> 2); */
-    dc_0 = _mm_sub_epi32(
-               LOADU(in_odd + 0),
+    dc_0 = SUB(LOADU(in_odd + 0),
                SAR(ADD3(LOADU(in_even + 0), s1_0, two), 2));
     STORE(tmp + PARALLEL_COLS_53 * 0, ADD(LOADU(in_even + 0), dc_0));
 
     s1_1 = LOADU(in_even + stride + 4);
     /* in_odd[0] - ((in_even[0] + s1 + 2) >> 2); */
-    dc_1 = _mm_sub_epi32(
-               LOADU(in_odd + 4),
+    dc_1 = SUB(LOADU(in_odd + 4),
                SAR(ADD3(LOADU(in_even + 4), s1_1, two), 2));
     STORE(tmp + PARALLEL_COLS_53 * 0 + 4, ADD(LOADU(in_even + 4), dc_1));
 
