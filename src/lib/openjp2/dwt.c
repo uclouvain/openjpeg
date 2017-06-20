@@ -443,6 +443,88 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
     memcpy(tiledp, tmp, (OPJ_UINT32)len * sizeof(OPJ_INT32));
 }
 
+#if !defined(STANDARD_SLOW_VERSION) && defined(__SSE2__)
+static void  opj_idwt53_h_cas0_SSE2(OPJ_INT32* tmp,
+                                    const OPJ_INT32 sn,
+                                    const OPJ_INT32 len,
+                                    OPJ_INT32* tiledp)
+{
+    OPJ_INT32 i;
+    const OPJ_INT32* in_even = &tiledp[0];
+    const OPJ_INT32* in_odd = &tiledp[sn];
+    const __m128i two = _mm_set1_epi32(2);
+    const __m128i *ie_p = (const __m128i *)in_even;
+    const __m128i *io_p = (const __m128i *)in_odd;
+    __m128i *o_p  = (__m128i *)tmp;
+    __m128i d1c, d1n, s1n, s0c, s0n;
+    __m128i r0, r1;
+
+    assert((len > 1) && ((len & 7) == 0));
+
+    /* Initial load */
+    s1n = _mm_loadu_si128(ie_p++);
+    d1n = _mm_loadu_si128(io_p++);
+
+    /* Take one cycle of advance for 's' */
+    /* r0 = (d1n[2],d1n[1],d1n[0],d1n[0]) */
+    r0 = _mm_shuffle_epi32(d1n, _MM_SHUFFLE(2, 1, 0, 0));
+    r1 = _mm_add_epi32(d1n, two);
+    r0 = _mm_add_epi32(r0, r1);
+    s0n = _mm_sub_epi32(s1n, _mm_srai_epi32(r0, 2));
+
+    /* Main loop  */
+    for (i = 8; i < len; i += 8) {
+        /* Next cycle */
+        d1c = d1n;
+        s0c = s0n;
+
+        /* Load new data */
+        s1n = _mm_loadu_si128(ie_p++);
+        d1n = _mm_loadu_si128(io_p++);
+
+        /* Compute the next 's' */
+#ifdef __SSSE3__
+        /* r0 = (d1n[2],d1n[1],d1n[0],d1c[3]) */
+        r0 = _mm_alignr_epi8(d1n, d1c, 12);
+#else
+        r0 = _mm_or_si128(_mm_slli_si128(d1n,  4),
+                          _mm_srli_si128(d1c, 12));
+#endif
+        r1 = _mm_add_epi32(d1n, two);
+        r0 = _mm_add_epi32(r0, r1);
+        s0n = _mm_sub_epi32(s1n, _mm_srai_epi32(r0, 2));
+
+        /* Compute the current 'd' */
+#ifdef __SSSE3__
+        /* r0 = (s0n[3],s0c[2],s0c[2],s0c[1]) */
+        r0 = _mm_alignr_epi8(s0n, s0c, 4);
+#else
+        r0 = _mm_or_si128(_mm_slli_si128(s0n, 12),
+                          _mm_srli_si128(s0c,  4));
+#endif
+        r0 = _mm_add_epi32(r0, s0c);
+        r0 = _mm_add_epi32(d1c, _mm_srai_epi32(r0, 1));
+
+        /* Interlace and store */
+        _mm_store_si128(o_p++, _mm_unpacklo_epi32(s0c, r0));
+        _mm_store_si128(o_p++, _mm_unpackhi_epi32(s0c, r0));
+    }
+
+    /* Compute the last 'd' */
+    /* r0 = (s0n[3],s0n[3],s0n[2],s0n[1]) */
+    r0 = _mm_shuffle_epi32(s0n, _MM_SHUFFLE(3, 3, 2, 1));
+    r0 = _mm_add_epi32(r0, s0n);
+    r0 = _mm_add_epi32(d1n, _mm_srai_epi32(r0, 1));
+
+    /* Interlace and store */
+    _mm_store_si128(o_p++, _mm_unpacklo_epi32(s0n, r0));
+    _mm_store_si128(o_p++, _mm_unpackhi_epi32(s0n, r0));
+
+    memcpy(tiledp, tmp, (OPJ_UINT32)len * sizeof(OPJ_INT32));
+}
+
+#endif /* !defined(STANDARD_SLOW_VERSION) && defined(__SSE2__) */
+
 static void  opj_idwt53_h_cas1(OPJ_INT32* tmp,
                                const OPJ_INT32 sn,
                                const OPJ_INT32 len,
@@ -531,6 +613,12 @@ static void opj_idwt53_h(const opj_dwt_t *dwt,
     const OPJ_INT32 sn = dwt->sn;
     const OPJ_INT32 len = sn + dwt->dn;
     if (dwt->cas == 0) { /* Left-most sample is on even coordinate */
+#if __SSE2__
+        if (len > 1 && (len & 7) == 0) {
+            opj_idwt53_h_cas0_SSE2(dwt->mem, sn, len, tiledp);
+            return;
+        }
+#endif
         if (len > 1) {
             opj_idwt53_h_cas0(dwt->mem, sn, len, tiledp);
         } else {
