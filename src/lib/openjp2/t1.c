@@ -2152,7 +2152,7 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
         /* Prevent generation of FF as last data byte of a pass*/
         /* For terminating passes, the flushing procedure ensured this already */
         assert(pass->rate > 0);
-        if ((cblk->data[pass->rate - 1] == 0xFF)) {
+        if (cblk->data[pass->rate - 1] == 0xFF) {
             pass->rate--;
         }
         pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);
