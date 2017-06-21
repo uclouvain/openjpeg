@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5c56933daf1da88aa6f2a8c8dc5fcc7b1d76cb00
+<pre class='wrap'>commit cdd3e83bae71e1e023c4c2bdd5e52d082576e550
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-21 12:49:01 +0200
+
+    Fix clang warning about extraneous parentheses
+
+commit 5c56933daf1da88aa6f2a8c8dc5fcc7b1d76cb00
 Merge: 32b20b9 8df2521
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-06-18 00:49:20 +0200
@@ -806,15 +812,6 @@ Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
 Date:   2016-09-06 07:54:29 +0200
 
     Add overflow check in opj_tcd_init_tile (#819)
-
-commit d7e6b7de8a3860dd3135bfe49e0e1be2d9dba80f
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-06 01:31:15 +0200
-
-    Fix leak &amp; invalid behavior of opj_jp2_read_ihdr (#818)
-    
-    In case multiple ihdr box are present, only the first one shall be
-    taken into account.
 
 ...</pre></div>
 
