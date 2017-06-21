@@ -72,6 +72,14 @@ void * opj_aligned_realloc(void *ptr, size_t size);
 void opj_aligned_free(void* ptr);
 
 /**
+Allocate memory aligned to a 32 byte boundary
+@param size Bytes to allocate
+@return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
+*/
+void * opj_aligned_32_malloc(size_t size);
+void * opj_aligned_32_realloc(void *ptr, size_t size);
+
+/**
 Reallocate memory blocks.
 @param m Pointer to previously allocated memory block
 @param s New size in bytes
