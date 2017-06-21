@@ -935,7 +935,8 @@ OPJ_FLOAT64 opj_clock(void)
     /* cout << "freq = " << ((double) freq.QuadPart) << endl; */
     /* t is the high resolution performance counter (see MSDN) */
     QueryPerformanceCounter(& t) ;
-    return freq.QuadPart ? ((OPJ_FLOAT64)t.QuadPart / (OPJ_FLOAT64)freq.QuadPart) : 0;
+    return freq.QuadPart ? ((OPJ_FLOAT64)t.QuadPart / (OPJ_FLOAT64)freq.QuadPart) :
+           0;
 #elif defined(__linux)
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
