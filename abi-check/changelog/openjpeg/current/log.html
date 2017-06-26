@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 60267860698b86e215bee584857e6b4f2f08b693
+<pre class='wrap'>commit 533fa2fdee4f69a5d7bb8f0b1c0a8f432dad334f
+Merge: 6026786 4fe7620
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-06-26 12:45:34 +0200
+
+    Merge pull request #957 from rouault/idwt_53_improvements
+    
+    IDWT 5x3 single-pass lifting and SSE2/AVX2 implementation
+
+commit 60267860698b86e215bee584857e6b4f2f08b693
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-21 13:20:35 +0200
 
@@ -37,6 +46,56 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-21 12:49:01 +0200
 
     Fix clang warning about extraneous parentheses
+
+commit 4fe7620d4adc131c3ff93bb47bb8d138d69c9cbd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-21 12:28:51 +0200
+
+    .travis.yml: add a configuration to test compilation of AVX2 (but disable tests since Travis doesn't have AVX2 compatible machines)
+
+commit fd0dc535ad9ae0d369d1039aaf56235583ca64ea
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-21 12:12:58 +0200
+
+    IDWT 5x3: generalize SSE2 version for AVX2
+    
+    Thanks to our macros that abstract SSE use, the functions can use
+    AVX2 when available (at compile time)
+    
+    This brings an extra 23% speed improvement on bench_dwt in 64bit builds
+    with AVX2 compared to SSE2.
+
+commit f6e3475cc9328e5378e96e72b5adf29fb07c5feb
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-21 01:07:56 +0200
+
+    dwt.c: small cleanup
+
+commit f06cfadef8e2b1ad9008957cc6bc80a27c53f2eb
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-20 18:24:21 +0200
+
+    Enable __SSE__ / __SSE2__ with Visual Studio
+
+commit fa55b52d19f39765d7f108d654a8f87035a5772f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-20 17:56:25 +0200
+
+    Improve performance of inverse DWT 5x3 (#953)
+    
+    * Use single-pass lifting inverse wavelet transform.
+    * For vertical pass, use SSE2 when available so as to process 8 columns
+      in parallel. This is the most beneficial improvement, since the
+      vertical pass involves a lot of cache trashing.
+    
+    With the bench_dwt utility with default arguments (16383x16383 image),
+    time goes from 4.064 s to 1.212 s.
+
+commit 919ed5f8b8681aeae54ce3884b3ecca56cadc2e0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-06-20 17:56:19 +0200
+
+    Add bench_dwt program (compiled only if BUILD_BENCH_DWT=ON)
 
 commit 5c56933daf1da88aa6f2a8c8dc5fcc7b1d76cb00
 Merge: 32b20b9 8df2521
@@ -753,62 +812,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2016-09-08 09:43:36 +0200
 
     opj_thread_pool: fix potential deadlock at thread pool destruction
-
-commit ef01f18dfc6780b776d0674ed3e7415c6ef54d24
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-08 07:34:46 +0200
-
-    Cast to size_t before multiplication
-    
-    Need to cast to size_t before multiplication otherwise overflow check is useless.
-
-commit e078172b1c3f98d2219c37076b238fb759c751ea
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-08 00:24:15 +0200
-
-    Add sanity check for tile coordinates (#823)
-    
-    Coordinates are casted from OPJ_UINT32 to OPJ_INT32
-    Add sanity check for negative values and upper bound becoming lower
-    than lower bound.
-    See also
-    https://pdfium.googlesource.com/pdfium/+/b6befb2ed2485a3805cddea86dc7574510178ea9
-
-commit 8750e183c652de44d332e786842ca33182c375be
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2016-09-07 08:41:01 +0200
-
-    Moved type OPJ_BITFIELD from openjpeg.h to opj_includes.h
-    
-    OPJ_BITFIELD is used only in internal headers and must not
-    appear in the public openjpeg.h header.
-
-commit 6c83f1468c3ac4d8b031efb016aa075b36895aaf
-Merge: 5487419 c16bc05
-Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
-Date:   2016-09-07 08:35:19 +0200
-
-    Merge branch 'master' into bit-fields-type
-
-commit acfb307df43a811cc56c035d0dc651dac8c9e7de
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-07 00:00:21 +0200
-
-    Add test for PR 818 (#822)
-    
-    update uclouvain/openjpeg#818
-
-commit 275aad4df8620660a9bd10c52b01f3c710481464
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-06 22:33:45 +0200
-
-    Update to libpng 1.6.25 (#821)
-
-commit 734d57d5f7842aa7c2c9f36d62131ab4d8bd6c87
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-06 22:33:26 +0200
-
-    fix incrementing of "l_tcp-&gt;m_nb_mcc_records" in opj_j2k_read_mcc (#820)
 
 ...</pre></div>
 
