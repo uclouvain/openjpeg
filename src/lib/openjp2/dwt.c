@@ -685,9 +685,9 @@ static void opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2(
         s1n_0 = LOADU(in_even + ((len - 1) / 2) * stride);
         /* tmp_len_minus_1 = s1n - ((d1n + 1) >> 1); */
         tmp_len_minus_1 = SUB(s1n_0, SAR(ADD3(d1n_0, d1n_0, two), 2));
-        STORE(tmp + 8 * (len - 1), tmp_len_minus_1);
+        STORE(tmp + PARALLEL_COLS_53 * (len - 1), tmp_len_minus_1);
         /* d1n + ((s0n + tmp_len_minus_1) >> 1) */
-        STORE(tmp + 8 * (len - 2),
+        STORE(tmp + PARALLEL_COLS_53 * (len - 2),
               ADD(d1n_0, SAR(ADD(s0n_0, tmp_len_minus_1), 1)));
 
         s1n_1 = LOADU(in_even + ((len - 1) / 2) * stride + VREG_INT_COUNT);
