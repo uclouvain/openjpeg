@@ -142,6 +142,15 @@ elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
 			OPJ_CC_VERSION=vs????
 		fi
 	fi
+	if [ "${OPJ_CI_INSTRUCTION_SETS-:}" == "/arch:AVX2" ]; then
+		cl $PWD/tools/travis-ci/detect-avx2.c
+		if ./detect-avx2.exe; then
+			echo "AVX2 available on CPU"
+		else
+			echo "AVX2 not available on CPU. Disabling tests"
+			export OPJ_CI_SKIP_TESTS=1
+		fi
+	fi
 else
 	echo "OS not supported: ${TRAVIS_OS_NAME}"; exit 1
 fi
