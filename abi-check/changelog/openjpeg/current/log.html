@@ -20,7 +20,38 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8fa405ee15b5151df40d8d96460257ee5b510135
+<pre class='wrap'>commit e673c8bd4da9f0414da472ac5f3d8e03e5102982
+Merge: 8fa405e b992376
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-07-01 12:54:39 +0200
+
+    Merge pull request #963 from rouault/travis_avx2
+    
+    Enable AVX2 at runtime on Travis-CI and AppVeyor
+
+commit b9923764da198742c635ad7dff9de158c3dbb60d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-01 04:15:36 +0200
+
+    Add tools/travis-ci/knownfailures-Ubuntu14.04-clang3.8.0-x86_64-Release-3rdP.txt (copied from knownfailures-Ubuntu12.04-clang3.9.0-x86_64-Release-3rdP.txt)
+
+commit f194ff32ac3fd5bab88607ea6bf09a73adb99758
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-01 02:53:55 +0200
+
+    appveyor.yml: add a /arch:AVX2 config on Windows
+    
+    Try running the tests if the CPU supports AVX2.
+
+commit 69a001819c9ac36bb3210e475d099cc2abbbf89f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-01 01:46:55 +0200
+
+    .travis.yml: try to run tests in -mavx2 mode if the CPU supports it
+    
+    And modify settings so as to hae a AVX2 compatible CPU
+
+commit 8fa405ee15b5151df40d8d96460257ee5b510135
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-30 00:03:05 +0200
 
@@ -778,36 +809,6 @@ Date:   2016-09-13 17:43:30 +0800
     Fix issue 833.
     
     Add some overflow check operations.
-
-commit 805972f4c85fd4b34e08e499c12c68334706df47
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-11 19:47:32 +0200
-
-    Add test for issue 820 (#829)
-    
-    Update uclouvain/openjpeg#820
-
-commit 45ed017b1b9cfac6578d40a2ccc33640c2a94f78
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-08 23:56:06 +0200
-
-    Add test for issue 826 (#827)
-    
-    Update uclouvain/openjpeg#826
-    
-    Also correct names for data of issue uclouvain/openjpeg#823
-
-commit b21a8317e5cba895aaca066330fe1dca15371eab
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-08 22:14:19 +0200
-
-    Fix coverity 113065 (CWE-484) (#824)
-
-commit 5fb81d986e84074b576192541621a29fcdf8b0f8
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-08 11:28:58 +0200
-
-    Update THANKS.md
 
 ...</pre></div>
 
