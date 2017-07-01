@@ -27,9 +27,11 @@ matrix:
 
 # Test compilation with AVX2
     - os: linux
+      # "sudo: yes" and "dist: trusty" give us a worker with the AVX2 instruction set
+      sudo: yes
+      dist: trusty
       compiler: clang-3.8
-      # skip tests since Travis doesn't have AVX2 compatible machines
-      env: OPJ_CI_CC=clang-3.8 OPJ_CI_CXX=clang-3.8 OPJ_CI_INSTRUCTION_SETS="-mavx2" OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_SKIP_TESTS=1
+      env: OPJ_CI_CC=clang-3.8 OPJ_CI_CXX=clang-3.8 OPJ_CI_INSTRUCTION_SETS="-mavx2" OPJ_CI_BUILD_CONFIGURATION=Release
       addons:
         apt:
           sources:
