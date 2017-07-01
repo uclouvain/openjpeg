@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e673c8bd4da9f0414da472ac5f3d8e03e5102982
+<pre class='wrap'>commit ecbfcbc2764ff1b09e693d57e3ef5764518f1e1c
+Merge: e673c8b 96d757c
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-07-01 13:51:52 +0200
+
+    Merge pull request #964 from rouault/remove_useless_knownfailures
+    
+    Remove useless knownfailures (since LAZY encoding is fixed)
+
+commit e673c8bd4da9f0414da472ac5f3d8e03e5102982
 Merge: 8fa405e b992376
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-07-01 12:54:39 +0200
@@ -42,6 +51,12 @@ Date:   2017-07-01 02:53:55 +0200
     appveyor.yml: add a /arch:AVX2 config on Windows
     
     Try running the tests if the CPU supports AVX2.
+
+commit 96d757cb8e6c3fb0e133817e5057ee5eae6a594d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-01 04:24:46 +0200
+
+    Remove useless knownfailures (since LAZY encoding is fixed)
 
 commit 69a001819c9ac36bb3210e475d099cc2abbbf89f
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -795,20 +810,6 @@ Date:   2016-09-13 16:39:26 +0200
     Merge pull request #786 from rouault/tier1_optimizations_multithreading
     
     T1 &amp; DWT multithreading decoding optimizations
-
-commit f1f7c533089130266a6c1a502b30a846bb506b56
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-13 16:21:38 +0200
-
-    remove ops 1.4 and 1.2 from abi-check to avoid symlinks in gh-pages
-
-commit 893143c8e13e491d0e884eb757580ec9575bbc8f
-Author: trylab &lt;trylab@users.noreply.github.com&gt;
-Date:   2016-09-13 17:43:30 +0800
-
-    Fix issue 833.
-    
-    Add some overflow check operations.
 
 ...</pre></div>
 
