@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit ecbfcbc2764ff1b09e693d57e3ef5764518f1e1c
+<pre class='wrap'>commit 5736b1a3683261a5b31fc19a691731dc9fce5920
+Merge: ecbfcbc a0839cc
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-07-03 12:03:29 +0200
+
+    Merge pull request #954 from jeroen/static
+    
+    build both shared and static library
+
+commit ecbfcbc2764ff1b09e693d57e3ef5764518f1e1c
 Merge: e673c8b 96d757c
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-07-01 13:51:52 +0200
@@ -192,6 +201,18 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-17 14:09:31 +0200
 
     Fix warnings with recent GCC versions
+
+commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
+Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
+Date:   2017-06-16 13:58:25 +0200
+
+    only build both static and dynamic on non-windows
+
+commit 1329b3240aafb1b31328091eb6f7720787b391be
+Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
+Date:   2017-06-16 13:27:19 +0200
+
+    build both shared and static library
 
 commit 36dd87cea80ad56e0e3178221aa579a28f02a549
 Merge: 9cbc990 5f1e380
@@ -787,29 +808,6 @@ Date:   2016-09-14 00:12:43 +0200
     Fix some warnings (#838)
     
     Fix warnings introduced by uclouvain/openjpeg#786
-
-commit 1e69940955f6d5b05369ebeeafe70e698cc2b870
-Merge: d6d0f07 f66e120
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-13 21:21:56 +0200
-
-    Merge branch 'smuehlst-bit-fields-type'
-
-commit f66e1204523415e8936c237ce9cc759e2185708f
-Merge: d6d0f07 8750e18
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-13 21:21:11 +0200
-
-    Merge branch 'bit-fields-type' of https://github.com/smuehlst/openjpeg into smuehlst-bit-fields-type
-
-commit d6d0f070e179fc195849aacd842c92f79653934f
-Merge: f1f7c53 48c16b2
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-13 16:39:26 +0200
-
-    Merge pull request #786 from rouault/tier1_optimizations_multithreading
-    
-    T1 &amp; DWT multithreading decoding optimizations
 
 ...</pre></div>
 
