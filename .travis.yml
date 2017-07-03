@@ -72,7 +72,7 @@ matrix:
 # Test with CLang 3.8
     - os: linux
       compiler: clang-3.8
-      env: OPJ_CI_CC=clang-3.8 OPJ_CI_CXX=clang-3.8 OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_PERF_TESTS=1
+      env: OPJ_CI_CC=clang-3.8 OPJ_CI_CXX=clang-3.8 OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_PERF_TESTS=1 OPJ_CI_BUILD_FUZZERS=1
       addons:
         apt:
           sources:

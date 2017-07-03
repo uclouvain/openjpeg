@@ -344,6 +344,12 @@ New/unknown test failure found!!!
 	fi
 fi
 
+if [ "${OPJ_CI_BUILD_FUZZERS:-}" == "1" ]; then
+    cd tests/fuzzers
+    make
+    cd ../..
+fi
+
 if [ "${OPJ_CI_PERF_TESTS:-}" == "1" ]; then
     cd tests/performance
     echo "Running performance tests on current version (dry-run)"
