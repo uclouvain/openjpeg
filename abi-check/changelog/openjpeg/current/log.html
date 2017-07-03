@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5736b1a3683261a5b31fc19a691731dc9fce5920
+<pre class='wrap'>commit c308de39edc1697efbd5c10dc4852a58f9b86558
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-03 14:33:57 +0200
+
+    opj_j2k_read_header_procedure(): validate marker size to avoid excessive memory allocation attempt
+
+commit 5736b1a3683261a5b31fc19a691731dc9fce5920
 Merge: ecbfcbc a0839cc
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-07-03 12:03:29 +0200
@@ -800,14 +806,6 @@ Date:   2016-09-14 23:46:46 +0200
     Flags in T1 shall be unsigned (#840)
     
     This will remove some conversion warnings
-
-commit 0954bc11e3ab6a39d86e5ed51286da4b8989743d
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-14 00:12:43 +0200
-
-    Fix some warnings (#838)
-    
-    Fix warnings introduced by uclouvain/openjpeg#786
 
 ...</pre></div>
 
