@@ -7711,6 +7711,10 @@ static OPJ_BOOL opj_j2k_read_header_procedure(opj_j2k_t *p_j2k,
         /* read 2 bytes as the marker size */
         opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data, &l_marker_size,
                        2);
+        if (l_marker_size < 2) {
+            opj_event_msg(p_manager, EVT_ERROR, "Invalid marker size\n");
+            return OPJ_FALSE;
+        }
         l_marker_size -= 2; /* Subtract the size of the marker ID already read */
 
         /* Check if the marker size is compatible with the header data size */
