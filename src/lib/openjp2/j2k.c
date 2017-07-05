@@ -8798,15 +8798,18 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
             OPJ_SIZE_T l_width = l_img_comp_dest->w;
             OPJ_SIZE_T l_height = l_img_comp_dest->h;
 
-            if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height))) {
+            if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height)) ||
+                    l_width * l_height > SIZE_MAX / sizeof(OPJ_INT32)) {
                 /* would overflow */
                 return OPJ_FALSE;
             }
-            l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(l_width * l_height,
+            l_img_comp_dest->data = (OPJ_INT32*) opj_aligned_malloc(l_width * l_height *
                                     sizeof(OPJ_INT32));
             if (! l_img_comp_dest->data) {
                 return OPJ_FALSE;
             }
+            /* Do we really need this memset ? */
+            memset(l_img_comp_dest->data, 0, l_width * l_height * sizeof(OPJ_INT32));
         }
 
         /* Copy info from decoded comp image to output image */
@@ -10416,7 +10419,7 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
 
         /* Transfer TCD data to output image data */
         for (i = 0; i < p_j2k->m_output_image->numcomps; i++) {
-            opj_free(p_j2k->m_output_image->comps[i].data);
+            opj_aligned_free(p_j2k->m_output_image->comps[i].data);
             p_j2k->m_output_image->comps[i].data =
                 p_j2k->m_tcd->tcd_image->tiles->comps[i].data;
             p_j2k->m_output_image->comps[i].resno_decoded =
@@ -10821,7 +10824,7 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
             p_j2k->m_output_image->comps[compno].resno_decoded;
 
         if (p_image->comps[compno].data) {
-            opj_free(p_image->comps[compno].data);
+            opj_aligned_free(p_image->comps[compno].data);
         }
 
         p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
