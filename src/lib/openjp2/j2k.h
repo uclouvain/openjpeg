@@ -463,13 +463,6 @@ typedef struct opj_j2k_dec {
     OPJ_UINT32 m_start_tile_y;
     OPJ_UINT32 m_end_tile_x;
     OPJ_UINT32 m_end_tile_y;
-    /**
-     * Decoded area set by the user
-     */
-    OPJ_UINT32 m_DA_x0;
-    OPJ_UINT32 m_DA_y0;
-    OPJ_UINT32 m_DA_x1;
-    OPJ_UINT32 m_DA_y1;
 
     /** Index of the tile to decode (used in get_tile) */
     OPJ_INT32 m_tile_ind_to_dec;
