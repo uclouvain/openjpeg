@@ -8716,15 +8716,20 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
         return OPJ_FALSE;
     }
 
-    if (! opj_tcd_update_tile_data(p_j2k->m_tcd, p_data, p_data_size)) {
-        return OPJ_FALSE;
-    }
+    /* p_data can be set to NULL when the call will take care of using */
+    /* itself the TCD data. This is typically the case for whole single */
+    /* tile decoding optimization. */
+    if (p_data != NULL) {
+        if (! opj_tcd_update_tile_data(p_j2k->m_tcd, p_data, p_data_size)) {
+            return OPJ_FALSE;
+        }
 
-    /* To avoid to destroy the tcp which can be useful when we try to decode a tile decoded before (cf j2k_random_tile_access)
-     * we destroy just the data which will be re-read in read_tile_header*/
-    /*opj_j2k_tcp_destroy(l_tcp);
-    p_j2k->m_tcd->tcp = 0;*/
-    opj_j2k_tcp_data_destroy(l_tcp);
+        /* To avoid to destroy the tcp which can be useful when we try to decode a tile decoded before (cf j2k_random_tile_access)
+        * we destroy just the data which will be re-read in read_tile_header*/
+        /*opj_j2k_tcp_destroy(l_tcp);
+        p_j2k->m_tcd->tcp = 0;*/
+        opj_j2k_tcp_data_destroy(l_tcp);
+    }
 
     p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
     p_j2k->m_specific_param.m_decoder.m_state &= (~(OPJ_UINT32)J2K_STATE_DATA);
@@ -10380,6 +10385,47 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
     OPJ_UINT32 l_nb_comps;
     OPJ_BYTE * l_current_data;
     OPJ_UINT32 nr_tiles = 0;
+
+    /* Particular case for whole single tile decoding */
+    /* We can avoid allocating intermediate tile buffers */
+    if (p_j2k->m_cp.tw == 1 && p_j2k->m_cp.th == 1 &&
+            p_j2k->m_cp.tx0 == 0 && p_j2k->m_cp.ty0 == 0 &&
+            p_j2k->m_output_image->x0 == 0 &&
+            p_j2k->m_output_image->y0 == 0 &&
+            p_j2k->m_output_image->x1 == p_j2k->m_cp.tdx &&
+            p_j2k->m_output_image->y1 == p_j2k->m_cp.tdy &&
+            p_j2k->m_output_image->comps[0].factor == 0) {
+        OPJ_UINT32 i;
+        if (! opj_j2k_read_tile_header(p_j2k,
+                                       &l_current_tile_no,
+                                       &l_data_size,
+                                       &l_tile_x0, &l_tile_y0,
+                                       &l_tile_x1, &l_tile_y1,
+                                       &l_nb_comps,
+                                       &l_go_on,
+                                       p_stream,
+                                       p_manager)) {
+            return OPJ_FALSE;
+        }
+
+        if (! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
+                                  p_stream, p_manager)) {
+            opj_event_msg(p_manager, EVT_ERROR, "Failed to decode tile 1/1\n");
+            return OPJ_FALSE;
+        }
+
+        /* Transfer TCD data to output image data */
+        for (i = 0; i < p_j2k->m_output_image->numcomps; i++) {
+            opj_free(p_j2k->m_output_image->comps[i].data);
+            p_j2k->m_output_image->comps[i].data =
+                p_j2k->m_tcd->tcd_image->tiles->comps[i].data;
+            p_j2k->m_output_image->comps[i].resno_decoded =
+                p_j2k->m_tcd->image->comps[i].resno_decoded;
+            p_j2k->m_tcd->tcd_image->tiles->comps[i].data = NULL;
+        }
+
+        return OPJ_TRUE;
+    }
 
     l_current_data = (OPJ_BYTE*)opj_malloc(1000);
     if (! l_current_data) {
