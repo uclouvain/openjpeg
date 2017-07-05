@@ -74,7 +74,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts,
                 opj_image_destroy(image);
                 return NULL;
             }
-            comp->data = (OPJ_INT32*) opj_aligned_malloc(
+            comp->data = (OPJ_INT32*) opj_image_data_alloc(
                              (size_t)comp->w * comp->h * sizeof(OPJ_INT32));
             if (!comp->data) {
                 /* TODO replace with event manager, breaks API */
@@ -99,7 +99,7 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image)
             for (compno = 0; compno < image->numcomps; compno++) {
                 opj_image_comp_t *image_comp = &(image->comps[compno]);
                 if (image_comp->data) {
-                    opj_aligned_free(image_comp->data);
+                    opj_image_data_free(image_comp->data);
                 }
             }
             opj_free(image->comps);
