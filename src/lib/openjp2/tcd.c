@@ -1213,11 +1213,7 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data(opj_tcd_cblk_enc_t *
 
 void opj_tcd_reinit_segment(opj_tcd_seg_t* seg)
 {
-    opj_tcd_seg_data_chunk_t *l_chunks = seg->chunks;
-    OPJ_UINT32 l_numchunksalloc = seg->numchunksalloc;
     memset(seg, 0, sizeof(opj_tcd_seg_t));
-    seg->chunks = l_chunks;
-    seg->numchunksalloc = l_numchunksalloc;
 }
 
 /**
@@ -1241,6 +1237,8 @@ static OPJ_BOOL opj_tcd_code_block_dec_allocate(opj_tcd_cblk_dec_t *
         /* sanitize */
         opj_tcd_seg_t * l_segs = p_code_block->segs;
         OPJ_UINT32 l_current_max_segs = p_code_block->m_current_max_segs;
+        opj_tcd_seg_data_chunk_t* l_chunks = p_code_block->chunks;
+        OPJ_UINT32 l_numchunksalloc = p_code_block->numchunksalloc;
         OPJ_UINT32 i;
 
         memset(p_code_block, 0, sizeof(opj_tcd_cblk_dec_t));
@@ -1249,6 +1247,8 @@ static OPJ_BOOL opj_tcd_code_block_dec_allocate(opj_tcd_cblk_dec_t *
         for (i = 0; i < l_current_max_segs; ++i) {
             opj_tcd_reinit_segment(&l_segs[i]);
         }
+        p_code_block->chunks = l_chunks;
+        p_code_block->numchunksalloc = l_numchunksalloc;
     }
 
     return OPJ_TRUE;
@@ -1952,12 +1952,13 @@ static void opj_tcd_code_block_dec_deallocate(opj_tcd_precinct_t * p_precinct)
         for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
 
             if (l_code_block->segs) {
-                OPJ_UINT32 i;
-                for (i = 0; i < l_code_block->m_current_max_segs; ++ i) {
-                    opj_free(l_code_block->segs[i].chunks);
-                }
                 opj_free(l_code_block->segs);
                 l_code_block->segs = 00;
+            }
+
+            if (l_code_block->chunks) {
+                opj_free(l_code_block->chunks);
+                l_code_block->chunks = 00;
             }
 
             ++l_code_block;

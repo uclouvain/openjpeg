@@ -1287,25 +1287,26 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
 
 #endif /* USE_JPWL */
 
-                if (l_seg->numchunks == l_seg->numchunksalloc) {
-                    OPJ_UINT32 l_numchunksalloc = l_seg->numchunksalloc * 2 + 1;
+                if (l_cblk->numchunks == l_cblk->numchunksalloc) {
+                    OPJ_UINT32 l_numchunksalloc = l_cblk->numchunksalloc * 2 + 1;
                     opj_tcd_seg_data_chunk_t* l_chunks =
-                        (opj_tcd_seg_data_chunk_t*)opj_realloc(l_seg->chunks,
+                        (opj_tcd_seg_data_chunk_t*)opj_realloc(l_cblk->chunks,
                                 l_numchunksalloc * sizeof(opj_tcd_seg_data_chunk_t));
                     if (l_chunks == NULL) {
                         opj_event_msg(p_manager, EVT_ERROR,
                                       "cannot allocate opj_tcd_seg_data_chunk_t* array");
                         return OPJ_FALSE;
                     }
-                    l_seg->chunks = l_chunks;
-                    l_seg->numchunksalloc = l_numchunksalloc;
+                    l_cblk->chunks = l_chunks;
+                    l_cblk->numchunksalloc = l_numchunksalloc;
                 }
 
-                l_seg->chunks[l_seg->numchunks].data = l_current_data;
-                l_seg->chunks[l_seg->numchunks].len = l_seg->newlen;
-                l_seg->numchunks ++;
+                l_cblk->chunks[l_cblk->numchunks].data = l_current_data;
+                l_cblk->chunks[l_cblk->numchunks].len = l_seg->newlen;
+                l_cblk->numchunks ++;
 
                 l_current_data += l_seg->newlen;
+                l_seg->len += l_seg->newlen;
                 l_seg->numpasses += l_seg->numnewpasses;
                 l_cblk->numnewpasses -= l_seg->numnewpasses;
 

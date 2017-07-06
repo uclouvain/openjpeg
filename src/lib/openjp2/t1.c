@@ -1604,7 +1604,7 @@ void opj_t1_destroy(opj_t1_t *p_t1)
         p_t1->flags = 00;
     }
 
-    opj_free(p_t1->segdatabuffer);
+    opj_free(p_t1->cblkdatabuffer);
 
     opj_free(p_t1);
 }
@@ -1615,7 +1615,7 @@ typedef struct {
     opj_tcd_band_t* band;
     opj_tcd_tilecomp_t* tilec;
     opj_tccp_t* tccp;
-    OPJ_BOOL mustuse_segdatabuffer;
+    OPJ_BOOL mustuse_cblkdatabuffer;
     volatile OPJ_BOOL* pret;
     opj_event_mgr_t *p_manager;
     opj_mutex_t* p_manager_mutex;
@@ -1660,7 +1660,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         t1 = opj_t1_create(OPJ_FALSE);
         opj_tls_set(tls, OPJ_TLS_KEY_T1, t1, opj_t1_destroy_wrapper);
     }
-    t1->mustuse_segdatabuffer = job->mustuse_segdatabuffer;
+    t1->mustuse_cblkdatabuffer = job->mustuse_cblkdatabuffer;
 
     if (OPJ_FALSE == opj_t1_decode_cblk(
                 t1,
@@ -1790,7 +1790,7 @@ void opj_t1_decode_cblks(opj_thread_pool_t* tp,
                     job->p_manager_mutex = p_manager_mutex;
                     job->p_manager = p_manager;
                     job->check_pterm = check_pterm;
-                    job->mustuse_segdatabuffer = opj_thread_pool_get_thread_count(tp) > 1;
+                    job->mustuse_cblkdatabuffer = opj_thread_pool_get_thread_count(tp) > 1;
                     opj_thread_pool_submit_job(tp, opj_t1_clbl_decode_processor, job);
                     if (!(*pret)) {
                         return;
@@ -1818,6 +1818,8 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
     OPJ_INT32 bpno_plus_one;
     OPJ_UINT32 passtype;
     OPJ_UINT32 segno, passno;
+    OPJ_BYTE* cblkdata = NULL;
+    OPJ_UINT32 cblkdataindex = 0;
     OPJ_BYTE type = T1_TYPE_MQ; /* BYPASS mode */
 
     mqc->lut_ctxno_zc_orient = lut_ctxno_zc + (orient << 9);
@@ -1849,58 +1851,57 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
     opj_mqc_setstate(mqc, T1_CTXNO_AGG, 0, 3);
     opj_mqc_setstate(mqc, T1_CTXNO_ZC, 0, 4);
 
+    /* Even if we have a single chunk, in multi-threaded decoding */
+    /* the insertion of our synthetic marker might potentially override */
+    /* valid codestream of other codeblocks decoded in parallel. */
+    if (cblk->numchunks > 1 || t1->mustuse_cblkdatabuffer) {
+        OPJ_UINT32 i;
+        OPJ_UINT32 cblk_len;
+
+        /* Compute whole codeblock length from chunk lengths */
+        cblk_len = 0;
+        for (i = 0; i < cblk->numchunks; i++) {
+            cblk_len += cblk->chunks[i].len;
+        }
+
+        /* Allocate temporary memory if needed */
+        if (cblk_len + OPJ_COMMON_CBLK_DATA_EXTRA > t1->cblkdatabuffersize) {
+            cblkdata = (OPJ_BYTE*)opj_realloc(t1->cblkdatabuffer,
+                                              cblk_len + OPJ_COMMON_CBLK_DATA_EXTRA);
+            if (cblkdata == NULL) {
+                return OPJ_FALSE;
+            }
+            t1->cblkdatabuffer = cblkdata;
+            memset(t1->cblkdatabuffer + cblk_len, 0, OPJ_COMMON_CBLK_DATA_EXTRA);
+            t1->cblkdatabuffersize = cblk_len + OPJ_COMMON_CBLK_DATA_EXTRA;
+        }
+
+        /* Concatenate all chunks */
+        cblkdata = t1->cblkdatabuffer;
+        cblk_len = 0;
+        for (i = 0; i < cblk->numchunks; i++) {
+            memcpy(cblkdata + cblk_len, cblk->chunks[i].data, cblk->chunks[i].len);
+            cblk_len += cblk->chunks[i].len;
+        }
+    } else if (cblk->numchunks == 1) {
+        cblkdata = cblk->chunks[0].data;
+    }
+
     for (segno = 0; segno < cblk->real_num_segs; ++segno) {
         opj_tcd_seg_t *seg = &cblk->segs[segno];
-        OPJ_BYTE* segdata;
-        OPJ_UINT32 seglen;
 
         /* BYPASS mode */
         type = ((bpno_plus_one <= ((OPJ_INT32)(cblk->numbps)) - 4) && (passtype < 2) &&
                 (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 
-        /* Even if we have a single chunk, in mulithtreaded decoding */
-        /* the insertion of our synthetic marker might potentially override */
-        /* valid codestream of other codeblocks decoded in parallel. */
-        if (seg->numchunks == 1 && !(t1->mustuse_segdatabuffer)) {
-            segdata = seg->chunks[0].data;
-            seglen = seg->chunks[0].len;
-        } else {
-            OPJ_UINT32 i;
-
-            /* Compute whole segment length from chunk lengths */
-            seglen = 0;
-            for (i = 0; i < seg->numchunks; i++) {
-                seglen += seg->chunks[i].len;
-            }
-
-            /* Allocate temporary memory if needed */
-            if (seglen + OPJ_COMMON_CBLK_DATA_EXTRA > t1->segdatabuffersize) {
-                segdata = (OPJ_BYTE*)opj_realloc(t1->segdatabuffer,
-                                                 seglen + OPJ_COMMON_CBLK_DATA_EXTRA);
-                if (segdata == NULL) {
-                    return OPJ_FALSE;
-                }
-                t1->segdatabuffer = segdata;
-                memset(t1->segdatabuffer + seglen, 0, OPJ_COMMON_CBLK_DATA_EXTRA);
-                t1->segdatabuffersize = seglen + OPJ_COMMON_CBLK_DATA_EXTRA;
-            }
-
-            /* Concatenate all segments chunks */
-            segdata = t1->segdatabuffer;
-            seglen = 0;
-            for (i = 0; i < seg->numchunks; i++) {
-                memcpy(segdata + seglen, seg->chunks[i].data, seg->chunks[i].len);
-                seglen += seg->chunks[i].len;
-            }
-        }
-
         if (type == T1_TYPE_RAW) {
-            opj_mqc_raw_init_dec(mqc, segdata, seglen,
+            opj_mqc_raw_init_dec(mqc, cblkdata + cblkdataindex, seg->len,
                                  OPJ_COMMON_CBLK_DATA_EXTRA);
         } else {
-            opj_mqc_init_dec(mqc, segdata, seglen,
+            opj_mqc_init_dec(mqc, cblkdata + cblkdataindex, seg->len,
                              OPJ_COMMON_CBLK_DATA_EXTRA);
         }
+        cblkdataindex += seg->len;
 
         for (passno = 0; (passno < seg->real_num_passes) &&
                 (bpno_plus_one >= 1); ++passno) {
