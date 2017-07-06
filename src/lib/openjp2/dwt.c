@@ -398,7 +398,7 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
 
 #ifdef TWO_PASS_VERSION
     /* For documentation purpose: performs lifting in two iterations, */
-    /* but withtmp explicit interleaving */
+    /* but without explicit interleaving */
 
     assert(len > 1);
 
@@ -466,7 +466,7 @@ static void  opj_idwt53_h_cas1(OPJ_INT32* tmp,
 
 #ifdef TWO_PASS_VERSION
     /* For documentation purpose: performs lifting in two iterations, */
-    /* but withtmp explicit interleaving */
+    /* but without explicit interleaving */
 
     assert(len > 2);
 
