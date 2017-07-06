@@ -655,8 +655,8 @@ fails1:
             nr_samples = (size_t)(max * 3 * sizeof(unsigned char));
             in = inbuf = (unsigned char*)opj_image_data_alloc(nr_samples);
             out = outbuf = (unsigned char*)opj_image_data_alloc(nr_samples);
-            g = (int*)calloc((size_t)max, sizeof(int));
-            b = (int*)calloc((size_t)max, sizeof(int));
+            g = (int*)opj_image_data_alloc((size_t)max * sizeof(int));
+            b = (int*)opj_image_data_alloc((size_t)max * sizeof(int));
 
             if (inbuf == NULL || outbuf == NULL || g == NULL || b == NULL) {
                 goto fails2;
@@ -715,8 +715,8 @@ fails2:
             nr_samples = (size_t)(max * 3U * sizeof(unsigned short));
             in = inbuf = (unsigned short*)opj_image_data_alloc(nr_samples);
             out = outbuf = (unsigned short*)opj_image_data_alloc(nr_samples);
-            g = (int*)calloc((size_t)max, sizeof(int));
-            b = (int*)calloc((size_t)max, sizeof(int));
+            g = (int*)opj_image_data_alloc((size_t)max * sizeof(int));
+            b = (int*)opj_image_data_alloc((size_t)max * sizeof(int));
 
             if (inbuf == NULL || outbuf == NULL || g == NULL || b == NULL) {
                 goto fails3;
