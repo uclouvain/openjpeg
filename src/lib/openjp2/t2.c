@@ -1245,7 +1245,6 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
             if (!l_cblk->numsegs) {
                 l_seg = l_cblk->segs;
                 ++l_cblk->numsegs;
-                l_cblk->data_current_size = 0;
             } else {
                 l_seg = &l_cblk->segs[l_cblk->numsegs - 1];
 
@@ -1287,46 +1286,30 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                 };
 
 #endif /* USE_JPWL */
-                /* Check possible overflow on size */
-                if ((l_cblk->data_current_size + l_seg->newlen + OPJ_COMMON_CBLK_DATA_EXTRA) <
-                        l_cblk->data_current_size) {
-                    opj_event_msg(p_manager, EVT_ERROR,
-                                  "read: segment too long (%d) with current size (%d > %d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                  l_seg->newlen, l_cblk->data_current_size, 0xFFFFFFFF - l_seg->newlen, cblkno,
-                                  p_pi->precno, bandno, p_pi->resno, p_pi->compno);
-                    return OPJ_FALSE;
-                }
-                /* Check if the cblk->data have allocated enough memory */
-                if ((l_cblk->data_current_size + l_seg->newlen + OPJ_COMMON_CBLK_DATA_EXTRA) >
-                        l_cblk->data_max_size) {
-                    OPJ_BYTE* new_cblk_data = (OPJ_BYTE*) opj_realloc(l_cblk->data,
-                                              l_cblk->data_current_size + l_seg->newlen + OPJ_COMMON_CBLK_DATA_EXTRA);
-                    if (! new_cblk_data) {
-                        opj_free(l_cblk->data);
-                        l_cblk->data = NULL;
-                        l_cblk->data_max_size = 0;
-                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to realloc code block cata!\n"); */
+
+                if (l_seg->numchunks == l_seg->numchunksalloc) {
+                    OPJ_UINT32 l_numchunksalloc = l_seg->numchunksalloc * 2 + 1;
+                    opj_tcd_seg_data_chunk_t* l_chunks =
+                        (opj_tcd_seg_data_chunk_t*)opj_realloc(l_seg->chunks,
+                                l_numchunksalloc * sizeof(opj_tcd_seg_data_chunk_t));
+                    if (l_chunks == NULL) {
+                        opj_event_msg(p_manager, EVT_ERROR,
+                                      "cannot allocate opj_tcd_seg_data_chunk_t* array");
                         return OPJ_FALSE;
                     }
-                    l_cblk->data_max_size = l_cblk->data_current_size + l_seg->newlen +
-                                            OPJ_COMMON_CBLK_DATA_EXTRA;
-                    l_cblk->data = new_cblk_data;
+                    l_seg->chunks = l_chunks;
+                    l_seg->numchunksalloc = l_numchunksalloc;
                 }
 
-                memcpy(l_cblk->data + l_cblk->data_current_size, l_current_data, l_seg->newlen);
-
-                if (l_seg->numpasses == 0) {
-                    l_seg->data = &l_cblk->data;
-                    l_seg->dataindex = l_cblk->data_current_size;
-                }
+                l_seg->chunks[l_seg->numchunks].data = l_current_data;
+                l_seg->chunks[l_seg->numchunks].len = l_seg->newlen;
+                l_seg->numchunks ++;
 
                 l_current_data += l_seg->newlen;
                 l_seg->numpasses += l_seg->numnewpasses;
                 l_cblk->numnewpasses -= l_seg->numnewpasses;
 
                 l_seg->real_num_passes = l_seg->numpasses;
-                l_cblk->data_current_size += l_seg->newlen;
-                l_seg->len += l_seg->newlen;
 
                 if (l_cblk->numnewpasses > 0) {
                     ++l_seg;
@@ -1391,7 +1374,6 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
             if (!l_cblk->numsegs) {
                 l_seg = l_cblk->segs;
                 ++l_cblk->numsegs;
-                l_cblk->data_current_size = 0;
             } else {
                 l_seg = &l_cblk->segs[l_cblk->numsegs - 1];
 
@@ -1464,22 +1446,23 @@ static OPJ_BOOL opj_t2_init_seg(opj_tcd_cblk_dec_t* cblk,
 
     if (l_nb_segs > cblk->m_current_max_segs) {
         opj_tcd_seg_t* new_segs;
-        cblk->m_current_max_segs += OPJ_J2K_DEFAULT_NB_SEGS;
+        OPJ_UINT32 l_m_current_max_segs = cblk->m_current_max_segs +
+                                          OPJ_J2K_DEFAULT_NB_SEGS;
 
         new_segs = (opj_tcd_seg_t*) opj_realloc(cblk->segs,
-                                                cblk->m_current_max_segs * sizeof(opj_tcd_seg_t));
+                                                l_m_current_max_segs * sizeof(opj_tcd_seg_t));
         if (! new_segs) {
-            opj_free(cblk->segs);
-            cblk->segs = NULL;
-            cblk->m_current_max_segs = 0;
             /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to initialize segment %d\n", l_nb_segs); */
             return OPJ_FALSE;
         }
         cblk->segs = new_segs;
+        memset(new_segs + cblk->m_current_max_segs,
+               0, OPJ_J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t));
+        cblk->m_current_max_segs = l_m_current_max_segs;
     }
 
     seg = &cblk->segs[index];
-    memset(seg, 0, sizeof(opj_tcd_seg_t));
+    opj_tcd_reinit_segment(seg);
 
     if (cblksty & J2K_CCP_CBLKSTY_TERMALL) {
         seg->maxpasses = 1;

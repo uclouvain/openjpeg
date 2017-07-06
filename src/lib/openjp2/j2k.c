@@ -4684,15 +4684,35 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
                           "Tile part length size inconsistent with stream length\n");
             return OPJ_FALSE;
         }
+        if (p_j2k->m_specific_param.m_decoder.m_sot_length >
+                UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "p_j2k->m_specific_param.m_decoder.m_sot_length > "
+                          "UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA");
+            return OPJ_FALSE;
+        }
+        /* Add a margin of OPJ_COMMON_CBLK_DATA_EXTRA to the allocation we */
+        /* do so that opj_mqc_init_dec_common() can safely add a synthetic */
+        /* 0xFFFF marker. */
         if (! *l_current_data) {
             /* LH: oddly enough, in this path, l_tile_len!=0.
              * TODO: If this was consistent, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
              */
             *l_current_data = (OPJ_BYTE*) opj_malloc(
-                                  p_j2k->m_specific_param.m_decoder.m_sot_length);
+                                  p_j2k->m_specific_param.m_decoder.m_sot_length + OPJ_COMMON_CBLK_DATA_EXTRA);
         } else {
-            OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data,
-                                           *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
+            OPJ_BYTE *l_new_current_data;
+            if (*l_tile_len > UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA -
+                    p_j2k->m_specific_param.m_decoder.m_sot_length) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "*l_tile_len > UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA - "
+                              "p_j2k->m_specific_param.m_decoder.m_sot_length");
+                return OPJ_FALSE;
+            }
+
+            l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data,
+                                 *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length +
+                                 OPJ_COMMON_CBLK_DATA_EXTRA);
             if (! l_new_current_data) {
                 opj_free(*l_current_data);
                 /*nothing more is done as l_current_data will be set to null, and just

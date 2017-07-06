@@ -200,6 +200,12 @@ typedef struct opj_t1 {
     OPJ_UINT32 flagssize;
     OPJ_UINT32 data_stride;
     OPJ_BOOL   encoder;
+
+    /* Thre 3 variables below are only used by the decoder */
+    OPJ_BOOL     mustuse_segdatabuffer; /* set to TRUE in multithreaded context */
+    OPJ_BYTE
+    *segdatabuffer;     /* Temporary buffer to concatenate all chunks of a segment */
+    OPJ_UINT32   segdatabuffersize; /* Maximum size available in segdatabuffer */
 } opj_t1_t;
 
 /** @name Exported functions */

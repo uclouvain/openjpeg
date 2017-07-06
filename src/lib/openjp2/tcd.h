@@ -49,19 +49,6 @@ each other. The functions in TCD.C are used by other functions in J2K.C.
 /** @defgroup TCD TCD - Implementation of a tile coder/decoder */
 /*@{*/
 
-/**
-FIXME DOC
-*/
-typedef struct opj_tcd_seg {
-    OPJ_BYTE ** data;
-    OPJ_UINT32 dataindex;
-    OPJ_UINT32 numpasses;
-    OPJ_UINT32 real_num_passes;
-    OPJ_UINT32 len;
-    OPJ_UINT32 maxpasses;
-    OPJ_UINT32 numnewpasses;
-    OPJ_UINT32 newlen;
-} opj_tcd_seg_t;
 
 /**
 FIXME DOC
@@ -102,19 +89,48 @@ typedef struct opj_tcd_cblk_enc {
 } opj_tcd_cblk_enc_t;
 
 
+/** Chunk of codestream data that is part of a T1 segment */
+typedef struct opj_tcd_seg_data_chunk {
+    OPJ_BYTE *
+    data;                /* Point to tilepart buffer. We don't make a copy !
+                                       So the tilepart buffer must be kept alive
+                                       as long as we need to decode the codeblocks */
+    OPJ_UINT32 len;                 /* Usable length of data */
+} opj_tcd_seg_data_chunk_t;
+
+/** Segment of a code-block.
+ * A segment represent a number of consecutive coding passes, without termination
+ * of MQC or RAW between them. */
+typedef struct opj_tcd_seg {
+    opj_tcd_seg_data_chunk_t* chunks; /* Array of chunks */
+    OPJ_UINT32 numchunks;           /* Number of valid chunks items */
+    OPJ_UINT32 numchunksalloc;      /* Number of chunks item allocated */
+    OPJ_UINT32
+    numpasses;           /* Number of passes decoded. Including those that we skip */
+    OPJ_UINT32
+    real_num_passes;     /* Number of passes actually to be decoded. To be used for code-block decoding */
+    OPJ_UINT32 maxpasses;           /* Maximum number of passes for this segment */
+    OPJ_UINT32
+    numnewpasses;        /* Number of new passes for current packed. Transitory value */
+    OPJ_UINT32
+    newlen;              /* Codestream length for this segment for current packed. Transitory value */
+} opj_tcd_seg_t;
+
+/* Code-block for decoding */
 typedef struct opj_tcd_cblk_dec {
-    OPJ_BYTE * data;                /* Data */
     opj_tcd_seg_t* segs;            /* segments information */
     OPJ_INT32 x0, y0, x1,
               y1;       /* position of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
     OPJ_UINT32 numbps;
-    OPJ_UINT32 numlenbits;
-    OPJ_UINT32 data_max_size;       /* Size of allocated data buffer */
-    OPJ_UINT32 data_current_size;   /* Size of used data buffer */
-    OPJ_UINT32 numnewpasses;        /* number of pass added to the code-blocks */
-    OPJ_UINT32 numsegs;             /* number of segments */
-    OPJ_UINT32 real_num_segs;
-    OPJ_UINT32 m_current_max_segs;
+    OPJ_UINT32
+    numlenbits;          /* number of bits for len,, for the current packet. Transitory value */
+    OPJ_UINT32
+    numnewpasses;        /* number of pass added to the code-blocks, for the current packet. Transitory value */
+    OPJ_UINT32
+    numsegs;             /* number of segments, including those of packet we skip */
+    OPJ_UINT32
+    real_num_segs;       /* number of segments, to be used for code block decoding */
+    OPJ_UINT32 m_current_max_segs;  /* allocated number of segs[] items */
 } opj_tcd_cblk_dec_t;
 
 /**
@@ -380,6 +396,9 @@ OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec);
  * @return OPJ_TRUE whether the sub-band is empty.
  */
 OPJ_BOOL opj_tcd_is_band_empty(opj_tcd_band_t* band);
+
+/** Reinitialize a segment, without deallocating its chunks array */
+void opj_tcd_reinit_segment(opj_tcd_seg_t* seg);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/
