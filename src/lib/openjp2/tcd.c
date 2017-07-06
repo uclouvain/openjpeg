@@ -965,8 +965,10 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                 numbps = (OPJ_INT32)(l_image_comp->prec + l_gain);
                 l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0,
                                                   (OPJ_INT32)(numbps - l_step_size->expn)))) * fraction;
+                /* Mb value of Equation E-2 in "E.1 Inverse quantization
+                 * procedure" of the standard */
                 l_band->numbps = l_step_size->expn + (OPJ_INT32)l_tccp->numgbits -
-                                 1;      /* WHY -1 ? */
+                                 1;
 
                 if (!l_band->precincts && (l_nb_precincts > 0U)) {
                     l_band->precincts = (opj_tcd_precinct_t *) opj_malloc(/*3 * */

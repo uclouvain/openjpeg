@@ -1491,6 +1491,10 @@ static OPJ_BOOL opj_t2_init_seg(opj_tcd_cblk_dec_t* cblk,
                               ((seg - 1)->maxpasses == 10)) ? 2 : 1;
         }
     } else {
+        /* See paragraph "B.10.6 Number of coding passes" of the standard.
+         * Probably that 109 must be interpreted a (Mb-1)*3 + 1 with Mb=37,
+         * Mb being the maximum number of bit-planes available for the
+         * representation of coefficients in the sub-band */
         seg->maxpasses = 109;
     }
 
