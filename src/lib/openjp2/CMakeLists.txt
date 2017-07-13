@@ -87,11 +87,13 @@ if(WIN32)
     add_definitions(-DOPJ_STATIC)
   endif()
   add_library(${OPENJPEG_LIBRARY_NAME} ${OPENJPEG_SRCS})
+  set(INSTALL_LIBS ${OPENJPEG_LIBRARY_NAME})
 else()
   # Builds both static and dynamic libs
   add_library(${OPENJPEG_LIBRARY_NAME} SHARED ${OPENJPEG_SRCS})
   add_library(openjp2_static STATIC ${OPENJPEG_SRCS})
   set_target_properties(openjp2_static PROPERTIES OUTPUT_NAME ${OPENJPEG_LIBRARY_NAME})
+  set(INSTALL_LIBS ${OPENJPEG_LIBRARY_NAME} openjp2_static)
 endif()
 
 if(UNIX)
@@ -103,7 +105,7 @@ if(${CMAKE_VERSION} VERSION_GREATER "2.8.11")
 endif()
 
 # Install library
-install(TARGETS ${OPENJPEG_LIBRARY_NAME}
+install(TARGETS ${INSTALL_LIBS}
   EXPORT OpenJPEGTargets
   RUNTIME DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   LIBRARY DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
