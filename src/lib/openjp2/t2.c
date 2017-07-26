@@ -1127,10 +1127,19 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
             n = (OPJ_INT32)l_cblk->numnewpasses;
 
             do {
+                OPJ_UINT32 bit_number;
                 l_cblk->segs[l_segno].numnewpasses = (OPJ_UINT32)opj_int_min((OPJ_INT32)(
                         l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses), n);
-                l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio,
-                                               l_cblk->numlenbits + opj_uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
+                bit_number = l_cblk->numlenbits + opj_uint_floorlog2(
+                                 l_cblk->segs[l_segno].numnewpasses);
+                if (bit_number > 32) {
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Invalid bit number %d in opj_t2_read_packet_header()\n",
+                                  bit_number);
+                    opj_bio_destroy(l_bio);
+                    return OPJ_FALSE;
+                }
+                l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio, bit_number);
                 JAS_FPRINTF(stderr, "included=%d numnewpasses=%d increment=%d len=%d \n",
                             l_included, l_cblk->segs[l_segno].numnewpasses, l_increment,
                             l_cblk->segs[l_segno].newlen);
