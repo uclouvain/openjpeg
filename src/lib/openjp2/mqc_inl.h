@@ -109,6 +109,7 @@ static INLINE OPJ_UINT32 opj_mqc_raw_decode(opj_mqc_t *mqc)
             if (l_c > 0x8f) { \
                 c += 0xff00; \
                 ct = 8; \
+                mqc->end_of_byte_stream_counter ++; \
             } else { \
                 mqc->bp++; \
                 c += l_c << 9; \

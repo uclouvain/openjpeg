@@ -230,7 +230,10 @@ Decode the code-blocks of a tile
 void opj_t1_decode_cblks(opj_thread_pool_t* tp,
                          volatile OPJ_BOOL* pret,
                          opj_tcd_tilecomp_t* tilec,
-                         opj_tccp_t* tccp);
+                         opj_tccp_t* tccp,
+                         opj_event_mgr_t *p_manager,
+                         opj_mutex_t* p_manager_mutex,
+                         OPJ_BOOL check_pterm);
 
 
 

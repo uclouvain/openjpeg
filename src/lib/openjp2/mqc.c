@@ -300,6 +300,7 @@ void opj_mqc_init_enc(opj_mqc_t *mqc, OPJ_BYTE *bp)
     assert(*(mqc->bp) != 0xff);
 
     mqc->start = bp;
+    mqc->end_of_byte_stream_counter = 0;
 }
 
 void opj_mqc_encode(opj_mqc_t *mqc, OPJ_UINT32 d)
@@ -513,6 +514,7 @@ void opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len,
     /* See https://github.com/uclouvain/openjpeg/issues/921 */
     opj_mqc_init_dec_common(mqc, bp, len, extra_writable_bytes);
     opj_mqc_setcurctx(mqc, 0);
+    mqc->end_of_byte_stream_counter = 0;
     if (len == 0) {
         mqc->c = 0xff << 16;
     } else {
