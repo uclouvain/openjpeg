@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8d2e69e37d01bf6a0440d3109d92235c3c586ffe
+<pre class='wrap'>commit 94cc97c58acfa574e734fac5eb673c516c0ac469
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-26 20:13:09 +0200
+
+    opj_decompress: fix null pointer dereference on comps[].data on id_000167,sig_11,src_006079,op_havoc,rep_4 (#939)
+
+commit 8d2e69e37d01bf6a0440d3109d92235c3c586ffe
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-26 19:49:38 +0200
 
@@ -750,12 +756,6 @@ Author: Mathieu Malaterre &lt;mathieu.malaterre@gmail.com&gt;
 Date:   2016-09-26 12:01:31 +0200
 
     OPENJPEG_NAMESPACE is configurable by user
-
-commit 4d5c5e7c4891491d61c7deaf77d9238b3621c32a
-Author: Mathieu Malaterre &lt;mathieu.malaterre@gmail.com&gt;
-Date:   2016-09-26 11:26:55 +0200
-
-    Remove typos from comments and man pages
 
 ...</pre></div>
 
