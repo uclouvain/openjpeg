@@ -20,7 +20,17 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5c5319984b81e2aa32d1d83abdef0cdb8dbe7b18
+<pre class='wrap'>commit 8d2e69e37d01bf6a0440d3109d92235c3c586ffe
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-26 19:49:38 +0200
+
+    Fix assertion / memory leak in opj_j2k_merge_ppt() on corrupted images (#939)
+    
+    Fixes issue on id:000020,sig:06,src:001958,op:flip4,pos:149 that has two
+    SOT markers for the same tile with the same tile part number, causing
+    opj_j2k_merge_ppt() to be called several times.
+
+commit 5c5319984b81e2aa32d1d83abdef0cdb8dbe7b18
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-26 18:05:56 +0200
 
@@ -746,18 +756,6 @@ Author: Mathieu Malaterre &lt;mathieu.malaterre@gmail.com&gt;
 Date:   2016-09-26 11:26:55 +0200
 
     Remove typos from comments and man pages
-
-commit fac916f72a162483a4d6d804fd070fdf32f402ed
-Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
-Date:   2016-09-22 00:30:34 +0200
-
-    Fix PNM file reading (#847)
-    
-    Malformed PNM file could cause a crash in opj_compress.
-    Checks were added to prevent this.
-    
-    Fixes #843
-    Updates #440
 
 ...</pre></div>
 
