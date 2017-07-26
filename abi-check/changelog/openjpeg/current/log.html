@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 80818c39f5bfbac37768fcee95b0ffeceaa77264
+<pre class='wrap'>commit 5c5319984b81e2aa32d1d83abdef0cdb8dbe7b18
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-26 18:05:56 +0200
+
+    Avoid division by zero in opj_pi_next_rpcl, opj_pi_next_pcrl, opj_pi_next_cprl (#938)
+    
+    Fixes crash on id_000004,sig_06,src_000679,op_arith8,pos_49,val_-17
+
+commit 80818c39f5bfbac37768fcee95b0ffeceaa77264
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-26 12:24:26 +0200
 
@@ -750,39 +758,6 @@ Date:   2016-09-22 00:30:34 +0200
     
     Fixes #843
     Updates #440
-
-commit 8715ce2749d1e5a1e9c77646e9a2ddf0ec82bac9
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-09-21 21:15:25 +0200
-
-    Fix some issues reported by Coverity Scan (#846)
-    
-    * test_tile_decoder: Fix potential buffer overflow (coverity)
-    
-    CID 1190155 (#1 of 1): Unbounded source buffer (STRING_SIZE)
-    
-    Using a pointer instead of buffer of fixed size avoids the limit
-    for the length of the input file name.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-    
-    * test_tile_encoder: Fix potential buffer overflow (coverity)
-    
-    CID 1190154 (#1 of 1): Unbounded source buffer (STRING_SIZE)
-    
-    Using a pointer instead of buffer of fixed size avoids the limit
-    for the length of the output file name. This implies that the length
-    can exceed 255, so the data type for variable len had to be fixed, too.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-    
-    * openjpip: Initialize data before returning it
-    
-    This fixes an error reported by Coverity:
-    
-    CID 1190143 (#1 of 1): Uninitialized scalar variable (UNINIT)
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 ...</pre></div>
 
