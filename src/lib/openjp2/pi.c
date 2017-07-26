@@ -383,6 +383,13 @@ static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi)
                     }
                     res = &comp->resolutions[pi->resno];
                     levelno = comp->numresolutions - 1 - pi->resno;
+                    /* Avoids division by zero */
+                    /* Relates to id_000004,sig_06,src_000679,op_arith8,pos_49,val_-17 */
+                    /* of  https://github.com/uclouvain/openjpeg/issues/938 */
+                    if (((comp->dx << levelno) >> levelno) != comp->dx ||
+                            ((comp->dy << levelno) >> levelno) != comp->dy) {
+                        continue;
+                    }
                     trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
                     try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
                     trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
@@ -493,6 +500,13 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi)
                     OPJ_INT32 prci, prcj;
                     res = &comp->resolutions[pi->resno];
                     levelno = comp->numresolutions - 1 - pi->resno;
+                    /* Avoids division by zero */
+                    /* Relates to id_000004,sig_06,src_000679,op_arith8,pos_49,val_-17 */
+                    /* of  https://github.com/uclouvain/openjpeg/issues/938 */
+                    if (((comp->dx << levelno) >> levelno) != comp->dx ||
+                            ((comp->dy << levelno) >> levelno) != comp->dy) {
+                        continue;
+                    }
                     trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
                     try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
                     trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
@@ -601,6 +615,12 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi)
                     OPJ_INT32 prci, prcj;
                     res = &comp->resolutions[pi->resno];
                     levelno = comp->numresolutions - 1 - pi->resno;
+                    /* Avoids division by zero on id_000004,sig_06,src_000679,op_arith8,pos_49,val_-17 */
+                    /* of  https://github.com/uclouvain/openjpeg/issues/938 */
+                    if (((comp->dx << levelno) >> levelno) != comp->dx ||
+                            ((comp->dy << levelno) >> levelno) != comp->dy) {
+                        continue;
+                    }
                     trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
                     try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
                     trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
