@@ -4283,6 +4283,24 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
     l_tile_x = p_j2k->m_current_tile_number % l_cp->tw;
     l_tile_y = p_j2k->m_current_tile_number / l_cp->tw;
 
+    /* Fixes issue with id_000020,sig_06,src_001958,op_flip4,pos_149 */
+    /* of https://github.com/uclouvain/openjpeg/issues/939 */
+    /* We must avoid reading twice the same tile part number for a given tile */
+    /* so as to avoid various issues, like opj_j2k_merge_ppt being called */
+    /* several times. */
+    /* ISO 15444-1 A.4.2 Start of tile-part (SOT) mandates that tile parts */
+    /* should appear in increasing order. */
+    if (l_tcp->m_current_tile_part_number + 1 != (OPJ_INT32)l_current_part) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Invalid tile part index for tile number %d. "
+                      "Got %d, expected %d\n",
+                      p_j2k->m_current_tile_number,
+                      l_current_part,
+                      l_tcp->m_current_tile_part_number + 1);
+        return OPJ_FALSE;
+    }
+    ++ l_tcp->m_current_tile_part_number;
+
 #ifdef USE_JPWL
     if (l_cp->correct) {
 
@@ -7876,6 +7894,7 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd(opj_j2k_t * p_j2k,
         l_tcp->cod = 0;
         l_tcp->ppt = 0;
         l_tcp->ppt_data = 00;
+        l_tcp->m_current_tile_part_number = -1;
         /* Remove memory not owned by this tile in case of early error return. */
         l_tcp->m_mct_decoding_matrix = 00;
         l_tcp->m_nb_max_mct_records = 0;
@@ -10410,6 +10429,8 @@ static OPJ_BOOL opj_j2k_decode_one_tile(opj_j2k_t *p_j2k,
     OPJ_INT32 l_tile_x0, l_tile_y0, l_tile_x1, l_tile_y1;
     OPJ_UINT32 l_nb_comps;
     OPJ_BYTE * l_current_data;
+    OPJ_UINT32 l_nb_tiles;
+    OPJ_UINT32 i;
 
     l_current_data = (OPJ_BYTE*)opj_malloc(1000);
     if (! l_current_data) {
@@ -10453,6 +10474,15 @@ static OPJ_BOOL opj_j2k_decode_one_tile(opj_j2k_t *p_j2k,
                 p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
             }
         }
+
+    /* Reset current tile part number for all tiles, and not only the one */
+    /* of interest. */
+    /* Not completely sure this is always correct but required for */
+    /* ./build/bin/j2k_random_tile_access ./build/tests/tte1.j2k */
+    l_nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th;
+    for (i = 0; i < l_nb_tiles; ++i) {
+        p_j2k->m_cp.tcps[i].m_current_tile_part_number = -1;
+    }
 
     for (;;) {
         if (! opj_j2k_read_tile_header(p_j2k,

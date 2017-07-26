@@ -269,6 +269,8 @@ typedef struct opj_tcp {
     OPJ_FLOAT32 distoratio[100];
     /** tile-component coding parameters */
     opj_tccp_t *tccps;
+    /** current tile part number or -1 if first time into this tile */
+    OPJ_INT32  m_current_tile_part_number;
     /** number of tile parts for the tile. */
     OPJ_UINT32 m_nb_tile_parts;
     /** data for the tile */
