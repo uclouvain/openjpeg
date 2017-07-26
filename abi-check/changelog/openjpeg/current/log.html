@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 39e962a0ca5e53722f6badda8e93681aad412cf1
+<pre class='wrap'>commit d27ccf01c68a31ad62b33d2dc1ba2bb1eeaafe7b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-26 11:30:56 +0200
+
+    Avoid division by zero in opj_pi_next_rpcl, opj_pi_next_pcrl and opj_pi_next_cprl (#938)
+    
+    Fixes issues with id:000026,sig:08,src:002419,op:int32,pos:60,val:+32 and
+    id:000019,sig:08,src:001098,op:flip1,pos:49
+
+commit 39e962a0ca5e53722f6badda8e93681aad412cf1
 Merge: 60f8ddf 90ced71
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-07-13 13:33:21 +0200
@@ -788,15 +797,6 @@ Date:   2016-09-21 13:17:09 +0200
     Variable i must be checked before testing query_param.box_type.
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit da940424816e11d624362ce080bc026adffa26e8
-Merge: 31d44f0 893143c
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-20 18:59:30 +0200
-
-    Merge pull request #834 from trylab/issue833
-    
-    Fix issue 833.
 
 ...</pre></div>
 
