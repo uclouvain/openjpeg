@@ -78,6 +78,8 @@ typedef struct opj_mqc {
     OPJ_UINT32 a;
     /** number of bits already read or free to write */
     OPJ_UINT32 ct;
+    /* only used by decoder, to count the number of times a terminating 0xFF >0x8F marker is read */
+    OPJ_UINT32 end_of_byte_stream_counter;
     /** pointer to the current position in the buffer */
     OPJ_BYTE *bp;
     /** pointer to the start of the buffer */
