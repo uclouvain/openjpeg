@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d27ccf01c68a31ad62b33d2dc1ba2bb1eeaafe7b
+<pre class='wrap'>commit 80818c39f5bfbac37768fcee95b0ffeceaa77264
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-26 12:24:26 +0200
+
+    Avoid index out of bounds access to pi-&gt;include[] (#938)
+    
+    Fix id:000098,sig:11,src:005411,op:havoc,rep:2 test case
+
+commit d27ccf01c68a31ad62b33d2dc1ba2bb1eeaafe7b
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-26 11:30:56 +0200
 
@@ -773,28 +781,6 @@ Date:   2016-09-21 21:15:25 +0200
     This fixes an error reported by Coverity:
     
     CID 1190143 (#1 of 1): Uninitialized scalar variable (UNINIT)
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 045aa4d9f297b8d3d5f89e9983a54252d103a3da
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2016-09-21 13:17:09 +0200
-
-    Fix potential out-of-bounds read (coverity)  (#844)
-    
-    * query_parser: Fix potential out-of-bounds read (coverity)
-    
-    CID 1190207 (#1 of 1): Out-of-bounds read (OVERRUN)
-    
-    Variable i must be checked before testing query_param.box_type.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-    
-    * jpip_parser: Fix potential out-of-bounds read (coverity)
-    
-    CID 1190206 (#1 of 1): Out-of-bounds read (OVERRUN)
-    
-    Variable i must be checked before testing query_param.box_type.
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
