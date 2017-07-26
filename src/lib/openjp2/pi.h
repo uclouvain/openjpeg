@@ -75,6 +75,8 @@ typedef struct opj_pi_iterator {
     OPJ_BYTE tp_on;
     /** precise if the packet has been already used (useful for progression order change) */
     OPJ_INT16 *include;
+    /** Number of elements in include array */
+    OPJ_UINT32 include_size;
     /** layer step used to localize the packet in the include vector */
     OPJ_UINT32 step_l;
     /** resolution step used to localize the packet in the include vector */

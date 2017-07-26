@@ -230,6 +230,12 @@ static OPJ_BOOL opj_pi_check_next_level(OPJ_INT32 pos,
 ==========================================================
 */
 
+static void opj_pi_emit_error(opj_pi_iterator_t * pi, const char* msg)
+{
+    (void)pi;
+    (void)msg;
+}
+
 static OPJ_BOOL opj_pi_next_lrcp(opj_pi_iterator_t * pi)
 {
     opj_pi_comp_t *comp = NULL;
@@ -259,6 +265,16 @@ static OPJ_BOOL opj_pi_next_lrcp(opj_pi_iterator_t * pi)
                 for (pi->precno = pi->poc.precno0; pi->precno < pi->poc.precno1; pi->precno++) {
                     index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                             pi->step_c + pi->precno * pi->step_p;
+                    /* Avoids index out of bounds access with */
+                    /* id_000098,sig_11,src_005411,op_havoc,rep_2 of */
+                    /* https://github.com/uclouvain/openjpeg/issues/938 */
+                    /* Not sure if this is the most clever fix. Perhaps */
+                    /* include should be resized when a POC arises, or */
+                    /* the POC should be rejected */
+                    if (index >= pi->include_size) {
+                        opj_pi_emit_error(pi, "Invalid access to pi->include");
+                        return OPJ_FALSE;
+                    }
                     if (!pi->include[index]) {
                         pi->include[index] = 1;
                         return OPJ_TRUE;
@@ -301,6 +317,10 @@ static OPJ_BOOL opj_pi_next_rlcp(opj_pi_iterator_t * pi)
                 for (pi->precno = pi->poc.precno0; pi->precno < pi->poc.precno1; pi->precno++) {
                     index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                             pi->step_c + pi->precno * pi->step_p;
+                    if (index >= pi->include_size) {
+                        opj_pi_emit_error(pi, "Invalid access to pi->include");
+                        return OPJ_FALSE;
+                    }
                     if (!pi->include[index]) {
                         pi->include[index] = 1;
                         return OPJ_TRUE;
@@ -407,6 +427,10 @@ static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi)
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
+                        if (index >= pi->include_size) {
+                            opj_pi_emit_error(pi, "Invalid access to pi->include");
+                            return OPJ_FALSE;
+                        }
                         if (!pi->include[index]) {
                             pi->include[index] = 1;
                             return OPJ_TRUE;
@@ -513,6 +537,10 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi)
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
+                        if (index >= pi->include_size) {
+                            opj_pi_emit_error(pi, "Invalid access to pi->include");
+                            return OPJ_FALSE;
+                        }
                         if (!pi->include[index]) {
                             pi->include[index] = 1;
                             return OPJ_TRUE;
@@ -617,6 +645,10 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi)
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
+                        if (index >= pi->include_size) {
+                            opj_pi_emit_error(pi, "Invalid access to pi->include");
+                            return OPJ_FALSE;
+                        }
                         if (!pi->include[index]) {
                             pi->include[index] = 1;
                             return OPJ_TRUE;
@@ -1332,9 +1364,10 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
     /* prevent an integer overflow issue */
     /* 0 < l_tcp->numlayers < 65536 c.f. opj_j2k_read_cod in j2k.c */
     l_current_pi->include = 00;
-    if (l_step_l <= (SIZE_MAX / (l_tcp->numlayers + 1U))) {
-        l_current_pi->include = (OPJ_INT16*) opj_calloc((size_t)(
-                                    l_tcp->numlayers + 1U) * l_step_l, sizeof(OPJ_INT16));
+    if (l_step_l <= (UINT_MAX / (l_tcp->numlayers + 1U))) {
+        l_current_pi->include_size = (l_tcp->numlayers + 1U) * l_step_l;
+        l_current_pi->include = (OPJ_INT16*) opj_calloc(
+                                    l_current_pi->include_size, sizeof(OPJ_INT16));
     }
 
     if (!l_current_pi->include) {
@@ -1424,6 +1457,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
         }
         /* special treatment*/
         l_current_pi->include = (l_current_pi - 1)->include;
+        l_current_pi->include_size = (l_current_pi - 1)->include_size;
         ++l_current_pi;
     }
     opj_free(l_tmp_data);
@@ -1525,7 +1559,8 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
     l_current_pi = l_pi;
 
     /* memory allocation for include*/
-    l_current_pi->include = (OPJ_INT16*) opj_calloc(l_tcp->numlayers * l_step_l,
+    l_current_pi->include_size = l_tcp->numlayers * l_step_l;
+    l_current_pi->include = (OPJ_INT16*) opj_calloc(l_current_pi->include_size,
                             sizeof(OPJ_INT16));
     if (!l_current_pi->include) {
         opj_free(l_tmp_data);
@@ -1610,6 +1645,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 
         /* special treatment*/
         l_current_pi->include = (l_current_pi - 1)->include;
+        l_current_pi->include_size = (l_current_pi - 1)->include_size;
         ++l_current_pi;
     }
 
