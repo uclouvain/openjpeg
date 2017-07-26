@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit dbf527bf2a53bc88e6cf1373991002ec0e8e22a1
+<pre class='wrap'>commit 6c5fe9407b7768eb2ac55b83511bc103551d207a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-26 22:22:44 +0200
+
+    Avoid potential undefined shift behaviour in opj_bio_read() from opj_t2_read_packet_header()
+    
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2485
+    Credit to OSS Fuzz
+
+commit dbf527bf2a53bc88e6cf1373991002ec0e8e22a1
 Merge: 5e795d9 94c4b73
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-07-26 22:05:32 +0200
@@ -753,12 +762,6 @@ Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-29 20:23:01 +0200
 
     fix abi-check
-
-commit 5695ac15ff961fb56ecee8455bca325444f37694
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-28 20:33:31 +0200
-
-    Update abi-check scripts for v2.1.2
 
 ...</pre></div>
 
