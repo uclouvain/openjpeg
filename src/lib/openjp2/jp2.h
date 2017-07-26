@@ -174,7 +174,7 @@ typedef struct opj_jp2 {
     OPJ_UINT32 *cl;
     opj_jp2_comps_t *comps;
     /* FIXME: The following two variables are used to save offset
-      as we write out a JP2 file to disk. This mecanism is not flexible
+      as we write out a JP2 file to disk. This mechanism is not flexible
       as codec writers will need to extand those fields as new part
       of the standard are implemented.
     */
@@ -442,7 +442,7 @@ OPJ_BOOL opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
  * Dump some elements from the JP2 decompression structure .
  *
  *@param p_jp2        the jp2 codec.
- *@param flag        flag to describe what elments are dump.
+ *@param flag        flag to describe what elements are dump.
  *@param out_stream      output stream where dump the elements.
  *
 */

@@ -353,7 +353,7 @@ static OPJ_BOOL opj_jp2_read_header_procedure(opj_jp2_t *jp2,
         opj_event_mgr_t * p_manager);
 
 /**
- * Excutes the given procedures on the given codec.
+ * Executes the given procedures on the given codec.
  *
  * @param   p_procedure_list    the list of procedures to execute
  * @param   jp2                 the jpeg2000 file codec to execute the procedures on.
@@ -383,7 +383,7 @@ static OPJ_BOOL opj_jp2_read_boxhdr(opj_jp2_box_t *box,
                                     opj_event_mgr_t * p_manager);
 
 /**
- * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
+ * Sets up the validation ,i.e. adds the procedures to launch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
 static OPJ_BOOL opj_jp2_setup_encoding_validation(opj_jp2_t *jp2,
@@ -452,7 +452,7 @@ static OPJ_BOOL opj_jp2_read_boxhdr_char(opj_jp2_box_t *box,
         opj_event_mgr_t * p_manager);
 
 /**
- * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
+ * Sets up the validation ,i.e. adds the procedures to launch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
 static OPJ_BOOL opj_jp2_setup_decoding_validation(opj_jp2_t *jp2,
@@ -2355,7 +2355,7 @@ static OPJ_BOOL opj_jp2_read_header_procedure(opj_jp2_t *jp2,
 }
 
 /**
- * Excutes the given procedures on the given codec.
+ * Executes the given procedures on the given codec.
  *
  * @param   p_procedure_list    the list of procedures to execute
  * @param   jp2                 the jpeg2000 file codec to execute the procedures on.

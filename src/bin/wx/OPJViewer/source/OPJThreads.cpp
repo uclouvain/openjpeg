@@ -420,7 +420,7 @@ BEGIN_EVENT_TABLE(OPJMarkerTree, wxGenericTreeCtrl)
     /*EVT_TREE_KEY_DOWN(TreeTest_Ctrl, OPJMarkerTree::OnTreeKeyDown)*/
     /*EVT_TREE_ITEM_ACTIVATED(TreeTest_Ctrl, OPJMarkerTree::OnItemActivated)*/
 
-    // so many differents ways to handle right mouse button clicks...
+    // so many different ways to handle right mouse button clicks...
     /*EVT_CONTEXT_MENU(OPJMarkerTree::OnContextMenu)*/
     // EVT_TREE_ITEM_MENU is the preferred event for creating context menus
     // on a tree control, because it includes the point of the click or item,

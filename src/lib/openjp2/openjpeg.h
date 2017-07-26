@@ -179,7 +179,7 @@ typedef size_t   OPJ_SIZE_T;
 
 /**
  * JPEG 2000 Profiles, see Table A.10 from 15444-1 (updated in various AMD)
- * These values help chosing the RSIZ value for the J2K codestream.
+ * These values help choosing the RSIZ value for the J2K codestream.
  * The RSIZ value triggers various encoding options, as detailed in Table A.10.
  * If OPJ_PROFILE_PART2 is chosen, it has to be combined with one or more extensions
  * described hereunder.
@@ -1521,7 +1521,7 @@ OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t
  *
  * @param   p_codec         the jpeg2000 codec.
  * @param   info_flag       type of information dump.
- * @param   output_stream   output stream where dump the informations get from the codec.
+ * @param   output_stream   output stream where dump the information gotten from the codec.
  *
  */
 OPJ_API void OPJ_CALLCONV opj_dump_codec(opj_codec_t *p_codec,

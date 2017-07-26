@@ -56,7 +56,7 @@ typedef struct {
 typedef struct {
     OPJ_UINT32 biSize;             /* Size of the structure in bytes */
     OPJ_UINT32 biWidth;            /* Width of the image in pixels */
-    OPJ_UINT32 biHeight;           /* Heigth of the image in pixels */
+    OPJ_UINT32 biHeight;           /* Height of the image in pixels */
     OPJ_UINT16 biPlanes;           /* 1 */
     OPJ_UINT16 biBitCount;         /* Number of color bits by pixels */
     OPJ_UINT32 biCompression;      /* Type of encoding 0: none 1: RLE8 2: RLE4 */

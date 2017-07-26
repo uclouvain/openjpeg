@@ -88,7 +88,7 @@
  * Before connecting to the JPIP server, every JPIP client checks local cache data of the requesting image with the image decoding server.
  * If its cache exists, the image decoding server provides ChannelID (CID), which identifies the image and its cache model on the JPIP server, and the whole system can continue the session using the CID.
  *
- *  \image html jpip_protocol.png "Message Sequence Chart of OpenJPIP impementation"
+ *  \image html jpip_protocol.png "Message Sequence Chart of OpenJPIP implementation"
  *
  * \author Kaori Hagihara UCL/SST/ICTM/ELEN
  */
