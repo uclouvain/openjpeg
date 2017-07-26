@@ -369,6 +369,17 @@ static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi)
                     try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
                     rpx = res->pdx + levelno;
                     rpy = res->pdy + levelno;
+
+                    /* To avoid divisions by zero / undefined behaviour on shift */
+                    /* in below tests */
+                    /* Fixes reading id:000026,sig:08,src:002419,op:int32,pos:60,val:+32 */
+                    /* of https://github.com/uclouvain/openjpeg/issues/938 */
+                    if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                            rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy) {
+                        continue;
+                    }
+
+                    /* See ISO-15441. B.12.1.3 Resolution level-position-component-layer progression */
                     if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) &&
                             ((try0 << levelno) % (1 << rpy))))) {
                         continue;
@@ -464,6 +475,17 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi)
                     try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
                     rpx = res->pdx + levelno;
                     rpy = res->pdy + levelno;
+
+                    /* To avoid divisions by zero / undefined behaviour on shift */
+                    /* in below tests */
+                    /* Relates to id:000019,sig:08,src:001098,op:flip1,pos:49 */
+                    /* of https://github.com/uclouvain/openjpeg/issues/938 */
+                    if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                            rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy) {
+                        continue;
+                    }
+
+                    /* See ISO-15441. B.12.1.4 Position-component-resolution level-layer progression */
                     if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) &&
                             ((try0 << levelno) % (1 << rpy))))) {
                         continue;
@@ -557,6 +579,17 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi)
                     try1 = opj_int_ceildiv(pi->ty1, (OPJ_INT32)(comp->dy << levelno));
                     rpx = res->pdx + levelno;
                     rpy = res->pdy + levelno;
+
+                    /* To avoid divisions by zero / undefined behaviour on shift */
+                    /* in below tests */
+                    /* Fixes reading id:000019,sig:08,src:001098,op:flip1,pos:49 */
+                    /* of https://github.com/uclouvain/openjpeg/issues/938 */
+                    if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                            rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy) {
+                        continue;
+                    }
+
+                    /* See ISO-15441. B.12.1.5 Component-position-resolution level-layer progression */
                     if (!((pi->y % (OPJ_INT32)(comp->dy << rpy) == 0) || ((pi->y == pi->ty0) &&
                             ((try0 << levelno) % (1 << rpy))))) {
                         continue;
