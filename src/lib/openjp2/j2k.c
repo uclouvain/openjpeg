@@ -2234,9 +2234,9 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         /* Avoids later undefined shift in computation of */
         /* p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps[i].m_dc_level_shift = 1
                     << (l_image->comps[i].prec - 1); */
-        if (l_img_comp->prec > 32) {
+        if (l_img_comp->prec > 31) {
             opj_event_msg(p_manager, EVT_ERROR,
-                          "Invalid values for comp = %d : prec=%u (should be between 1 and 38 according to the JPEG2000 norm. OpenJpeg only supports up to 32)\n",
+                          "Invalid values for comp = %d : prec=%u (should be between 1 and 38 according to the JPEG2000 norm. OpenJpeg only supports up to 31)\n",
                           i, l_img_comp->prec);
             return OPJ_FALSE;
         }
@@ -6271,9 +6271,9 @@ static OPJ_BOOL opj_j2k_read_cbd(opj_j2k_t *p_j2k,
         l_comp->sgnd = (l_comp_def >> 7) & 1;
         l_comp->prec = (l_comp_def & 0x7f) + 1;
 
-        if (l_comp->prec > 32) {
+        if (l_comp->prec > 31) {
             opj_event_msg(p_manager, EVT_ERROR,
-                          "Invalid values for comp = %d : prec=%u (should be between 1 and 38 according to the JPEG2000 norm. OpenJpeg only supports up to 32)\n",
+                          "Invalid values for comp = %d : prec=%u (should be between 1 and 38 according to the JPEG2000 norm. OpenJpeg only supports up to 31)\n",
                           i, l_comp->prec);
             return OPJ_FALSE;
         }
