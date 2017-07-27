@@ -950,8 +950,13 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color,
         /* verify that no component is targeted more than once */
         for (i = 0; i < nr_channels; i++) {
             OPJ_UINT16 pcol = cmap[i].pcol;
-            assert(cmap[i].mtyp == 0 || cmap[i].mtyp == 1);
-            if (pcol >= nr_channels) {
+            /* See ISO 15444-1 Table I.14 – MTYPi field values */
+            if (cmap[i].mtyp != 0 && cmap[i].mtyp != 1) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Invalid value for cmap[%d].mtyp = %d.\n", i,
+                              cmap[i].mtyp);
+                is_sane = OPJ_FALSE;
+            } else if (pcol >= nr_channels) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid component/palette index for direct mapping %d.\n", pcol);
                 is_sane = OPJ_FALSE;
