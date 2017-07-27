@@ -20,7 +20,18 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit a88cbb6a0b3539461dfb29922102953b7a7fc3a7
+<pre class='wrap'>commit d6fa30099797c68c6a67decf58571dd59dbf734b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-26 23:25:38 +0200
+
+    Avoids undefined shift behaviour in m_dc_level_shift computation
+    
+    Fixes warning found on clusterfuzz-testcase-minimized-5146316340461568
+    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2495
+    
+    Credit to OSS Fuzz
+
+commit a88cbb6a0b3539461dfb29922102953b7a7fc3a7
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-26 22:53:59 +0200
 
@@ -759,12 +770,6 @@ Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2016-09-29 22:06:23 +0200
 
     fix abi-check and limit upload to website for master
-
-commit 110d31891b459c673c7c788cf8170cadfd2201bf
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-09-29 21:44:38 +0200
-
-    fix abi-check
 
 ...</pre></div>
 
