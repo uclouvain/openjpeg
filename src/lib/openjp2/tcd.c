@@ -1523,14 +1523,18 @@ OPJ_BOOL opj_tcd_update_tile_data(opj_tcd_t *p_tcd,
             if (l_img_comp->sgnd) {
                 for (j = 0; j < l_height; ++j) {
                     for (k = 0; k < l_width; ++k) {
-                        *(l_dest_ptr++) = (OPJ_INT16)(*(l_src_ptr++));
+                        OPJ_INT16 val = (OPJ_INT16)(*(l_src_ptr++));
+                        memcpy(l_dest_ptr, &val, sizeof(val));
+                        l_dest_ptr ++;
                     }
                     l_src_ptr += l_stride;
                 }
             } else {
                 for (j = 0; j < l_height; ++j) {
                     for (k = 0; k < l_width; ++k) {
-                        *(l_dest_ptr++) = (OPJ_INT16)((*(l_src_ptr++)) & 0xffff);
+                        OPJ_INT16 val = (OPJ_INT16)((*(l_src_ptr++)) & 0xffff);
+                        memcpy(l_dest_ptr, &val, sizeof(val));
+                        l_dest_ptr ++;
                     }
                     l_src_ptr += l_stride;
                 }
@@ -1544,10 +1548,9 @@ OPJ_BOOL opj_tcd_update_tile_data(opj_tcd_t *p_tcd,
             OPJ_INT32 * l_src_ptr = l_tilec->data;
 
             for (j = 0; j < l_height; ++j) {
-                for (k = 0; k < l_width; ++k) {
-                    *(l_dest_ptr++) = (*(l_src_ptr++));
-                }
-                l_src_ptr += l_stride;
+                memcpy(l_dest_ptr, l_src_ptr, l_width * sizeof(OPJ_INT32));
+                l_dest_ptr += l_width;
+                l_src_ptr += l_width + l_stride;
             }
 
             p_dest = (OPJ_BYTE*) l_dest_ptr;

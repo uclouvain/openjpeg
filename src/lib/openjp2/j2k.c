@@ -8951,7 +8951,10 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
             if (l_img_comp_src->sgnd) {
                 for (j = 0; j < l_height_dest; ++j) {
                     for (k = 0; k < l_width_dest; ++k) {
-                        *(l_dest_ptr++) = *(l_src_ptr++);
+                        OPJ_INT16 val;
+                        memcpy(&val, l_src_ptr, sizeof(val));
+                        l_src_ptr ++;
+                        *(l_dest_ptr++) = val;
                     }
 
                     l_dest_ptr += l_line_offset_dest;
@@ -8960,7 +8963,10 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
             } else {
                 for (j = 0; j < l_height_dest; ++j) {
                     for (k = 0; k < l_width_dest; ++k) {
-                        *(l_dest_ptr++) = (*(l_src_ptr++)) & 0xffff;
+                        OPJ_INT16 val;
+                        memcpy(&val, l_src_ptr, sizeof(val));
+                        l_src_ptr ++;
+                        *(l_dest_ptr++) = val & 0xffff;
                     }
 
                     l_dest_ptr += l_line_offset_dest;
@@ -8977,12 +8983,9 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
             l_src_ptr += l_start_offset_src;
 
             for (j = 0; j < l_height_dest; ++j) {
-                for (k = 0; k < l_width_dest; ++k) {
-                    *(l_dest_ptr++) = (*(l_src_ptr++));
-                }
-
-                l_dest_ptr += l_line_offset_dest;
-                l_src_ptr += l_line_offset_src ;
+                memcpy(l_dest_ptr, l_src_ptr, l_width_dest * sizeof(OPJ_INT32));
+                l_dest_ptr += l_width_dest + l_line_offset_dest;
+                l_src_ptr += l_width_dest + l_line_offset_src ;
             }
 
             l_src_ptr += l_end_offset_src;
