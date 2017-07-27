@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 820fcfe8bb101a2862c076b02c9b6b636ce39d2f
+<pre class='wrap'>commit e03e9474667e5117341351699f0b1dbb06f93346
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-27 22:29:17 +0200
+
+    Avoid undefined shift behaviour if bit depth == 32 (#895)
+    
+    Fixes openjeg-crashes-2017-07-27/id:000000,sig:11,src:003798,op:ext_AO,pos:128.jp2
+
+commit 820fcfe8bb101a2862c076b02c9b6b636ce39d2f
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-27 19:34:54 +0200
 
@@ -764,21 +772,6 @@ Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2017-03-03 23:23:39 +0100
 
     Fixed CRLF auto conversion issue in openjpeg-data #655
-
-commit a43f1bea6273e87d9e5cb6e428f560ae7a59223b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-02-13 12:36:45 +0100
-
-    Remove warnings related to empty tag-trees.
-    
-    Decoding some valid .jp2 files like Sentinel2 datasets leads to warnings like:
-    No incltree created.
-    tgt_create tree-&gt;numnodes == 0, no tree created.
-    No imsbtree created.
-    tgt_create tree-&gt;numnodes == 0, no tree created.
-    
-    Besides that, the image is correctly decoded. So there is no reason to emit
-    those warnings.
 
 ...</pre></div>
 
