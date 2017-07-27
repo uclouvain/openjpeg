@@ -20,7 +20,17 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 6c4e5bacb9d9791fc6ff074bd7958b3820d70514
+<pre class='wrap'>commit 820fcfe8bb101a2862c076b02c9b6b636ce39d2f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-27 19:34:54 +0200
+
+    opj_j2k_update_image_data / opj_tcd_update_tile_data: fix unaligned load/store (#895)
+    
+    When components don't have the same width, unaligned load/store are possible.
+    
+    Fixes openjeg-crashes-2017-07-27/id:000000,sig:11,src:001342,op:flip4,pos:162.jp2 of #895
+
+commit 6c4e5bacb9d9791fc6ff074bd7958b3820d70514
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-27 19:22:14 +0200
 
@@ -769,12 +779,6 @@ Date:   2017-02-13 12:36:45 +0100
     
     Besides that, the image is correctly decoded. So there is no reason to emit
     those warnings.
-
-commit 7113c4e3bbb4b397ae0c27cbfb645ae8acfee042
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2016-10-03 23:47:10 +0200
-
-    Update THANKS.md
 
 ...</pre></div>
 
