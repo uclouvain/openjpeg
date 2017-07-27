@@ -400,6 +400,10 @@ static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi)
                             ((comp->dy << levelno) >> levelno) != comp->dy) {
                         continue;
                     }
+                    if ((comp->dx << levelno) > INT_MAX ||
+                            (comp->dy << levelno) > INT_MAX) {
+                        continue;
+                    }
                     trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
                     try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
                     trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
@@ -526,6 +530,10 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi)
                             ((comp->dy << levelno) >> levelno) != comp->dy) {
                         continue;
                     }
+                    if ((comp->dx << levelno) > INT_MAX ||
+                            (comp->dy << levelno) > INT_MAX) {
+                        continue;
+                    }
                     trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
                     try0 = opj_int_ceildiv(pi->ty0, (OPJ_INT32)(comp->dy << levelno));
                     trx1 = opj_int_ceildiv(pi->tx1, (OPJ_INT32)(comp->dx << levelno));
@@ -648,6 +656,10 @@ static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi)
                     if (levelno >= 32 ||
                             ((comp->dx << levelno) >> levelno) != comp->dx ||
                             ((comp->dy << levelno) >> levelno) != comp->dy) {
+                        continue;
+                    }
+                    if ((comp->dx << levelno) > INT_MAX ||
+                            (comp->dy << levelno) > INT_MAX) {
                         continue;
                     }
                     trx0 = opj_int_ceildiv(pi->tx0, (OPJ_INT32)(comp->dx << levelno));
