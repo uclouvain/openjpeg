@@ -5584,6 +5584,7 @@ static OPJ_BOOL opj_j2k_read_mct(opj_j2k_t *p_j2k,
     if (l_mct_data->m_data) {
         opj_free(l_mct_data->m_data);
         l_mct_data->m_data = 00;
+        l_mct_data->m_data_size = 0;
     }
 
     l_mct_data->m_index = l_indix;
