@@ -5549,6 +5549,28 @@ static OPJ_BOOL opj_j2k_read_mct(opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read MCT marker\n");
                 return OPJ_FALSE;
             }
+
+            /* Update m_mcc_records[].m_offset_array and m_decorrelation_array
+             * to point to the new addresses */
+            if (new_mct_records != l_tcp->m_mct_records) {
+                for (i = 0; i < l_tcp->m_nb_mcc_records; ++i) {
+                    opj_simple_mcc_decorrelation_data_t* l_mcc_record =
+                        &(l_tcp->m_mcc_records[i]);
+                    if (l_mcc_record->m_decorrelation_array) {
+                        l_mcc_record->m_decorrelation_array =
+                            new_mct_records +
+                            (l_mcc_record->m_decorrelation_array -
+                             l_tcp->m_mct_records);
+                    }
+                    if (l_mcc_record->m_offset_array) {
+                        l_mcc_record->m_offset_array =
+                            new_mct_records +
+                            (l_mcc_record->m_offset_array -
+                             l_tcp->m_mct_records);
+                    }
+                }
+            }
+
             l_tcp->m_mct_records = new_mct_records;
             l_mct_data = l_tcp->m_mct_records + l_tcp->m_nb_mct_records;
             memset(l_mct_data, 0, (l_tcp->m_nb_max_mct_records - l_tcp->m_nb_mct_records) *
