@@ -270,8 +270,11 @@ static OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
 Apply collected palette data
 @param color Collector for profile, cdef and pclr data
 @param image
+@return true in case of success
 */
-static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color);
+static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+                                   opj_jp2_color_t *color,
+                                   opj_event_mgr_t * p_manager);
 
 static void opj_jp2_free_pclr(opj_jp2_color_t *color);
 
@@ -1009,7 +1012,9 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color,
 }
 
 /* file9.jp2 */
-static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
+static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+                                   opj_jp2_color_t *color,
+                                   opj_event_mgr_t * p_manager)
 {
     opj_image_comp_t *old_comps, *new_comps;
     OPJ_BYTE *channel_size, *channel_sign;
@@ -1026,13 +1031,23 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
     cmap = color->jp2_pclr->cmap;
     nr_channels = color->jp2_pclr->nr_channels;
 
+    for (i = 0; i < nr_channels; ++i) {
+        /* Palette mapping: */
+        cmp = cmap[i].cmp;
+        if (image->comps[cmp].data == NULL) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "image->comps[%d].data == NULL in opj_jp2_apply_pclr().\n", i);
+            return OPJ_FALSE;
+        }
+    }
+
     old_comps = image->comps;
     new_comps = (opj_image_comp_t*)
                 opj_malloc(nr_channels * sizeof(opj_image_comp_t));
     if (!new_comps) {
-        /* FIXME no error code for opj_jp2_apply_pclr */
-        /* FIXME event manager error callback */
-        return;
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Memory allocation failure in opj_jp2_apply_pclr().\n");
+        return OPJ_FALSE;
     }
     for (i = 0; i < nr_channels; ++i) {
         pcol = cmap[i].pcol;
@@ -1051,11 +1066,14 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
         new_comps[i].data = (OPJ_INT32*)
                             opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
         if (!new_comps[i].data) {
+            while (i > 0) {
+                -- i;
+                opj_free(new_comps[i].data);
+            }
             opj_free(new_comps);
-            new_comps = NULL;
-            /* FIXME no error code for opj_jp2_apply_pclr */
-            /* FIXME event manager error callback */
-            return;
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Memory allocation failure in opj_jp2_apply_pclr().\n");
+            return OPJ_FALSE;
         }
         new_comps[i].prec = channel_size[i];
         new_comps[i].sgnd = channel_sign[i];
@@ -1068,7 +1086,7 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
         cmp = cmap[i].cmp;
         pcol = cmap[i].pcol;
         src = old_comps[cmp].data;
-        assert(src);
+        assert(src); /* verified above */
         max = new_comps[pcol].w * new_comps[pcol].h;
 
         /* Direct use: */
@@ -1110,6 +1128,7 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 
     opj_jp2_free_pclr(color);
 
+    return OPJ_TRUE;
 }/* apply_pclr() */
 
 static OPJ_BOOL opj_jp2_read_pclr(opj_jp2_t *jp2,
@@ -1597,7 +1616,9 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
             if (!jp2->color.jp2_pclr->cmap) {
                 opj_jp2_free_pclr(&(jp2->color));
             } else {
-                opj_jp2_apply_pclr(p_image, &(jp2->color));
+                if (!opj_jp2_apply_pclr(p_image, &(jp2->color), p_manager)) {
+                    return OPJ_FALSE;
+                }
             }
         }
 
@@ -3069,7 +3090,9 @@ OPJ_BOOL opj_jp2_get_tile(opj_jp2_t *p_jp2,
         if (!p_jp2->color.jp2_pclr->cmap) {
             opj_jp2_free_pclr(&(p_jp2->color));
         } else {
-            opj_jp2_apply_pclr(p_image, &(p_jp2->color));
+            if (!opj_jp2_apply_pclr(p_image, &(p_jp2->color), p_manager)) {
+                return OPJ_FALSE;
+            }
         }
     }
 
