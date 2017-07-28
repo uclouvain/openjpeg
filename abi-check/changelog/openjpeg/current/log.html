@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit c5bf5ef4d6552e9159aaad29cb27826acd1a3389
+<pre class='wrap'>commit 16aeb9282f6b3877aa8365c461ba8d3d1338adae
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-28 21:39:30 +0200
+
+    Fix null pointer dereference in opj_j2k_add_mct() (#895)
+    
+    Fixes openjeg-crashes-2017-07-27/issue879-poc1.j2k of #895
+
+commit c5bf5ef4d6552e9159aaad29cb27826acd1a3389
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-28 21:29:55 +0200
 
@@ -764,16 +772,6 @@ Author: Alex Chan &lt;a.chan@wellcome.ac.uk&gt;
 Date:   2017-04-28 09:43:05 +0100
 
     Escape quotes to ensure README renders on GitHub correctly
-
-commit cf08763c3174525f151746705c3c72a321a01a4a
-Author: Jakub Wilk &lt;jwilk@jwilk.net&gt;
-Date:   2017-03-05 16:08:57 +0100
-
-    Remove spurious .R macros from manpages
-    
-    Fixes the following warnings from man:
-    
-        `R' is a string (producing the registered sign), not a macro.
 
 ...</pre></div>
 
