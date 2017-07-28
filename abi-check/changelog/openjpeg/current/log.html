@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 7bdbe490cba9990916f94a40379cc787434340ff
+<pre class='wrap'>commit 361c4506fdfb9b6f0e41d86d5d0ea1efb5704ecf
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-28 22:06:26 +0200
+
+    opj_tcd_dc_level_shift_decode(): avoid int overflow. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2516. Credit to OSS Fuzz
+
+commit 7bdbe490cba9990916f94a40379cc787434340ff
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-28 21:55:22 +0200
 
@@ -763,15 +769,6 @@ Date:   2017-05-03 11:46:45 +0200
     Merge pull request #899 from jwilk/man-warnings
     
     Remove spurious .R macros from manpages
-
-commit 807da629a6e00a06a3d2506c3f99da1757252c43
-Merge: 8c33128 4927b64
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-03 11:46:01 +0200
-
-    Merge pull request #914 from alexwlchan/fix-readme
-    
-    Escape quotes to ensure README renders on GitHub correctly
 
 ...</pre></div>
 
