@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 361c4506fdfb9b6f0e41d86d5d0ea1efb5704ecf
+<pre class='wrap'>commit d6654d906c1ae66590b6d600458a91f1ee923de5
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-28 22:15:47 +0200
+
+    opj_int_ceildiv(): fix int32 overflow. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2494. Credit to OSS Fuzz
+
+commit 361c4506fdfb9b6f0e41d86d5d0ea1efb5704ecf
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-28 22:06:26 +0200
 
@@ -760,15 +766,6 @@ Date:   2017-05-03 11:48:02 +0200
     Merge pull request #893 from rouault/remove_tagtree_warnings
     
     Remove warnings related to empty tag-trees.
-
-commit e7ff1efb82fab7ba6c6d69e7d286811abb4ee7e7
-Merge: 807da62 cf08763
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-03 11:46:45 +0200
-
-    Merge pull request #899 from jwilk/man-warnings
-    
-    Remove spurious .R macros from manpages
 
 ...</pre></div>
 
