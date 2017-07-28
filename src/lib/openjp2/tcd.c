@@ -1890,8 +1890,15 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
             for (j = 0; j < l_height; ++j) {
                 for (i = 0; i < l_width; ++i) {
                     OPJ_FLOAT32 l_value = *((OPJ_FLOAT32 *) l_current_ptr);
-                    *l_current_ptr = opj_int_clamp((OPJ_INT32)opj_lrintf(l_value) +
-                                                   l_tccp->m_dc_level_shift, l_min, l_max); ;
+                    OPJ_INT32 l_value_int = (OPJ_INT32)opj_lrintf(l_value);
+                    if (l_value > INT_MAX ||
+                            (l_value_int > 0 && l_tccp->m_dc_level_shift > 0 &&
+                             l_value_int > INT_MAX - l_tccp->m_dc_level_shift)) {
+                        *l_current_ptr = l_max;
+                    } else {
+                        *l_current_ptr = opj_int_clamp(
+                                             l_value_int + l_tccp->m_dc_level_shift, l_min, l_max);
+                    }
                     ++l_current_ptr;
                 }
                 l_current_ptr += l_stride;
