@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e03e9474667e5117341351699f0b1dbb06f93346
+<pre class='wrap'>commit c5bf5ef4d6552e9159aaad29cb27826acd1a3389
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-28 21:29:55 +0200
+
+    Avoid use-after-free when a MCT marker is found after a MCC one (#895)
+    
+    Fixes openjeg-crashes-2017-07-27/issue880-poc2.j2k of #895
+
+commit e03e9474667e5117341351699f0b1dbb06f93346
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-27 22:29:17 +0200
 
@@ -766,12 +774,6 @@ Date:   2017-03-05 16:08:57 +0100
     Fixes the following warnings from man:
     
         `R' is a string (producing the registered sign), not a macro.
-
-commit 8c33128369816be09968712b50681e743464b93c
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2017-03-03 23:23:39 +0100
-
-    Fixed CRLF auto conversion issue in openjpeg-data #655
 
 ...</pre></div>
 
