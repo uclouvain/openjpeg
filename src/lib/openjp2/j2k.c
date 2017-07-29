@@ -8655,6 +8655,9 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
     *p_tile_index = p_j2k->m_current_tile_number;
     *p_go_on = OPJ_TRUE;
     *p_data_size = opj_tcd_get_decoded_tile_size(p_j2k->m_tcd);
+    if (*p_data_size == UINT_MAX) {
+        return OPJ_FALSE;
+    }
     *p_tile_x0 = p_j2k->m_tcd->tcd_image->tiles->x0;
     *p_tile_y0 = p_j2k->m_tcd->tcd_image->tiles->y0;
     *p_tile_x1 = p_j2k->m_tcd->tcd_image->tiles->x1;
