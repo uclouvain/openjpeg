@@ -129,6 +129,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     if (fread(tga, TGA_HEADER_SIZE, 1, fp) != 1) {
         fprintf(stderr,
                 "\nError: fread return a number of element different from the expected.\n");
+        free(tga);
         return 0 ;
     }
     id_len = (unsigned char)tga[0];
