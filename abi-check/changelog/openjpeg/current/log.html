@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 397f62c0a838e15d667ef50e27d5d011d2c79c04
+<pre class='wrap'>commit 51eb86d8f7a6297a4f0e8ca44977b72532de0353
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-29 19:43:23 +0200
+
+    Fix warnings in pi.c raised by VS11 analyze (#190)
+
+commit 397f62c0a838e15d667ef50e27d5d011d2c79c04
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 19:13:49 +0200
 
@@ -590,12 +596,6 @@ Date:   2017-06-01 11:15:25 +0200
 
     T1: avoid pointer indirection for mqc and raw members of opj_t1_t
 
-commit a5003787ffdbc4fb4a9b4e18187e9f69c36b9e9b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-01 10:23:30 +0200
-
-    T1: remove flags_stride variable from opj_t1_t
-
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
@@ -747,18 +747,11 @@ Date:   2017-05-04 15:22:14 +0200
     And run them by Travis-CI
 
 commit 20291aad07591da40ac86e5f5a87b4f6d154ba6a
-Merge: a18040e 04980a8
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-03 12:41:02 +0200
 
     Merge pull request #915 from rouault/appveyor_fix_attempt
     
-    Fix retrieval of jpylyzer in AppVeyor
-
-commit 04980a8c7b6c260394084ab12b4bdee957caa24f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-03 12:03:00 +0200
-
     Fix retrieval of jpylyzer in AppVeyor
 
 ...</pre></div>
