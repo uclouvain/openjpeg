@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 3fbe71369019df0b47c7a2be4fab8c05768f2f32
+<pre class='wrap'>commit 11445eddad7e7fa5b273d1c83c91011c44e5d586
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-29 19:03:13 +0200
+
+    opj_pi_update_decode_poc(): limit layno1 to the number of layers (CVE-2016-1626 and CVE-2016-1628, #850)
+    
+    This has been recently fixed in a less elegant way per
+    80818c39f5bfbac37768fcee95b0ffeceaa77264
+
+commit 3fbe71369019df0b47c7a2be4fab8c05768f2f32
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 18:38:16 +0200
 
@@ -581,18 +590,6 @@ Date:   2017-06-01 10:23:30 +0200
 
     T1: remove flags_stride variable from opj_t1_t
 
-commit 0ec842e1f1e6ebc80df5308cab457372456b204d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-31 19:45:03 +0200
-
-    Inline opj_raw_decode()
-
-commit aa7a8a4398b3792b4a52fb443d49d317a9a4984f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-31 17:15:27 +0200
-
-    T1: loop unrolling in dec_sigpass_raw and dec_refpass_raw
-
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
@@ -757,6 +754,14 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-03 12:03:00 +0200
 
     Fix retrieval of jpylyzer in AppVeyor
+
+commit a18040e02238c577cf7853a0e303cbca62e044a8
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-05-03 11:48:02 +0200
+
+    Merge pull request #893 from rouault/remove_tagtree_warnings
+    
+    Remove warnings related to empty tag-trees.
 
 ...</pre></div>
 
