@@ -1685,14 +1685,22 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
     cblk_h = t1->h;
 
     if (tccp->roishift) {
-        OPJ_INT32 thresh = 1 << tccp->roishift;
-        for (j = 0; j < cblk_h; ++j) {
-            for (i = 0; i < cblk_w; ++i) {
-                OPJ_INT32 val = datap[(j * cblk_w) + i];
-                OPJ_INT32 mag = abs(val);
-                if (mag >= thresh) {
-                    mag >>= tccp->roishift;
-                    datap[(j * cblk_w) + i] = val < 0 ? -mag : mag;
+        if (tccp->roishift >= 31) {
+            for (j = 0; j < cblk_h; ++j) {
+                for (i = 0; i < cblk_w; ++i) {
+                    datap[(j * cblk_w) + i] = 0;
+                }
+            }
+        } else {
+            OPJ_INT32 thresh = 1 << tccp->roishift;
+            for (j = 0; j < cblk_h; ++j) {
+                for (i = 0; i < cblk_w; ++i) {
+                    OPJ_INT32 val = datap[(j * cblk_w) + i];
+                    OPJ_INT32 mag = abs(val);
+                    if (mag >= thresh) {
+                        mag >>= tccp->roishift;
+                        datap[(j * cblk_w) + i] = val < 0 ? -mag : mag;
+                    }
                 }
             }
         }
