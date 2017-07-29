@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 51eb86d8f7a6297a4f0e8ca44977b72532de0353
+<pre class='wrap'>commit 517bf6fd86dae18b62390a03533d30da0e5bb701
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-29 21:11:23 +0200
+
+    src/bin/jpwl/convert.c: fix memleak (fix suggested by maddin200, #631)
+
+commit 51eb86d8f7a6297a4f0e8ca44977b72532de0353
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 19:43:23 +0200
 
@@ -590,12 +596,6 @@ Date:   2017-06-01 17:02:50 +0200
 
     T1: remove use of neghalf variable. It is useless since bpno is always &gt; 0
 
-commit 10410fe72ec2d20f2bbdfb68a383bce1df17f35d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-01 11:15:25 +0200
-
-    T1: avoid pointer indirection for mqc and raw members of opj_t1_t
-
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
@@ -730,29 +730,12 @@ Date:   2017-05-06 15:06:24 +0200
     Add profiling of CPU and memory usage (#912)
 
 commit e92fe29016300e7ae9ccfa6e9cf5422456f57e25
-Merge: 20291aa 328f076
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-09 12:33:07 +0200
 
     Merge pull request #917 from rouault/bench
     
     Add performance benchmarking scripts
-
-commit 328f076d2639d8664436e2b620cf9eed4f7dee53
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-04 15:22:14 +0200
-
-    Add performance benchmarking scripts
-    
-    And run them by Travis-CI
-
-commit 20291aad07591da40ac86e5f5a87b4f6d154ba6a
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-03 12:41:02 +0200
-
-    Merge pull request #915 from rouault/appveyor_fix_attempt
-    
-    Fix retrieval of jpylyzer in AppVeyor
 
 ...</pre></div>
 
