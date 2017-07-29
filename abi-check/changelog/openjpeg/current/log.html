@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit f6551f822fe020843299bd807ec6989abd070b2c
+<pre class='wrap'>commit db9ef99f6dd054a84fa8382c02869fb0656abfc8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-29 16:34:35 +0200
+
+    opj_t1_decode_cblk(): avoid undefined shift behaviour. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2487. Credit to OSS Fuzz
+
+commit f6551f822fe020843299bd807ec6989abd070b2c
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 16:29:11 +0200
 
@@ -749,15 +755,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-03 12:03:00 +0200
 
     Fix retrieval of jpylyzer in AppVeyor
-
-commit a18040e02238c577cf7853a0e303cbca62e044a8
-Merge: e7ff1ef a43f1be
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-03 11:48:02 +0200
-
-    Merge pull request #893 from rouault/remove_tagtree_warnings
-    
-    Remove warnings related to empty tag-trees.
 
 ...</pre></div>
 
