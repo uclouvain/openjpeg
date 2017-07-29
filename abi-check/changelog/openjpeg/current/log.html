@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9906fbf737692486cebabe98169988d818e2e66a
+<pre class='wrap'>commit f6551f822fe020843299bd807ec6989abd070b2c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-29 16:29:11 +0200
+
+    opj_t1_clbl_decode_processor(): avoid undefined behaviour if roishift &gt;= 31. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2506. Credit to OSS Fuzz
+
+commit 9906fbf737692486cebabe98169988d818e2e66a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 16:22:36 +0200
 
@@ -578,12 +584,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-23 00:40:30 +0200
 
     Optimize a bit opj_t1_enc_clnpass()
-
-commit c76a59213100bbec567a0c78b7b1b8ba82d1e1fa
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-22 23:30:30 +0200
-
-    T1: remove unused code in decoder
 
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
