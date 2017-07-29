@@ -1351,6 +1351,8 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
                                         opj_cp_t *p_cp,
                                         OPJ_UINT32 p_tile_no)
 {
+    OPJ_UINT32 numcomps = p_image->numcomps;
+
     /* loop */
     OPJ_UINT32 pino;
     OPJ_UINT32 compno, resno;
@@ -1388,13 +1390,13 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 
     l_data_stride = 4 * OPJ_J2K_MAXRLVLS;
     l_tmp_data = (OPJ_UINT32*)opj_malloc(
-                     l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
+                     l_data_stride * numcomps * sizeof(OPJ_UINT32));
     if
     (! l_tmp_data) {
         return 00;
     }
     l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
-                    p_image->numcomps * sizeof(OPJ_UINT32 *));
+                    numcomps * sizeof(OPJ_UINT32 *));
     if
     (! l_tmp_ptr) {
         opj_free(l_tmp_data);
@@ -1412,7 +1414,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
     l_encoding_value_ptr = l_tmp_data;
     /* update pointer array */
     for
-    (compno = 0; compno < p_image->numcomps; ++compno) {
+    (compno = 0; compno < numcomps; ++compno) {
         l_tmp_ptr[compno] = l_encoding_value_ptr;
         l_encoding_value_ptr += l_data_stride;
     }
@@ -1423,7 +1425,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
     /* step calculations */
     l_step_p = 1;
     l_step_c = l_max_prec * l_step_p;
-    l_step_r = p_image->numcomps * l_step_c;
+    l_step_r = numcomps * l_step_c;
     l_step_l = l_max_res * l_step_r;
 
     /* set values for first packet iterator */
@@ -1466,7 +1468,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 
     /* allocation for components and number of components has already been calculated by opj_pi_create */
     for
-    (compno = 0; compno < l_current_pi->numcomps; ++compno) {
+    (compno = 0; compno < numcomps; ++compno) {
         opj_pi_resolution_t *l_res = l_current_comp->resolutions;
         l_encoding_value_ptr = l_tmp_ptr[compno];
 
@@ -1505,7 +1507,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 
         /* allocation for components and number of components has already been calculated by opj_pi_create */
         for
-        (compno = 0; compno < l_current_pi->numcomps; ++compno) {
+        (compno = 0; compno < numcomps; ++compno) {
             opj_pi_resolution_t *l_res = l_current_comp->resolutions;
             l_encoding_value_ptr = l_tmp_ptr[compno];
 
@@ -1549,6 +1551,8 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
         OPJ_UINT32 p_tile_no,
         J2K_T2_MODE p_t2_mode)
 {
+    OPJ_UINT32 numcomps = p_image->numcomps;
+
     /* loop*/
     OPJ_UINT32 pino;
     OPJ_UINT32 compno, resno;
@@ -1586,13 +1590,13 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 
     l_data_stride = 4 * OPJ_J2K_MAXRLVLS;
     l_tmp_data = (OPJ_UINT32*)opj_malloc(
-                     l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
+                     l_data_stride * numcomps * sizeof(OPJ_UINT32));
     if (! l_tmp_data) {
         return 00;
     }
 
     l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
-                    p_image->numcomps * sizeof(OPJ_UINT32 *));
+                    numcomps * sizeof(OPJ_UINT32 *));
     if (! l_tmp_ptr) {
         opj_free(l_tmp_data);
         return 00;
@@ -1608,7 +1612,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 
     l_encoding_value_ptr = l_tmp_data;
     /* update pointer array*/
-    for (compno = 0; compno < p_image->numcomps; ++compno) {
+    for (compno = 0; compno < numcomps; ++compno) {
         l_tmp_ptr[compno] = l_encoding_value_ptr;
         l_encoding_value_ptr += l_data_stride;
     }
@@ -1620,7 +1624,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
     /* step calculations*/
     l_step_p = 1;
     l_step_c = l_max_prec * l_step_p;
-    l_step_r = p_image->numcomps * l_step_c;
+    l_step_r = numcomps * l_step_c;
     l_step_l = l_max_res * l_step_r;
 
     /* set values for first packet iterator*/
@@ -1654,7 +1658,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
     l_current_pi->step_l = l_step_l;
 
     /* allocation for components and number of components has already been calculated by opj_pi_create */
-    for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
+    for (compno = 0; compno < numcomps; ++compno) {
         opj_pi_resolution_t *l_res = l_current_comp->resolutions;
         l_encoding_value_ptr = l_tmp_ptr[compno];
 
@@ -1693,7 +1697,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
         l_current_pi->step_l = l_step_l;
 
         /* allocation for components and number of components has already been calculated by opj_pi_create */
-        for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
+        for (compno = 0; compno < numcomps; ++compno) {
             opj_pi_resolution_t *l_res = l_current_comp->resolutions;
             l_encoding_value_ptr = l_tmp_ptr[compno];
 
@@ -1727,7 +1731,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
         opj_pi_update_encode_poc_and_final(p_cp, p_tile_no, l_tx0, l_tx1, l_ty0, l_ty1,
                                            l_max_prec, l_max_res, l_dx_min, l_dy_min);
     } else {
-        opj_pi_update_encode_not_poc(p_cp, p_image->numcomps, p_tile_no, l_tx0, l_tx1,
+        opj_pi_update_encode_not_poc(p_cp, numcomps, p_tile_no, l_tx0, l_tx1,
                                      l_ty0, l_ty1, l_max_prec, l_max_res, l_dx_min, l_dy_min);
     }
 
