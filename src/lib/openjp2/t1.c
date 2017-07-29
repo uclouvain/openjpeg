@@ -1822,6 +1822,18 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
     }
 
     bpno_plus_one = (OPJ_INT32)(roishift + cblk->numbps);
+    if (bpno_plus_one >= 31) {
+        if (p_manager_mutex) {
+            opj_mutex_lock(p_manager_mutex);
+        }
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "opj_t1_decode_cblk(): unsupported bpno_plus_one = %d >= 31\n",
+                      bpno_plus_one);
+        if (p_manager_mutex) {
+            opj_mutex_unlock(p_manager_mutex);
+        }
+        return OPJ_FALSE;
+    }
     passtype = 2;
 
     opj_mqc_resetstates(mqc);
