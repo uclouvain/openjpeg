@@ -1896,8 +1896,9 @@ static int are_comps_similar(opj_image_t * image)
     for (i = 1; i < image->numcomps; i++) {
         if (image->comps[0].dx != image->comps[i].dx ||
                 image->comps[0].dy != image->comps[i].dy ||
-                image->comps[0].prec != image->comps[i].prec ||
-                image->comps[0].sgnd != image->comps[i].sgnd) {
+                (i <= 2 &&
+                 (image->comps[0].prec != image->comps[i].prec ||
+                  image->comps[0].sgnd != image->comps[i].sgnd))) {
             return OPJ_FALSE;
         }
     }
@@ -1940,7 +1941,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
         ncomp = 1;
     }
 
-    if ((force_split == 0) &&
+    if ((force_split == 0) && ncomp >= 2 &&
             are_comps_similar(image)) {
         fdest = fopen(outfile, "wb");
 
