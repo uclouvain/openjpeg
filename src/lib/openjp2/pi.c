@@ -1213,7 +1213,8 @@ static void opj_pi_update_decode_poc(opj_pi_iterator_t * p_pi,
             l_current_poc->resno1; /* Resolution Level Index #0 (End) */
         l_current_pi->poc.compno1 =
             l_current_poc->compno1; /* Component Index #0 (End) */
-        l_current_pi->poc.layno1 = l_current_poc->layno1; /* Layer Index #0 (End) */
+        l_current_pi->poc.layno1 = opj_uint_min(l_current_poc->layno1,
+                                                p_tcp->numlayers); /* Layer Index #0 (End) */
         l_current_pi->poc.precno1 = p_max_precision;
         ++l_current_pi;
         ++l_current_poc;
