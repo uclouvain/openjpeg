@@ -526,7 +526,8 @@ static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi)
                     /* Avoids division by zero */
                     /* Relates to id_000004,sig_06,src_000679,op_arith8,pos_49,val_-17 */
                     /* of  https://github.com/uclouvain/openjpeg/issues/938 */
-                    if (((comp->dx << levelno) >> levelno) != comp->dx ||
+                    if (levelno >= 32 ||
+                            ((comp->dx << levelno) >> levelno) != comp->dx ||
                             ((comp->dy << levelno) >> levelno) != comp->dy) {
                         continue;
                     }
