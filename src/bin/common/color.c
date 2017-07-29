@@ -781,6 +781,18 @@ fails3:
     }
 }/* color_apply_icc_profile() */
 
+static int are_comps_same_dimensions(opj_image_t * image)
+{
+    unsigned int i;
+    for (i = 1; i < image->numcomps; i++) {
+        if (image->comps[0].dx != image->comps[i].dx ||
+                image->comps[0].dy != image->comps[i].dy) {
+            return OPJ_FALSE;
+        }
+    }
+    return OPJ_TRUE;
+}
+
 void color_cielab_to_rgb(opj_image_t *image)
 {
     int *row;
@@ -792,6 +804,12 @@ void color_cielab_to_rgb(opj_image_t *image)
     if (numcomps != 3) {
         fprintf(stderr, "%s:%d:\n\tnumcomps %d not handled. Quitting.\n",
                 __FILE__, __LINE__, numcomps);
+        return;
+    }
+    if (!are_comps_same_dimensions(image)) {
+        fprintf(stderr,
+                "%s:%d:\n\tcomponents are not all of the same dimension. Quitting.\n",
+                __FILE__, __LINE__);
         return;
     }
 
