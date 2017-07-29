@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 11445eddad7e7fa5b273d1c83c91011c44e5d586
+<pre class='wrap'>commit 397f62c0a838e15d667ef50e27d5d011d2c79c04
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-29 19:13:49 +0200
+
+    Fix write heap buffer overflow in opj_mqc_byteout(). Discovered by Ke Liu of Tencent's Xuanwu LAB (#835)
+
+commit 11445eddad7e7fa5b273d1c83c91011c44e5d586
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 19:03:13 +0200
 
@@ -754,14 +760,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-03 12:03:00 +0200
 
     Fix retrieval of jpylyzer in AppVeyor
-
-commit a18040e02238c577cf7853a0e303cbca62e044a8
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-03 11:48:02 +0200
-
-    Merge pull request #893 from rouault/remove_tagtree_warnings
-    
-    Remove warnings related to empty tag-trees.
 
 ...</pre></div>
 
