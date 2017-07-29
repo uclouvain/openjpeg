@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5a3e7aaf339943bc988adbada39a1fc8f5046899
+<pre class='wrap'>commit 3fbe71369019df0b47c7a2be4fab8c05768f2f32
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-29 18:38:16 +0200
+
+    opj_tcd_get_decoded_tile_size(): fix potential UINT32 overflow (#854, CVE-2016-5152)
+    
+    Fix derived from https://pdfium.googlesource.com/pdfium.git/+/d8cc503575463ff3d81b22dad292665f2c88911e/third_party/libopenjpeg20/0018-tcd_get_decoded_tile_size.patch
+
+commit 5a3e7aaf339943bc988adbada39a1fc8f5046899
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 17:56:12 +0200
 
@@ -584,12 +592,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-31 17:15:27 +0200
 
     T1: loop unrolling in dec_sigpass_raw and dec_refpass_raw
-
-commit 68557ff5036e68112bcbf194d2a7f48b1f58b752
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-31 14:35:56 +0200
-
-    T1: Transpose coder optimizations to decoder, and cleanup code
 
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
