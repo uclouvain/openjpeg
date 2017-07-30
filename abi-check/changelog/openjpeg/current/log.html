@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 4748318136626dd9e841ea1aa8b52adfbab26772
+<pre class='wrap'>commit 83342f2aafcab4599b49f780e35fd249e8402b61
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 18:18:59 +0200
+
+    Fix Doxygen warnings (patch derived from Winfried's doxygen-dif.txt.zip, #849)
+
+commit 4748318136626dd9e841ea1aa8b52adfbab26772
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 17:26:03 +0200
 
@@ -414,12 +420,6 @@ Date:   2017-06-21 12:54:40 +0200
 
     Fix mingw related warnings
 
-commit cdd3e83bae71e1e023c4c2bdd5e52d082576e550
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-21 12:49:01 +0200
-
-    Fix clang warning about extraneous parentheses
-
 commit 4fe7620d4adc131c3ff93bb47bb8d138d69c9cbd
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-21 12:28:51 +0200
@@ -437,12 +437,6 @@ Date:   2017-06-21 12:12:58 +0200
     
     This brings an extra 23% speed improvement on bench_dwt in 64bit builds
     with AVX2 compared to SSE2.
-
-commit f6e3475cc9328e5378e96e72b5adf29fb07c5feb
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-21 01:07:56 +0200
-
-    dwt.c: small cleanup
 
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
@@ -524,22 +518,6 @@ Date:   2017-06-02 14:32:12 +0200
 
     Fix documentation of opj_t1_decode_cblks()
 
-commit dde6cbabc0cb93102c2091c15d11dec1267d0fd8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-02 14:25:57 +0200
-
-    Simplify VSC handling: instead of masking out bits when reading the 4th row.
-    
-    Do not set them when updating flags of the 1st row
-
-commit 53d46fc7330ed652db66aa37b498fbfa27be625c
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-23 16:15:55 +0200
-
-    Merge pull request #936 from rouault/master_warnings
-    
-    CMake: add stronger warnings for openjp2 lib/bin by default, and error out on declaration-after-statement
-
 commit 5f1e380b5155577864a84c1e64f213b6d9f83334
 Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
 Date:   2017-05-16 09:31:07 -0400
@@ -563,14 +541,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-15 14:09:51 +0200
 
     Add comments about non successfull attempt of implementing alternate INITDEC, DECODE and BYTEIN procedures (refs #921)
-
-commit f7a126af61877cd4623327142521d82a0c19430d
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-15 13:08:03 +0200
-
-    Merge pull request #926 from rouault/reformat_h_files
-    
-    Reformat: apply reformattin on .h files (#128)
 
 ...</pre></div>
 
