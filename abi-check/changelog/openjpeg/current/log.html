@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e23e0c94d0eb30623bc67be19c38c22ee5378344
+<pre class='wrap'>commit 4748318136626dd9e841ea1aa8b52adfbab26772
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 17:26:03 +0200
+
+    j2k.c: remove hardcoded constants related to m_state, and useless FIXME
+
+commit e23e0c94d0eb30623bc67be19c38c22ee5378344
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 16:48:15 +0200
 
@@ -438,20 +444,6 @@ Date:   2017-06-21 01:07:56 +0200
 
     dwt.c: small cleanup
 
-commit f06cfadef8e2b1ad9008957cc6bc80a27c53f2eb
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-20 18:24:21 +0200
-
-    Enable __SSE__ / __SSE2__ with Visual Studio
-
-commit 5c56933daf1da88aa6f2a8c8dc5fcc7b1d76cb00
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-06-18 00:49:20 +0200
-
-    Merge pull request #955 from rouault/remove_opj_nosanitize
-    
-    Remove OPJ_NOSANITIZE in opj_bio_read() and opj_bio_write() (#761)
-
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
 Date:   2017-06-16 13:58:25 +0200
@@ -540,36 +532,13 @@ Date:   2017-06-02 14:25:57 +0200
     
     Do not set them when updating flags of the 1st row
 
-commit 3d9940a35b8c566c1fb41db56018c91b511a976a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-02 11:52:16 +0200
-
-    Force inlining of mqc decoding and pass steps through heavy use of macros, so as to get better register allocation
-
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
-Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-23 16:15:55 +0200
 
     Merge pull request #936 from rouault/master_warnings
     
     CMake: add stronger warnings for openjp2 lib/bin by default, and error out on declaration-after-statement
-
-commit a8ca7c51f38a4cbdcb4a541137478df03e5eb76d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-23 15:12:19 +0200
-
-    CMake: add stronger warnings for openjp2 lib/bin by default, and error out on declaration-after-statement
-    
-    And remove occurences of unused arguments in src/lib/openjp2
-
-commit 6e97d877b155aff55d1ae1fef4a36fa56d51e472
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-23 14:49:38 +0200
-
-    Merge pull request #935 from rouault/add_compress_vsc_test
-    
-    Tests: test opj_compress in VSC mode (related to #172)
 
 commit 5f1e380b5155577864a84c1e64f213b6d9f83334
 Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
@@ -596,27 +565,12 @@ Date:   2017-05-15 14:09:51 +0200
     Add comments about non successfull attempt of implementing alternate INITDEC, DECODE and BYTEIN procedures (refs #921)
 
 commit f7a126af61877cd4623327142521d82a0c19430d
-Merge: 28d2eab 3c2972f
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-15 13:08:03 +0200
 
     Merge pull request #926 from rouault/reformat_h_files
     
     Reformat: apply reformattin on .h files (#128)
-
-commit 3c2972f924857016bb454201c7e92f25de9105ee
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-15 12:21:30 +0200
-
-    Reformat: apply reformattin on .h files (#128)
-
-commit 28d2eabca79d06378843d1e94fecfb4a5e22178d
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-15 12:09:45 +0200
-
-    Merge pull request #919 from rouault/reformat
-    
-    Add mechanisms to reformat and check code style, and reformat whole codebase (#128)
 
 ...</pre></div>
 
