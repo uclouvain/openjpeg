@@ -1883,7 +1883,7 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
             l_max = (1 << (l_img_comp->prec - 1)) - 1;
         } else {
             l_min = 0;
-            l_max = (1 << l_img_comp->prec) - 1;
+            l_max = (OPJ_INT32)((1U << l_img_comp->prec) - 1);
         }
 
         l_current_ptr = l_tile_comp->data;
