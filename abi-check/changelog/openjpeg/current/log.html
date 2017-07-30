@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit ffa9a4f6585dc199fb850dee4255e7a7b84aad63
+<pre class='wrap'>commit 22bf99ce0220811bfce1562ee61423cb0245b683
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 19:07:16 +0200
+
+    Test return value of opj_j2k_setup_decoding_tile() (commit https://github.com/uclouvain/openjpeg/pull/561/commits/ec31fa0c7f1ff8979312c07296cba41584c458a0 by  ak-dxdy, #561)
+
+commit ffa9a4f6585dc199fb850dee4255e7a7b84aad63
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 18:46:34 +0200
 
@@ -391,14 +397,6 @@ Date:   2017-07-01 04:24:46 +0200
 
     Remove useless knownfailures (since LAZY encoding is fixed)
 
-commit 69a001819c9ac36bb3210e475d099cc2abbbf89f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-01 01:46:55 +0200
-
-    .travis.yml: try to run tests in -mavx2 mode if the CPU supports it
-    
-    And modify settings so as to hae a AVX2 compatible CPU
-
 commit 8fa405ee15b5151df40d8d96460257ee5b510135
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-30 00:03:05 +0200
@@ -410,14 +408,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-26 13:13:26 +0200
 
     INSTALL.md: add section discussing how to enable CPU specific optimizations
-
-commit 533fa2fdee4f69a5d7bb8f0b1c0a8f432dad334f
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-06-26 12:45:34 +0200
-
-    Merge pull request #957 from rouault/idwt_53_improvements
-    
-    IDWT 5x3 single-pass lifting and SSE2/AVX2 implementation
 
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
@@ -441,35 +431,16 @@ Date:   2017-06-14 17:23:06 +0200
     Quiet mode for opj_decompress via -quiet long parameter.
 
 commit 9cbc9903c3034d1a101d0521402503ead0abcff0
-Merge: 2609fb8 9a9b069
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-13 12:09:52 +0200
 
     Merge branch 't1_flag_optimizations'
-
-commit 2609fb8077125b5b31f1bcc2f98c12ff1e6572d7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-12 17:15:23 +0100
-
-    Packet header writing: set empty packet header bit to 0 when appropriate (small optimization)
-
-commit 9a9b06911e164bdc854cf6b9c3bc5b6e751bf46d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-02 19:22:15 +0200
-
-    opj_t1_dec_sigpass_raw/opj_t1_dec_refpass_raw: harmonize style with mqc methods
 
 commit 5f1e380b5155577864a84c1e64f213b6d9f83334
 Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
 Date:   2017-05-16 09:31:07 -0400
 
     Fixed formatting issues ASTYLE
-
-commit 9d8e1ecdeb99b1e4b4ffd19feb152c88fe4f83ba
-Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
-Date:   2017-05-15 14:39:54 -0400
-
-    Quiet mode for opj_decompress via -quiet long parameter.
 
 ...</pre></div>
 
