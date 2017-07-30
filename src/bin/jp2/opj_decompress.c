@@ -1722,7 +1722,7 @@ fin:
         }
         free(dirptr);
     }
-    if (numDecompressedImages && !(parameters.quiet)) {
+    if (numDecompressedImages && !failed && !(parameters.quiet)) {
         fprintf(stdout, "decode time: %d ms\n",
                 (int)((tCumulative * 1000.0) / (OPJ_FLOAT64)numDecompressedImages));
     }
