@@ -230,6 +230,8 @@ typedef struct opj_tcd {
     OPJ_BITFIELD m_is_decoder : 1;
     /** Thread pool */
     opj_thread_pool_t* thread_pool;
+    /** AFL test */
+    OPJ_UINT32 enumcs;
 } opj_tcd_t;
 
 /** @name Exported functions */

@@ -959,10 +959,11 @@ int imagetotga(opj_image_t * image, const char *outfile)
     for (i = 0; i < image->numcomps - 1; i++) {
         if ((image->comps[0].dx != image->comps[i + 1].dx)
                 || (image->comps[0].dy != image->comps[i + 1].dy)
-                || (image->comps[0].prec != image->comps[i + 1].prec)) {
+                || (image->comps[0].prec != image->comps[i + 1].prec)
+                || (image->comps[0].sgnd != image->comps[i+1].sgnd)) {
             fclose(fdest);
             fprintf(stderr,
-                    "Unable to create a tga file with such J2K image charateristics.");
+                    "Unable to create a tga file with such J2K image charateristics.\n");
             return 1;
         }
     }
@@ -2343,7 +2344,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
 {
     FILE *rawFile = NULL;
     size_t res;
-    unsigned int compno;
+    unsigned int compno, numcomps;
     int w, h, fails;
     int line, row, curr, mask;
     int *ptr;
@@ -2352,6 +2353,32 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
 
     if ((image->numcomps * image->x1 * image->y1) == 0) {
         fprintf(stderr, "\nError: invalid raw image parameters\n");
+        return 1;
+    }
+
+    numcomps = image->numcomps;
+
+    if (numcomps > 4) {
+        numcomps = 4;
+    }
+
+    for (compno = 1; compno < numcomps; ++compno) {
+        if (image->comps[0].dx != image->comps[compno].dx) {
+            break;
+        }
+        if (image->comps[0].dy != image->comps[compno].dy) {
+            break;
+        }
+        if (image->comps[0].prec != image->comps[compno].prec) {
+            break;
+        }
+        if (image->comps[0].sgnd != image->comps[compno].sgnd) {
+            break;
+        }
+    }
+    if (compno != numcomps) {
+        fprintf(stderr,"imagetoraw_common: All components shall have the same subsampling, same bit depth, same sign.\n");
+        fprintf(stderr,"\tAborting\n");
         return 1;
     }
 
@@ -2466,7 +2493,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
                 }
             }
         } else if (image->comps[compno].prec <= 32) {
-            fprintf(stderr, "More than 16 bits per component no handled yet\n");
+            fprintf(stderr, "More than 16 bits per component not handled yet\n");
             goto fin;
         } else {
             fprintf(stderr, "Error: invalid precision: %d\n", image->comps[compno].prec);
