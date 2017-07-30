@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 68832af20e3b3710424947e12762b6b52d3b6ac0
+<pre class='wrap'>commit 1ed8d67797ef57143e2c855b602016bf9d89337d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 15:35:47 +0200
+
+    opj_j2k_set_decode_area: replace assertions by runtime checks. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2795. Credit to OSS Fuzz
+
+commit 68832af20e3b3710424947e12762b6b52d3b6ac0
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 15:22:24 +0200
 
@@ -446,12 +452,6 @@ Date:   2017-06-20 17:56:25 +0200
     With the bench_dwt utility with default arguments (16383x16383 image),
     time goes from 4.064 s to 1.212 s.
 
-commit 919ed5f8b8681aeae54ce3884b3ecca56cadc2e0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-20 17:56:19 +0200
-
-    Add bench_dwt program (compiled only if BUILD_BENCH_DWT=ON)
-
 commit 5c56933daf1da88aa6f2a8c8dc5fcc7b1d76cb00
 Merge: 32b20b9 8df2521
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
@@ -477,12 +477,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-17 16:37:56 +0200
 
     Fix astyle issue
-
-commit 5f596cb2833d5ea7a4d04d22af551731bd770f05
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-17 14:10:15 +0200
-
-    Fix warning about unused arguments
 
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
@@ -584,12 +578,6 @@ Date:   2017-06-02 09:36:25 +0200
 
     t1_generate_luts.c: fix compiler warnings
 
-commit 2ba861c37cb5032d1fa90a7c9298f6e08a0f5413
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-01 19:42:03 +0200
-
-    Optimize opj_t1_update_flags()
-
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
@@ -687,20 +675,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-05-11 11:21:37 +0200
 
     astyle.options: use non deprecated option name
-
-commit 563bd8499e63db976ca8358216138647593354bc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-09 15:44:46 +0200
-
-    Reformat whole codebase with astyle.options (#128)
-
-commit 8650b70e06408d394c1708846b6fc2d86cf14079
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-09 13:16:53 +0200
-
-    Merge pull request #918 from rouault/profile
-    
-    Add profiling of CPU and memory usage (#912)
 
 ...</pre></div>
 
