@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 517bf6fd86dae18b62390a03533d30da0e5bb701
+<pre class='wrap'>commit 68832af20e3b3710424947e12762b6b52d3b6ac0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 15:22:24 +0200
+
+    opj_tcd_dc_level_shift_decode: avoid int32 overflow when prec == 31. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2799. Credit to OSS Fuzz
+
+commit 517bf6fd86dae18b62390a03533d30da0e5bb701
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 21:11:23 +0200
 
@@ -478,12 +484,6 @@ Date:   2017-06-17 14:10:15 +0200
 
     Fix warning about unused arguments
 
-commit cc07aec6c7b50090c3f471ca2c68d0ffa8aa4ff1
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-17 14:09:31 +0200
-
-    Fix warnings with recent GCC versions
-
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
 Date:   2017-06-16 13:58:25 +0200
@@ -590,12 +590,6 @@ Date:   2017-06-01 19:42:03 +0200
 
     Optimize opj_t1_update_flags()
 
-commit a0861855c11bcb8c93f399ca51e766b5c8ef9e33
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-01 17:02:50 +0200
-
-    T1: remove use of neghalf variable. It is useless since bpno is always &gt; 0
-
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
@@ -700,42 +694,13 @@ Date:   2017-05-09 15:44:46 +0200
 
     Reformat whole codebase with astyle.options (#128)
 
-commit d4e54e9f35d532062533f1d369c159810b01d224
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-09 15:28:09 +0200
-
-    Add mechanisms to reformant and check code style (#128)
-    
-    Use an internal version of astyle (astyle 3.0). Scripts taken from QGIS.
-    astyle.options from https://github.com/uclouvain/openjpeg/issues/128
-    
-    scripts/prepare-commit.sh can be used locally to automatically reformat
-    edited files.
-    
-    Travis-CI will run scripts/verify-indentation.sh to verify committed files.
-
 commit 8650b70e06408d394c1708846b6fc2d86cf14079
-Merge: e92fe29 05d5845
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-09 13:16:53 +0200
 
     Merge pull request #918 from rouault/profile
     
     Add profiling of CPU and memory usage (#912)
-
-commit 05d58451a1221ba95db8fb1d159eb0f76dbafb22
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-06 15:06:24 +0200
-
-    Add profiling of CPU and memory usage (#912)
-
-commit e92fe29016300e7ae9ccfa6e9cf5422456f57e25
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-05-09 12:33:07 +0200
-
-    Merge pull request #917 from rouault/bench
-    
-    Add performance benchmarking scripts
 
 ...</pre></div>
 
