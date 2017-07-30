@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 22bf99ce0220811bfce1562ee61423cb0245b683
+<pre class='wrap'>commit 9a6d41d22b1a4f17a376d2f6f208c52c58b8e4b3
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 19:27:01 +0200
+
+    opj_event_msg(): force zero termination of buffer
+
+commit b716f8616394252724ca0811eab3a20ab42b2189
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 19:26:47 +0200
+
+    Fix breakage of 22bf99ce0220811bfce1562ee61423cb0245b683
+
+commit 22bf99ce0220811bfce1562ee61423cb0245b683
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 19:07:16 +0200
 
@@ -369,7 +381,6 @@ Date:   2017-07-01 13:51:52 +0200
     Remove useless knownfailures (since LAZY encoding is fixed)
 
 commit e673c8bd4da9f0414da472ac5f3d8e03e5102982
-Merge: 8fa405e b992376
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-07-01 12:54:39 +0200
 
@@ -377,37 +388,11 @@ Date:   2017-07-01 12:54:39 +0200
     
     Enable AVX2 at runtime on Travis-CI and AppVeyor
 
-commit b9923764da198742c635ad7dff9de158c3dbb60d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-01 04:15:36 +0200
-
-    Add tools/travis-ci/knownfailures-Ubuntu14.04-clang3.8.0-x86_64-Release-3rdP.txt (copied from knownfailures-Ubuntu12.04-clang3.9.0-x86_64-Release-3rdP.txt)
-
-commit f194ff32ac3fd5bab88607ea6bf09a73adb99758
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-01 02:53:55 +0200
-
-    appveyor.yml: add a /arch:AVX2 config on Windows
-    
-    Try running the tests if the CPU supports AVX2.
-
 commit 96d757cb8e6c3fb0e133817e5057ee5eae6a594d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-01 04:24:46 +0200
 
     Remove useless knownfailures (since LAZY encoding is fixed)
-
-commit 8fa405ee15b5151df40d8d96460257ee5b510135
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-30 00:03:05 +0200
-
-    IDWT 5x3: fix bug in AVX2 implementation (#953, #957)
-
-commit 6239ed7be41d370c537ca43e198cf2fdc6eb9a60
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-26 13:13:26 +0200
-
-    INSTALL.md: add section discussing how to enable CPU specific optimizations
 
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
@@ -420,27 +405,6 @@ Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
 Date:   2017-06-16 13:27:19 +0200
 
     build both shared and static library
-
-commit 36dd87cea80ad56e0e3178221aa579a28f02a549
-Merge: 9cbc990 5f1e380
-Author: Antonin Descampe &lt;antonin@descampe.net&gt;
-Date:   2017-06-14 17:23:06 +0200
-
-    Merge pull request #928 from RussellMcOrmond/master
-    
-    Quiet mode for opj_decompress via -quiet long parameter.
-
-commit 9cbc9903c3034d1a101d0521402503ead0abcff0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-13 12:09:52 +0200
-
-    Merge branch 't1_flag_optimizations'
-
-commit 5f1e380b5155577864a84c1e64f213b6d9f83334
-Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
-Date:   2017-05-16 09:31:07 -0400
-
-    Fixed formatting issues ASTYLE
 
 ...</pre></div>
 
