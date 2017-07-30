@@ -486,6 +486,26 @@ void color_apply_icc_profile(opj_image_t *image)
     prec = (int)image->comps[0].prec;
 
     if (out_space == cmsSigRgbData) { /* enumCS 16 */
+        unsigned int i, nr_comp = image->numcomps;
+
+        if (nr_comp > 4) {
+            nr_comp = 4;
+        }
+        for (i = 1; i < nr_comp; ++i) { /* AFL test */
+            if (image->comps[0].dx != image->comps[i].dx) break;
+
+            if (image->comps[0].dy != image->comps[i].dy) break;
+
+            if (image->comps[0].prec != image->comps[i].prec) break;
+
+            if (image->comps[0].sgnd != image->comps[i].sgnd) break;
+
+        }
+        if (i != nr_comp) {
+            cmsCloseProfile(in_prof);
+            return;
+        }
+
         if (prec <= 8) {
             in_type = TYPE_RGB_8;
             out_type = TYPE_RGB_8;
