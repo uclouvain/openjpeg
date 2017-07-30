@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 1ed8d67797ef57143e2c855b602016bf9d89337d
+<pre class='wrap'>commit e23e0c94d0eb30623bc67be19c38c22ee5378344
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 16:48:15 +0200
+
+    Avoid p_stream-&gt;m_user_data_length &gt;= (OPJ_UINT64)p_stream-&gt;m_byte_offset assertion in opj_stream_get_number_byte_left(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2786. Credit to OSS Fuzz
+
+commit 1ed8d67797ef57143e2c855b602016bf9d89337d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 15:35:47 +0200
 
@@ -438,45 +444,13 @@ Date:   2017-06-20 18:24:21 +0200
 
     Enable __SSE__ / __SSE2__ with Visual Studio
 
-commit fa55b52d19f39765d7f108d654a8f87035a5772f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-20 17:56:25 +0200
-
-    Improve performance of inverse DWT 5x3 (#953)
-    
-    * Use single-pass lifting inverse wavelet transform.
-    * For vertical pass, use SSE2 when available so as to process 8 columns
-      in parallel. This is the most beneficial improvement, since the
-      vertical pass involves a lot of cache trashing.
-    
-    With the bench_dwt utility with default arguments (16383x16383 image),
-    time goes from 4.064 s to 1.212 s.
-
 commit 5c56933daf1da88aa6f2a8c8dc5fcc7b1d76cb00
-Merge: 32b20b9 8df2521
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-06-18 00:49:20 +0200
 
     Merge pull request #955 from rouault/remove_opj_nosanitize
     
     Remove OPJ_NOSANITIZE in opj_bio_read() and opj_bio_write() (#761)
-
-commit 8df2521a6015af7f69a378811986ddb0b3bfbd3a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-17 19:15:00 +0200
-
-    Remove OPJ_NOSANITIZE in opj_bio_read() and opj_bio_write() (#761)
-    
-    Commit 29313eb5 introduced those flags to avoid issues with
-    -fsanitize=unsigned-integer-overflow
-    However it is better just to rewrite the loop to avoid such condition
-    to occur.
-
-commit 32b20b93e04d38303f736e975eb5f483fda01ca5
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-17 16:37:56 +0200
-
-    Fix astyle issue
 
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
@@ -572,12 +546,6 @@ Date:   2017-06-02 11:52:16 +0200
 
     Force inlining of mqc decoding and pass steps through heavy use of macros, so as to get better register allocation
 
-commit 7e8b502842075738c9a062a2f06dace3f35dd7cd
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-02 09:36:25 +0200
-
-    t1_generate_luts.c: fix compiler warnings
-
 commit 53d46fc7330ed652db66aa37b498fbfa27be625c
 Merge: 6e97d87 a8ca7c5
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
@@ -596,25 +564,12 @@ Date:   2017-05-23 15:12:19 +0200
     And remove occurences of unused arguments in src/lib/openjp2
 
 commit 6e97d877b155aff55d1ae1fef4a36fa56d51e472
-Merge: 8728cfb 2d2c368
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-23 14:49:38 +0200
 
     Merge pull request #935 from rouault/add_compress_vsc_test
     
     Tests: test opj_compress in VSC mode (related to #172)
-
-commit 2d2c368b19ee59cba7470c94bcc2c06ca6db1d80
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-23 13:46:04 +0200
-
-    Tests: test opj_compress in VSC mode (related to #172)
-
-commit 8728cfbc799a61dd0600ee04aa64d829937d8710
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-23 13:54:28 +0200
-
-    t1.c: fix compiler warnings
 
 commit 5f1e380b5155577864a84c1e64f213b6d9f83334
 Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
@@ -656,25 +611,12 @@ Date:   2017-05-15 12:21:30 +0200
     Reformat: apply reformattin on .h files (#128)
 
 commit 28d2eabca79d06378843d1e94fecfb4a5e22178d
-Merge: 0ecac46 cde210b
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-05-15 12:09:45 +0200
 
     Merge pull request #919 from rouault/reformat
     
     Add mechanisms to reformat and check code style, and reformat whole codebase (#128)
-
-commit 0ecac46a1db911cbe340c4467000e91cea82c96d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-11 20:18:42 +0200
-
-    perf_test.py: implement -i option
-
-commit cde210be392d60fbcd8a3e7cacfa62660a95e8d9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-11 11:21:37 +0200
-
-    astyle.options: use non deprecated option name
 
 ...</pre></div>
 
