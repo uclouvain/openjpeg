@@ -10748,7 +10748,7 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
     p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = (OPJ_INT32)tile_index;
 
     /* customization of the decoding */
-    if (!opj_j2k_setup_decoding(p_j2k, p_manager)) {
+    if (!opj_j2k_setup_decoding_tile(p_j2k, p_manager)) {
         return OPJ_FALSE;
     }
 
