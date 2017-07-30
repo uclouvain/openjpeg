@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 83342f2aafcab4599b49f780e35fd249e8402b61
+<pre class='wrap'>commit c22cbd8bdf8ff2ae372f94391a4be2d322b36b41
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-30 18:43:25 +0200
+
+    Avoid heap buffer overflow in function pnmtoimage of convert.c, and unsigned integer overflow in opj_image_create() (CVE-2016-9118, #861)
+
+commit 83342f2aafcab4599b49f780e35fd249e8402b61
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 18:18:59 +0200
 
@@ -400,43 +406,12 @@ Date:   2017-06-26 13:13:26 +0200
     INSTALL.md: add section discussing how to enable CPU specific optimizations
 
 commit 533fa2fdee4f69a5d7bb8f0b1c0a8f432dad334f
-Merge: 6026786 4fe7620
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-06-26 12:45:34 +0200
 
     Merge pull request #957 from rouault/idwt_53_improvements
     
     IDWT 5x3 single-pass lifting and SSE2/AVX2 implementation
-
-commit 60267860698b86e215bee584857e6b4f2f08b693
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-21 13:20:35 +0200
-
-    Style fix
-
-commit 93aca84731bfffb20e968af10055a8cd0401806e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-21 12:54:40 +0200
-
-    Fix mingw related warnings
-
-commit 4fe7620d4adc131c3ff93bb47bb8d138d69c9cbd
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-21 12:28:51 +0200
-
-    .travis.yml: add a configuration to test compilation of AVX2 (but disable tests since Travis doesn't have AVX2 compatible machines)
-
-commit fd0dc535ad9ae0d369d1039aaf56235583ca64ea
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-21 12:12:58 +0200
-
-    IDWT 5x3: generalize SSE2 version for AVX2
-    
-    Thanks to our macros that abstract SSE use, the functions can use
-    AVX2 when available (at compile time)
-    
-    This brings an extra 23% speed improvement on bench_dwt in 64bit builds
-    with AVX2 compared to SSE2.
 
 commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
 Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
@@ -472,51 +447,11 @@ Date:   2017-06-12 17:15:23 +0100
 
     Packet header writing: set empty packet header bit to 0 when appropriate (small optimization)
 
-commit 73d1510d473b7dcfccfdee57e0e511e6791d5091
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-12 11:23:55 +0100
-
-    Encoder: fix packet writing of empty sub-bands (#891, #892)
-    
-    There are situations where, given a tile size, at a resolution level,
-    there are sub-bands with x0==x1 or y0==y1, that consequently don't have any
-    valid codeblocks, but the other sub-bands may be non-empty.
-    Given that we recycle the memory from one tile to another one, those
-    ghost codeblocks might be non-0 and thus candidate for packet inclusion.
-
-commit 81c5311758a0ae1f1aea349a6ee0bca2a238fa79
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-09 10:47:13 +0200
-
-    T1: fix BYPASS/LAZY, TERMALL/RESTART and PTERM/ERTERM encoding modes. (#674)
-    
-    There were a number of defects regarding when and how the termination of
-    passes had to done and the computation of their rate.
-
 commit 9a9b06911e164bdc854cf6b9c3bc5b6e751bf46d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-06-02 19:22:15 +0200
 
     opj_t1_dec_sigpass_raw/opj_t1_dec_refpass_raw: harmonize style with mqc methods
-
-commit 532243f1fd9997db63ea7f6b199d21138ccf58a3
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-02 16:49:26 +0200
-
-    MQC/RAW decoder: use an artificial 0xFF 0xFF terminating marker.
-    
-    This saves comparing the current pointer with the end of buffer pointer.
-    This results at least in tiny speed improvement for raw decoding, and
-    smaller code size for MQC as well.
-    
-    This kills the remains of the raw.h/.c files that were only used for
-    decoding. Encoding using the mqc structure already.
-
-commit 9b39fc4bccb3e9e4e9a9f61c4dc672fb7f05d865
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-06-02 14:32:12 +0200
-
-    Fix documentation of opj_t1_decode_cblks()
 
 commit 5f1e380b5155577864a84c1e64f213b6d9f83334
 Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
@@ -529,18 +464,6 @@ Author: Russell McOrmond &lt;russell.mcormond@canadiana.ca&gt;
 Date:   2017-05-15 14:39:54 -0400
 
     Quiet mode for opj_decompress via -quiet long parameter.
-
-commit 83d7a6d4a44833e78321bfd367dc0f822a8d0945
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-15 14:11:47 +0200
-
-    MQC: remove disabled MQC_PERF_OPT mode, which brings no performance improvements (see #923)
-
-commit 4431fa72657b6c4a92c3cf29cfc5c8df69424a0e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-05-15 14:09:51 +0200
-
-    Add comments about non successfull attempt of implementing alternate INITDEC, DECODE and BYTEIN procedures (refs #921)
 
 ...</pre></div>
 
