@@ -2367,10 +2367,19 @@ static OPJ_BOOL opj_jp2_read_header_procedure(opj_jp2_t *jp2,
             jp2->jp2_state |= JP2_STATE_UNKNOWN;
             if (opj_stream_skip(stream, l_current_data_size,
                                 p_manager) != l_current_data_size) {
-                opj_event_msg(p_manager, EVT_ERROR,
-                              "Problem with skipping JPEG2000 box, stream error\n");
-                opj_free(l_current_data);
-                return OPJ_FALSE;
+                if (jp2->jp2_state & JP2_STATE_CODESTREAM) {
+                    /* If we already read the codestream, do not error out */
+                    /* Needed for data/input/nonregression/issue254.jp2 */
+                    opj_event_msg(p_manager, EVT_WARNING,
+                                  "Problem with skipping JPEG2000 box, stream error\n");
+                    opj_free(l_current_data);
+                    return OPJ_TRUE;
+                } else {
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Problem with skipping JPEG2000 box, stream error\n");
+                    opj_free(l_current_data);
+                    return OPJ_FALSE;
+                }
             }
         }
     }
