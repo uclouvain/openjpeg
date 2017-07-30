@@ -9062,10 +9062,12 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
     /* Check if the positions provided by the user are correct */
 
     /* Left */
-    assert(p_start_x >= 0);
-    assert(p_start_y >= 0);
-
-    if ((OPJ_UINT32)p_start_x > l_image->x1) {
+    if (p_start_x < 0) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Left position of the decoded area (region_x0=%d) should be >= 0.\n",
+                      p_start_x);
+        return OPJ_FALSE;
+    } else if ((OPJ_UINT32)p_start_x > l_image->x1) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Left position of the decoded area (region_x0=%d) is outside the image area (Xsiz=%d).\n",
                       p_start_x, l_image->x1);
@@ -9083,7 +9085,12 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
     }
 
     /* Up */
-    if ((OPJ_UINT32)p_start_y > l_image->y1) {
+    if (p_start_x < 0) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Up position of the decoded area (region_y0=%d) should be >= 0.\n",
+                      p_start_y);
+        return OPJ_FALSE;
+    } else if ((OPJ_UINT32)p_start_y > l_image->y1) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Up position of the decoded area (region_y0=%d) is outside the image area (Ysiz=%d).\n",
                       p_start_y, l_image->y1);
@@ -9101,9 +9108,12 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
     }
 
     /* Right */
-    assert((OPJ_UINT32)p_end_x > 0);
-    assert((OPJ_UINT32)p_end_y > 0);
-    if ((OPJ_UINT32)p_end_x < l_image->x0) {
+    if (p_end_x <= 0) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Right position of the decoded area (region_x1=%d) should be > 0.\n",
+                      p_end_x);
+        return OPJ_FALSE;
+    } else if ((OPJ_UINT32)p_end_x < l_image->x0) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Right position of the decoded area (region_x1=%d) is outside the image area (XOsiz=%d).\n",
                       p_end_x, l_image->x0);
@@ -9121,7 +9131,12 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
     }
 
     /* Bottom */
-    if ((OPJ_UINT32)p_end_y < l_image->y0) {
+    if (p_end_y <= 0) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Bottom position of the decoded area (region_y1=%d) should be > 0.\n",
+                      p_end_y);
+        return OPJ_FALSE;
+    } else if ((OPJ_UINT32)p_end_y < l_image->y0) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Bottom position of the decoded area (region_y1=%d) is outside the image area (YOsiz=%d).\n",
                       p_end_y, l_image->y0);
