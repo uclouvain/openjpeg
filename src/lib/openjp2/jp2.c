@@ -3246,6 +3246,8 @@ static OPJ_BOOL opj_jpip_write_fidx(opj_jp2_t *jp2,
     OPJ_OFF_T j2k_codestream_exit;
     OPJ_BYTE l_data_header [24];
 
+    OPJ_UNUSED(jp2);
+
     /* preconditions */
     assert(jp2 != 00);
     assert(cio != 00);
@@ -3278,6 +3280,8 @@ static OPJ_BOOL opj_jpip_write_cidx(opj_jp2_t *jp2,
 {
     OPJ_OFF_T j2k_codestream_exit;
     OPJ_BYTE l_data_header [24];
+
+    OPJ_UNUSED(jp2);
 
     /* preconditions */
     assert(jp2 != 00);
