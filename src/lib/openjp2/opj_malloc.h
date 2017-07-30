@@ -56,8 +56,8 @@ void * opj_malloc(size_t size);
 
 /**
 Allocate a memory block with elements initialized to 0
-@param num Blocks to allocate
-@param size Bytes per block to allocate
+@param numOfElements  Blocks to allocate
+@param sizeOfElements Bytes per block to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
 void * opj_calloc(size_t numOfElements, size_t sizeOfElements);

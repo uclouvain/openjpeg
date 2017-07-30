@@ -89,6 +89,7 @@ Decode a packet of a tile from a source buffer
 @param data_read   FIXME DOC
 @param max_length  FIXME DOC
 @param pack_info Packet information
+@param p_manager the user event manager
 
 @return  FIXME DOC
 */

@@ -75,7 +75,7 @@ in T1.C are used by some function in TCD.C.
  *  a single 32-bit flags word to hold the state of 4 data points.  This corresponds
  *  to the 4-point-high columns that the data is processed in.
  *
- *  These #defines declare the layout of a 32-bit flags word.
+ *  These \#defines declare the layout of a 32-bit flags word.
  *
  *  This is currently done for encoding only.
  *  The values must NOT be changed, otherwise this is going to break a lot of
@@ -134,7 +134,7 @@ in T1.C are used by some function in TCD.C.
  *  word right by 3 bits and look at the same bit positions to see the
  *  values for data point 1.
  *
- *  The #defines below help a bit with this; say you have a flags word
+ *  The \#defines below help a bit with this; say you have a flags word
  *  f, you can do things like
  *
  *  (f & T1_SIGMA_THIS)
@@ -226,6 +226,9 @@ Decode the code-blocks of a tile
 @param pret Pointer to return value
 @param tilec The tile to decode
 @param tccp Tile coding parameters
+@param p_manager the event manager
+@param p_manager_mutex mutex for the event manager
+@param check_pterm whether PTERM correct termination should be checked
 */
 void opj_t1_decode_cblks(opj_thread_pool_t* tp,
                          volatile OPJ_BOOL* pret,

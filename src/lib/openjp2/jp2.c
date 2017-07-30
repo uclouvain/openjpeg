@@ -268,8 +268,9 @@ static OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
 
 /**
 Apply collected palette data
-@param color Collector for profile, cdef and pclr data
-@param image
+@param image Image.
+@param color Collector for profile, cdef and pclr data.
+@param p_manager the user event manager.
 @return true in case of success
 */
 static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,

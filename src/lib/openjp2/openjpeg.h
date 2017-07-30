@@ -1477,7 +1477,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
 /**
  * Start to compress the current image.
  * @param p_codec       Compressor handle
- * @param image         Input filled image
+ * @param p_image       Input filled image
  * @param p_stream      Input stgream
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_start_compress(opj_codec_t *p_codec,

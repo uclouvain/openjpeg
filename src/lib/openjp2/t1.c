@@ -184,6 +184,9 @@ Decode 1 code-block
 @param orient
 @param roishift Region of interest shifting value
 @param cblksty Code-block style
+@param p_manager the event manager
+@param p_manager_mutex mutex for the event manager
+@param check_pterm whether PTERM correct termination should be checked
 */
 static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                                    opj_tcd_cblk_dec_t* cblk,

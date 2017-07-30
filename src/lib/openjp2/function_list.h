@@ -91,6 +91,7 @@ void  opj_procedure_list_destroy(opj_procedure_list_t * p_list);
  *
  * @param   p_validation_list the list of procedure to modify.
  * @param   p_procedure     the procedure to add.
+ * @param   p_manager the user event manager.
  *
  * @return  OPJ_TRUE if the procedure could be added.
  */

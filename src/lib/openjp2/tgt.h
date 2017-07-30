@@ -80,10 +80,11 @@ typedef struct opj_tgt_tree {
 Create a tag-tree
 @param numleafsh Width of the array of leafs of the tree
 @param numleafsv Height of the array of leafs of the tree
+@param p_manager the event manager
 @return Returns a new tag-tree if successful, returns NULL otherwise
 */
 opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv,
-                               opj_event_mgr_t *manager);
+                               opj_event_mgr_t *p_manager);
 
 /**
  * Reinitialises a tag-tree from an exixting one.
