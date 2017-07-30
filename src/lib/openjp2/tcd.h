@@ -36,8 +36,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __TCD_H
-#define __TCD_H
+#ifndef OPJ_TCD_H
+#define OPJ_TCD_H
 /**
 @file tcd.h
 @brief Implementation of a tile coder/decoder (TCD)
@@ -386,4 +386,4 @@ OPJ_BOOL opj_tcd_is_band_empty(opj_tcd_band_t* band);
 
 /*@}*/
 
-#endif /* __TCD_H */
+#endif /* OPJ_TCD_H */

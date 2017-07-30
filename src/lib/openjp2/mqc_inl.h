@@ -36,8 +36,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __MQC_INL_H
-#define __MQC_INL_H
+#ifndef OPJ_MQC_INL_H
+#define OPJ_MQC_INL_H
 
 /* For internal use of opj_mqc_decode_macro() */
 #define opj_mqc_mpsexchange_macro(d, curctx, a) \
@@ -193,4 +193,4 @@ Decode a symbol
 #define opj_mqc_decode(d, mqc) \
     opj_mqc_decode_macro(d, mqc, mqc->curctx, mqc->a, mqc->c, mqc->ct)
 
-#endif /* __MQC_INL_H */
+#endif /* OPJ_MQC_INL_H */

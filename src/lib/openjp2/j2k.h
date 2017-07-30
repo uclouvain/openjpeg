@@ -39,8 +39,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __J2K_H
-#define __J2K_H
+#ifndef OPJ_J2K_H
+#define OPJ_J2K_H
 /**
 @file j2k.h
 @brief The JPEG-2000 Codestream Reader/Writer (J2K)
@@ -849,4 +849,4 @@ OPJ_BOOL opj_j2k_end_compress(opj_j2k_t *p_j2k,
 OPJ_BOOL opj_j2k_setup_mct_encoding(opj_tcp_t * p_tcp, opj_image_t * p_image);
 
 
-#endif /* __J2K_H */
+#endif /* OPJ_J2K_H */

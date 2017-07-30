@@ -38,8 +38,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __TGT_H
-#define __TGT_H
+#ifndef OPJ_TGT_H
+#define OPJ_TGT_H
 /**
 @file tgt.h
 @brief Implementation of a tag-tree coder (TGT)
@@ -145,4 +145,4 @@ OPJ_UINT32 opj_tgt_decode(opj_bio_t *bio,
 
 /*@}*/
 
-#endif /* __TGT_H */
+#endif /* OPJ_TGT_H */

@@ -36,8 +36,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __MQC_H
-#define __MQC_H
+#ifndef OPJ_MQC_H
+#define OPJ_MQC_H
 
 #include "opj_common.h"
 
@@ -268,4 +268,4 @@ Decode a symbol
 
 /*@}*/
 
-#endif /* __MQC_H */
+#endif /* OPJ_MQC_H */

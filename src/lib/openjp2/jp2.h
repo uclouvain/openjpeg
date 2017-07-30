@@ -33,8 +33,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __JP2_H
-#define __JP2_H
+#ifndef OPJ_JP2_H
+#define OPJ_JP2_H
 /**
 @file jp2.h
 @brief The JPEG-2000 file format Reader/Writer (JP2)
@@ -471,5 +471,5 @@ opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_t* p_jp2);
 
 /*@}*/
 
-#endif /* __JP2_H */
+#endif /* OPJ_JP2_H */
 

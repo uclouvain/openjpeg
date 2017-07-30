@@ -36,8 +36,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __T1_H
-#define __T1_H
+#ifndef OPJ_T1_H
+#define OPJ_T1_H
 /**
 @file t1.h
 @brief Implementation of the tier-1 coding (coding of code-block coefficients) (T1)
@@ -258,4 +258,4 @@ void opj_t1_destroy(opj_t1_t *p_t1);
 
 /*@}*/
 
-#endif /* __T1_H */
+#endif /* OPJ_T1_H */

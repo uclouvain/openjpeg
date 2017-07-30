@@ -36,8 +36,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __T2_H
-#define __T2_H
+#ifndef OPJ_T2_H
+#define OPJ_T2_H
 /**
 @file t2.h
 @brief Implementation of a tier-2 coding (packetization of code-block data) (T2)
@@ -132,4 +132,4 @@ void opj_t2_destroy(opj_t2_t *t2);
 
 /*@}*/
 
-#endif /* __T2_H */
+#endif /* OPJ_T2_H */

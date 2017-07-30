@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __INVERT_H
-#define __INVERT_H
+#ifndef OPJ_INVERT_H
+#define OPJ_INVERT_H
 /**
 @file invert.h
 @brief Implementation of the matrix inversion
@@ -61,4 +61,4 @@ OPJ_BOOL opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
 
 /*@}*/
 
-#endif /* __INVERT_H */
+#endif /* OPJ_INVERT_H */

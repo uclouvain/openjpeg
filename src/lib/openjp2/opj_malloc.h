@@ -29,8 +29,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __OPJ_MALLOC_H
-#define __OPJ_MALLOC_H
+#ifndef OPJ_MALLOC_H
+#define OPJ_MALLOC_H
 
 #include <stddef.h>
 /**
@@ -102,5 +102,5 @@ void opj_free(void * m);
 
 /*@}*/
 
-#endif /* __OPJ_MALLOC_H */
+#endif /* OPJ_MALLOC_H */
 

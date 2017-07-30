@@ -35,8 +35,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __PI_H
-#define __PI_H
+#ifndef OPJ_PI_H
+#define OPJ_PI_H
 /**
 @file pi.h
 @brief Implementation of a packet iterator (PI)
@@ -187,4 +187,4 @@ OPJ_BOOL opj_pi_next(opj_pi_iterator_t * pi);
 
 /*@}*/
 
-#endif /* __PI_H */
+#endif /* OPJ_PI_H */
