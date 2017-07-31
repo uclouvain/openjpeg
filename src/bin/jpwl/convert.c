@@ -1524,6 +1524,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
                 res = fwrite(&byte, 1, 1, fdest);
                 if (res < 1) {
                     fprintf(stderr, "failed to write 1 byte for %s\n", name);
+                    fclose(fdest);
                     return 1;
                 }
             }
