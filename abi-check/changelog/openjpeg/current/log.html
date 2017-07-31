@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 13cde9fa37249628af6b6f10601b733f87a025f4
+<pre class='wrap'>commit 48125b0d124bc668b971b1f5df5a3c39798cfcf9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-31 17:35:10 +0200
+
+    src/bin/jpwl/convert.c: add missing fclose() in error code path (suggested by maddin200, #976)
+
+commit 13cde9fa37249628af6b6f10601b733f87a025f4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 19:46:52 +0200
 
@@ -369,27 +375,12 @@ Date:   2017-07-03 14:33:57 +0200
     opj_j2k_read_header_procedure(): validate marker size to avoid excessive memory allocation attempt
 
 commit 5736b1a3683261a5b31fc19a691731dc9fce5920
-Merge: ecbfcbc a0839cc
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-07-03 12:03:29 +0200
 
     Merge pull request #954 from jeroen/static
     
     build both shared and static library
-
-commit ecbfcbc2764ff1b09e693d57e3ef5764518f1e1c
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-07-01 13:51:52 +0200
-
-    Merge pull request #964 from rouault/remove_useless_knownfailures
-    
-    Remove useless knownfailures (since LAZY encoding is fixed)
-
-commit a0839cca24e19f1f0906e30ee1009ce89e4942b4
-Author: Jeroen Ooms &lt;jeroenooms@gmail.com&gt;
-Date:   2017-06-16 13:58:25 +0200
-
-    only build both static and dynamic on non-windows
 
 ...</pre></div>
 
