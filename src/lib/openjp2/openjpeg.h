@@ -564,6 +564,7 @@ typedef struct opj_dparameters {
     /* <<UniPG */
 
     unsigned int flags;
+    unsigned int dump_state; /* AFL test */
 
 } opj_dparameters_t;
 
