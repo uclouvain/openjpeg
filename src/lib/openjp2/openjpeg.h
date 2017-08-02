@@ -501,6 +501,7 @@ typedef struct opj_cparameters {
 } opj_cparameters_t;
 
 #define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG  0x0001
+#define OPJ_DPARAMETERS_DUMP_FLAG 0x0002
 
 /**
  * Decompression parameters
@@ -564,7 +565,6 @@ typedef struct opj_dparameters {
     /* <<UniPG */
 
     unsigned int flags;
-    unsigned int dump_state; /* AFL test */
 
 } opj_dparameters_t;
 

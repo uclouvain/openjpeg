@@ -2158,7 +2158,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         return OPJ_FALSE;
     }
     if (!p_j2k->dump_state) {
-        OPJ_UINT32 siz_w, siz_h; /* AFL test */
+        OPJ_UINT32 siz_w, siz_h;
 
         siz_w = l_image->x1 - l_image->x0;
         siz_h = l_image->y1 - l_image->y0;
@@ -2236,11 +2236,11 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         l_img_comp->sgnd = tmp >> 7;
 
         if (p_j2k->dump_state == 0) {
-            if (i == 0) { /* AFL test */
+            if (i == 0) {
                 l_prec0 = l_img_comp->prec;
                 l_sgnd0 = l_img_comp->sgnd;
             } else if (l_cp->bpc_is_255 == 0
-                       && (l_img_comp->prec != l_prec0 || l_img_comp->sgnd != l_sgnd0)) {/* AFL test */
+                       && (l_img_comp->prec != l_prec0 || l_img_comp->sgnd != l_sgnd0)) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid precision and/or sgnd values for comp[%d]:\n"
                               "        [0] prec(%d) sgnd(%d) [%d] prec(%d) sgnd(%d)\n", i, l_prec0, l_sgnd0,
@@ -2305,120 +2305,8 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
             l_cp->m_specific_param.m_dec.m_reduce; /* reducing factor per component */
         ++l_img_comp;
     }
-    if (!p_j2k->dump_state) {
-        switch (p_j2k->enumcs) { /* AFL tests */
-            int ok, sycc;
 
-        case 12: /* CMYK */
-            if (l_image->numcomps == 4 /* cnf. color.c, line 879 */
-                    && l_image->comps[0].dx == l_image->comps[1].dx
-                    && l_image->comps[0].dx == l_image->comps[2].dx
-                    && l_image->comps[0].dx == l_image->comps[3].dx
-                    && l_image->comps[0].dy == l_image->comps[1].dy
-                    && l_image->comps[0].dy == l_image->comps[2].dy
-                    && l_image->comps[0].dy == l_image->comps[3].dy) {
-                break;
-            }
-            opj_event_msg(p_manager, EVT_ERROR, "wrong values for enumcs 12(i.e. CMYK)\n");
-            return OPJ_FALSE;
-
-        case 16: /* sRGB */
-            if (l_image->numcomps < 3) {
-                break;    /* GRAY, GRAYA */
-            }
-
-            if (l_image->numcomps == 3 /* RGB */
-                    && l_image->comps[0].dx == l_image->comps[1].dx
-                    && l_image->comps[0].dx == l_image->comps[2].dx
-                    && l_image->comps[0].dy == l_image->comps[1].dy
-                    && l_image->comps[0].dy == l_image->comps[2].dy
-                    && l_image->comps[0].prec == l_image->comps[1].prec
-                    && l_image->comps[0].prec == l_image->comps[2].prec
-                    && l_image->comps[0].sgnd == l_image->comps[1].sgnd
-                    && l_image->comps[0].sgnd == l_image->comps[2].sgnd) {
-                break;
-            }
-            if (l_image->numcomps == 4 /* RGBA */
-                    && l_image->comps[0].dx == l_image->comps[3].dx
-                    && l_image->comps[0].dy == l_image->comps[3].dy
-                    && l_image->comps[0].prec == l_image->comps[3].prec
-                    && l_image->comps[0].sgnd == l_image->comps[3].sgnd) {
-                break;
-            }
-            opj_event_msg(p_manager, EVT_ERROR, "wrong values for enumcs 16(i.e. sRGB)\n");
-            return OPJ_FALSE;
-
-        case 18: /* sYCC */
-            sycc = 0;
-            ok = (l_image->numcomps > 2); /* cnf. color.c, line 319 */
-
-            if (ok) {
-                sycc = /* sycc420 */
-                    ((l_image->comps[0].dx == 1)
-                     && (l_image->comps[1].dx == 2)
-                     && (l_image->comps[2].dx == 2)
-                     && (l_image->comps[0].dy == 1)
-                     && (l_image->comps[1].dy == 2)
-                     && (l_image->comps[2].dy == 2))
-                    || /* sycc422 */
-                    ((l_image->comps[0].dx == 1)
-                     && (l_image->comps[1].dx == 2)
-                     && (l_image->comps[2].dx == 2)
-                     && (l_image->comps[0].dy == 1)
-                     && (l_image->comps[1].dy == 1)
-                     && (l_image->comps[2].dy == 1))
-                    || /* sycc444 */
-                    ((l_image->comps[0].dx == 1)
-                     && (l_image->comps[1].dx == 1)
-                     && (l_image->comps[2].dx == 1)
-                     && (l_image->comps[0].dy == 1)
-                     && (l_image->comps[1].dy == 1)
-                     && (l_image->comps[2].dy == 1));
-            }
-            if (ok && sycc) {
-                break;
-            }
-
-            opj_event_msg(p_manager, EVT_ERROR, "wrong values for enumcs 18(i.e. sYCC)\n");
-            return OPJ_FALSE;
-
-        case 24: /* e-sYCC */
-            if (l_image->numcomps > 2 /* cnf. color.c, line 938 */
-                    && l_image->comps[0].dx == l_image->comps[1].dx
-                    && l_image->comps[0].dx == l_image->comps[2].dx
-                    && l_image->comps[0].dy == l_image->comps[1].dy
-                    && l_image->comps[0].dy == l_image->comps[2].dy) {
-                break;
-            }
-
-            opj_event_msg(p_manager, EVT_ERROR,
-                          "wrong values for enumcs 24(i.e. e-sYCC)\n");
-            return OPJ_FALSE;
-
-        case 14: /* CIELAB */
-            if (l_image->numcomps != 3) {
-                opj_event_msg(p_manager, EVT_ERROR,
-                              "wrong values for enumcs 14(i.e. CIElab)\n");
-                return OPJ_FALSE;
-            }
-            break;
-
-        case 17: /* GRAY */
-            if (l_image->comps[0].dx == 1
-                    && l_image->comps[0].dy == 1) {
-                break;
-            }
-            opj_event_msg(p_manager, EVT_ERROR, "wrong values for enumcs %u\n",
-                          p_j2k->enumcs);
-            return OPJ_FALSE;
-
-        default:
-            break;
-
-        }/* switch() */
-    } /* p_j2k->dump */
-
-    if (l_cp->tdx == 0 || l_cp->tdy == 0) { /* AFL test */
+    if (l_cp->tdx == 0 || l_cp->tdy == 0) {
         return OPJ_FALSE;
     }
 
@@ -6460,7 +6348,7 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
         j2k->m_cp.m_specific_param.m_dec.m_layer = parameters->cp_layer;
         j2k->m_cp.m_specific_param.m_dec.m_reduce = parameters->cp_reduce;
 
-        j2k->dump_state = parameters->dump_state;
+        j2k->dump_state = (parameters->flags & OPJ_DPARAMETERS_DUMP_FLAG);
 #ifdef USE_JPWL
         j2k->m_cp.correct = parameters->jpwl_correct;
         j2k->m_cp.exp_comps = parameters->jpwl_exp_comps;
@@ -8851,7 +8739,7 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
         opj_event_msg(p_manager, EVT_ERROR, "Failed to decode.\n");
         return OPJ_FALSE;
     }
-    p_j2k->m_tcd->enumcs = p_j2k->enumcs; /* AFL test */
+    p_j2k->m_tcd->enumcs = p_j2k->enumcs;
 
     if (! opj_tcd_update_tile_data(p_j2k->m_tcd, p_data, p_data_size)) {
         return OPJ_FALSE;

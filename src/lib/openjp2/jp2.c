@@ -619,10 +619,10 @@ static OPJ_BOOL opj_jp2_read_ihdr(opj_jp2_t *jp2,
     opj_read_bytes(p_image_header_data, &(jp2->IPR), 1);        /* IPR */
     ++ p_image_header_data;
 
-    jp2->j2k->m_cp.bpc_is_255 = (jp2->bpc == 255); /* For AFL test */
-    jp2->j2k->ihdr_w = jp2->w; /* For AFL test */
-    jp2->j2k->ihdr_h = jp2->h; /* For AFL test */
-    jp2->has_ihdr = 1; /* For AFL test */
+    jp2->j2k->m_cp.bpc_is_255 = (jp2->bpc == 255);
+    jp2->j2k->ihdr_w = jp2->w;
+    jp2->j2k->ihdr_h = jp2->h;
+    jp2->has_ihdr = 1;
 
     return OPJ_TRUE;
 }
@@ -2847,11 +2847,11 @@ OPJ_BOOL opj_jp2_read_header(opj_stream_private_t *p_stream,
     if (! opj_jp2_exec(jp2, jp2->m_procedure_list, p_stream, p_manager)) {
         return OPJ_FALSE;
     }
-    if (jp2->has_jp2h == 0) { /* AFL test */
+    if (jp2->has_jp2h == 0) {
         opj_event_msg(p_manager, EVT_ERROR, "JP2H box missing. Required.\n");
         return OPJ_FALSE;
     }
-    if (jp2->has_ihdr == 0) { /* AFL test */
+    if (jp2->has_ihdr == 0) {
         opj_event_msg(p_manager, EVT_ERROR, "IHDR box_missing. Required.\n");
         return OPJ_FALSE;
     }

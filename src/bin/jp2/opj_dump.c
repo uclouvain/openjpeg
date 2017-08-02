@@ -577,7 +577,7 @@ int main(int argc, char *argv[])
         opj_set_warning_handler(l_codec, warning_callback, 00);
         opj_set_error_handler(l_codec, error_callback, 00);
 
-        parameters.dump_state = 1; /* AFL test */
+        parameters.flags |= OPJ_DPARAMETERS_DUMP_FLAG;
 
         /* Setup the decoder decoding parameters using user parameters */
         if (!opj_setup_decoder(l_codec, &parameters)) {

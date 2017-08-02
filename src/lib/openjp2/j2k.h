@@ -446,7 +446,7 @@ typedef struct opj_cp {
     OPJ_BITFIELD ppm : 1;
     /** tells if the parameter is a coding or decoding one */
     OPJ_BITFIELD m_is_decoder : 1;
-    OPJ_BITFIELD bpc_is_255 : 1; /* for AFL test */
+    OPJ_BITFIELD bpc_is_255 : 1;
     /* <<UniPG */
 } opj_cp_t;
 
@@ -576,10 +576,10 @@ typedef struct opj_j2k {
     /** Thread pool */
     opj_thread_pool_t* m_tp;
 
-    OPJ_UINT32 ihdr_w; /* for AFL test */
-    OPJ_UINT32 ihdr_h; /* for AFL test */
-    OPJ_UINT32 enumcs; /* for AFL test */
-    unsigned int dump_state; /* for AFL test */
+    OPJ_UINT32 ihdr_w;
+    OPJ_UINT32 ihdr_h;
+    OPJ_UINT32 enumcs;
+    unsigned int dump_state;
 }
 opj_j2k_t;
 

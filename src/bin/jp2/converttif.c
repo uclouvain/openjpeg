@@ -42,6 +42,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 
 #ifndef OPJ_HAVE_LIBTIFF
 # error OPJ_HAVE_LIBTIFF_NOT_DEFINED
@@ -697,6 +698,12 @@ int imagetotif(opj_image_t * image, const char *outfile)
     TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, tiPhoto);
     TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
 
+    if (width > UINT_MAX/numcomps || width * bps > UINT_MAX/numcomps || width * numcomps > UINT_MAX/sizeof(OPJ_INT32)) {
+        fprintf(stderr, "Buffer overflow\n");
+        TIFFClose(tif);
+        return 1;
+    }
+
     strip_size = TIFFStripSize(tif);
     rowStride = (width * numcomps * bps + 7U) / 8U;
     if (rowStride != strip_size) {
@@ -709,8 +716,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
         TIFFClose(tif);
         return 1;
     }
-    buffer32s = (OPJ_INT32 *)malloc((OPJ_SIZE_T)(width * numcomps * sizeof(
-                                        OPJ_INT32)));
+
+    buffer32s = (OPJ_INT32 *)malloc((OPJ_SIZE_T)(width * numcomps * sizeof(OPJ_INT32)));
+
     if (buffer32s == NULL) {
         _TIFFfree(buf);
         TIFFClose(tif);
@@ -1246,7 +1254,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     OPJ_INT32* buffer32s = NULL;
     OPJ_INT32* planes[4];
     tmsize_t rowStride;
-
+    
     tif = TIFFOpen(filename, "r");
 
     if (!tif) {
@@ -1441,6 +1449,13 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 
     buf = _TIFFmalloc(strip_size);
     if (buf == NULL) {
+        TIFFClose(tif);
+        opj_image_destroy(image);
+        return NULL;
+    }
+    if (tiWidth > UINT_MAX/tiSpp || tiWidth * tiSpp > UINT_MAX/tiBps || tiWidth * tiSpp > UINT_MAX/sizeof(OPJ_INT32)) {
+        fprintf(stderr, "Buffer overflow\n");
+        _TIFFfree(buf);
         TIFFClose(tif);
         opj_image_destroy(image);
         return NULL;
