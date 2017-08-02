@@ -13,6 +13,16 @@ if [ "${OPJ_CI_ABI_CHECK:-}" != "1" ]; then
 	exit 0
 fi
 
+if [ "${OPJ_CI_CC:-}" != "" ]; then
+    export CC=${OPJ_CI_CC}
+    echo "Using ${CC}"
+fi
+
+if [ "${OPJ_CI_CXX:-}" != "" ]; then
+    export CXX=${OPJ_CI_CXX}
+    echo "Using ${CXX}"
+fi
+
 OPJ_UPLOAD_ABI_REPORT=0
 #OPJ_PREVIOUS_VERSION="2.1.1"
 OPJ_LATEST_VERSION="2.1.2"
@@ -58,6 +68,10 @@ wget -qO - https://github.com/lvc/installer/archive/0.10.tar.gz | tar -xz
 mkdir ${PWD}/tools/abi-tracker
 make -C installer-0.10 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
 export PATH=${PWD}/tools/abi-tracker/bin:$PATH
+
+# This will print configuration
+# travis-ci doesn't dump cmake version in system info, let's print it 
+cmake --version
 
 # RUN THE ABI-CHECK SCRIPTS
 
@@ -106,7 +120,7 @@ fi
 
 rm -rf src/openjpeg/current
 rm -rf build_logs
-
+	
 if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
 	git config user.name "OpenJPEG Travis CI"
 	git config user.email "info@openjpeg.org"
