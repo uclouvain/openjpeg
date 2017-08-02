@@ -125,7 +125,7 @@ if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
 	git config user.name "OpenJPEG Travis CI"
 	git config user.email "info@openjpeg.org"
 
-	git add .
+	git add --all .
 	git commit -m "Update ABI/API compatibility reports after commit ${TRAVIS_COMMIT:-}"
 
 	# Get the deploy key by using Travis's stored variables to decrypt travis_rsa.enc
