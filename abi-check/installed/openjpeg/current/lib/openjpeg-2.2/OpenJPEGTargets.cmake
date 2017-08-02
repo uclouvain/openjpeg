@@ -15,6 +15,9 @@ SET(CMAKE_IMPORT_FILE_VERSION 1)
 # Create imported target openjp2
 ADD_LIBRARY(openjp2 SHARED IMPORTED)
 
+# Create imported target openjp2_static
+ADD_LIBRARY(openjp2_static STATIC IMPORTED)
+
 # Create imported target opj_decompress
 ADD_EXECUTABLE(opj_decompress IMPORTED)
 
