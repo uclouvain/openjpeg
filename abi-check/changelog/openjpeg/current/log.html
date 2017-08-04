@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 155fc2e279b85bd04709967b2797de4f69b0cf3e
+<pre class='wrap'>commit 2fbd4bb0b9c6178f12c852dc40db6ab05734bfe2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-04 18:01:29 +0200
+
+    opj_j2k_read_sot(): check current TPSot number regarding previous (non-zero) TNsot to avoid opj_j2k_merge_ppt() to be called several times. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2851. Credit to OSS Fuzz
+
+commit 155fc2e279b85bd04709967b2797de4f69b0cf3e
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2017-08-02 17:07:29 +0200
 
@@ -373,12 +379,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-05 21:33:42 +0200
 
     Remove unused m_DA_x0, m_DA_y0, m_DA_x1, m_DA_y1 members from opj_j2k_dec structure
-
-commit 1a8eac6a90ca61f3703f9b97afc2ec4918f0ab55
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-03 14:14:03 +0200
-
-    Add tests/fuzzers for OSS Fuzz (#965)
 
 ...</pre></div>
 
