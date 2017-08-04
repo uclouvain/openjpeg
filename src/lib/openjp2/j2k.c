@@ -4378,6 +4378,16 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
         p_j2k->m_specific_param.m_decoder.m_last_tile_part = 1;
     }
 
+    if (l_tcp->m_nb_tile_parts != 0 && l_current_part >= l_tcp->m_nb_tile_parts) {
+        /* Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2851 */
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "In SOT marker, TPSot (%d) is not valid regards to the previous "
+                      "number of tile-part (%d), giving up\n", l_current_part,
+                      l_tcp->m_nb_tile_parts);
+        p_j2k->m_specific_param.m_decoder.m_last_tile_part = 1;
+        return OPJ_FALSE;
+    }
+
     if (l_num_parts !=
             0) { /* Number of tile-part header is provided by this tile-part header */
         l_num_parts += p_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction;
