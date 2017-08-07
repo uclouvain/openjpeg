@@ -1065,7 +1065,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
 
         /* Palette mapping: */
         new_comps[i].data = (OPJ_INT32*)
-                            opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
+                            opj_image_data_alloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
         if (!new_comps[i].data) {
             while (i > 0) {
                 -- i;
@@ -1119,7 +1119,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
     max = image->numcomps;
     for (i = 0; i < max; ++i) {
         if (old_comps[i].data) {
-            opj_free(old_comps[i].data);
+            opj_image_data_free(old_comps[i].data);
         }
     }
 

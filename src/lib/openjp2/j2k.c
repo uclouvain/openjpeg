@@ -4684,15 +4684,35 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
                           "Tile part length size inconsistent with stream length\n");
             return OPJ_FALSE;
         }
+        if (p_j2k->m_specific_param.m_decoder.m_sot_length >
+                UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "p_j2k->m_specific_param.m_decoder.m_sot_length > "
+                          "UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA");
+            return OPJ_FALSE;
+        }
+        /* Add a margin of OPJ_COMMON_CBLK_DATA_EXTRA to the allocation we */
+        /* do so that opj_mqc_init_dec_common() can safely add a synthetic */
+        /* 0xFFFF marker. */
         if (! *l_current_data) {
             /* LH: oddly enough, in this path, l_tile_len!=0.
              * TODO: If this was consistent, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
              */
             *l_current_data = (OPJ_BYTE*) opj_malloc(
-                                  p_j2k->m_specific_param.m_decoder.m_sot_length);
+                                  p_j2k->m_specific_param.m_decoder.m_sot_length + OPJ_COMMON_CBLK_DATA_EXTRA);
         } else {
-            OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data,
-                                           *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
+            OPJ_BYTE *l_new_current_data;
+            if (*l_tile_len > UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA -
+                    p_j2k->m_specific_param.m_decoder.m_sot_length) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "*l_tile_len > UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA - "
+                              "p_j2k->m_specific_param.m_decoder.m_sot_length");
+                return OPJ_FALSE;
+            }
+
+            l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data,
+                                 *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length +
+                                 OPJ_COMMON_CBLK_DATA_EXTRA);
             if (! l_new_current_data) {
                 opj_free(*l_current_data);
                 /*nothing more is done as l_current_data will be set to null, and just
@@ -8716,15 +8736,20 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
         return OPJ_FALSE;
     }
 
-    if (! opj_tcd_update_tile_data(p_j2k->m_tcd, p_data, p_data_size)) {
-        return OPJ_FALSE;
-    }
+    /* p_data can be set to NULL when the call will take care of using */
+    /* itself the TCD data. This is typically the case for whole single */
+    /* tile decoding optimization. */
+    if (p_data != NULL) {
+        if (! opj_tcd_update_tile_data(p_j2k->m_tcd, p_data, p_data_size)) {
+            return OPJ_FALSE;
+        }
 
-    /* To avoid to destroy the tcp which can be useful when we try to decode a tile decoded before (cf j2k_random_tile_access)
-     * we destroy just the data which will be re-read in read_tile_header*/
-    /*opj_j2k_tcp_destroy(l_tcp);
-    p_j2k->m_tcd->tcp = 0;*/
-    opj_j2k_tcp_data_destroy(l_tcp);
+        /* To avoid to destroy the tcp which can be useful when we try to decode a tile decoded before (cf j2k_random_tile_access)
+        * we destroy just the data which will be re-read in read_tile_header*/
+        /*opj_j2k_tcp_destroy(l_tcp);
+        p_j2k->m_tcd->tcp = 0;*/
+        opj_j2k_tcp_data_destroy(l_tcp);
+    }
 
     p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
     p_j2k->m_specific_param.m_decoder.m_state &= (~(OPJ_UINT32)J2K_STATE_DATA);
@@ -8793,15 +8818,18 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
             OPJ_SIZE_T l_width = l_img_comp_dest->w;
             OPJ_SIZE_T l_height = l_img_comp_dest->h;
 
-            if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height))) {
+            if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height)) ||
+                    l_width * l_height > SIZE_MAX / sizeof(OPJ_INT32)) {
                 /* would overflow */
                 return OPJ_FALSE;
             }
-            l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(l_width * l_height,
+            l_img_comp_dest->data = (OPJ_INT32*) opj_image_data_alloc(l_width * l_height *
                                     sizeof(OPJ_INT32));
             if (! l_img_comp_dest->data) {
                 return OPJ_FALSE;
             }
+            /* Do we really need this memset ? */
+            memset(l_img_comp_dest->data, 0, l_width * l_height * sizeof(OPJ_INT32));
         }
 
         /* Copy info from decoded comp image to output image */
@@ -10381,6 +10409,47 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
     OPJ_BYTE * l_current_data;
     OPJ_UINT32 nr_tiles = 0;
 
+    /* Particular case for whole single tile decoding */
+    /* We can avoid allocating intermediate tile buffers */
+    if (p_j2k->m_cp.tw == 1 && p_j2k->m_cp.th == 1 &&
+            p_j2k->m_cp.tx0 == 0 && p_j2k->m_cp.ty0 == 0 &&
+            p_j2k->m_output_image->x0 == 0 &&
+            p_j2k->m_output_image->y0 == 0 &&
+            p_j2k->m_output_image->x1 == p_j2k->m_cp.tdx &&
+            p_j2k->m_output_image->y1 == p_j2k->m_cp.tdy &&
+            p_j2k->m_output_image->comps[0].factor == 0) {
+        OPJ_UINT32 i;
+        if (! opj_j2k_read_tile_header(p_j2k,
+                                       &l_current_tile_no,
+                                       &l_data_size,
+                                       &l_tile_x0, &l_tile_y0,
+                                       &l_tile_x1, &l_tile_y1,
+                                       &l_nb_comps,
+                                       &l_go_on,
+                                       p_stream,
+                                       p_manager)) {
+            return OPJ_FALSE;
+        }
+
+        if (! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
+                                  p_stream, p_manager)) {
+            opj_event_msg(p_manager, EVT_ERROR, "Failed to decode tile 1/1\n");
+            return OPJ_FALSE;
+        }
+
+        /* Transfer TCD data to output image data */
+        for (i = 0; i < p_j2k->m_output_image->numcomps; i++) {
+            opj_image_data_free(p_j2k->m_output_image->comps[i].data);
+            p_j2k->m_output_image->comps[i].data =
+                p_j2k->m_tcd->tcd_image->tiles->comps[i].data;
+            p_j2k->m_output_image->comps[i].resno_decoded =
+                p_j2k->m_tcd->image->comps[i].resno_decoded;
+            p_j2k->m_tcd->tcd_image->tiles->comps[i].data = NULL;
+        }
+
+        return OPJ_TRUE;
+    }
+
     l_current_data = (OPJ_BYTE*)opj_malloc(1000);
     if (! l_current_data) {
         opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tiles\n");
@@ -10775,7 +10844,7 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
             p_j2k->m_output_image->comps[compno].resno_decoded;
 
         if (p_image->comps[compno].data) {
-            opj_free(p_image->comps[compno].data);
+            opj_image_data_free(p_image->comps[compno].data);
         }
 
         p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;

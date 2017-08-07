@@ -674,7 +674,7 @@ OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec)
     if ((l_tilec->data == 00) ||
             ((l_tilec->data_size_needed > l_tilec->data_size) &&
              (l_tilec->ownsData == OPJ_FALSE))) {
-        l_tilec->data = (OPJ_INT32 *) opj_aligned_malloc(l_tilec->data_size_needed);
+        l_tilec->data = (OPJ_INT32 *) opj_image_data_alloc(l_tilec->data_size_needed);
         if (! l_tilec->data) {
             return OPJ_FALSE;
         }
@@ -683,8 +683,8 @@ OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec)
         l_tilec->ownsData = OPJ_TRUE;
     } else if (l_tilec->data_size_needed > l_tilec->data_size) {
         /* We don't need to keep old data */
-        opj_aligned_free(l_tilec->data);
-        l_tilec->data = (OPJ_INT32 *) opj_aligned_malloc(l_tilec->data_size_needed);
+        opj_image_data_free(l_tilec->data);
+        l_tilec->data = (OPJ_INT32 *) opj_image_data_alloc(l_tilec->data_size_needed);
         if (! l_tilec->data) {
             l_tilec->data_size = 0;
             l_tilec->data_size_needed = 0;
@@ -965,8 +965,10 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                 numbps = (OPJ_INT32)(l_image_comp->prec + l_gain);
                 l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0,
                                                   (OPJ_INT32)(numbps - l_step_size->expn)))) * fraction;
+                /* Mb value of Equation E-2 in "E.1 Inverse quantization
+                 * procedure" of the standard */
                 l_band->numbps = l_step_size->expn + (OPJ_INT32)l_tccp->numgbits -
-                                 1;      /* WHY -1 ? */
+                                 1;
 
                 if (!l_band->precincts && (l_nb_precincts > 0U)) {
                     l_band->precincts = (opj_tcd_precinct_t *) opj_malloc(/*3 * */
@@ -1208,20 +1210,19 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data(opj_tcd_cblk_enc_t *
     return OPJ_TRUE;
 }
 
+
+void opj_tcd_reinit_segment(opj_tcd_seg_t* seg)
+{
+    memset(seg, 0, sizeof(opj_tcd_seg_t));
+}
+
 /**
  * Allocates memory for a decoding code block.
  */
 static OPJ_BOOL opj_tcd_code_block_dec_allocate(opj_tcd_cblk_dec_t *
         p_code_block)
 {
-    if (! p_code_block->data) {
-
-        p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_COMMON_DEFAULT_CBLK_DATA_SIZE);
-        if (! p_code_block->data) {
-            return OPJ_FALSE;
-        }
-        p_code_block->data_max_size = OPJ_COMMON_DEFAULT_CBLK_DATA_SIZE;
-        /*fprintf(stderr, "Allocate 8192 elements of code_block->data\n");*/
+    if (! p_code_block->segs) {
 
         p_code_block->segs = (opj_tcd_seg_t *) opj_calloc(OPJ_J2K_DEFAULT_NB_SEGS,
                              sizeof(opj_tcd_seg_t));
@@ -1234,16 +1235,20 @@ static OPJ_BOOL opj_tcd_code_block_dec_allocate(opj_tcd_cblk_dec_t *
         /*fprintf(stderr, "m_current_max_segs of code_block->data = %d\n", p_code_block->m_current_max_segs);*/
     } else {
         /* sanitize */
-        OPJ_BYTE* l_data = p_code_block->data;
-        OPJ_UINT32 l_data_max_size = p_code_block->data_max_size;
         opj_tcd_seg_t * l_segs = p_code_block->segs;
         OPJ_UINT32 l_current_max_segs = p_code_block->m_current_max_segs;
+        opj_tcd_seg_data_chunk_t* l_chunks = p_code_block->chunks;
+        OPJ_UINT32 l_numchunksalloc = p_code_block->numchunksalloc;
+        OPJ_UINT32 i;
 
         memset(p_code_block, 0, sizeof(opj_tcd_cblk_dec_t));
-        p_code_block->data = l_data;
-        p_code_block->data_max_size = l_data_max_size;
         p_code_block->segs = l_segs;
         p_code_block->m_current_max_segs = l_current_max_segs;
+        for (i = 0; i < l_current_max_segs; ++i) {
+            opj_tcd_reinit_segment(&l_segs[i]);
+        }
+        p_code_block->chunks = l_chunks;
+        p_code_block->numchunksalloc = l_numchunksalloc;
     }
 
     return OPJ_TRUE;
@@ -1645,7 +1650,7 @@ static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
         }
 
         if (l_tile_comp->ownsData && l_tile_comp->data) {
-            opj_aligned_free(l_tile_comp->data);
+            opj_image_data_free(l_tile_comp->data);
             l_tile_comp->data = 00;
             l_tile_comp->ownsData = 0;
             l_tile_comp->data_size = 0;
@@ -1946,14 +1951,14 @@ static void opj_tcd_code_block_dec_deallocate(opj_tcd_precinct_t * p_precinct)
 
         for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
 
-            if (l_code_block->data) {
-                opj_free(l_code_block->data);
-                l_code_block->data = 00;
-            }
-
             if (l_code_block->segs) {
                 opj_free(l_code_block->segs);
                 l_code_block->segs = 00;
+            }
+
+            if (l_code_block->chunks) {
+                opj_free(l_code_block->chunks);
+                l_code_block->chunks = 00;
             }
 
             ++l_code_block;
