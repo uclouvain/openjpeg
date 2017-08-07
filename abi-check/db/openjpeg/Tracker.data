@@ -115,7 +115,7 @@ $VAR1 = {
                                                      'Lang' => 'C',
                                                      'Object' => 'lib/libopenjp2.so.2.2.0',
                                                      'Path' => 'abi_dump/openjpeg/current/2c999/ABI.dump',
-                                                     'TotalSymbols' => '46',
+                                                     'TotalSymbols' => '48',
                                                      'Version' => '1.7'
                                                    }
                                       }
@@ -287,7 +287,7 @@ $VAR1 = {
                                       },
                            '2.1.2' => {
                                         'current' => {
-                                                       'Added' => 3,
+                                                       'Added' => 5,
                                                        'BC' => 100,
                                                        'ChangedSoname' => 0,
                                                        'ObjectsAdded' => 0,
@@ -455,7 +455,7 @@ $VAR1 = {
                              '2.1.2' => {
                                           'current' => {
                                                          '58361' => {
-                                                                      'Added' => 3,
+                                                                      'Added' => 5,
                                                                       'Affected' => 0,
                                                                       'Object1' => 'lib/libopenjp2.so.2.1.2',
                                                                       'Object2' => 'lib/libopenjp2.so.2.2.0',
@@ -496,7 +496,7 @@ $VAR1 = {
                       '2.1' => '2014-04-29 12:58',
                       '2.1.1' => '2016-07-05 14:54',
                       '2.1.2' => '2016-09-28 18:18',
-                      'current' => '2017-08-04 18:01:29'
+                      'current' => '2017-08-07 20:17:36'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -574,7 +574,7 @@ $VAR1 = {
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1501863199',
+          'ScmUpdateTime' => '1502130566',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'

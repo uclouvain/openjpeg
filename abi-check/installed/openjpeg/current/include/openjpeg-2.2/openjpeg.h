@@ -1093,6 +1093,27 @@ OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
 OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts,
         opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
 
+/**
+ * Allocator for opj_image_t->comps[].data
+ * To be paired with opj_image_data_free.
+ *
+ * @param   size    number of bytes to allocate
+ *
+ * @return  a new pointer if successful, NULL otherwise.
+ * @since 2.2.0
+*/
+OPJ_API void* OPJ_CALLCONV opj_image_data_alloc(OPJ_SIZE_T size);
+
+/**
+ * Destructor for opj_image_t->comps[].data
+ * To be paired with opj_image_data_alloc.
+ *
+ * @param   ptr    Pointer to free
+ *
+ * @since 2.2.0
+*/
+OPJ_API void OPJ_CALLCONV opj_image_data_free(void* ptr);
+
 /*
 ==========================================================
    stream functions definitions
