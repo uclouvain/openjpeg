@@ -187,6 +187,8 @@ typedef struct opj_jp2 {
     opj_jp2_color_t color;
 
     OPJ_BOOL ignore_pclr_cmap_cdef;
+    OPJ_BYTE has_jp2h;
+    OPJ_BYTE has_ihdr;
 }
 opj_jp2_t;
 

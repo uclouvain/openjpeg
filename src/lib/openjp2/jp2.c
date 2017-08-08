@@ -619,6 +619,11 @@ static OPJ_BOOL opj_jp2_read_ihdr(opj_jp2_t *jp2,
     opj_read_bytes(p_image_header_data, &(jp2->IPR), 1);        /* IPR */
     ++ p_image_header_data;
 
+    jp2->j2k->m_cp.bpc_is_255 = (jp2->bpc == 255);
+    jp2->j2k->ihdr_w = jp2->w;
+    jp2->j2k->ihdr_h = jp2->h;
+    jp2->has_ihdr = 1;
+
     return OPJ_TRUE;
 }
 
@@ -1572,6 +1577,9 @@ static OPJ_BOOL opj_jp2_read_colr(opj_jp2_t *jp2,
         opj_event_msg(p_manager, EVT_INFO,
                       "COLR BOX meth value is not a regular value (%d), "
                       "so we will ignore the entire Colour Specification box. \n", jp2->meth);
+    }
+    if (jp2->color.jp2_has_colr) {
+        jp2->j2k->enumcs = jp2->enumcs;
     }
     return OPJ_TRUE;
 }
@@ -2733,6 +2741,7 @@ static OPJ_BOOL opj_jp2_read_jp2h(opj_jp2_t *jp2,
     }
 
     jp2->jp2_state |= JP2_STATE_HEADER;
+    jp2->has_jp2h = 1;
 
     return OPJ_TRUE;
 }
@@ -2836,6 +2845,14 @@ OPJ_BOOL opj_jp2_read_header(opj_stream_private_t *p_stream,
 
     /* read header */
     if (! opj_jp2_exec(jp2, jp2->m_procedure_list, p_stream, p_manager)) {
+        return OPJ_FALSE;
+    }
+    if (jp2->has_jp2h == 0) {
+        opj_event_msg(p_manager, EVT_ERROR, "JP2H box missing. Required.\n");
+        return OPJ_FALSE;
+    }
+    if (jp2->has_ihdr == 0) {
+        opj_event_msg(p_manager, EVT_ERROR, "IHDR box_missing. Required.\n");
         return OPJ_FALSE;
     }
 
