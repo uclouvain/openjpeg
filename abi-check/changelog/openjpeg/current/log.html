@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 3b1b0672663b59853b63d48f94b63ca497883527
+<pre class='wrap'>commit 0394f8d0f1c981e0bc587beddc14d1fb0b265b1b
+Merge: 3b1b067 bc3cb74
+Author: Antonin Descampe &lt;antonin@descampe.net&gt;
+Date:   2017-08-08 16:51:54 -0700
+
+    Merge pull request #975 from szukw000/changes-for-afl-tests
+    
+    Catch images broken by AFL
+
+commit 3b1b0672663b59853b63d48f94b63ca497883527
 Merge: 2fbd4bb 9211469
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-08-07 20:17:36 +0200
@@ -217,11 +226,23 @@ Date:   2017-07-05 23:48:28 +0200
         n0: 402672336 0x40369E: main (opj_decompress.c:1459)
      n0: 53704448 in 58 places, all below massif's threshold (1.00%)
 
+commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
+Author: szukw000 &lt;szukw000@arcor.de&gt;
+Date:   2017-08-07 16:44:28 +0200
+
+    Changes for converttif.c to fix tsize_t
+
 commit 2fbd4bb0b9c6178f12c852dc40db6ab05734bfe2
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-04 18:01:29 +0200
 
     opj_j2k_read_sot(): check current TPSot number regarding previous (non-zero) TNsot to avoid opj_j2k_merge_ppt() to be called several times. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2851. Credit to OSS Fuzz
+
+commit 57e36dbfeb57451444c5c20eab66ab0bedd3d3b3
+Author: szukw000 &lt;szukw000@arcor.de&gt;
+Date:   2017-08-02 17:27:08 +0200
+
+    First change on changes-for-afl-tests
 
 commit 155fc2e279b85bd04709967b2797de4f69b0cf3e
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
@@ -240,6 +261,12 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-31 17:35:10 +0200
 
     src/bin/jpwl/convert.c: add missing fclose() in error code path (suggested by maddin200, #976)
+
+commit 00f45684a8339e69ed55df2397f3c19d09fecaed
+Author: szukw000 &lt;szukw000@arcor.de&gt;
+Date:   2017-07-31 13:58:08 +0200
+
+    Catch images broken by AFL
 
 commit 13cde9fa37249628af6b6f10601b733f87a025f4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -570,6 +597,12 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-06 12:11:37 +0200
 
     Comment fix
+
+commit a38c4496b631bb5d3f8d5ea42d394544523a9bc6
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-07-05 21:33:42 +0200
+
+    Remove unused m_DA_x0, m_DA_y0, m_DA_x1, m_DA_y1 members from opj_j2k_dec structure
 
 ...</pre></div>
 

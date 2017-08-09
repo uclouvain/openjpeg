@@ -605,7 +605,8 @@ s values. */</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">} opj_cparameters_t;</td><td> </td><td class="right">} opj_cparameters_t;</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td><a name="diff0030" /></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="lblock">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG  <span class="delete">   </span>0x0001</td><td> </td><td class="rblock">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG  0x0001</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG     0x0001</td><td> </td><td class="rblock">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG  0x0001</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_DPARAMETERS_DUMP_FLAG 0x0002</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"> * Decompression parameters</td><td> </td><td class="right"> * Decompression parameters</td><td class="lineno" valign="top"></td></tr>
@@ -1207,7 +1208,7 @@ nhance)</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   openjpeg version</td><td> </td><td class="right">   openjpeg version</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr bgcolor="gray" ><td></td><th><a name="part-l4" /><small>skipping to change at</small><em> line 1062</em></th><th> </th><th><a name="part-r4" /><small>skipping to change at</small><em> line 1065</em></th><td></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l4" /><small>skipping to change at</small><em> line 1062</em></th><th> </th><th><a name="part-r4" /><small>skipping to change at</small><em> line 1066</em></th><td></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
@@ -1801,7 +1802,7 @@ at);</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">&lt;li&gt;Size of precinct : 2^15 x 2^15 (means 1 precinct)</td><td> </td><td class="right">&lt;li&gt;Size of precinct : 2^15 x 2^15 (means 1 precinct)</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">&lt;li&gt;Size of code-block : 64 x 64</td><td> </td><td class="right">&lt;li&gt;Size of code-block : 64 x 64</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr bgcolor="gray" ><td></td><th><a name="part-l5" /><small>skipping to change at</small><em> line 1417</em></th><th> </th><th><a name="part-r5" /><small>skipping to change at</small><em> line 1475</em></th><td></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l5" /><small>skipping to change at</small><em> line 1417</em></th><th> </th><th><a name="part-r5" /><small>skipping to change at</small><em> line 1476</em></th><td></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">&lt;li&gt;No mode switch activated</td><td> </td><td class="right">&lt;li&gt;No mode switch activated</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">&lt;li&gt;Progression order: LRCP</td><td> </td><td class="right">&lt;li&gt;Progression order: LRCP</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">&lt;li&gt;No index file</td><td> </td><td class="right">&lt;li&gt;No index file</td><td class="lineno" valign="top"></td></tr>
@@ -2015,7 +2016,7 @@ c);</td><td class="lineno" valign="top"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
      <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 158 change blocks.&nbsp;</a></th></tr>
-     <tr class="stats"><td></td><th><i>949 lines changed or deleted</i></th><th><i> </i></th><th><i>950 lines changed or added</i></th><td></td></tr>
+     <tr class="stats"><td></td><th><i>949 lines changed or deleted</i></th><th><i> </i></th><th><i>951 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"></td></tr>
    </table>
    <br/><br/>
