@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5a560ebf5138ebc241e9962306ce74bfc50fc69c
+<pre class='wrap'>commit 0eceb4494c23d141ddf242209b92f07bc942b437
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-09 09:50:39 +0200
+
+    src/bin/jpwl/convert.c pgxtoimage(): add missing fclose() (#977)
+
+commit 5a560ebf5138ebc241e9962306ce74bfc50fc69c
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-09 09:42:30 +0200
 
@@ -581,15 +587,6 @@ Date:   2017-07-26 12:24:26 +0200
     Avoid index out of bounds access to pi-&gt;include[] (#938)
     
     Fix id:000098,sig:11,src:005411,op:havoc,rep:2 test case
-
-commit d27ccf01c68a31ad62b33d2dc1ba2bb1eeaafe7b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-26 11:30:56 +0200
-
-    Avoid division by zero in opj_pi_next_rpcl, opj_pi_next_pcrl and opj_pi_next_cprl (#938)
-    
-    Fixes issues with id:000026,sig:08,src:002419,op:int32,pos:60,val:+32 and
-    id:000019,sig:08,src:001098,op:flip1,pos:49
 
 ...</pre></div>
 
