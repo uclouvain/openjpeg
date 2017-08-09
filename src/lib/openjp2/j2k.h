@@ -446,7 +446,8 @@ typedef struct opj_cp {
     OPJ_BITFIELD ppm : 1;
     /** tells if the parameter is a coding or decoding one */
     OPJ_BITFIELD m_is_decoder : 1;
-    OPJ_BITFIELD bpc_is_255 : 1;
+    /** whether different bit depth or sign per component is allowed. Decoder only for ow */
+    OPJ_BITFIELD allow_different_bit_depth_sign : 1;
     /* <<UniPG */
 } opj_cp_t;
 

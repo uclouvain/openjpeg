@@ -2239,14 +2239,14 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
             if (i == 0) {
                 l_prec0 = l_img_comp->prec;
                 l_sgnd0 = l_img_comp->sgnd;
-            } else if (l_cp->bpc_is_255 == 0
+            } else if (!l_cp->allow_different_bit_depth_sign
                        && (l_img_comp->prec != l_prec0 || l_img_comp->sgnd != l_sgnd0)) {
-                opj_event_msg(p_manager, EVT_ERROR,
-                              "Invalid precision and/or sgnd values for comp[%d]:\n"
+                opj_event_msg(p_manager, EVT_WARNING,
+                              "Despite JP2 BPC!=255, precision and/or sgnd values for comp[%d] is different than comp[0]:\n"
                               "        [0] prec(%d) sgnd(%d) [%d] prec(%d) sgnd(%d)\n", i, l_prec0, l_sgnd0,
                               i, l_img_comp->prec, l_img_comp->sgnd);
-                return OPJ_FALSE;
             }
+            /* TODO: we should perhaps also check against JP2 BPCC values */
         }
         opj_read_bytes(p_header_data, &tmp, 1); /* XRsiz_i */
         ++p_header_data;
@@ -9273,6 +9273,9 @@ opj_j2k_t* opj_j2k_create_decompress(void)
 
     l_j2k->m_is_decoder = 1;
     l_j2k->m_cp.m_is_decoder = 1;
+    /* in the absence of JP2 boxes, consider different bit depth / sign */
+    /* per component is allowed */
+    l_j2k->m_cp.allow_different_bit_depth_sign = 1;
 
 #ifdef OPJ_DISABLE_TPSOT_FIX
     l_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
