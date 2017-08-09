@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 11b1ffb373d8e41705348080ba5e74a4ffe4148c
+<pre class='wrap'>commit 9203e8ec51a1c1c1a358a9cbafdf3391549ebc80
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-09 14:50:59 +0200
+
+    tcd.h: doc fixes and improvements
+
+commit 11b1ffb373d8e41705348080ba5e74a4ffe4148c
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-09 14:13:58 +0200
 
@@ -594,16 +600,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-26 20:13:09 +0200
 
     opj_decompress: fix null pointer dereference on comps[].data on id_000167,sig_11,src_006079,op_havoc,rep_4 (#939)
-
-commit 8d2e69e37d01bf6a0440d3109d92235c3c586ffe
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-26 19:49:38 +0200
-
-    Fix assertion / memory leak in opj_j2k_merge_ppt() on corrupted images (#939)
-    
-    Fixes issue on id:000020,sig:06,src:001958,op:flip4,pos:149 that has two
-    SOT markers for the same tile with the same tile part number, causing
-    opj_j2k_merge_ppt() to be called several times.
 
 ...</pre></div>
 
