@@ -1281,7 +1281,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     h = (int)tiHeight;
 
     if (tiSpp == 0 || tiSpp > 4) { /* should be 1 ... 4 */
-        fprintf(stderr, "tiftoimage: Bad value for samples per pixel == %hu.\n"
+        fprintf(stderr, "tiftoimage: Bad value for samples per pixel == %d.\n"
                 "\tAborting.\n", tiSpp);
         TIFFClose(tif);
         return NULL;
