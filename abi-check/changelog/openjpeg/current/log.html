@@ -20,7 +20,28 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit c38bdbef4f3a5888948903247532fc8cf4284c00
+<pre class='wrap'>commit ac375ac9f5b4ae47501b60795e905e3d25dd00f8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-09 11:34:08 +0200
+
+    Partial revert BPC related check of #975 (#979)
+    
+    PR #975 introduced a check that rejects images that have different bit depth/sign
+    per compoment in SIZ marker if the JP2 IHDR box has BPC != 255
+    This didn't work properly if decoding a .j2k file since the new bit added in
+    opj_cp_t wasn't initialized to the right value.
+    For clarity, tThis new bit has also been renamed to allow_different_bit_depth_sign
+    
+    But looking closer at the code, it seems we were already tolerant to inconsistencies.
+    For example we parsed a JP2 BPCC box even if BPC != 255 (just a warning is emitted)
+    So failing hard in opj_j2k_read_siz() wouldn't be very inconsistent, and that
+    alone cannot protect against other issues, so just emit a warning if BPC != 255
+    and the SIZ marker contains different bit depth/sign per component.
+    
+    Note: we could also check that the content of JP2 BPCC box is consistant with the one
+    of the SIZ marker.
+
+commit c38bdbef4f3a5888948903247532fc8cf4284c00
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-09 10:03:59 +0200
 
@@ -585,14 +606,6 @@ Date:   2017-07-26 18:05:56 +0200
     Avoid division by zero in opj_pi_next_rpcl, opj_pi_next_pcrl, opj_pi_next_cprl (#938)
     
     Fixes crash on id_000004,sig_06,src_000679,op_arith8,pos_49,val_-17
-
-commit 80818c39f5bfbac37768fcee95b0ffeceaa77264
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-26 12:24:26 +0200
-
-    Avoid index out of bounds access to pi-&gt;include[] (#938)
-    
-    Fix id:000098,sig:11,src:005411,op:havoc,rep:2 test case
 
 ...</pre></div>
 
