@@ -1,8 +1,8 @@
 {
-  "Affected": "0",
+  "Affected": "3.5",
   "Added": 5,
   "Removed": 0,
-  "TotalProblems": 0,
+  "TotalProblems": 9,
   "Object1": "lib/libopenjp2.so.2.1.2",
   "Object2": "lib/libopenjp2.so.2.2.0"
 }
