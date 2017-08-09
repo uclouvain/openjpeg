@@ -929,7 +929,9 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-            r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            if (adjustR > 0) {
+                r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            }
             if (r > 255) {
                 r = 255;
             } else if (r < 0) {
@@ -939,7 +941,9 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             g = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
-            g = ((g >> adjustG) + ((g >> (adjustG - 1)) % 2));
+            if (adjustG > 0) {
+                g = ((g >> adjustG) + ((g >> (adjustG - 1)) % 2));
+            }
             if (g > 255) {
                 g = 255;
             } else if (g < 0) {
@@ -949,7 +953,9 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             b = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
-            b = ((b >> adjustB) + ((b >> (adjustB - 1)) % 2));
+            if (adjustB > 0) {
+                b = ((b >> adjustB) + ((b >> (adjustB - 1)) % 2));
+            }
             if (b > 255) {
                 b = 255;
             } else if (b < 0) {
@@ -1044,7 +1050,9 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-            r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            if (adjustR > 0) {
+                r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            }
             if (r > 255) {
                 r = 255;
             } else if (r < 0) {
