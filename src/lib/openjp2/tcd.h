@@ -154,7 +154,7 @@ typedef struct opj_tcd_precinct {
 typedef struct opj_tcd_band {
     /* dimension of the subband : left upper corner (x0, y0) right low corner (x1,y1) */
     OPJ_INT32 x0, y0, x1, y1;
-    /* band number: for lowest resolution level (0=LL), otherwise (0=HL, 1=LH, 2=HH) */
+    /* band number: for lowest resolution level (0=LL), otherwise (1=HL, 2=LH, 3=HH) */
     OPJ_UINT32 bandno;
     /* precinct information */
     opj_tcd_precinct_t *precincts;
