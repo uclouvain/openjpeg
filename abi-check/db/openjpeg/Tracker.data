@@ -288,7 +288,7 @@ $VAR1 = {
                            '2.1.2' => {
                                         'current' => {
                                                        'Added' => 5,
-                                                       'BC' => '96.5',
+                                                       'BC' => 100,
                                                        'ChangedSoname' => 0,
                                                        'ObjectsAdded' => 0,
                                                        'ObjectsAddedSymbols' => 0,
@@ -297,7 +297,7 @@ $VAR1 = {
                                                        'Path' => 'objects_report/openjpeg/2.1.2/current/report.html',
                                                        'Removed' => 0,
                                                        'TotalObjects' => 1,
-                                                       'TotalProblems' => 9
+                                                       'TotalProblems' => 0
                                                      }
                                       }
                          },
@@ -456,12 +456,12 @@ $VAR1 = {
                                           'current' => {
                                                          '58361' => {
                                                                       'Added' => 5,
-                                                                      'Affected' => '3.5',
+                                                                      'Affected' => 0,
                                                                       'Object1' => 'lib/libopenjp2.so.2.1.2',
                                                                       'Object2' => 'lib/libopenjp2.so.2.2.0',
                                                                       'Path' => 'compat_report/openjpeg/2.1.2/current/58361/abi_compat_report.html',
                                                                       'Removed' => 0,
-                                                                      'TotalProblems' => 9
+                                                                      'TotalProblems' => 0
                                                                     }
                                                        }
                                         }
@@ -496,7 +496,7 @@ $VAR1 = {
                       '2.1' => '2014-04-29 12:58',
                       '2.1.1' => '2016-07-05 14:54',
                       '2.1.2' => '2016-09-28 18:18',
-                      'current' => '2017-08-09 17:37:05'
+                      'current' => '2017-08-10 01:14:35'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -574,7 +574,7 @@ $VAR1 = {
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1502320173',
+          'ScmUpdateTime' => '1502321396',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'
