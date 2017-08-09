@@ -115,7 +115,7 @@ typedef struct opj_tcd_seg {
     OPJ_UINT32 newlen;
 } opj_tcd_seg_t;
 
-/* Code-block for decoding */
+/** Code-block for decoding */
 typedef struct opj_tcd_cblk_dec {
     opj_tcd_seg_t* segs;            /* segments information */
     opj_tcd_seg_data_chunk_t* chunks; /* Array of chunks */
@@ -135,13 +135,11 @@ typedef struct opj_tcd_cblk_dec {
     OPJ_UINT32 numchunksalloc;      /* Number of chunks item allocated */
 } opj_tcd_cblk_dec_t;
 
-/**
-FIXME DOC
-*/
+/** Precinct structure */
 typedef struct opj_tcd_precinct {
-    OPJ_INT32 x0, y0, x1,
-              y1;       /* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
-    OPJ_UINT32 cw, ch;              /* number of precinct in width and height */
+    /* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
+    OPJ_INT32 x0, y0, x1, y1;
+    OPJ_UINT32 cw, ch;              /* number of code-blocks, in width and height */
     union {                         /* code-blocks information */
         opj_tcd_cblk_enc_t* enc;
         opj_tcd_cblk_dec_t* dec;
@@ -152,48 +150,54 @@ typedef struct opj_tcd_precinct {
     opj_tgt_tree_t *imsbtree;       /* IMSB tree */
 } opj_tcd_precinct_t;
 
-/**
-FIXME DOC
-*/
+/** Sub-band structure */
 typedef struct opj_tcd_band {
-    OPJ_INT32 x0, y0, x1,
-              y1;       /* dimension of the subband : left upper corner (x0, y0) right low corner (x1,y1) */
+    /* dimension of the subband : left upper corner (x0, y0) right low corner (x1,y1) */
+    OPJ_INT32 x0, y0, x1, y1;
+    /* band number: for lowest resolution level (0=LL), otherwise (0=HL, 1=LH, 2=HH) */
     OPJ_UINT32 bandno;
-    opj_tcd_precinct_t *precincts;  /* precinct information */
-    OPJ_UINT32 precincts_data_size; /* size of data taken by precincts */
+    /* precinct information */
+    opj_tcd_precinct_t *precincts;
+    /* size of data taken by precincts */
+    OPJ_UINT32 precincts_data_size;
     OPJ_INT32 numbps;
     OPJ_FLOAT32 stepsize;
 } opj_tcd_band_t;
 
-/**
-FIXME DOC
-*/
+/** Tile-component resolution structure */
 typedef struct opj_tcd_resolution {
-    OPJ_INT32 x0, y0, x1,
-              y1;       /* dimension of the resolution level : left upper corner (x0, y0) right low corner (x1,y1) */
+    /* dimension of the resolution level : left upper corner (x0, y0) right low corner (x1,y1) */
+    OPJ_INT32 x0, y0, x1, y1;
+    /* number of precincts, in width and height, for this resolution level */
     OPJ_UINT32 pw, ph;
-    OPJ_UINT32 numbands;            /* number sub-band for the resolution level */
-    opj_tcd_band_t bands[3];        /* subband information */
+    /* number of sub-bands for the resolution level (1 for lowest resolution level, 3 otherwise) */
+    OPJ_UINT32 numbands;
+    /* subband information */
+    opj_tcd_band_t bands[3];
 } opj_tcd_resolution_t;
 
-/**
-FIXME DOC
-*/
+/** Tile-component structure */
 typedef struct opj_tcd_tilecomp {
-    OPJ_INT32 x0, y0, x1,
-              y1;           /* dimension of component : left upper corner (x0, y0) right low corner (x1,y1) */
-    OPJ_UINT32 numresolutions;          /* number of resolutions level */
-    OPJ_UINT32
-    minimum_num_resolutions; /* number of resolutions level to decode (at max)*/
-    opj_tcd_resolution_t *resolutions;  /* resolutions information */
-    OPJ_UINT32
-    resolutions_size;        /* size of data for resolutions (in bytes) */
-    OPJ_INT32 *data;                    /* data of the component */
-    OPJ_BOOL  ownsData;                 /* if true, then need to free after usage, otherwise do not free */
-    OPJ_UINT32
-    data_size_needed;        /* we may either need to allocate this amount of data, or re-use image data and ignore this value */
-    OPJ_UINT32 data_size;               /* size of the data of the component */
-    OPJ_INT32 numpix;                   /* add fixed_quality */
+    /* dimension of component : left upper corner (x0, y0) right low corner (x1,y1) */
+    OPJ_INT32 x0, y0, x1, y1;
+    /* number of resolutions level */
+    OPJ_UINT32 numresolutions;
+    /* number of resolutions level to decode (at max)*/
+    OPJ_UINT32 minimum_num_resolutions;
+    /* resolutions information */
+    opj_tcd_resolution_t *resolutions;
+    /* size of data for resolutions (in bytes) */
+    OPJ_UINT32 resolutions_size;
+    /* data of the component */
+    OPJ_INT32 *data;
+    /* if true, then need to free after usage, otherwise do not free */
+    OPJ_BOOL  ownsData;
+    /* we may either need to allocate this amount of data, or re-use image data and ignore this value */
+    OPJ_UINT32 data_size_needed;
+    /* size of the data of the component */
+    OPJ_UINT32 data_size;
+    /* add fixed_quality */
+    OPJ_INT32 numpix;
 } opj_tcd_tilecomp_t;
 
 
@@ -201,8 +205,8 @@ typedef struct opj_tcd_tilecomp {
 FIXME DOC
 */
 typedef struct opj_tcd_tile {
-    OPJ_INT32 x0, y0, x1,
-              y1;       /* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
+    /* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
+    OPJ_INT32 x0, y0, x1, y1;
     OPJ_UINT32 numcomps;            /* number of components in tile */
     opj_tcd_tilecomp_t *comps;  /* Components information */
     OPJ_INT32 numpix;               /* add fixed_quality */
