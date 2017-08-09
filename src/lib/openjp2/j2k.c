@@ -8769,7 +8769,6 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
         opj_event_msg(p_manager, EVT_ERROR, "Failed to decode.\n");
         return OPJ_FALSE;
     }
-    p_j2k->m_tcd->enumcs = p_j2k->enumcs;
 
     /* p_data can be set to NULL when the call will take care of using */
     /* itself the TCD data. This is typically the case for whole single */
