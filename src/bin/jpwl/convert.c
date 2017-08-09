@@ -1352,6 +1352,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
                &endian2, signtmp, &prec, temp, &w, temp, &h) != 9) {
         fprintf(stderr,
                 "ERROR: Failed to read the right number of element from the fscanf() function!\n");
+        fclose(f);
         return NULL;
     }
 
@@ -1371,6 +1372,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
         bigendian = 0;
     } else {
         fprintf(stderr, "Bad pgx header, please check input file\n");
+        fclose(f);
         return NULL;
     }
 
