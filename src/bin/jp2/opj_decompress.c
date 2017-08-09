@@ -237,6 +237,8 @@ static void decode_help_display(void)
         fprintf(stdout, "  -threads <num_threads>\n"
                 "    Number of threads to use for decoding.\n");
     }
+    fprintf(stdout, "  -quiet\n"
+            "    Disable output from the library and other output.\n");
     /* UniPG>> */
 #ifdef USE_JPWL
     fprintf(stdout, "  -W <options>\n"
@@ -1352,7 +1354,9 @@ int main(int argc, char **argv)
     /*Decoding image one by one*/
     for (imageno = 0; imageno < num_images ; imageno++)  {
 
-        fprintf(stderr, "\n");
+        if (!parameters.quiet) {
+            fprintf(stderr, "\n");
+        }
 
         if (img_fol.set_imgdir == 1) {
             if (get_next_file(imageno, dirptr, &img_fol, &parameters)) {
