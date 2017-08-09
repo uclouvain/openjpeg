@@ -873,7 +873,7 @@ typedef struct opj_tccp_info {
     OPJ_UINT32 cblkh;
     /** code-block coding style */
     OPJ_UINT32 cblksty;
-    /** discrete wavelet transform identifier */
+    /** discrete wavelet transform identifier: 0 = 9-7 irreversible, 1 = 5-3 reversible */
     OPJ_UINT32 qmfbid;
     /** quantisation style */
     OPJ_UINT32 qntsty;
