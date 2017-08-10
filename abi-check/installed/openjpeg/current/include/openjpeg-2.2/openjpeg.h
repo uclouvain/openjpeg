@@ -867,9 +867,9 @@ typedef struct opj_tccp_info {
     OPJ_UINT32 csty;
     /** number of resolutions */
     OPJ_UINT32 numresolutions;
-    /** code-blocks width */
+    /** log2 of code-blocks width */
     OPJ_UINT32 cblkw;
-    /** code-blocks height */
+    /** log2 of code-blocks height */
     OPJ_UINT32 cblkh;
     /** code-block coding style */
     OPJ_UINT32 cblksty;
