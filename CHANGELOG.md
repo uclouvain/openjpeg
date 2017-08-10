@@ -1,6 +1,6 @@
 # Changelog
 
-## [v2.2.0]("https://github.com/uclouvain/openjpeg/releases/v2.2.0" ) (2017-08-03)
+## [v2.2.0]("https://github.com/uclouvain/openjpeg/releases/v2.2.0" ) (2017-08-10)
 [Full Changelog](https://github.com/uclouvain/openjpeg/compare/v2.1.2...v2.2.0)
 
 **Implemented enhancements:**
