@@ -180,12 +180,14 @@ static OPJ_BOOL opj_tcd_t2_encode(opj_tcd_t *p_tcd,
                                   OPJ_BYTE * p_dest_data,
                                   OPJ_UINT32 * p_data_written,
                                   OPJ_UINT32 p_max_dest_size,
-                                  opj_codestream_info_t *p_cstr_info);
+                                  opj_codestream_info_t *p_cstr_info,
+                                  opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_tcd_rate_allocate_encode(opj_tcd_t *p_tcd,
         OPJ_BYTE * p_dest_data,
         OPJ_UINT32 p_max_dest_size,
-        opj_codestream_info_t *p_cstr_info);
+        opj_codestream_info_t *p_cstr_info,
+        opj_event_mgr_t *p_manager);
 
 /* ----------------------------------------------------------------------- */
 
@@ -431,7 +433,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                               OPJ_BYTE *dest,
                               OPJ_UINT32 * p_data_written,
                               OPJ_UINT32 len,
-                              opj_codestream_info_t *cstr_info)
+                              opj_codestream_info_t *cstr_info,
+                              opj_event_mgr_t *p_manager)
 {
     OPJ_UINT32 compno, resno, bandno, precno, cblkno, layno;
     OPJ_UINT32 passno;
@@ -563,7 +566,7 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                     if (OPJ_IS_CINEMA(cp->rsiz)) {
                         if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,
                                                     p_data_written, maxlen, cstr_info, tcd->cur_tp_num, tcd->tp_pos, tcd->cur_pino,
-                                                    THRESH_CALC)) {
+                                                    THRESH_CALC, p_manager)) {
 
                             lo = thresh;
                             continue;
@@ -593,7 +596,7 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                 } else {
                     if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,
                                                 p_data_written, maxlen, cstr_info, tcd->cur_tp_num, tcd->tp_pos, tcd->cur_pino,
-                                                THRESH_CALC)) {
+                                                THRESH_CALC, p_manager)) {
                         /* TODO: what to do with l ??? seek / tell ??? */
                         /* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
                         lo = thresh;
@@ -1303,7 +1306,8 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
                              OPJ_BYTE *p_dest,
                              OPJ_UINT32 * p_data_written,
                              OPJ_UINT32 p_max_length,
-                             opj_codestream_info_t *p_cstr_info)
+                             opj_codestream_info_t *p_cstr_info,
+                             opj_event_mgr_t *p_manager)
 {
 
     if (p_tcd->cur_tp_num == 0) {
@@ -1365,7 +1369,8 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
         /* FIXME _ProfStop(PGROUP_T1); */
 
         /* FIXME _ProfStart(PGROUP_RATE); */
-        if (! opj_tcd_rate_allocate_encode(p_tcd, p_dest, p_max_length, p_cstr_info)) {
+        if (! opj_tcd_rate_allocate_encode(p_tcd, p_dest, p_max_length,
+                                           p_cstr_info, p_manager)) {
             return OPJ_FALSE;
         }
         /* FIXME _ProfStop(PGROUP_RATE); */
@@ -1380,7 +1385,7 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
     /* FIXME _ProfStart(PGROUP_T2); */
 
     if (! opj_tcd_t2_encode(p_tcd, p_dest, p_data_written, p_max_length,
-                            p_cstr_info)) {
+                            p_cstr_info, p_manager)) {
         return OPJ_FALSE;
     }
     /* FIXME _ProfStop(PGROUP_T2); */
@@ -2196,7 +2201,8 @@ static OPJ_BOOL opj_tcd_t2_encode(opj_tcd_t *p_tcd,
                                   OPJ_BYTE * p_dest_data,
                                   OPJ_UINT32 * p_data_written,
                                   OPJ_UINT32 p_max_dest_size,
-                                  opj_codestream_info_t *p_cstr_info)
+                                  opj_codestream_info_t *p_cstr_info,
+                                  opj_event_mgr_t *p_manager)
 {
     opj_t2_t * l_t2;
 
@@ -2217,7 +2223,8 @@ static OPJ_BOOL opj_tcd_t2_encode(opj_tcd_t *p_tcd,
                 p_tcd->tp_num,
                 p_tcd->tp_pos,
                 p_tcd->cur_pino,
-                FINAL_PASS)) {
+                FINAL_PASS,
+                p_manager)) {
         opj_t2_destroy(l_t2);
         return OPJ_FALSE;
     }
@@ -2232,7 +2239,8 @@ static OPJ_BOOL opj_tcd_t2_encode(opj_tcd_t *p_tcd,
 static OPJ_BOOL opj_tcd_rate_allocate_encode(opj_tcd_t *p_tcd,
         OPJ_BYTE * p_dest_data,
         OPJ_UINT32 p_max_dest_size,
-        opj_codestream_info_t *p_cstr_info)
+        opj_codestream_info_t *p_cstr_info,
+        opj_event_mgr_t *p_manager)
 {
     opj_cp_t * l_cp = p_tcd->cp;
     OPJ_UINT32 l_nb_written = 0;
@@ -2246,7 +2254,7 @@ static OPJ_BOOL opj_tcd_rate_allocate_encode(opj_tcd_t *p_tcd,
         /* fixed_quality */
         /* Normal Rate/distortion allocation */
         if (! opj_tcd_rateallocate(p_tcd, p_dest_data, &l_nb_written, p_max_dest_size,
-                                   p_cstr_info)) {
+                                   p_cstr_info, p_manager)) {
             return OPJ_FALSE;
         }
     } else {

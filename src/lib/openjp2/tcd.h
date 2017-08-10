@@ -317,7 +317,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                               OPJ_BYTE *dest,
                               OPJ_UINT32 * p_data_written,
                               OPJ_UINT32 len,
-                              opj_codestream_info_t *cstr_info);
+                              opj_codestream_info_t *cstr_info,
+                              opj_event_mgr_t *p_manager);
 
 /**
  * Gets the maximum tile size that will be taken by the tile once decoded.
@@ -332,6 +333,7 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size(opj_tcd_t *p_tcd);
  * @param   p_data_written  pointer to an int that is incremented by the number of bytes really written on p_dest
  * @param   p_len           Maximum length of the destination buffer
  * @param   p_cstr_info     Codestream information structure
+ * @param   p_manager       the user event manager
  * @return  true if the coding is successful.
 */
 OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
@@ -339,7 +341,8 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
                              OPJ_BYTE *p_dest,
                              OPJ_UINT32 * p_data_written,
                              OPJ_UINT32 p_len,
-                             struct opj_codestream_info *p_cstr_info);
+                             struct opj_codestream_info *p_cstr_info,
+                             opj_event_mgr_t *p_manager);
 
 
 /**

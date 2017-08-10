@@ -4659,7 +4659,8 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
     *p_data_written = 0;
 
     if (! opj_tcd_encode_tile(p_tile_coder, p_j2k->m_current_tile_number, p_data,
-                              p_data_written, l_remaining_data, l_cstr_info)) {
+                              p_data_written, l_remaining_data, l_cstr_info,
+                              p_manager)) {
         opj_event_msg(p_manager, EVT_ERROR, "Cannot encode tile\n");
         return OPJ_FALSE;
     }

@@ -76,6 +76,7 @@ Encode the packets of a tile to a destination buffer
 @param tppos            The position of the tile part flag in the progression order
 @param pino             FIXME DOC
 @param t2_mode          If == 0 In Threshold calculation ,If == 1 Final pass
+@param p_manager        the user event manager
 */
 OPJ_BOOL opj_t2_encode_packets(opj_t2_t* t2,
                                OPJ_UINT32 tileno,
@@ -88,7 +89,8 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* t2,
                                OPJ_UINT32 tpnum,
                                OPJ_INT32 tppos,
                                OPJ_UINT32 pino,
-                               J2K_T2_MODE t2_mode);
+                               J2K_T2_MODE t2_mode,
+                               opj_event_mgr_t *p_manager);
 
 /**
 Decode the packets of a tile from a source buffer
