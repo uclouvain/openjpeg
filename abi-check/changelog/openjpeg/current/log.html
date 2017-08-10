@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit a316f36dfc7cc4217bfce0ac6d23b47f90cf8fd9
+<pre class='wrap'>commit 0b4fef6d1901254e41ab74ed681daba477d724c3
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-10 16:49:47 +0200
+
+    Propagate event manager down to opj_t2_encode_packet() and use it to emit an error message when the output buffer is too small
+
+commit a316f36dfc7cc4217bfce0ac6d23b47f90cf8fd9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-10 14:43:16 +0200
 
@@ -555,22 +561,6 @@ Date:   2017-07-28 21:39:30 +0200
     Fix null pointer dereference in opj_j2k_add_mct() (#895)
     
     Fixes openjeg-crashes-2017-07-27/issue879-poc1.j2k of #895
-
-commit c5bf5ef4d6552e9159aaad29cb27826acd1a3389
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-28 21:29:55 +0200
-
-    Avoid use-after-free when a MCT marker is found after a MCC one (#895)
-    
-    Fixes openjeg-crashes-2017-07-27/issue880-poc2.j2k of #895
-
-commit e03e9474667e5117341351699f0b1dbb06f93346
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-27 22:29:17 +0200
-
-    Avoid undefined shift behaviour if bit depth == 32 (#895)
-    
-    Fixes openjeg-crashes-2017-07-27/id:000000,sig:11,src:003798,op:ext_AO,pos:128.jp2
 
 ...</pre></div>
 
