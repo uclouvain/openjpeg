@@ -854,7 +854,7 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
                 opj_event_msg(p_manager, EVT_ERROR,
                               "opj_t2_encode_packet(): only %u bytes remaining in "
                               "output buffer. %u needed.\n",
-                              layer->len, length);
+                              length, layer->len);
                 return OPJ_FALSE;
             }
 
