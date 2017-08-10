@@ -6769,6 +6769,13 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
         }
     }
 
+    /* If no explicit layers are provided, use lossless settings */
+    if (parameters->tcp_numlayers == 0) {
+        parameters->tcp_numlayers = 1;
+        parameters->cp_disto_alloc = 1;
+        parameters->tcp_rates[0] = 0;
+    }
+
     /* see if max_codestream_size does limit input rate */
     if (parameters->max_cs_size <= 0) {
         if (parameters->tcp_rates[parameters->tcp_numlayers - 1] > 0) {

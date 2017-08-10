@@ -1618,9 +1618,12 @@ static int parse_cmdline_encoder(int argc, char **argv,
         return 1;
     }               /* mod fixed_quality */
 
+
     /* if no rate entered, lossless by default */
+    /* Note: post v2.2.0, this is no longer necessary, but for released */
+    /* versions at the time of writing, this is needed to avoid crashes */
     if (parameters->tcp_numlayers == 0) {
-        parameters->tcp_rates[0] = 0;   /* MOD antonin : losslessbug */
+        parameters->tcp_rates[0] = 0;
         parameters->tcp_numlayers++;
         parameters->cp_disto_alloc = 1;
     }
