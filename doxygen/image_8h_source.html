@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -53,8 +53,8 @@
 </div><!--header-->
 <div class="contents">
 <a href="image_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * The copyright in this software is being made available under the 2-clauses </span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * BSD License, included below. This software may be subject to other third </span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * The copyright in this software is being made available under the 2-clauses</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * BSD License, included below. This software may be subject to other third</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * party and contributor rights, including patent rights, and no such rights</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * are granted under this license.</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
@@ -82,8 +82,8 @@
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * POSSIBILITY OF SUCH DAMAGE.</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef __IMAGE_H</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#define __IMAGE_H</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef OPJ_IMAGE_H</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#define OPJ_IMAGE_H</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">struct </span><a class="code" href="structopj__image.html">opj_image</a>;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">struct </span><a class="code" href="structopj__cp.html">opj_cp</a>;</div>
@@ -93,17 +93,19 @@
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___i_m_a_g_e.html#gaa7b8e2985cd630021497528669063b7c">opj_image_comp_header_update</a>(<a class="code" href="structopj__image.html">opj_image_t</a> * p_image, <span class="keyword">const</span> <span class="keyword">struct</span> <a class="code" href="structopj__cp.html">opj_cp</a>* p_cp);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___i_m_a_g_e.html#ga3802de36855e5331f4d6c04bc1b732a3">opj_copy_image_header</a>(<span class="keyword">const</span> <a class="code" href="structopj__image.html">opj_image_t</a>* p_image_src, <a class="code" href="structopj__image.html">opj_image_t</a>* p_image_dest);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __IMAGE_H */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___i_m_a_g_e.html#gaa7b8e2985cd630021497528669063b7c">opj_image_comp_header_update</a>(<a class="code" href="structopj__image.html">opj_image_t</a> * p_image,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                                  <span class="keyword">const</span> <span class="keyword">struct</span> <a class="code" href="structopj__cp.html">opj_cp</a>* p_cp);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___i_m_a_g_e.html#ga3802de36855e5331f4d6c04bc1b732a3">opj_copy_image_header</a>(<span class="keyword">const</span> <a class="code" href="structopj__image.html">opj_image_t</a>* p_image_src,</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                           <a class="code" href="structopj__image.html">opj_image_t</a>* p_image_dest);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* OPJ_IMAGE_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
 <div class="ttc" id="group___i_m_a_g_e_html_ga83035109ca4e81f9d90451adf6d975b4"><div class="ttname"><a href="group___i_m_a_g_e.html#ga83035109ca4e81f9d90451adf6d975b4">opj_image_create0</a></div><div class="ttdeci">opj_image_t * opj_image_create0(void)</div><div class="ttdoc">Create an empty image. </div><div class="ttdef"><b>Definition:</b> image.c:34</div></div>
-<div class="ttc" id="structopj__image_html"><div class="ttname"><a href="structopj__image.html">opj_image</a></div><div class="ttdoc">Defines image data and characteristics. </div><div class="ttdef"><b>Definition:</b> openjpeg.h:661</div></div>
-<div class="ttc" id="group___i_m_a_g_e_html_gaa7b8e2985cd630021497528669063b7c"><div class="ttname"><a href="group___i_m_a_g_e.html#gaa7b8e2985cd630021497528669063b7c">opj_image_comp_header_update</a></div><div class="ttdeci">void opj_image_comp_header_update(opj_image_t *p_image, const struct opj_cp *p_cp)</div><div class="ttdoc">Updates the components characteristics of the image from the coding parameters. </div><div class="ttdef"><b>Definition:</b> image.c:109</div></div>
-<div class="ttc" id="structopj__cp_html"><div class="ttname"><a href="structopj__cp.html">opj_cp</a></div><div class="ttdoc">Coding parameters. </div><div class="ttdef"><b>Definition:</b> j2k.h:353</div></div>
-<div class="ttc" id="group___i_m_a_g_e_html_ga3802de36855e5331f4d6c04bc1b732a3"><div class="ttname"><a href="group___i_m_a_g_e.html#ga3802de36855e5331f4d6c04bc1b732a3">opj_copy_image_header</a></div><div class="ttdeci">void opj_copy_image_header(const opj_image_t *p_image_src, opj_image_t *p_image_dest)</div><div class="ttdoc">Copy only header of image and its component header (no data are copied) if dest image have data...</div><div class="ttdef"><b>Definition:</b> image.c:148</div></div>
+<div class="ttc" id="structopj__image_html"><div class="ttname"><a href="structopj__image.html">opj_image</a></div><div class="ttdoc">Defines image data and characteristics. </div><div class="ttdef"><b>Definition:</b> openjpeg.h:666</div></div>
+<div class="ttc" id="group___i_m_a_g_e_html_gaa7b8e2985cd630021497528669063b7c"><div class="ttname"><a href="group___i_m_a_g_e.html#gaa7b8e2985cd630021497528669063b7c">opj_image_comp_header_update</a></div><div class="ttdeci">void opj_image_comp_header_update(opj_image_t *p_image, const struct opj_cp *p_cp)</div><div class="ttdoc">Updates the components characteristics of the image from the coding parameters. </div><div class="ttdef"><b>Definition:</b> image.c:122</div></div>
+<div class="ttc" id="structopj__cp_html"><div class="ttname"><a href="structopj__cp.html">opj_cp</a></div><div class="ttdoc">Coding parameters. </div><div class="ttdef"><b>Definition:</b> j2k.h:345</div></div>
+<div class="ttc" id="group___i_m_a_g_e_html_ga3802de36855e5331f4d6c04bc1b732a3"><div class="ttname"><a href="group___i_m_a_g_e.html#ga3802de36855e5331f4d6c04bc1b732a3">opj_copy_image_header</a></div><div class="ttdeci">void opj_copy_image_header(const opj_image_t *p_image_src, opj_image_t *p_image_dest)</div><div class="ttdoc">Copy only header of image and its component header (no data are copied) if dest image have data...</div><div class="ttdef"><b>Definition:</b> image.c:165</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

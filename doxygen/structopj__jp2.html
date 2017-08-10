@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -113,6 +113,10 @@ Data Fields</h2></td></tr>
 <tr class="separator:a93425cf36af61028d51c8e1d8ccb926c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace2bc5d96509b1975fead8d36a7a2489"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__jp2.html#ace2bc5d96509b1975fead8d36a7a2489">ignore_pclr_cmap_cdef</a></td></tr>
 <tr class="separator:ace2bc5d96509b1975fead8d36a7a2489"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94d28ba033ecd425f6f8fc456c0c758b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__jp2.html#a94d28ba033ecd425f6f8fc456c0c758b">has_jp2h</a></td></tr>
+<tr class="separator:a94d28ba033ecd425f6f8fc456c0c758b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1a3c49660d4366865cf11d1f489419c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__jp2.html#ac1a3c49660d4366865cf11d1f489419c">has_ihdr</a></td></tr>
+<tr class="separator:ac1a3c49660d4366865cf11d1f489419c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>JPEG-2000 file format reader/writer. </p>
@@ -243,6 +247,34 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ac1a3c49660d4366865cf11d1f489419c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> opj_jp2::has_ihdr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="group___j_p2.html#ga6bfb434e0d150ae769c7e8eb81117723">opj_jp2_read_header()</a>, and <a class="el" href="group___j_p2.html#ga0e0fac85bb2576b0fe2bff8a251a5814">opj_jp2_read_ihdr()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a94d28ba033ecd425f6f8fc456c0c758b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> opj_jp2::has_jp2h</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="group___j_p2.html#ga6bfb434e0d150ae769c7e8eb81117723">opj_jp2_read_header()</a>, and <a class="el" href="group___j_p2.html#ga13296666d7710af2bfb5a5d55480f90b">opj_jp2_read_jp2h()</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ace2bc5d96509b1975fead8d36a7a2489"></a>
 <div class="memitem">
 <div class="memproto">
@@ -283,7 +315,7 @@ Data Fields</h2></td></tr>
 
 <p>handle to the J2K codec </p>
 
-<p>Referenced by <a class="el" href="group___j_p2.html#ga218687e233b685fbb1986b81849aeb61">jp2_dump()</a>, <a class="el" href="group___j_p2.html#ga195430af9298b6633ff7a2aa754e2d31">jp2_get_cstr_index()</a>, <a class="el" href="group___j_p2.html#ga5ed9ca90035485efa93e1e7dce474780">jp2_get_cstr_info()</a>, <a class="el" href="group___j_p2.html#ga7d5389b7ba1706b96ec2adeb431a4735">opj_jp2_create()</a>, <a class="el" href="group___j_p2.html#gaab973979e00628ffd8b3d99a402d85aa">opj_jp2_decode()</a>, <a class="el" href="group___j_p2.html#gaebe5923df2f64f3107658fefb4cb03e0">opj_jp2_decode_tile()</a>, <a class="el" href="jp2_8c.html#acfb9b48b3d99eff4f6355dda79c645c5">opj_jp2_default_validation()</a>, <a class="el" href="group___j_p2.html#ga1f7f8e8462c3bf6fdf6c3d4d75b8b3b7">opj_jp2_destroy()</a>, <a class="el" href="group___j_p2.html#ga87e42b697673c52a0b2bb2a241e56b06">opj_jp2_encode()</a>, <a class="el" href="group___j_p2.html#gaceeec558d7ed87b1eec33edddf4a0205">opj_jp2_end_compress()</a>, <a class="el" href="group___j_p2.html#ga305f0351317cfc1ff0e0372fe0c64cdc">opj_jp2_end_decompress()</a>, <a class="el" href="group___j_p2.html#ga69b73f68c750cf70dc3b9836ed6ccfdc">opj_jp2_get_tile()</a>, <a class="el" href="group___j_p2.html#ga6bfb434e0d150ae769c7e8eb81117723">opj_jp2_read_header()</a>, <a class="el" href="group___j_p2.html#ga39499b02d05699c0bbd69412b24c6bd6">opj_jp2_read_tile_header()</a>, <a class="el" href="group___j_p2.html#ga3f8042c954d1cb5a29080555fa241e10">opj_jp2_set_decode_area()</a>, <a class="el" href="group___j_p2.html#ga271ca4cacb9ec1d01623e1dc0762af22">opj_jp2_set_decoded_resolution_factor()</a>, <a class="el" href="group___j_p2.html#ga24d94a6f5cf51200b3366a77e25e547d">opj_jp2_setup_decoder()</a>, <a class="el" href="group___j_p2.html#ga94441c4e15ce0c7adfc3610152e630f2">opj_jp2_setup_encoder()</a>, <a class="el" href="group___j_p2.html#ga241be56a14ecbf212a1cef44bc148f7b">opj_jp2_start_compress()</a>, and <a class="el" href="group___j_p2.html#ga96e24b7a59738febb2f4e89750212021">opj_jp2_write_tile()</a>.</p>
+<p>Referenced by <a class="el" href="group___j_p2.html#ga218687e233b685fbb1986b81849aeb61">jp2_dump()</a>, <a class="el" href="group___j_p2.html#ga195430af9298b6633ff7a2aa754e2d31">jp2_get_cstr_index()</a>, <a class="el" href="group___j_p2.html#ga5ed9ca90035485efa93e1e7dce474780">jp2_get_cstr_info()</a>, <a class="el" href="group___j_p2.html#ga7d5389b7ba1706b96ec2adeb431a4735">opj_jp2_create()</a>, <a class="el" href="group___j_p2.html#gaab973979e00628ffd8b3d99a402d85aa">opj_jp2_decode()</a>, <a class="el" href="group___j_p2.html#gaebe5923df2f64f3107658fefb4cb03e0">opj_jp2_decode_tile()</a>, <a class="el" href="jp2_8c.html#acfb9b48b3d99eff4f6355dda79c645c5">opj_jp2_default_validation()</a>, <a class="el" href="group___j_p2.html#ga1f7f8e8462c3bf6fdf6c3d4d75b8b3b7">opj_jp2_destroy()</a>, <a class="el" href="group___j_p2.html#ga87e42b697673c52a0b2bb2a241e56b06">opj_jp2_encode()</a>, <a class="el" href="group___j_p2.html#gaceeec558d7ed87b1eec33edddf4a0205">opj_jp2_end_compress()</a>, <a class="el" href="group___j_p2.html#ga305f0351317cfc1ff0e0372fe0c64cdc">opj_jp2_end_decompress()</a>, <a class="el" href="group___j_p2.html#ga69b73f68c750cf70dc3b9836ed6ccfdc">opj_jp2_get_tile()</a>, <a class="el" href="group___j_p2.html#gac1702a7ea040c681c8d7c9e33e6fd5bd">opj_jp2_read_colr()</a>, <a class="el" href="group___j_p2.html#ga6bfb434e0d150ae769c7e8eb81117723">opj_jp2_read_header()</a>, <a class="el" href="group___j_p2.html#ga0e0fac85bb2576b0fe2bff8a251a5814">opj_jp2_read_ihdr()</a>, <a class="el" href="group___j_p2.html#ga39499b02d05699c0bbd69412b24c6bd6">opj_jp2_read_tile_header()</a>, <a class="el" href="group___j_p2.html#ga3f8042c954d1cb5a29080555fa241e10">opj_jp2_set_decode_area()</a>, <a class="el" href="group___j_p2.html#ga271ca4cacb9ec1d01623e1dc0762af22">opj_jp2_set_decoded_resolution_factor()</a>, <a class="el" href="group___j_p2.html#gabe8ec92a2ec7c342926f81a166b6b59c">opj_jp2_set_threads()</a>, <a class="el" href="group___j_p2.html#ga24d94a6f5cf51200b3366a77e25e547d">opj_jp2_setup_decoder()</a>, <a class="el" href="group___j_p2.html#ga94441c4e15ce0c7adfc3610152e630f2">opj_jp2_setup_encoder()</a>, <a class="el" href="group___j_p2.html#ga241be56a14ecbf212a1cef44bc148f7b">opj_jp2_start_compress()</a>, and <a class="el" href="group___j_p2.html#ga96e24b7a59738febb2f4e89750212021">opj_jp2_write_tile()</a>.</p>
 
 </div>
 </div>

@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -94,6 +94,14 @@
 <li>open_remotefile()
 : <a class="el" href="target__manager_8c.html#ac02b149e177c6d198b19e340a8731755">target_manager.c</a>
 </li>
+<li>opj_aligned_32_malloc()
+: <a class="el" href="group___m_i_s_c.html#gaca33611a393378b0314a07d239b66099">opj_malloc.h</a>
+, <a class="el" href="group___m_i_s_c.html#gaca33611a393378b0314a07d239b66099">opj_malloc.c</a>
+</li>
+<li>opj_aligned_32_realloc()
+: <a class="el" href="group___m_i_s_c.html#ga42f91b38d00506a6851fc1dde0fba402">opj_malloc.c</a>
+, <a class="el" href="group___m_i_s_c.html#ga42f91b38d00506a6851fc1dde0fba402">opj_malloc.h</a>
+</li>
 <li>opj_aligned_alloc_n()
 : <a class="el" href="opj__malloc_8c.html#ac38162a5a110cb6499df3efd7a6b395f">opj_malloc.c</a>
 </li>
@@ -113,8 +121,8 @@
 : <a class="el" href="opj__malloc_8c.html#a29b9ed947cbc800b3d9747a4d9312013">opj_malloc.c</a>
 </li>
 <li>opj_alloc_tile_component_data()
-: <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">tcd.h</a>
-, <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">tcd.c</a>
+: <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">tcd.c</a>
+, <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">tcd.h</a>
 </li>
 <li>opj_bio_bytein()
 : <a class="el" href="group___b_i_o.html#ga1632241f1dd35ee1c895c89abf5f0fd0">bio.c</a>
@@ -177,8 +185,29 @@
 , <a class="el" href="cidx__manager_8h.html#ab67c4291dded54c0ca21a721f3ae25c9">cidx_manager.h</a>
 </li>
 <li>opj_clock()
-: <a class="el" href="group___m_i_s_c.html#gaf53ced13a225d45380052173563421bf">opj_clock.c</a>
+: <a class="el" href="group___m_i_s_c.html#gaf53ced13a225d45380052173563421bf">bench_dwt.c</a>
+, <a class="el" href="group___m_i_s_c.html#gaf53ced13a225d45380052173563421bf">opj_clock.c</a>
 , <a class="el" href="group___m_i_s_c.html#gaf53ced13a225d45380052173563421bf">opj_clock.h</a>
+</li>
+<li>opj_codec_set_threads()
+: <a class="el" href="openjpeg_8c.html#a7f9ce98db94c05a7ed01e84d3070084c">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#a0962545f4b1c98e695daf3c3fb667536">openjpeg.h</a>
+</li>
+<li>opj_cond_create()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga7f8a4c1ce6d9ad2dde1d293fad317522">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga7f8a4c1ce6d9ad2dde1d293fad317522">thread.h</a>
+</li>
+<li>opj_cond_destroy()
+: <a class="el" href="group___t_h_r_e_a_d.html#gafba4c2356f6d070d43e5f0d5c71fdbee">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gafba4c2356f6d070d43e5f0d5c71fdbee">thread.h</a>
+</li>
+<li>opj_cond_signal()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga0f3687b35d6f3c395e1156a8499d1632">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga0f3687b35d6f3c395e1156a8499d1632">thread.h</a>
+</li>
+<li>opj_cond_wait()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga6edf64f08cd0b48299800852d52245d6">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga6edf64f08cd0b48299800852d52245d6">thread.h</a>
 </li>
 <li>opj_copy_image_header()
 : <a class="el" href="group___i_m_a_g_e.html#ga3802de36855e5331f4d6c04bc1b732a3">image.c</a>
@@ -224,21 +253,21 @@
 , <a class="el" href="group___d_w_t.html#ga1cbaf895c3ddcf1990d30d07e7604980">dwt.h</a>
 </li>
 <li>opj_dwt_decode()
-: <a class="el" href="group___d_w_t.html#ga677aada99e88407d553f5f10af6d4a51">dwt.c</a>
-, <a class="el" href="group___d_w_t.html#ga677aada99e88407d553f5f10af6d4a51">dwt.h</a>
+: <a class="el" href="group___d_w_t.html#ga851ac455d3e28b8f39a9e3b0818a8196">dwt.c</a>
+, <a class="el" href="group___d_w_t.html#ga851ac455d3e28b8f39a9e3b0818a8196">dwt.h</a>
 </li>
-<li>opj_dwt_decode_1()
-: <a class="el" href="group___d_w_t.html#ga1f57ae9f4b123f877737e2ed75b91722">dwt.c</a>
-</li>
-<li>opj_dwt_decode_1_()
-: <a class="el" href="group___d_w_t.html#ga2e69978f5e9a3680f23fd36c4df69992">dwt.c</a>
+<li>opj_dwt_decode_h_func()
+: <a class="el" href="dwt_8c.html#ab6701233c67d89f96c5328f2627a6233">dwt.c</a>
 </li>
 <li>opj_dwt_decode_real()
 : <a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">dwt.c</a>
 , <a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">dwt.h</a>
 </li>
 <li>opj_dwt_decode_tile()
-: <a class="el" href="group___d_w_t.html#ga48646519707c1effde28134ac7267f89">dwt.c</a>
+: <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">dwt.c</a>
+</li>
+<li>opj_dwt_decode_v_func()
+: <a class="el" href="dwt_8c.html#a2b001cbb0e2278c374cead2046ea4023">dwt.c</a>
 </li>
 <li>opj_dwt_deinterleave_h()
 : <a class="el" href="group___d_w_t.html#ga0b6cd2e3590b6c11297128ef42b00fe2">dwt.c</a>
@@ -281,12 +310,6 @@
 <li>opj_dwt_getnorm_real()
 : <a class="el" href="group___d_w_t.html#ga330f64c5e2755f1b2a3c1d2b591d09ed">dwt.c</a>
 , <a class="el" href="group___d_w_t.html#ga330f64c5e2755f1b2a3c1d2b591d09ed">dwt.h</a>
-</li>
-<li>opj_dwt_interleave_h()
-: <a class="el" href="group___d_w_t.html#ga78a14c7491cf132e1daf5d4c4d83d17e">dwt.c</a>
-</li>
-<li>opj_dwt_interleave_v()
-: <a class="el" href="group___d_w_t.html#gadd8462222aaf0890c0f19868997f8851">dwt.c</a>
 </li>
 <li>opj_dwt_max_resolution()
 : <a class="el" href="group___d_w_t.html#gac2fffad328e477aa744b59f2872e5603">dwt.c</a>
@@ -338,8 +361,34 @@
 <li>opj_get_jp2_metadata()
 : <a class="el" href="openjpeg_8h.html#adc9849b9d75076edefaf5fa1b2bb3061">openjpeg.h</a>
 </li>
+<li>opj_get_num_cpus()
+: <a class="el" href="openjpeg_8h.html#a94cf0e6a4deef45a884707a723ac34e7">openjpeg.h</a>
+, <a class="el" href="thread_8c.html#a93ce856805936340ca26e98bcf3f4996">thread.c</a>
+</li>
 <li>opj_get_tile_dimensions()
 : <a class="el" href="group___j2_k.html#ga137ed861d6b253613d162498afe49159">j2k.c</a>
+</li>
+<li>opj_has_thread_support()
+: <a class="el" href="openjpeg_8h.html#a3b024724d551ba3fb0e8bdc682419f5b">openjpeg.h</a>
+, <a class="el" href="thread_8c.html#aae69d6e8a731757a983888c4047d3e3b">thread.c</a>
+</li>
+<li>opj_idwt3_v_cas0()
+: <a class="el" href="dwt_8c.html#aa741e88e981684828174e88c8bb5c473">dwt.c</a>
+</li>
+<li>opj_idwt3_v_cas1()
+: <a class="el" href="dwt_8c.html#a1c7dea3463dc30fd40ff44d3e37d6402">dwt.c</a>
+</li>
+<li>opj_idwt53_h()
+: <a class="el" href="dwt_8c.html#af8fc877331f6639b1d2f166451177f7f">dwt.c</a>
+</li>
+<li>opj_idwt53_h_cas0()
+: <a class="el" href="dwt_8c.html#aa1e1d65844d59fd0182bc2c5355144f5">dwt.c</a>
+</li>
+<li>opj_idwt53_h_cas1()
+: <a class="el" href="dwt_8c.html#aa1a47075793852c4d73935ab6c4305d1">dwt.c</a>
+</li>
+<li>opj_idwt53_v()
+: <a class="el" href="dwt_8c.html#ae6b25268462aa5ebb4875b540c3b18ec">dwt.c</a>
 </li>
 <li>opj_image_comp_header_update()
 : <a class="el" href="group___i_m_a_g_e.html#gaa7b8e2985cd630021497528669063b7c">image.c</a>
@@ -352,6 +401,14 @@
 <li>opj_image_create0()
 : <a class="el" href="group___i_m_a_g_e.html#ga83035109ca4e81f9d90451adf6d975b4">image.c</a>
 , <a class="el" href="group___i_m_a_g_e.html#ga83035109ca4e81f9d90451adf6d975b4">image.h</a>
+</li>
+<li>opj_image_data_alloc()
+: <a class="el" href="openjpeg_8c.html#a3f03dd6d6224e93ff15a1d9234d948d5">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#a35a842389bc0ce0e79e196d397d697bc">openjpeg.h</a>
+</li>
+<li>opj_image_data_free()
+: <a class="el" href="openjpeg_8c.html#a53a2908ba063e90755b9449001194f88">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#a70e22cb655b4a95041a4dc8bdaf94196">openjpeg.h</a>
 </li>
 <li>opj_image_destroy()
 : <a class="el" href="image_8c.html#a193f6a609b0a3c4aa4912be9c987cd14">image.c</a>
@@ -516,6 +573,9 @@
 </li>
 <li>opj_j2k_get_default_stride()
 : <a class="el" href="group___j2_k.html#ga7d5ad212fd3ccafde90e06dad1bd9a6c">j2k.c</a>
+</li>
+<li>opj_j2k_get_default_thread_count()
+: <a class="el" href="j2k_8c.html#ac8b636dfb2c65311872afe7de0ee121b">j2k.c</a>
 </li>
 <li>opj_j2k_get_end_header()
 : <a class="el" href="group___j2_k.html#ga06bfef520a515d5b8c8eb2b7fa8f555e">j2k.c</a>
@@ -705,6 +765,10 @@
 : <a class="el" href="j2k_8c.html#ad2c05f29bca659d072a13133993312f9">j2k.c</a>
 , <a class="el" href="j2k_8h.html#ad2c05f29bca659d072a13133993312f9">j2k.h</a>
 </li>
+<li>opj_j2k_set_threads()
+: <a class="el" href="group___j2_k.html#gabecf91393e6703f8be5006b19df1be22">j2k.c</a>
+, <a class="el" href="group___j2_k.html#gabecf91393e6703f8be5006b19df1be22">j2k.h</a>
+</li>
 <li>opj_j2k_setup_decoder()
 : <a class="el" href="group___j2_k.html#gad278fa72d1461084c57c87a4276850cf">j2k.c</a>
 , <a class="el" href="group___j2_k.html#gad278fa72d1461084c57c87a4276850cf">j2k.h</a>
@@ -867,7 +931,7 @@
 : <a class="el" href="group___j_p2.html#gab2a081552f8c61d75c1c925d702057bb">jp2.c</a>
 </li>
 <li>opj_jp2_apply_pclr()
-: <a class="el" href="group___j_p2.html#gae31e2b30eb366c6be2762a6c62dedbed">jp2.c</a>
+: <a class="el" href="group___j_p2.html#ga8c6a6b30b72a7814f8caf2a95aed9e14">jp2.c</a>
 </li>
 <li>opj_jp2_check_color()
 : <a class="el" href="jp2_8c.html#a7230dd12ccadea216f8dd6b4c670011f">jp2.c</a>
@@ -970,6 +1034,10 @@
 <li>opj_jp2_set_decoded_resolution_factor()
 : <a class="el" href="group___j_p2.html#ga271ca4cacb9ec1d01623e1dc0762af22">jp2.c</a>
 , <a class="el" href="group___j_p2.html#ga271ca4cacb9ec1d01623e1dc0762af22">jp2.h</a>
+</li>
+<li>opj_jp2_set_threads()
+: <a class="el" href="group___j_p2.html#gabe8ec92a2ec7c342926f81a166b6b59c">jp2.c</a>
+, <a class="el" href="group___j_p2.html#gabe8ec92a2ec7c342926f81a166b6b59c">jp2.h</a>
 </li>
 <li>opj_jp2_setup_decoder()
 : <a class="el" href="group___j_p2.html#ga24d94a6f5cf51200b3366a77e25e547d">jp2.c</a>
@@ -1100,15 +1168,19 @@
 , <a class="el" href="group___m_q_c.html#gad886df66150746e1a41d3e20037683fb">mqc.h</a>
 </li>
 <li>opj_mqc_bypass_flush_enc()
-: <a class="el" href="group___m_q_c.html#ga06f573a8ddf3566cd663a3fc65a69bc6">mqc.h</a>
-, <a class="el" href="group___m_q_c.html#ga06f573a8ddf3566cd663a3fc65a69bc6">mqc.c</a>
+: <a class="el" href="group___m_q_c.html#ga9eb31de8e3ede6acad7469f9ea0b0d1b">mqc.h</a>
+, <a class="el" href="group___m_q_c.html#ga9eb31de8e3ede6acad7469f9ea0b0d1b">mqc.c</a>
+</li>
+<li>opj_mqc_bypass_get_extra_bytes()
+: <a class="el" href="group___m_q_c.html#ga4a259d02eadde28d92edac74dbc40323">mqc.c</a>
+, <a class="el" href="group___m_q_c.html#ga4a259d02eadde28d92edac74dbc40323">mqc.h</a>
 </li>
 <li>opj_mqc_bypass_init_enc()
-: <a class="el" href="group___m_q_c.html#gaba5f2d1b605d35e514aeb7a2827996b9">mqc.c</a>
-, <a class="el" href="group___m_q_c.html#gaba5f2d1b605d35e514aeb7a2827996b9">mqc.h</a>
+: <a class="el" href="group___m_q_c.html#gaba5f2d1b605d35e514aeb7a2827996b9">mqc.h</a>
+, <a class="el" href="group___m_q_c.html#gaba5f2d1b605d35e514aeb7a2827996b9">mqc.c</a>
 </li>
 <li>opj_mqc_bytein()
-: <a class="el" href="group___m_q_c.html#gaf012e670d76a43f52ca38d514643ad64">mqc.c</a>
+: <a class="el" href="mqc__inl_8h.html#af1feff8274fe5a9da129d93322fce03e">mqc_inl.h</a>
 </li>
 <li>opj_mqc_byteout()
 : <a class="el" href="group___m_q_c.html#ga1f9bb597e9030a65889e0a4f329debc6">mqc.c</a>
@@ -1119,50 +1191,39 @@
 <li>opj_mqc_codemps()
 : <a class="el" href="group___m_q_c.html#ga9efae713566157c7180137eec9b1cbad">mqc.c</a>
 </li>
-<li>opj_mqc_create()
-: <a class="el" href="group___m_q_c.html#ga3acb7e6dd9ce8878a97e1f023510be28">mqc.h</a>
-, <a class="el" href="group___m_q_c.html#ga3acb7e6dd9ce8878a97e1f023510be28">mqc.c</a>
-</li>
-<li>opj_mqc_decode()
-: <a class="el" href="group___m_q_c.html#ga3eb5cf91b899a932c19f3a24f04a3c0f">mqc.c</a>
-, <a class="el" href="group___m_q_c.html#ga3eb5cf91b899a932c19f3a24f04a3c0f">mqc.h</a>
-</li>
-<li>opj_mqc_destroy()
-: <a class="el" href="group___m_q_c.html#ga136e9f02b4e53ede318511f7d42bf190">mqc.c</a>
-, <a class="el" href="group___m_q_c.html#ga136e9f02b4e53ede318511f7d42bf190">mqc.h</a>
-</li>
 <li>opj_mqc_encode()
 : <a class="el" href="group___m_q_c.html#gabe330c18fbdee2676a2201f88a756be2">mqc.c</a>
 , <a class="el" href="group___m_q_c.html#gabe330c18fbdee2676a2201f88a756be2">mqc.h</a>
 </li>
 <li>opj_mqc_erterm_enc()
-: <a class="el" href="group___m_q_c.html#gae8351e8a317e68679bf5ce649e91f48d">mqc.h</a>
-, <a class="el" href="group___m_q_c.html#gae8351e8a317e68679bf5ce649e91f48d">mqc.c</a>
+: <a class="el" href="group___m_q_c.html#gae8351e8a317e68679bf5ce649e91f48d">mqc.c</a>
+, <a class="el" href="group___m_q_c.html#gae8351e8a317e68679bf5ce649e91f48d">mqc.h</a>
 </li>
 <li>opj_mqc_flush()
 : <a class="el" href="group___m_q_c.html#ga39b562515ebaa0a9707c51b6770ad7fe">mqc.c</a>
 , <a class="el" href="group___m_q_c.html#ga39b562515ebaa0a9707c51b6770ad7fe">mqc.h</a>
 </li>
 <li>opj_mqc_init_dec()
-: <a class="el" href="group___m_q_c.html#ga379332e36caa09ac0741988b65e64625">mqc.h</a>
-, <a class="el" href="group___m_q_c.html#ga379332e36caa09ac0741988b65e64625">mqc.c</a>
+: <a class="el" href="group___m_q_c.html#gaa0e4b75040d645307e25dd53528e8512">mqc.h</a>
+, <a class="el" href="group___m_q_c.html#gaa0e4b75040d645307e25dd53528e8512">mqc.c</a>
+</li>
+<li>opj_mqc_init_dec_common()
+: <a class="el" href="mqc_8c.html#a4f0a5a2ce3c6ff564f7dc9bdaae4f961">mqc.c</a>
 </li>
 <li>opj_mqc_init_enc()
 : <a class="el" href="group___m_q_c.html#gac1a06acd83ef63950db20f73251efab3">mqc.c</a>
 , <a class="el" href="group___m_q_c.html#gac1a06acd83ef63950db20f73251efab3">mqc.h</a>
 </li>
-<li>opj_mqc_lpsexchange()
-: <a class="el" href="group___m_q_c.html#gace6e8a3c17fb19c08a4d8020c9f414b7">mqc.c</a>
-</li>
-<li>opj_mqc_mpsexchange()
-: <a class="el" href="group___m_q_c.html#ga2cc1a0c79434187e3495e555c0a92de5">mqc.c</a>
-</li>
 <li>opj_mqc_numbytes()
 : <a class="el" href="group___m_q_c.html#gac9c6d11f48074e5064584d1e5d0dcd0f">mqc.c</a>
 , <a class="el" href="group___m_q_c.html#gac9c6d11f48074e5064584d1e5d0dcd0f">mqc.h</a>
 </li>
-<li>opj_mqc_renormd()
-: <a class="el" href="group___m_q_c.html#ga4946ec38da7e0d4a5ef29f97c1e3e79a">mqc.c</a>
+<li>opj_mqc_raw_decode()
+: <a class="el" href="mqc__inl_8h.html#ac95b072fbe38180fafa0c02051b12874">mqc_inl.h</a>
+</li>
+<li>opj_mqc_raw_init_dec()
+: <a class="el" href="group___m_q_c.html#ga683734858d69085fd07394d1d3fae633">mqc.h</a>
+, <a class="el" href="group___m_q_c.html#ga683734858d69085fd07394d1d3fae633">mqc.c</a>
 </li>
 <li>opj_mqc_renorme()
 : <a class="el" href="group___m_q_c.html#gade5d1c418166b02f2a4445967c241ebf">mqc.c</a>
@@ -1172,16 +1233,12 @@
 , <a class="el" href="group___m_q_c.html#ga858901a7f568a2845885e537aaeab825">mqc.h</a>
 </li>
 <li>opj_mqc_resetstates()
-: <a class="el" href="group___m_q_c.html#ga9b1de23283892ba50029b75ab1b9a91a">mqc.h</a>
-, <a class="el" href="group___m_q_c.html#ga9b1de23283892ba50029b75ab1b9a91a">mqc.c</a>
-</li>
-<li>opj_mqc_restart_enc()
-: <a class="el" href="group___m_q_c.html#gae7894baeeb49e44f6135cd77e076dd16">mqc.c</a>
-, <a class="el" href="group___m_q_c.html#gae7894baeeb49e44f6135cd77e076dd16">mqc.h</a>
+: <a class="el" href="group___m_q_c.html#ga9b1de23283892ba50029b75ab1b9a91a">mqc.c</a>
+, <a class="el" href="group___m_q_c.html#ga9b1de23283892ba50029b75ab1b9a91a">mqc.h</a>
 </li>
 <li>opj_mqc_restart_init_enc()
-: <a class="el" href="group___m_q_c.html#ga178f2a2119c59ae30169835162bd73e7">mqc.h</a>
-, <a class="el" href="group___m_q_c.html#ga178f2a2119c59ae30169835162bd73e7">mqc.c</a>
+: <a class="el" href="group___m_q_c.html#ga178f2a2119c59ae30169835162bd73e7">mqc.c</a>
+, <a class="el" href="group___m_q_c.html#ga178f2a2119c59ae30169835162bd73e7">mqc.h</a>
 </li>
 <li>opj_mqc_segmark_enc()
 : <a class="el" href="group___m_q_c.html#gaf6195cf3fe837a5acbaa721c3e453465">mqc.c</a>
@@ -1191,8 +1248,24 @@
 : <a class="el" href="group___m_q_c.html#ga22d3ee14b5fa548d998bfcef2b34f344">mqc.c</a>
 </li>
 <li>opj_mqc_setstate()
-: <a class="el" href="group___m_q_c.html#ga7260daca59a1e01f087a7806db045853">mqc.c</a>
-, <a class="el" href="group___m_q_c.html#ga7260daca59a1e01f087a7806db045853">mqc.h</a>
+: <a class="el" href="group___m_q_c.html#ga7260daca59a1e01f087a7806db045853">mqc.h</a>
+, <a class="el" href="group___m_q_c.html#ga7260daca59a1e01f087a7806db045853">mqc.c</a>
+</li>
+<li>opj_mutex_create()
+: <a class="el" href="group___t_h_r_e_a_d.html#gaa81ea27e801a8c0cf453b256ab38e067">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gaa81ea27e801a8c0cf453b256ab38e067">thread.h</a>
+</li>
+<li>opj_mutex_destroy()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga66757c34c788b873ad9acfb60a5e008b">thread.h</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga66757c34c788b873ad9acfb60a5e008b">thread.c</a>
+</li>
+<li>opj_mutex_lock()
+: <a class="el" href="group___t_h_r_e_a_d.html#gab38a90b92a1d294f7e1886e36a405518">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gab38a90b92a1d294f7e1886e36a405518">thread.h</a>
+</li>
+<li>opj_mutex_unlock()
+: <a class="el" href="group___t_h_r_e_a_d.html#gacf1f5a5f7f7257663505af02b717272c">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gacf1f5a5f7f7257663505af02b717272c">thread.h</a>
 </li>
 <li>opj_null_jas_fprintf()
 : <a class="el" href="t2_8c.html#a35b80b6c684e197ce32949882c37a7e1">t2.c</a>
@@ -1208,12 +1281,15 @@
 , <a class="el" href="group___p_i.html#ga4990d0324eb594434bd7ef61d746ac46">pi.h</a>
 </li>
 <li>opj_pi_create_encode()
-: <a class="el" href="group___p_i.html#gacb01a23ef601a5e06c582c926c39a8e4">pi.h</a>
-, <a class="el" href="group___p_i.html#gacb01a23ef601a5e06c582c926c39a8e4">pi.c</a>
+: <a class="el" href="group___p_i.html#gacb01a23ef601a5e06c582c926c39a8e4">pi.c</a>
+, <a class="el" href="group___p_i.html#gacb01a23ef601a5e06c582c926c39a8e4">pi.h</a>
 </li>
 <li>opj_pi_destroy()
 : <a class="el" href="group___p_i.html#ga2b305751720002ec7fd630d9c87d4dd4">pi.c</a>
 , <a class="el" href="group___p_i.html#ga2b305751720002ec7fd630d9c87d4dd4">pi.h</a>
+</li>
+<li>opj_pi_emit_error()
+: <a class="el" href="pi_8c.html#a37d06dc95601749d4aa1dba6bcbd269c">pi.c</a>
 </li>
 <li>opj_pi_initialise_encode()
 : <a class="el" href="group___p_i.html#ga063e3300cc8f7553f0ea02652194409a">pi.h</a>
@@ -1259,8 +1335,8 @@
 , <a class="el" href="group___v_a_l.html#ga504334e4d2e64b16372e70f6c7a9d3e2">function_list.h</a>
 </li>
 <li>opj_procedure_list_clear()
-: <a class="el" href="group___v_a_l.html#ga9db9849fff78faa60392827aabf7e529">function_list.c</a>
-, <a class="el" href="group___v_a_l.html#ga9db9849fff78faa60392827aabf7e529">function_list.h</a>
+: <a class="el" href="group___v_a_l.html#ga9db9849fff78faa60392827aabf7e529">function_list.h</a>
+, <a class="el" href="group___v_a_l.html#ga9db9849fff78faa60392827aabf7e529">function_list.c</a>
 </li>
 <li>opj_procedure_list_create()
 : <a class="el" href="group___v_a_l.html#ga5058f9c3fdf2ff44f72c315e571cd153">function_list.c</a>
@@ -1275,44 +1351,24 @@
 , <a class="el" href="group___v_a_l.html#ga0fbe67e6c1863704ac826cd33de8f91b">function_list.h</a>
 </li>
 <li>opj_procedure_list_get_nb_procedures()
-: <a class="el" href="group___v_a_l.html#ga24cf23916e23907db588b420f870dbf4">function_list.c</a>
-, <a class="el" href="group___v_a_l.html#ga24cf23916e23907db588b420f870dbf4">function_list.h</a>
-</li>
-<li>opj_raw_create()
-: <a class="el" href="group___r_a_w.html#ga84d58773379209bf64c3e48e0d174670">raw.c</a>
-, <a class="el" href="group___r_a_w.html#ga84d58773379209bf64c3e48e0d174670">raw.h</a>
-</li>
-<li>opj_raw_decode()
-: <a class="el" href="group___r_a_w.html#gaa4e879e1d733e459b94c29141b7df142">raw.c</a>
-, <a class="el" href="group___r_a_w.html#gaa4e879e1d733e459b94c29141b7df142">raw.h</a>
-</li>
-<li>opj_raw_destroy()
-: <a class="el" href="group___r_a_w.html#gabb2f5b65ad948ccccf595df86d0e305d">raw.c</a>
-, <a class="el" href="group___r_a_w.html#gabb2f5b65ad948ccccf595df86d0e305d">raw.h</a>
-</li>
-<li>opj_raw_init_dec()
-: <a class="el" href="group___r_a_w.html#gaebd3e67e3b8673e4e4c3fa1834406389">raw.c</a>
-, <a class="el" href="group___r_a_w.html#gaebd3e67e3b8673e4e4c3fa1834406389">raw.h</a>
-</li>
-<li>opj_raw_numbytes()
-: <a class="el" href="group___r_a_w.html#gaee1cb91b1c5183234a36f53e0624f733">raw.c</a>
-, <a class="el" href="group___r_a_w.html#gaee1cb91b1c5183234a36f53e0624f733">raw.h</a>
+: <a class="el" href="group___v_a_l.html#ga24cf23916e23907db588b420f870dbf4">function_list.h</a>
+, <a class="el" href="group___v_a_l.html#ga24cf23916e23907db588b420f870dbf4">function_list.c</a>
 </li>
 <li>opj_read_bytes_BE()
 : <a class="el" href="group___c_i_o.html#ga9f901a48ea910d97ff038f87d9256037">cio.c</a>
 , <a class="el" href="group___c_i_o.html#ga9f901a48ea910d97ff038f87d9256037">cio.h</a>
 </li>
 <li>opj_read_bytes_LE()
-: <a class="el" href="group___c_i_o.html#gaf273fa2d61cb73738877a811e689dc88">cio.c</a>
-, <a class="el" href="group___c_i_o.html#gaf273fa2d61cb73738877a811e689dc88">cio.h</a>
+: <a class="el" href="group___c_i_o.html#gaf273fa2d61cb73738877a811e689dc88">cio.h</a>
+, <a class="el" href="group___c_i_o.html#gaf273fa2d61cb73738877a811e689dc88">cio.c</a>
 </li>
 <li>opj_read_double_BE()
 : <a class="el" href="group___c_i_o.html#gaf4f59dfe6fc6cb0d93ccf308e81727d3">cio.c</a>
 , <a class="el" href="group___c_i_o.html#gaf4f59dfe6fc6cb0d93ccf308e81727d3">cio.h</a>
 </li>
 <li>opj_read_double_LE()
-: <a class="el" href="group___c_i_o.html#gadae00135fe98bea16876125f0898759a">cio.c</a>
-, <a class="el" href="group___c_i_o.html#gadae00135fe98bea16876125f0898759a">cio.h</a>
+: <a class="el" href="group___c_i_o.html#gadae00135fe98bea16876125f0898759a">cio.h</a>
+, <a class="el" href="group___c_i_o.html#gadae00135fe98bea16876125f0898759a">cio.c</a>
 </li>
 <li>opj_read_float_BE()
 : <a class="el" href="group___c_i_o.html#gae3c5b5fac8489e8fb4d1caecc98a8788">cio.c</a>
@@ -1330,8 +1386,8 @@
 , <a class="el" href="openjpeg_8h.html#ab7ccce9a2fb0cf5caa18d814e7f2947f">openjpeg.h</a>
 </li>
 <li>opj_read_tile_header()
-: <a class="el" href="openjpeg_8h.html#a1e19d815afde20f647102ae9f5beead2">openjpeg.h</a>
-, <a class="el" href="openjpeg_8c.html#a563b0410755e72d90b5009ee6705be8f">openjpeg.c</a>
+: <a class="el" href="openjpeg_8c.html#a563b0410755e72d90b5009ee6705be8f">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#a1e19d815afde20f647102ae9f5beead2">openjpeg.h</a>
 </li>
 <li>opj_realloc()
 : <a class="el" href="group___m_i_s_c.html#ga95862b2a456efdc436c61beba816fb25">opj_malloc.c</a>
@@ -1341,40 +1397,40 @@
 : <a class="el" href="openjpeg_8c.html#a3aab793d4767e2899acba18567bb38fa">openjpeg.c</a>
 </li>
 <li>opj_set_decode_area()
-: <a class="el" href="openjpeg_8h.html#a29648f3323808658b11710fc5a7cfa89">openjpeg.h</a>
-, <a class="el" href="openjpeg_8c.html#aea476bddc65f8bf5b5b2bbbe41af7389">openjpeg.c</a>
+: <a class="el" href="openjpeg_8c.html#aea476bddc65f8bf5b5b2bbbe41af7389">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#a29648f3323808658b11710fc5a7cfa89">openjpeg.h</a>
 </li>
 <li>opj_set_decoded_resolution_factor()
-: <a class="el" href="openjpeg_8c.html#a0ca577ace088ef7efa44d8762222c353">openjpeg.c</a>
-, <a class="el" href="openjpeg_8h.html#a1212c14b4728546170c329acd0c04e78">openjpeg.h</a>
+: <a class="el" href="openjpeg_8h.html#a1212c14b4728546170c329acd0c04e78">openjpeg.h</a>
+, <a class="el" href="openjpeg_8c.html#a0ca577ace088ef7efa44d8762222c353">openjpeg.c</a>
 </li>
 <li>opj_set_default_decoder_parameters()
-: <a class="el" href="openjpeg_8h.html#a26ab41f825d43b214e38b1b9d6d63aac">openjpeg.h</a>
-, <a class="el" href="openjpeg_8c.html#a4404982cd554e2251772043ea12e5164">openjpeg.c</a>
+: <a class="el" href="openjpeg_8c.html#a4404982cd554e2251772043ea12e5164">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#a26ab41f825d43b214e38b1b9d6d63aac">openjpeg.h</a>
 </li>
 <li>opj_set_default_encoder_parameters()
 : <a class="el" href="openjpeg_8c.html#a579b5a50da6517f9d7563489e8044298">openjpeg.c</a>
 , <a class="el" href="openjpeg_8h.html#adf975bbcd105f85d8773b4ee925bc73f">openjpeg.h</a>
 </li>
 <li>opj_set_default_event_handler()
-: <a class="el" href="group___e_v_e_n_t.html#ga8584de0db0bbc62b70d5cf5089165ef2">event.h</a>
-, <a class="el" href="group___e_v_e_n_t.html#ga8584de0db0bbc62b70d5cf5089165ef2">event.c</a>
+: <a class="el" href="group___e_v_e_n_t.html#ga8584de0db0bbc62b70d5cf5089165ef2">event.c</a>
+, <a class="el" href="group___e_v_e_n_t.html#ga8584de0db0bbc62b70d5cf5089165ef2">event.h</a>
 </li>
 <li>opj_set_error_handler()
-: <a class="el" href="openjpeg_8h.html#a52a1f826dd3a2d257fa5b935b60a82ac">openjpeg.h</a>
-, <a class="el" href="openjpeg_8c.html#a0b847b8776315c6f654a6ad7c2d8af67">openjpeg.c</a>
+: <a class="el" href="openjpeg_8c.html#a0b847b8776315c6f654a6ad7c2d8af67">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#a52a1f826dd3a2d257fa5b935b60a82ac">openjpeg.h</a>
 </li>
 <li>opj_set_info_handler()
-: <a class="el" href="openjpeg_8h.html#ac887f1d80d30a49fe20b673836783696">openjpeg.h</a>
-, <a class="el" href="openjpeg_8c.html#a6b7606d660444e8f414aa6e2c148fa44">openjpeg.c</a>
+: <a class="el" href="openjpeg_8c.html#a6b7606d660444e8f414aa6e2c148fa44">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#ac887f1d80d30a49fe20b673836783696">openjpeg.h</a>
 </li>
 <li>opj_set_MCT()
 : <a class="el" href="openjpeg_8h.html#a7850d110156f6dae53f05fc3943562e0">openjpeg.h</a>
 , <a class="el" href="openjpeg_8c.html#afe151054b10829ce8fc1e478710ca653">openjpeg.c</a>
 </li>
 <li>opj_set_warning_handler()
-: <a class="el" href="openjpeg_8h.html#ae24aa81acf8ec8154f099bbe35703c0a">openjpeg.h</a>
-, <a class="el" href="openjpeg_8c.html#ab460c38323da1140f66763aa419c404b">openjpeg.c</a>
+: <a class="el" href="openjpeg_8c.html#ab460c38323da1140f66763aa419c404b">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#ae24aa81acf8ec8154f099bbe35703c0a">openjpeg.h</a>
 </li>
 <li>opj_setup_decoder()
 : <a class="el" href="openjpeg_8h.html#accb6a7b065e3808777237012011e6894">openjpeg.h</a>
@@ -1388,16 +1444,16 @@
 : <a class="el" href="openjpeg_8c.html#ae8060b5a32b0a58fd0485a04f55de141">openjpeg.c</a>
 </li>
 <li>opj_start_compress()
-: <a class="el" href="openjpeg_8c.html#a254b148aa82603b85b2c799dbafe50b3">openjpeg.c</a>
-, <a class="el" href="openjpeg_8h.html#afaaf1b749d982c1fe36749b0542b581b">openjpeg.h</a>
+: <a class="el" href="openjpeg_8h.html#afaaf1b749d982c1fe36749b0542b581b">openjpeg.h</a>
+, <a class="el" href="openjpeg_8c.html#a254b148aa82603b85b2c799dbafe50b3">openjpeg.c</a>
 </li>
 <li>opj_stream_create()
 : <a class="el" href="cio_8c.html#a9fb51f39980fb6bc1e15ef48a2fd1970">cio.c</a>
 , <a class="el" href="openjpeg_8h.html#a5ceb2a40ddd3b69cdc183e1373257091">openjpeg.h</a>
 </li>
 <li>opj_stream_create_default_file_stream()
-: <a class="el" href="openjpeg_8h.html#aec377b042454f3b695486f9829d8a490">openjpeg.h</a>
-, <a class="el" href="openjpeg_8c.html#acb36a77efa64f8332c27fc4ea6be066c">openjpeg.c</a>
+: <a class="el" href="openjpeg_8c.html#acb36a77efa64f8332c27fc4ea6be066c">openjpeg.c</a>
+, <a class="el" href="openjpeg_8h.html#aec377b042454f3b695486f9829d8a490">openjpeg.h</a>
 </li>
 <li>opj_stream_create_file_stream()
 : <a class="el" href="openjpeg_8c.html#a872f13112894292a165f89ba4dd1078f">openjpeg.c</a>
@@ -1412,36 +1468,36 @@
 , <a class="el" href="group___c_i_o.html#gad24645757cfda744ed8f4405f8e3b646">cio.h</a>
 </li>
 <li>opj_stream_default_seek()
-: <a class="el" href="group___c_i_o.html#ga52e44990c6b111efba20ffc05ac37d27">cio.h</a>
-, <a class="el" href="group___c_i_o.html#ga52e44990c6b111efba20ffc05ac37d27">cio.c</a>
+: <a class="el" href="group___c_i_o.html#ga52e44990c6b111efba20ffc05ac37d27">cio.c</a>
+, <a class="el" href="group___c_i_o.html#ga52e44990c6b111efba20ffc05ac37d27">cio.h</a>
 </li>
 <li>opj_stream_default_skip()
 : <a class="el" href="group___c_i_o.html#ga48c7c8450f5cdb6a063baa3e6de8ad8c">cio.c</a>
 , <a class="el" href="group___c_i_o.html#ga48c7c8450f5cdb6a063baa3e6de8ad8c">cio.h</a>
 </li>
 <li>opj_stream_default_write()
-: <a class="el" href="group___c_i_o.html#ga691682240555fdcd433694bb49313957">cio.c</a>
-, <a class="el" href="group___c_i_o.html#ga691682240555fdcd433694bb49313957">cio.h</a>
+: <a class="el" href="group___c_i_o.html#ga691682240555fdcd433694bb49313957">cio.h</a>
+, <a class="el" href="group___c_i_o.html#ga691682240555fdcd433694bb49313957">cio.c</a>
 </li>
 <li>opj_stream_destroy()
 : <a class="el" href="cio_8c.html#ac0686c0048dfa2d2fcffaf649891ea58">cio.c</a>
 , <a class="el" href="openjpeg_8h.html#a0703208df785be60460eb83c5d40b10f">openjpeg.h</a>
 </li>
 <li>opj_stream_flush()
-: <a class="el" href="group___c_i_o.html#ga3cb2e53726d5dde5a5f97f64a9e5f42d">cio.h</a>
-, <a class="el" href="group___c_i_o.html#ga3cb2e53726d5dde5a5f97f64a9e5f42d">cio.c</a>
+: <a class="el" href="group___c_i_o.html#ga3cb2e53726d5dde5a5f97f64a9e5f42d">cio.c</a>
+, <a class="el" href="group___c_i_o.html#ga3cb2e53726d5dde5a5f97f64a9e5f42d">cio.h</a>
 </li>
 <li>opj_stream_get_number_byte_left()
 : <a class="el" href="group___c_i_o.html#gaec7225a845169469fd1aa8db2a3fac9e">cio.c</a>
 , <a class="el" href="group___c_i_o.html#gaec7225a845169469fd1aa8db2a3fac9e">cio.h</a>
 </li>
 <li>opj_stream_has_seek()
-: <a class="el" href="group___c_i_o.html#gae456419611db729983d8ca337e3f3293">cio.h</a>
-, <a class="el" href="group___c_i_o.html#gae456419611db729983d8ca337e3f3293">cio.c</a>
+: <a class="el" href="group___c_i_o.html#gae456419611db729983d8ca337e3f3293">cio.c</a>
+, <a class="el" href="group___c_i_o.html#gae456419611db729983d8ca337e3f3293">cio.h</a>
 </li>
 <li>opj_stream_read_data()
-: <a class="el" href="group___c_i_o.html#ga6102b5a73d4a0235e9cfa65d92a623dc">cio.c</a>
-, <a class="el" href="group___c_i_o.html#ga6102b5a73d4a0235e9cfa65d92a623dc">cio.h</a>
+: <a class="el" href="group___c_i_o.html#ga6102b5a73d4a0235e9cfa65d92a623dc">cio.h</a>
+, <a class="el" href="group___c_i_o.html#ga6102b5a73d4a0235e9cfa65d92a623dc">cio.c</a>
 </li>
 <li>opj_stream_read_seek()
 : <a class="el" href="group___c_i_o.html#ga7dc74eec9e8e6227d485ef36396c57d8">cio.c</a>
@@ -1460,8 +1516,8 @@
 , <a class="el" href="openjpeg_8h.html#a32646f57f2e8450e57165d085dadb8c8">openjpeg.h</a>
 </li>
 <li>opj_stream_set_seek_function()
-: <a class="el" href="openjpeg_8h.html#abad6efc7d4b7a75b2223bef8a444ccb4">openjpeg.h</a>
-, <a class="el" href="cio_8c.html#aa693f609fb645fa540e37a6b2e7f597c">cio.c</a>
+: <a class="el" href="cio_8c.html#aa693f609fb645fa540e37a6b2e7f597c">cio.c</a>
+, <a class="el" href="openjpeg_8h.html#abad6efc7d4b7a75b2223bef8a444ccb4">openjpeg.h</a>
 </li>
 <li>opj_stream_set_skip_function()
 : <a class="el" href="cio_8c.html#a05423b3e3cc5114cc845913e1079bdc3">cio.c</a>
@@ -1472,12 +1528,12 @@
 , <a class="el" href="openjpeg_8h.html#a6cd79f0336b039391ffd67cddca0ac67">openjpeg.h</a>
 </li>
 <li>opj_stream_set_user_data_length()
-: <a class="el" href="cio_8c.html#ad3a6d67f83a37ac57ace0580d05181e2">cio.c</a>
-, <a class="el" href="openjpeg_8h.html#a2845fa5ff8031ef4a0b46314a19c0dc5">openjpeg.h</a>
+: <a class="el" href="openjpeg_8h.html#a2845fa5ff8031ef4a0b46314a19c0dc5">openjpeg.h</a>
+, <a class="el" href="cio_8c.html#ad3a6d67f83a37ac57ace0580d05181e2">cio.c</a>
 </li>
 <li>opj_stream_set_write_function()
-: <a class="el" href="openjpeg_8h.html#a5d196d304c431d2c1d462397976aa763">openjpeg.h</a>
-, <a class="el" href="cio_8c.html#ae0b2d3c47f4dc68c3f52def9eb5fb752">cio.c</a>
+: <a class="el" href="cio_8c.html#ae0b2d3c47f4dc68c3f52def9eb5fb752">cio.c</a>
+, <a class="el" href="openjpeg_8h.html#a5d196d304c431d2c1d462397976aa763">openjpeg.h</a>
 </li>
 <li>opj_stream_skip()
 : <a class="el" href="group___c_i_o.html#ga8a8ab9c9e1ccdc20a6dd2a2925a3f8c0">cio.c</a>
@@ -1502,86 +1558,110 @@
 <li>opj_t1_allocate_buffers()
 : <a class="el" href="group___t1.html#ga676ae65a9d3daed3299a36fa3842043e">t1.c</a>
 </li>
+<li>opj_t1_clbl_decode_processor()
+: <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">t1.c</a>
+</li>
 <li>opj_t1_create()
 : <a class="el" href="group___t1.html#ga7f1a52a233804744f2c7384ac04117f8">t1.h</a>
 , <a class="el" href="group___t1.html#ga7f1a52a233804744f2c7384ac04117f8">t1.c</a>
 </li>
 <li>opj_t1_dec_clnpass()
-: <a class="el" href="group___t1.html#gae29fe78fff17d859098068e31e36e885">t1.c</a>
+: <a class="el" href="t1_8c.html#a860ac272932c58c131aa669596936c0b">t1.c</a>
+</li>
+<li>opj_t1_dec_clnpass_64x64_novsc()
+: <a class="el" href="t1_8c.html#a67617bffcac63a0541f94b755f423865">t1.c</a>
+</li>
+<li>opj_t1_dec_clnpass_64x64_vsc()
+: <a class="el" href="t1_8c.html#a1f24b4844ca01e8aae692fd63d420338">t1.c</a>
+</li>
+<li>opj_t1_dec_clnpass_check_segsym()
+: <a class="el" href="t1_8c.html#a5b012076ab1c77674f5d0727bb78bf1d">t1.c</a>
+</li>
+<li>opj_t1_dec_clnpass_generic_novsc()
+: <a class="el" href="t1_8c.html#a8d53c000e250c4c1d3a6d2d852e23eda">t1.c</a>
+</li>
+<li>opj_t1_dec_clnpass_generic_vsc()
+: <a class="el" href="t1_8c.html#ab2e7e8800088f45448d17e5f34dd61bb">t1.c</a>
 </li>
 <li>opj_t1_dec_clnpass_step()
-: <a class="el" href="group___t1.html#ga14bc4e74cc948eb84b76560f6c293240">t1.c</a>
-</li>
-<li>opj_t1_dec_clnpass_step_partial()
-: <a class="el" href="group___t1.html#gae80bc5bce7e2811e8979a75c8c6066c3">t1.c</a>
-</li>
-<li>opj_t1_dec_clnpass_step_vsc()
-: <a class="el" href="group___t1.html#ga8db2d99a01aa0fa42722f685bc853a57">t1.c</a>
+: <a class="el" href="group___t1.html#ga0d5fd8c3c165fc611d6f3222fe1dffab">t1.c</a>
 </li>
 <li>opj_t1_dec_refpass_mqc()
-: <a class="el" href="group___t1.html#gace5d13e333a3fcff3ec6ed814f5463f5">t1.c</a>
+: <a class="el" href="t1_8c.html#ace5d13e333a3fcff3ec6ed814f5463f5">t1.c</a>
 </li>
-<li>opj_t1_dec_refpass_mqc_vsc()
-: <a class="el" href="group___t1.html#ga6159ec3239bc4fd888a0d91b88c88440">t1.c</a>
+<li>opj_t1_dec_refpass_mqc_64x64()
+: <a class="el" href="t1_8c.html#a8b82f08217395975f908e88cf9497632">t1.c</a>
+</li>
+<li>opj_t1_dec_refpass_mqc_generic()
+: <a class="el" href="t1_8c.html#a06f90286e24528a4f4fa71632217a020">t1.c</a>
 </li>
 <li>opj_t1_dec_refpass_raw()
-: <a class="el" href="group___t1.html#gaaae582c9081d5e25b416f2daa7598ac7">t1.c</a>
+: <a class="el" href="group___t1.html#gae2a2445442159db390c6062fccc9d2c0">t1.c</a>
 </li>
 <li>opj_t1_dec_refpass_step_mqc()
-: <a class="el" href="group___t1.html#gaf401f6d5dc7efa053efac2695ad7868f">t1.c</a>
-</li>
-<li>opj_t1_dec_refpass_step_mqc_vsc()
-: <a class="el" href="group___t1.html#ga3534d8f8428ce074d064647bb1495607">t1.c</a>
+: <a class="el" href="group___t1.html#ga75c4e634295ac2fa331be7c8b0ba0563">t1.c</a>
 </li>
 <li>opj_t1_dec_refpass_step_raw()
-: <a class="el" href="group___t1.html#gac10f219c32faf19a1b5cdf62ef54ad33">t1.c</a>
+: <a class="el" href="group___t1.html#gab0a7bec44865423db1e55dd10e6b51fe">t1.c</a>
 </li>
 <li>opj_t1_dec_sigpass_mqc()
-: <a class="el" href="group___t1.html#ga0abe12e4e59b25d19edadf956d0f41e6">t1.c</a>
+: <a class="el" href="t1_8c.html#afad44776606263f0a4ca1838d41607fd">t1.c</a>
 </li>
-<li>opj_t1_dec_sigpass_mqc_vsc()
-: <a class="el" href="group___t1.html#ga6610a77592a51ac50fc7448641bc8b52">t1.c</a>
+<li>opj_t1_dec_sigpass_mqc_64x64_novsc()
+: <a class="el" href="t1_8c.html#a0c7f1d8bd841304b7575fcc2d1e70f15">t1.c</a>
+</li>
+<li>opj_t1_dec_sigpass_mqc_64x64_vsc()
+: <a class="el" href="t1_8c.html#a9b9ccbbfede9ef34edf75cddf698a2f4">t1.c</a>
+</li>
+<li>opj_t1_dec_sigpass_mqc_generic_novsc()
+: <a class="el" href="t1_8c.html#a6675fd69fea5b9d1fd53155ee0555721">t1.c</a>
+</li>
+<li>opj_t1_dec_sigpass_mqc_generic_vsc()
+: <a class="el" href="t1_8c.html#af6048ce87c54e6a8c9fe2f2db94444ed">t1.c</a>
 </li>
 <li>opj_t1_dec_sigpass_raw()
-: <a class="el" href="group___t1.html#ga31cc6cb83b69a5a7d5f217743a16b196">t1.c</a>
+: <a class="el" href="group___t1.html#ga4a8e7c66427e3bcbf47d8d92c229892b">t1.c</a>
 </li>
 <li>opj_t1_dec_sigpass_step_mqc()
-: <a class="el" href="group___t1.html#gac33a78db8651f3a494737b02d9d65a2e">t1.c</a>
-</li>
-<li>opj_t1_dec_sigpass_step_mqc_vsc()
-: <a class="el" href="group___t1.html#gaddf560d65ec1fb58f57e881164bcf584">t1.c</a>
+: <a class="el" href="group___t1.html#gaf6ab9b96c0c6f3af01d505066f9d9164">t1.c</a>
 </li>
 <li>opj_t1_dec_sigpass_step_raw()
-: <a class="el" href="group___t1.html#gad7b4fc8f0264a0a1eebc5020986789d7">t1.c</a>
+: <a class="el" href="group___t1.html#ga637be949c4d76c22bcf308c3454efd93">t1.c</a>
 </li>
 <li>opj_t1_decode_cblk()
-: <a class="el" href="group___t1.html#gac0eda7cad23045baec567ddbe0a4da3f">t1.c</a>
+: <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">t1.c</a>
 </li>
 <li>opj_t1_decode_cblks()
-: <a class="el" href="group___t1.html#ga66e8b56fa305940438708e06d8e5ea4b">t1.c</a>
-, <a class="el" href="group___t1.html#ga66e8b56fa305940438708e06d8e5ea4b">t1.h</a>
+: <a class="el" href="group___t1.html#ga20cf3c3ce3f470e6311e96bf6e365cb0">t1.c</a>
+, <a class="el" href="group___t1.html#ga20cf3c3ce3f470e6311e96bf6e365cb0">t1.h</a>
 </li>
 <li>opj_t1_destroy()
 : <a class="el" href="group___t1.html#gadbc87000940d2fc0c5f3e2f0ad28938a">t1.c</a>
 , <a class="el" href="group___t1.html#gadbc87000940d2fc0c5f3e2f0ad28938a">t1.h</a>
 </li>
+<li>opj_t1_destroy_wrapper()
+: <a class="el" href="t1_8c.html#ad100b25cf4492d278d25cae52ace0d2a">t1.c</a>
+</li>
 <li>opj_t1_enc_clnpass()
-: <a class="el" href="group___t1.html#gaeb22e0766c89d205091500cb477f680b">t1.c</a>
+: <a class="el" href="group___t1.html#ga8494e1a811e935f0feae5776a9d628e1">t1.c</a>
 </li>
 <li>opj_t1_enc_clnpass_step()
-: <a class="el" href="group___t1.html#ga2595a800b851d21ec2cca3a1d57a3688">t1.c</a>
+: <a class="el" href="t1_8c.html#a64b9e9214000b533d5f243db517d411b">t1.c</a>
+</li>
+<li>opj_t1_enc_is_term_pass()
+: <a class="el" href="t1_8c.html#adc60d65d3cd311cbfa95fd2f5a0d7897">t1.c</a>
 </li>
 <li>opj_t1_enc_refpass()
-: <a class="el" href="group___t1.html#gab777e7c3dd22e7f0c11889dfd83049df">t1.c</a>
+: <a class="el" href="group___t1.html#gaff8fb497bd8ef0f7f9dc9de53f962cc1">t1.c</a>
 </li>
 <li>opj_t1_enc_refpass_step()
-: <a class="el" href="group___t1.html#ga329c1a66ceaa0e163174a67f49961d17">t1.c</a>
+: <a class="el" href="t1_8c.html#aa946021b83eb158db2e3a1d475a378ca">t1.c</a>
 </li>
 <li>opj_t1_enc_sigpass()
-: <a class="el" href="group___t1.html#ga854a4e227e743c1679c341697885efbf">t1.c</a>
+: <a class="el" href="group___t1.html#ga4608fc74c44bd6ca766ea02a3d886948">t1.c</a>
 </li>
 <li>opj_t1_enc_sigpass_step()
-: <a class="el" href="group___t1.html#ga80eebf0e3634a59bd879ea54ee6ea905">t1.c</a>
+: <a class="el" href="t1_8c.html#ad8f8195ed2a683f7240974fc926d3ce4">t1.c</a>
 </li>
 <li>opj_t1_encode_cblk()
 : <a class="el" href="group___t1.html#ga129afb46903336a9f911323b47e29b81">t1.c</a>
@@ -1591,13 +1671,16 @@
 , <a class="el" href="group___t1.html#gada55dfa54a9324f948a3383ed95aedc5">t1.c</a>
 </li>
 <li>opj_t1_getctxno_mag()
-: <a class="el" href="group___t1.html#ga3e967975405b445d94631a383e4fba19">t1.c</a>
+: <a class="el" href="group___t1.html#gab81c3e6f2d931ff8ec00123699c00c55">t1.c</a>
 </li>
 <li>opj_t1_getctxno_sc()
-: <a class="el" href="group___t1.html#ga5df8352d4075da04aaa6d56bc4e6c220">t1.c</a>
+: <a class="el" href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">t1.c</a>
 </li>
 <li>opj_t1_getctxno_zc()
-: <a class="el" href="group___t1.html#ga57a4c362f62705fb9f7fe8a11109ee39">t1.c</a>
+: <a class="el" href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">t1.c</a>
+</li>
+<li>opj_t1_getctxtno_sc_or_spb_index()
+: <a class="el" href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">t1.c</a>
 </li>
 <li>opj_t1_getnmsedec_ref()
 : <a class="el" href="group___t1.html#ga50d065ba47a7ebe17a06bef5cb26cdca">t1.c</a>
@@ -1606,13 +1689,13 @@
 : <a class="el" href="group___t1.html#gadf094116da3b172cf17ffc4ade0933cf">t1.c</a>
 </li>
 <li>opj_t1_getspb()
-: <a class="el" href="group___t1.html#gae66bfd0474cf9ab54ae23ec1fa204e6a">t1.c</a>
+: <a class="el" href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">t1.c</a>
 </li>
 <li>opj_t1_getwmsedec()
 : <a class="el" href="group___t1.html#ga569bb3939e11d7817a297739d06950b0">t1.c</a>
 </li>
-<li>opj_t1_updateflags()
-: <a class="el" href="group___t1.html#gad7ae6b38d23c1ecb724ae88093e436db">t1.c</a>
+<li>opj_t1_update_flags()
+: <a class="el" href="group___t1.html#ga7d897b856ec35a1c1fbd4fb03bafca6a">t1.c</a>
 </li>
 <li>opj_t2_create()
 : <a class="el" href="group___t2.html#gad7845a4d5a2fd73c2c81e1c525bf0ae4">t2.c</a>
@@ -1622,19 +1705,19 @@
 : <a class="el" href="group___t2.html#gada815b83043821025d3e3510b8fdbd24">t2.c</a>
 </li>
 <li>opj_t2_decode_packets()
-: <a class="el" href="group___t2.html#ga6de6ce65e2c8b2ae26fb17a8b318cee4">t2.h</a>
-, <a class="el" href="group___t2.html#ga6de6ce65e2c8b2ae26fb17a8b318cee4">t2.c</a>
+: <a class="el" href="group___t2.html#ga6de6ce65e2c8b2ae26fb17a8b318cee4">t2.c</a>
+, <a class="el" href="group___t2.html#ga6de6ce65e2c8b2ae26fb17a8b318cee4">t2.h</a>
 </li>
 <li>opj_t2_destroy()
-: <a class="el" href="group___t2.html#ga0e929ed8feb7bad8d169b0dc4478e59a">t2.c</a>
-, <a class="el" href="group___t2.html#ga0e929ed8feb7bad8d169b0dc4478e59a">t2.h</a>
+: <a class="el" href="group___t2.html#ga0e929ed8feb7bad8d169b0dc4478e59a">t2.h</a>
+, <a class="el" href="group___t2.html#ga0e929ed8feb7bad8d169b0dc4478e59a">t2.c</a>
 </li>
 <li>opj_t2_encode_packet()
 : <a class="el" href="group___t2.html#ga08a6b4ac26dfd81119b329f02c480f39">t2.c</a>
 </li>
 <li>opj_t2_encode_packets()
-: <a class="el" href="group___t2.html#ga8ec376edb7a967e6ebec609c68066f9a">t2.h</a>
-, <a class="el" href="group___t2.html#ga8ec376edb7a967e6ebec609c68066f9a">t2.c</a>
+: <a class="el" href="group___t2.html#ga8ec376edb7a967e6ebec609c68066f9a">t2.c</a>
+, <a class="el" href="group___t2.html#ga8ec376edb7a967e6ebec609c68066f9a">t2.h</a>
 </li>
 <li>opj_t2_getcommacode()
 : <a class="el" href="group___t2.html#ga5a05d5b618bf6e2113e661c1e4bc56ff">t2.c</a>
@@ -1683,8 +1766,8 @@
 , <a class="el" href="group___t_c_d.html#ga878d50b5d131d76a234794300579495d">tcd.c</a>
 </li>
 <li>opj_tcd_create()
-: <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">tcd.c</a>
-, <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">tcd.h</a>
+: <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">tcd.h</a>
+, <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">tcd.c</a>
 </li>
 <li>opj_tcd_dc_level_shift_decode()
 : <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">tcd.c</a>
@@ -1722,23 +1805,27 @@
 , <a class="el" href="group___t_c_d.html#ga1effc29873237c5b9668461852906609">tcd.c</a>
 </li>
 <li>opj_tcd_init()
-: <a class="el" href="group___t_c_d.html#gafacd81d67fcf710774b642c8f3bf16d8">tcd.c</a>
-, <a class="el" href="group___t_c_d.html#gafacd81d67fcf710774b642c8f3bf16d8">tcd.h</a>
+: <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">tcd.c</a>
+, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">tcd.h</a>
 </li>
 <li>opj_tcd_init_decode_tile()
-: <a class="el" href="group___t_c_d.html#gad4c38b7d4cbb4e458fb22fe6c34fcbef">tcd.c</a>
-, <a class="el" href="group___t_c_d.html#gad4c38b7d4cbb4e458fb22fe6c34fcbef">tcd.h</a>
+: <a class="el" href="group___t_c_d.html#gad4c38b7d4cbb4e458fb22fe6c34fcbef">tcd.h</a>
+, <a class="el" href="group___t_c_d.html#gad4c38b7d4cbb4e458fb22fe6c34fcbef">tcd.c</a>
 </li>
 <li>opj_tcd_init_encode_tile()
-: <a class="el" href="group___t_c_d.html#ga261addde80e80a2ad6af635daeb342bb">tcd.h</a>
-, <a class="el" href="group___t_c_d.html#ga261addde80e80a2ad6af635daeb342bb">tcd.c</a>
+: <a class="el" href="group___t_c_d.html#ga261addde80e80a2ad6af635daeb342bb">tcd.c</a>
+, <a class="el" href="group___t_c_d.html#ga261addde80e80a2ad6af635daeb342bb">tcd.h</a>
 </li>
 <li>opj_tcd_init_tile()
 : <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">tcd.c</a>
 </li>
+<li>opj_tcd_is_band_empty()
+: <a class="el" href="group___t_c_d.html#ga96f962af737e4f4f2b7fb026f7869eca">tcd.c</a>
+, <a class="el" href="group___t_c_d.html#ga96f962af737e4f4f2b7fb026f7869eca">tcd.h</a>
+</li>
 <li>opj_tcd_makelayer()
-: <a class="el" href="group___t_c_d.html#ga350b4deff33a47f09e609d1f7d7cb43d">tcd.c</a>
-, <a class="el" href="group___t_c_d.html#ga350b4deff33a47f09e609d1f7d7cb43d">tcd.h</a>
+: <a class="el" href="group___t_c_d.html#ga350b4deff33a47f09e609d1f7d7cb43d">tcd.h</a>
+, <a class="el" href="group___t_c_d.html#ga350b4deff33a47f09e609d1f7d7cb43d">tcd.c</a>
 </li>
 <li>opj_tcd_makelayer_fixed()
 : <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">tcd.c</a>
@@ -1754,15 +1841,19 @@
 : <a class="el" href="tcd_8c.html#a93cdca6a641338fd45c29b2cc7b33867">tcd.c</a>
 </li>
 <li>opj_tcd_rateallocate()
-: <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">tcd.c</a>
-, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">tcd.h</a>
+: <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">tcd.h</a>
+, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">tcd.c</a>
 </li>
 <li>opj_tcd_rateallocate_fixed()
 : <a class="el" href="group___t_c_d.html#ga686fc1b04304a07219a03108b6f808a9">tcd.c</a>
 , <a class="el" href="group___t_c_d.html#ga686fc1b04304a07219a03108b6f808a9">tcd.h</a>
 </li>
+<li>opj_tcd_reinit_segment()
+: <a class="el" href="group___t_c_d.html#gaa0f48c91a7b3527fc105c1b608ebd766">tcd.c</a>
+, <a class="el" href="group___t_c_d.html#gaa0f48c91a7b3527fc105c1b608ebd766">tcd.h</a>
+</li>
 <li>opj_tcd_t1_decode()
-: <a class="el" href="tcd_8c.html#ac33a259f67229c735c1a267f9c67a944">tcd.c</a>
+: <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">tcd.c</a>
 </li>
 <li>opj_tcd_t1_encode()
 : <a class="el" href="tcd_8c.html#ad72fe72839a232fcd2ba4dd82588be2e">tcd.c</a>
@@ -1778,16 +1869,16 @@
 , <a class="el" href="group___t_c_d.html#gaee317346b70f250cbe327c3dc2536715">tcd.c</a>
 </li>
 <li>opj_tgt_create()
-: <a class="el" href="group___t_g_t.html#ga4064318799aec1ffe9276488f02553f2">tgt.h</a>
-, <a class="el" href="group___t_g_t.html#ga4064318799aec1ffe9276488f02553f2">tgt.c</a>
+: <a class="el" href="group___t_g_t.html#gaaf27107458b5242fe7d848480b4a4690">tgt.c</a>
+, <a class="el" href="group___t_g_t.html#gaaf27107458b5242fe7d848480b4a4690">tgt.h</a>
 </li>
 <li>opj_tgt_decode()
-: <a class="el" href="group___t_g_t.html#ga5b970bfd9b761cdf2ff36001821b06aa">tgt.c</a>
-, <a class="el" href="group___t_g_t.html#ga5b970bfd9b761cdf2ff36001821b06aa">tgt.h</a>
+: <a class="el" href="group___t_g_t.html#ga5b970bfd9b761cdf2ff36001821b06aa">tgt.h</a>
+, <a class="el" href="group___t_g_t.html#ga5b970bfd9b761cdf2ff36001821b06aa">tgt.c</a>
 </li>
 <li>opj_tgt_destroy()
-: <a class="el" href="group___t_g_t.html#gaa9a20506fefbb59153ad401f9af51fe7">tgt.h</a>
-, <a class="el" href="group___t_g_t.html#gaa9a20506fefbb59153ad401f9af51fe7">tgt.c</a>
+: <a class="el" href="group___t_g_t.html#gaa9a20506fefbb59153ad401f9af51fe7">tgt.c</a>
+, <a class="el" href="group___t_g_t.html#gaa9a20506fefbb59153ad401f9af51fe7">tgt.h</a>
 </li>
 <li>opj_tgt_encode()
 : <a class="el" href="group___t_g_t.html#gafe36abfc042710c566552ed3adfcb2a9">tgt.h</a>
@@ -1798,12 +1889,60 @@
 , <a class="el" href="group___t_g_t.html#gaa34fdf087e24d66a2a661c31ba194c3f">tgt.c</a>
 </li>
 <li>opj_tgt_reset()
-: <a class="el" href="group___t_g_t.html#gad4bf197e6977fd4c4e947a946391e598">tgt.h</a>
-, <a class="el" href="group___t_g_t.html#gad4bf197e6977fd4c4e947a946391e598">tgt.c</a>
+: <a class="el" href="group___t_g_t.html#gad4bf197e6977fd4c4e947a946391e598">tgt.c</a>
+, <a class="el" href="group___t_g_t.html#gad4bf197e6977fd4c4e947a946391e598">tgt.h</a>
 </li>
 <li>opj_tgt_setvalue()
 : <a class="el" href="group___t_g_t.html#gab0844dbb6cdf88a7bb4036d718774f69">tgt.h</a>
 , <a class="el" href="group___t_g_t.html#gab0844dbb6cdf88a7bb4036d718774f69">tgt.c</a>
+</li>
+<li>opj_thread_create()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga541be683ba651c8244bde3f0d3650c92">thread.h</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga541be683ba651c8244bde3f0d3650c92">thread.c</a>
+</li>
+<li>opj_thread_join()
+: <a class="el" href="group___t_h_r_e_a_d.html#gad49986b56da75f8609b7c940c17f713f">thread.h</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gad49986b56da75f8609b7c940c17f713f">thread.c</a>
+</li>
+<li>opj_thread_pool_create()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga24a3a1b343df1168a3beb57babfa0916">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga24a3a1b343df1168a3beb57babfa0916">thread.h</a>
+</li>
+<li>opj_thread_pool_destroy()
+: <a class="el" href="group___t_h_r_e_a_d.html#gae44e8b9258d0baa19e3671a382faa33e">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gae44e8b9258d0baa19e3671a382faa33e">thread.h</a>
+</li>
+<li>opj_thread_pool_get_next_job()
+: <a class="el" href="thread_8c.html#a57e6dc05f2283639a2ec0b6884d9691c">thread.c</a>
+</li>
+<li>opj_thread_pool_get_thread_count()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga4faef98a6b8495c63e9e5ce9cf0c3fc3">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga4faef98a6b8495c63e9e5ce9cf0c3fc3">thread.h</a>
+</li>
+<li>opj_thread_pool_setup()
+: <a class="el" href="thread_8c.html#acdca1ecb372546840fdd9d5d5badce07">thread.c</a>
+</li>
+<li>opj_thread_pool_submit_job()
+: <a class="el" href="group___t_h_r_e_a_d.html#gaf389ecb3a583a30077fc546eef767c89">thread.h</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gaf389ecb3a583a30077fc546eef767c89">thread.c</a>
+</li>
+<li>opj_thread_pool_wait_completion()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga0ced26c80598e49bf3a964bb802130f1">thread.h</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga0ced26c80598e49bf3a964bb802130f1">thread.c</a>
+</li>
+<li>opj_tls_destroy()
+: <a class="el" href="thread_8c.html#a8f4ee11fc0faa44d49f2c341cbf3dc79">thread.c</a>
+</li>
+<li>opj_tls_get()
+: <a class="el" href="group___t_h_r_e_a_d.html#ga90caa0ff9c1e54033ef1e3010faf03a9">thread.c</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#ga90caa0ff9c1e54033ef1e3010faf03a9">thread.h</a>
+</li>
+<li>opj_tls_new()
+: <a class="el" href="thread_8c.html#a28308877c7160bae4a21d2b1c8bddfe0">thread.c</a>
+</li>
+<li>opj_tls_set()
+: <a class="el" href="group___t_h_r_e_a_d.html#gab1b97098aabc89f98eca8f8f7274f3e7">thread.h</a>
+, <a class="el" href="group___t_h_r_e_a_d.html#gab1b97098aabc89f98eca8f8f7274f3e7">thread.c</a>
 </li>
 <li>opj_uint_adds()
 : <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gab9aad885f5c9bc9e39420003b2b32fe5">opj_intmath.h</a>
@@ -1839,8 +1978,11 @@
 : <a class="el" href="group___d_w_t.html#gafd9564a93feba5c3a554ee00b2332ef8">dwt.c</a>
 </li>
 <li>opj_version()
-: <a class="el" href="openjpeg_8c.html#affadae073896fc06f726834c4bcd6eaa">openjpeg.c</a>
-, <a class="el" href="openjpeg_8h.html#ac24bc27913136e224911380a147c5c89">openjpeg.h</a>
+: <a class="el" href="openjpeg_8h.html#ac24bc27913136e224911380a147c5c89">openjpeg.h</a>
+, <a class="el" href="openjpeg_8c.html#affadae073896fc06f726834c4bcd6eaa">openjpeg.c</a>
+</li>
+<li>opj_worker_thread_function()
+: <a class="el" href="thread_8c.html#ac0a73d8572dbdb91b3a9a10b053f23ec">thread.c</a>
 </li>
 <li>opj_write_bytes_BE()
 : <a class="el" href="group___c_i_o.html#gaa94d0663a3de41683f3635114eb42eed">cio.c</a>
@@ -1858,12 +2000,12 @@
 : <a class="el" href="cidx__manager_8c.html#a032aff39cfba9760b736129a1e4edde7">cidx_manager.c</a>
 </li>
 <li>opj_write_double_BE()
-: <a class="el" href="group___c_i_o.html#gae0dee6cbee329301242f265d6e7851fa">cio.c</a>
-, <a class="el" href="group___c_i_o.html#gae0dee6cbee329301242f265d6e7851fa">cio.h</a>
+: <a class="el" href="group___c_i_o.html#gae0dee6cbee329301242f265d6e7851fa">cio.h</a>
+, <a class="el" href="group___c_i_o.html#gae0dee6cbee329301242f265d6e7851fa">cio.c</a>
 </li>
 <li>opj_write_double_LE()
-: <a class="el" href="group___c_i_o.html#gad2083292c9469ca4a135521524784f89">cio.c</a>
-, <a class="el" href="group___c_i_o.html#gad2083292c9469ca4a135521524784f89">cio.h</a>
+: <a class="el" href="group___c_i_o.html#gad2083292c9469ca4a135521524784f89">cio.h</a>
+, <a class="el" href="group___c_i_o.html#gad2083292c9469ca4a135521524784f89">cio.c</a>
 </li>
 <li>opj_write_float_BE()
 : <a class="el" href="group___c_i_o.html#ga4ea9737eccd7572e6389ca03ace79dd5">cio.c</a>
@@ -1885,12 +2027,12 @@
 , <a class="el" href="indexbox__manager_8h.html#ae302b0ef07e61195c96fb07fad26337b">indexbox_manager.h</a>
 </li>
 <li>opj_write_phix()
-: <a class="el" href="phix__manager_8c.html#a5c0dbd417439692b345a68a703755143">phix_manager.c</a>
-, <a class="el" href="indexbox__manager_8h.html#a5c0dbd417439692b345a68a703755143">indexbox_manager.h</a>
+: <a class="el" href="indexbox__manager_8h.html#a5c0dbd417439692b345a68a703755143">indexbox_manager.h</a>
+, <a class="el" href="phix__manager_8c.html#a5c0dbd417439692b345a68a703755143">phix_manager.c</a>
 </li>
 <li>opj_write_phixfaix()
-: <a class="el" href="indexbox__manager_8h.html#abeff45d507796a5ebfdc84e6a2612dd1">indexbox_manager.h</a>
-, <a class="el" href="phix__manager_8c.html#abeff45d507796a5ebfdc84e6a2612dd1">phix_manager.c</a>
+: <a class="el" href="phix__manager_8c.html#abeff45d507796a5ebfdc84e6a2612dd1">phix_manager.c</a>
+, <a class="el" href="indexbox__manager_8h.html#abeff45d507796a5ebfdc84e6a2612dd1">indexbox_manager.h</a>
 </li>
 <li>opj_write_ppix()
 : <a class="el" href="ppix__manager_8c.html#ada83077c95f10b8beceaa9f447b5ef80">ppix_manager.c</a>
@@ -1901,12 +2043,12 @@
 , <a class="el" href="indexbox__manager_8h.html#ac7ae0747dadd5ef6cc00b10a142341a9">indexbox_manager.h</a>
 </li>
 <li>opj_write_thix()
-: <a class="el" href="thix__manager_8c.html#a7a270921f503df83233bf10d9008c61c">thix_manager.c</a>
-, <a class="el" href="indexbox__manager_8h.html#a7a270921f503df83233bf10d9008c61c">indexbox_manager.h</a>
+: <a class="el" href="indexbox__manager_8h.html#a7a270921f503df83233bf10d9008c61c">indexbox_manager.h</a>
+, <a class="el" href="thix__manager_8c.html#a7a270921f503df83233bf10d9008c61c">thix_manager.c</a>
 </li>
 <li>opj_write_tile()
-: <a class="el" href="openjpeg_8c.html#a721e564fa8b835232a139f62ff79a5f8">openjpeg.c</a>
-, <a class="el" href="openjpeg_8h.html#a0a8bf8169aceca7b355f54700759a1f0">openjpeg.h</a>
+: <a class="el" href="openjpeg_8h.html#a0a8bf8169aceca7b355f54700759a1f0">openjpeg.h</a>
+, <a class="el" href="openjpeg_8c.html#a721e564fa8b835232a139f62ff79a5f8">openjpeg.c</a>
 </li>
 <li>opj_write_tilemhix()
 : <a class="el" href="thix__manager_8c.html#a24b7aeffc984ce09ff26e817449f3a1a">thix_manager.c</a>
@@ -1920,13 +2062,17 @@
 : <a class="el" href="tpix__manager_8c.html#a615f1af7e1d9253a449ae0494f88b87b">tpix_manager.c</a>
 , <a class="el" href="indexbox__manager_8h.html#a615f1af7e1d9253a449ae0494f88b87b">indexbox_manager.h</a>
 </li>
+<li>opq_mqc_finish_dec()
+: <a class="el" href="group___m_q_c.html#ga5bdec54dabf502c578e46d6b34ce8b93">mqc.c</a>
+, <a class="el" href="group___m_q_c.html#ga5bdec54dabf502c578e46d6b34ce8b93">mqc.h</a>
+</li>
 <li>output_index()
-: <a class="el" href="openjpip_8h.html#a2ff3d3894ccf463eb4f1fd87ca408dcb">openjpip.h</a>
-, <a class="el" href="openjpip_8c.html#aae2dd8d2b7a32a857712558239848237">openjpip.c</a>
+: <a class="el" href="openjpip_8c.html#aae2dd8d2b7a32a857712558239848237">openjpip.c</a>
+, <a class="el" href="openjpip_8h.html#a2ff3d3894ccf463eb4f1fd87ca408dcb">openjpip.h</a>
 </li>
 <li>output_log()
-: <a class="el" href="openjpip_8h.html#a33462880bc3c9bca15ac1086d73e4080">openjpip.h</a>
-, <a class="el" href="openjpip_8c.html#a7db14c845bc5cdd2a0da404f1192d92a">openjpip.c</a>
+: <a class="el" href="openjpip_8c.html#a7db14c845bc5cdd2a0da404f1192d92a">openjpip.c</a>
+, <a class="el" href="openjpip_8h.html#a33462880bc3c9bca15ac1086d73e4080">openjpip.h</a>
 </li>
 </ul>
 </div><!-- contents -->

@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -62,12 +62,18 @@ Macros</h2></td></tr>
 <tr class="separator:gadc2f3a78c374e6fdf074c6171fa1be74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga31bf1fb6b96a5a983ebd491c347ad3db"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga31bf1fb6b96a5a983ebd491c347ad3db">OPJ_WD</a>(i)&#160;&#160;&#160;v-&gt;mem[(1+(i)*2)]</td></tr>
 <tr class="separator:ga31bf1fb6b96a5a983ebd491c347ad3db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga203e9a299cb61df2823e412d871046d4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga203e9a299cb61df2823e412d871046d4">VREG_INT_COUNT</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ga203e9a299cb61df2823e412d871046d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of int32 values in a SSE2 register.  <a href="#ga203e9a299cb61df2823e412d871046d4">More...</a><br /></td></tr>
+<tr class="separator:ga203e9a299cb61df2823e412d871046d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf921eb88f7e110d3c16c0ca4d33e6ece"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gaf921eb88f7e110d3c16c0ca4d33e6ece">PARALLEL_COLS_53</a>&#160;&#160;&#160;(2*<a class="el" href="group___d_w_t.html#ga203e9a299cb61df2823e412d871046d4">VREG_INT_COUNT</a>)</td></tr>
+<tr class="memdesc:gaf921eb88f7e110d3c16c0ca4d33e6ece"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of columns that we can process in parallel in the vertical pass.  <a href="#gaf921eb88f7e110d3c16c0ca4d33e6ece">More...</a><br /></td></tr>
+<tr class="separator:gaf921eb88f7e110d3c16c0ca4d33e6ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:gaffb50e4511c11d8196c265072fad06a5"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gaffb50e4511c11d8196c265072fad06a5">DWT1DFN</a>) (<a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *v)</td></tr>
-<tr class="memdesc:gaffb50e4511c11d8196c265072fad06a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual function type for wavelet transform in 1-D.  <a href="#gaffb50e4511c11d8196c265072fad06a5">More...</a><br /></td></tr>
-<tr class="separator:gaffb50e4511c11d8196c265072fad06a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5f66bc5a748c56e567a9704103a78dc3"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga5f66bc5a748c56e567a9704103a78dc3">DWT1DFN</a>) (const <a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *v)</td></tr>
+<tr class="memdesc:ga5f66bc5a748c56e567a9704103a78dc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual function type for wavelet transform in 1-D.  <a href="#ga5f66bc5a748c56e567a9704103a78dc3">More...</a><br /></td></tr>
+<tr class="separator:ga5f66bc5a748c56e567a9704103a78dc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="member-group"></a>
 Local data structures</h2></td></tr>
@@ -96,29 +102,18 @@ Local static functions</h2></td></tr>
 <tr class="memitem:ga4c4f46cd84206ee317a0ee2a2021c932"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga4c4f46cd84206ee317a0ee2a2021c932">opj_dwt_deinterleave_v</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *b, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> dn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> x, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas)</td></tr>
 <tr class="memdesc:ga4c4f46cd84206ee317a0ee2a2021c932"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward lazy transform (vertical)  <a href="#ga4c4f46cd84206ee317a0ee2a2021c932">More...</a><br /></td></tr>
 <tr class="separator:ga4c4f46cd84206ee317a0ee2a2021c932"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga78a14c7491cf132e1daf5d4c4d83d17e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga78a14c7491cf132e1daf5d4c4d83d17e">opj_dwt_interleave_h</a> (<a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *h, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a)</td></tr>
-<tr class="memdesc:ga78a14c7491cf132e1daf5d4c4d83d17e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse lazy transform (horizontal)  <a href="#ga78a14c7491cf132e1daf5d4c4d83d17e">More...</a><br /></td></tr>
-<tr class="separator:ga78a14c7491cf132e1daf5d4c4d83d17e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadd8462222aaf0890c0f19868997f8851"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gadd8462222aaf0890c0f19868997f8851">opj_dwt_interleave_v</a> (<a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *v, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> x)</td></tr>
-<tr class="memdesc:gadd8462222aaf0890c0f19868997f8851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse lazy transform (vertical)  <a href="#gadd8462222aaf0890c0f19868997f8851">More...</a><br /></td></tr>
-<tr class="separator:gadd8462222aaf0890c0f19868997f8851"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga98ee55372f7bad698b27e61ae58f3955"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> dn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas)</td></tr>
 <tr class="memdesc:ga98ee55372f7bad698b27e61ae58f3955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward 5-3 wavelet transform in 1-D.  <a href="#ga98ee55372f7bad698b27e61ae58f3955">More...</a><br /></td></tr>
 <tr class="separator:ga98ee55372f7bad698b27e61ae58f3955"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1f57ae9f4b123f877737e2ed75b91722"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga1f57ae9f4b123f877737e2ed75b91722">opj_dwt_decode_1</a> (<a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *v)</td></tr>
-<tr class="memdesc:ga1f57ae9f4b123f877737e2ed75b91722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse 5-3 wavelet transform in 1-D.  <a href="#ga1f57ae9f4b123f877737e2ed75b91722">More...</a><br /></td></tr>
-<tr class="separator:ga1f57ae9f4b123f877737e2ed75b91722"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2e69978f5e9a3680f23fd36c4df69992"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga2e69978f5e9a3680f23fd36c4df69992">opj_dwt_decode_1_</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> dn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas)</td></tr>
-<tr class="separator:ga2e69978f5e9a3680f23fd36c4df69992"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2951099dd464175bcf192755f843fe56"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> dn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas)</td></tr>
 <tr class="memdesc:ga2951099dd464175bcf192755f843fe56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward 9-7 wavelet transform in 1-D.  <a href="#ga2951099dd464175bcf192755f843fe56">More...</a><br /></td></tr>
 <tr class="separator:ga2951099dd464175bcf192755f843fe56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab25c1a377c367a7246c24179477cd956"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gab25c1a377c367a7246c24179477cd956">opj_dwt_encode_stepsize</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> stepsize, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> numbps, <a class="el" href="group___j2_k.html#ga0ad456b88c684f8d81cc5962867046e7">opj_stepsize_t</a> *bandno_stepsize)</td></tr>
 <tr class="memdesc:gab25c1a377c367a7246c24179477cd956"><td class="mdescLeft">&#160;</td><td class="mdescRight">Explicit calculation of the Quantization Stepsizes.  <a href="#gab25c1a377c367a7246c24179477cd956">More...</a><br /></td></tr>
 <tr class="separator:gab25c1a377c367a7246c24179477cd956"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga48646519707c1effde28134ac7267f89"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga48646519707c1effde28134ac7267f89">opj_dwt_decode_tile</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> i, <a class="el" href="group___d_w_t.html#gaffb50e4511c11d8196c265072fad06a5">DWT1DFN</a> fn)</td></tr>
-<tr class="memdesc:ga48646519707c1effde28134ac7267f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse wavelet transform in 2-D.  <a href="#ga48646519707c1effde28134ac7267f89">More...</a><br /></td></tr>
-<tr class="separator:ga48646519707c1effde28134ac7267f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga473550255363b8acb0c9b10a6dbac434"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile</a> (<a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *tp, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> i)</td></tr>
+<tr class="memdesc:ga473550255363b8acb0c9b10a6dbac434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse wavelet transform in 2-D.  <a href="#ga473550255363b8acb0c9b10a6dbac434">More...</a><br /></td></tr>
+<tr class="separator:ga473550255363b8acb0c9b10a6dbac434"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf5d11346c5468f428d60d40e7dfced26"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gaf5d11346c5468f428d60d40e7dfced26">opj_dwt_encode_procedure</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, void(*p_function)(<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>))</td></tr>
 <tr class="separator:gaf5d11346c5468f428d60d40e7dfced26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac2fffad328e477aa744b59f2872e5603"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gac2fffad328e477aa744b59f2872e5603">opj_dwt_max_resolution</a> (<a class="el" href="group___t_c_d.html#gad1d24a03a43040a0a219f65711215ce8">opj_tcd_resolution_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> r, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> i)</td></tr>
@@ -139,9 +134,9 @@ Exported functions</h2></td></tr>
 <tr class="memitem:ga791590b5a5c6637fc4809fe4dd793ce0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga791590b5a5c6637fc4809fe4dd793ce0">opj_dwt_encode</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec)</td></tr>
 <tr class="memdesc:ga791590b5a5c6637fc4809fe4dd793ce0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward 5-3 wavelet transform in 2-D.  <a href="#ga791590b5a5c6637fc4809fe4dd793ce0">More...</a><br /></td></tr>
 <tr class="separator:ga791590b5a5c6637fc4809fe4dd793ce0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga677aada99e88407d553f5f10af6d4a51"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga677aada99e88407d553f5f10af6d4a51">opj_dwt_decode</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
-<tr class="memdesc:ga677aada99e88407d553f5f10af6d4a51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse 5-3 wavelet transform in 2-D.  <a href="#ga677aada99e88407d553f5f10af6d4a51">More...</a><br /></td></tr>
-<tr class="separator:ga677aada99e88407d553f5f10af6d4a51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga851ac455d3e28b8f39a9e3b0818a8196"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga851ac455d3e28b8f39a9e3b0818a8196">opj_dwt_decode</a> (<a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *tp, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
+<tr class="memdesc:ga851ac455d3e28b8f39a9e3b0818a8196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse 5-3 wavelet transform in 2-D.  <a href="#ga851ac455d3e28b8f39a9e3b0818a8196">More...</a><br /></td></tr>
+<tr class="separator:ga851ac455d3e28b8f39a9e3b0818a8196"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga42f534b2676d3b3f221f7a4c7a56506c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga42f534b2676d3b3f221f7a4c7a56506c">opj_dwt_getgain</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient)</td></tr>
 <tr class="memdesc:ga42f534b2676d3b3f221f7a4c7a56506c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the gain of a subband for the reversible 5-3 DWT.  <a href="#ga42f534b2676d3b3f221f7a4c7a56506c">More...</a><br /></td></tr>
 <tr class="separator:ga42f534b2676d3b3f221f7a4c7a56506c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -198,13 +193,43 @@ Exported functions</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a class="anchor" id="gaffb50e4511c11d8196c265072fad06a5"></a>
+<a class="anchor" id="gaf921eb88f7e110d3c16c0ca4d33e6ece"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* DWT1DFN) (<a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *v)</td>
+          <td class="memname">#define PARALLEL_COLS_53&#160;&#160;&#160;(2*<a class="el" href="group___d_w_t.html#ga203e9a299cb61df2823e412d871046d4">VREG_INT_COUNT</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of columns that we can process in parallel in the vertical pass. </p>
+
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>, <a class="el" href="dwt_8c.html#a2b001cbb0e2278c374cead2046ea4023">opj_dwt_decode_v_func()</a>, and <a class="el" href="dwt_8c.html#ae6b25268462aa5ebb4875b540c3b18ec">opj_idwt53_v()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga203e9a299cb61df2823e412d871046d4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define VREG_INT_COUNT&#160;&#160;&#160;4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of int32 values in a SSE2 register. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a class="anchor" id="ga5f66bc5a748c56e567a9704103a78dc3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* DWT1DFN) (const <a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *v)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -277,13 +302,19 @@ Exported functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ga677aada99e88407d553f5f10af6d4a51"></a>
+<a class="anchor" id="ga851ac455d3e28b8f39a9e3b0818a8196"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> opj_dwt_decode </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *&#160;</td>
+          <td class="paramname"><em>tp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *&#160;</td>
           <td class="paramname"><em>tilec</em>, </td>
         </tr>
@@ -304,95 +335,16 @@ Exported functions</h2></td></tr>
 <p>Inverse 5-3 wavelet transform in 2-D. </p>
 <p>Apply a reversible inverse DWT transform to a component of an image. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">tp</td><td>Thread pool </td></tr>
     <tr><td class="paramname">tilec</td><td>Tile component information (current tile) </td></tr>
     <tr><td class="paramname">numres</td><td>Number of resolution levels to decode </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>References <a class="el" href="group___d_w_t.html#ga1f57ae9f4b123f877737e2ed75b91722">opj_dwt_decode_1()</a>, and <a class="el" href="group___d_w_t.html#ga48646519707c1effde28134ac7267f89">opj_dwt_decode_tile()</a>.</p>
+<p>References <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>.</p>
 
-<p>Referenced by <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ga1f57ae9f4b123f877737e2ed75b91722"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void opj_dwt_decode_1 </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *&#160;</td>
-          <td class="paramname"><em>v</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Inverse 5-3 wavelet transform in 1-D. </p>
-
-<p>References <a class="el" href="structdwt__local.html#a6edde1cc0a7ac25c1116affd9fcd3991">dwt_local::cas</a>, <a class="el" href="structdwt__local.html#a55352e9122d04587f04e1fcd55904d53">dwt_local::dn</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, <a class="el" href="group___d_w_t.html#ga2e69978f5e9a3680f23fd36c4df69992">opj_dwt_decode_1_()</a>, and <a class="el" href="structdwt__local.html#af52e06d1d510c7c4b20544183c33ed1d">dwt_local::sn</a>.</p>
-
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga677aada99e88407d553f5f10af6d4a51">opj_dwt_decode()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ga2e69978f5e9a3680f23fd36c4df69992"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void opj_dwt_decode_1_ </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
-          <td class="paramname"><em>a</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
-          <td class="paramname"><em>dn</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
-          <td class="paramname"><em>sn</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
-          <td class="paramname"><em>cas</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>References <a class="el" href="dwt_8c.html#a04bb4ccf4b75deb37b6c6ba2157e0c63">OPJ_D</a>, <a class="el" href="dwt_8c.html#a78d3fbca149e143d6a82303cab0198da">OPJ_D_</a>, <a class="el" href="dwt_8c.html#a9dfda884d0091fcbed7c98012b2e02f0">OPJ_DD_</a>, <a class="el" href="dwt_8c.html#a665395cdbae6aed5f795011b9f2fb9d9">OPJ_S</a>, and <a class="el" href="dwt_8c.html#a3e7f7c2b83a6d6b6b89173813f66b4c6">OPJ_SS_</a>.</p>
-
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga1f57ae9f4b123f877737e2ed75b91722">opj_dwt_decode_1()</a>.</p>
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, and <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>.</p>
 
 </div>
 </div>
@@ -435,7 +387,7 @@ Exported functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ga48646519707c1effde28134ac7267f89"></a>
+<a class="anchor" id="ga473550255363b8acb0c9b10a6dbac434"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -445,6 +397,12 @@ Exported functions</h2></td></tr>
         <tr>
           <td class="memname">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> opj_dwt_decode_tile </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *&#160;</td>
+          <td class="paramname"><em>tp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *&#160;</td>
           <td class="paramname"><em>tilec</em>, </td>
         </tr>
@@ -452,13 +410,7 @@ Exported functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
-          <td class="paramname"><em>i</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="group___d_w_t.html#gaffb50e4511c11d8196c265072fad06a5">DWT1DFN</a>&#160;</td>
-          <td class="paramname"><em>fn</em>&#160;</td>
+          <td class="paramname"><em>i</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -475,9 +427,9 @@ Exported functions</h2></td></tr>
 
 <p>Inverse wavelet transform in 2-D. </p>
 
-<p>References <a class="el" href="structdwt__local.html#a6edde1cc0a7ac25c1116affd9fcd3991">dwt_local::cas</a>, <a class="el" href="structopj__tcd__tilecomp.html#ad5618371884e54026423ef59e57395d8">opj_tcd_tilecomp::data</a>, <a class="el" href="structdwt__local.html#a55352e9122d04587f04e1fcd55904d53">dwt_local::dn</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, <a class="el" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free()</a>, <a class="el" href="group___m_i_s_c.html#ga4418db34754a5b9ac5a79fece518c601">opj_aligned_malloc()</a>, <a class="el" href="group___d_w_t.html#ga78a14c7491cf132e1daf5d4c4d83d17e">opj_dwt_interleave_h()</a>, <a class="el" href="group___d_w_t.html#gadd8462222aaf0890c0f19868997f8851">opj_dwt_interleave_v()</a>, <a class="el" href="group___d_w_t.html#gac2fffad328e477aa744b59f2872e5603">opj_dwt_max_resolution()</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, <a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, <a class="el" href="structopj__tcd__tilecomp.html#a98466597d37dad1b049ffae6b9722885">opj_tcd_tilecomp::resolutions</a>, <a class="el" href="opj__malloc_8c.html#a3c75bb398badb69c7577b21486f9963f">SIZE_MAX</a>, <a class="el" href="structdwt__local.html#af52e06d1d510c7c4b20544183c33ed1d">dwt_local::sn</a>, <a class="el" href="structopj__tcd__resolution.html#ac65adbcc5c51d8aaf0e5e9315243d6a1">opj_tcd_resolution::x0</a>, <a class="el" href="structopj__tcd__tilecomp.html#a38cdc1ca5c18fa64e2dabfb025dd9784">opj_tcd_tilecomp::x0</a>, <a class="el" href="structopj__tcd__resolution.html#a4544bfa885feb38635dd2770a9114ecf">opj_tcd_resolution::x1</a>, <a class="el" href="structopj__tcd__tilecomp.html#a0209cbaa880e6901e3a2aec6c108b982">opj_tcd_tilecomp::x1</a>, <a class="el" href="structopj__tcd__resolution.html#ae4fb93aaa054fc66cc93021badc18cec">opj_tcd_resolution::y0</a>, and <a class="el" href="structopj__tcd__resolution.html#a4b68d3bd5fbaccd293e6a773be9d1a7f">opj_tcd_resolution::y1</a>.</p>
+<p>References <a class="el" href="structdwt__local.html#a6edde1cc0a7ac25c1116affd9fcd3991">dwt_local::cas</a>, <a class="el" href="structopj__tcd__tilecomp.html#ad5618371884e54026423ef59e57395d8">opj_tcd_tilecomp::data</a>, <a class="el" href="structdwt__local.html#a55352e9122d04587f04e1fcd55904d53">dwt_local::dn</a>, <a class="el" href="structopj__dwd__decode__h__job__t.html#a293437c172b64ff06a379e8c31879957">opj_dwd_decode_h_job_t::h</a>, <a class="el" href="structopj__dwd__decode__h__job__t.html#ac45517fd07237f3756ca763e581bcaa9">opj_dwd_decode_h_job_t::max_j</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#ada432ee2ce3778a9b34b8ba4f4a97abd">opj_dwd_decode_v_job_t::max_j</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, <a class="el" href="structopj__dwd__decode__h__job__t.html#a70b542215bdb62a976ec17484606252d">opj_dwd_decode_h_job_t::min_j</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a56a0817df9209c5b6cf8903855374c6f">opj_dwd_decode_v_job_t::min_j</a>, <a class="el" href="group___m_i_s_c.html#gaca33611a393378b0314a07d239b66099">opj_aligned_32_malloc()</a>, <a class="el" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free()</a>, <a class="el" href="dwt_8c.html#ab6701233c67d89f96c5328f2627a6233">opj_dwt_decode_h_func()</a>, <a class="el" href="dwt_8c.html#a2b001cbb0e2278c374cead2046ea4023">opj_dwt_decode_v_func()</a>, <a class="el" href="group___d_w_t.html#gac2fffad328e477aa744b59f2872e5603">opj_dwt_max_resolution()</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, <a class="el" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free()</a>, <a class="el" href="dwt_8c.html#af8fc877331f6639b1d2f166451177f7f">opj_idwt53_h()</a>, <a class="el" href="dwt_8c.html#ae6b25268462aa5ebb4875b540c3b18ec">opj_idwt53_v()</a>, <a class="el" href="group___m_i_s_c.html#ga49c70931cbed786f6eef5f095bcb2917">opj_malloc()</a>, <a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a>, <a class="el" href="group___t_h_r_e_a_d.html#ga4faef98a6b8495c63e9e5ce9cf0c3fc3">opj_thread_pool_get_thread_count()</a>, <a class="el" href="group___t_h_r_e_a_d.html#gaf389ecb3a583a30077fc546eef767c89">opj_thread_pool_submit_job()</a>, <a class="el" href="group___t_h_r_e_a_d.html#ga0ced26c80598e49bf3a964bb802130f1">opj_thread_pool_wait_completion()</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, <a class="el" href="group___d_w_t.html#gaf921eb88f7e110d3c16c0ca4d33e6ece">PARALLEL_COLS_53</a>, <a class="el" href="structopj__tcd__tilecomp.html#a98466597d37dad1b049ffae6b9722885">opj_tcd_tilecomp::resolutions</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a8ba0b11114d6128e14faa247ff2e566c">opj_dwd_decode_v_job_t::rh</a>, <a class="el" href="structopj__dwd__decode__h__job__t.html#a9803d75e94ea5e9ba8a49ee3d2c1bc45">opj_dwd_decode_h_job_t::rw</a>, <a class="el" href="opj__malloc_8c.html#a3c75bb398badb69c7577b21486f9963f">SIZE_MAX</a>, <a class="el" href="structdwt__local.html#af52e06d1d510c7c4b20544183c33ed1d">dwt_local::sn</a>, <a class="el" href="structopj__dwd__decode__h__job__t.html#a6afa70016cd767a93f4b387948fec9a1">opj_dwd_decode_h_job_t::tiledp</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a797aff8158e5598deef78b1090de2d1e">opj_dwd_decode_v_job_t::tiledp</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#abc625ce46d77d1592678cc7cfc7ea5c9">opj_dwd_decode_v_job_t::v</a>, <a class="el" href="structopj__dwd__decode__h__job__t.html#a9ce8fa94a6c32aec1deb7a1b1ddb5e75">opj_dwd_decode_h_job_t::w</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a0c0901c76829899d23973ee50b510411">opj_dwd_decode_v_job_t::w</a>, <a class="el" href="structopj__tcd__resolution.html#ac65adbcc5c51d8aaf0e5e9315243d6a1">opj_tcd_resolution::x0</a>, <a class="el" href="structopj__tcd__tilecomp.html#a38cdc1ca5c18fa64e2dabfb025dd9784">opj_tcd_tilecomp::x0</a>, <a class="el" href="structopj__tcd__resolution.html#a4544bfa885feb38635dd2770a9114ecf">opj_tcd_resolution::x1</a>, <a class="el" href="structopj__tcd__tilecomp.html#a0209cbaa880e6901e3a2aec6c108b982">opj_tcd_tilecomp::x1</a>, <a class="el" href="structopj__tcd__resolution.html#ae4fb93aaa054fc66cc93021badc18cec">opj_tcd_resolution::y0</a>, and <a class="el" href="structopj__tcd__resolution.html#a4b68d3bd5fbaccd293e6a773be9d1a7f">opj_tcd_resolution::y1</a>.</p>
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga677aada99e88407d553f5f10af6d4a51">opj_dwt_decode()</a>.</p>
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga851ac455d3e28b8f39a9e3b0818a8196">opj_dwt_decode()</a>.</p>
 
 </div>
 </div>
@@ -623,7 +575,7 @@ Exported functions</h2></td></tr>
 
 <p>References <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#gaf5d11346c5468f428d60d40e7dfced26">opj_dwt_encode_procedure()</a>.</p>
 
-<p>Referenced by <a class="el" href="tcd_8c.html#a044d8c47b267665af6abd3b3c6cc2d3e">opj_tcd_dwt_encode()</a>.</p>
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, and <a class="el" href="tcd_8c.html#a044d8c47b267665af6abd3b3c6cc2d3e">opj_tcd_dwt_encode()</a>.</p>
 
 </div>
 </div>
@@ -673,7 +625,7 @@ Exported functions</h2></td></tr>
 
 <p>Forward 5-3 wavelet transform in 1-D. </p>
 
-<p>References <a class="el" href="dwt_8c.html#a04bb4ccf4b75deb37b6c6ba2157e0c63">OPJ_D</a>, <a class="el" href="dwt_8c.html#a78d3fbca149e143d6a82303cab0198da">OPJ_D_</a>, <a class="el" href="dwt_8c.html#a9dfda884d0091fcbed7c98012b2e02f0">OPJ_DD_</a>, <a class="el" href="dwt_8c.html#a665395cdbae6aed5f795011b9f2fb9d9">OPJ_S</a>, and <a class="el" href="dwt_8c.html#ab69a5e12479c52ceed3d59a9729a7f42">OPJ_S_</a>.</p>
+<p>References <a class="el" href="dwt_8c.html#a04bb4ccf4b75deb37b6c6ba2157e0c63">OPJ_D</a>, <a class="el" href="dwt_8c.html#a78d3fbca149e143d6a82303cab0198da">OPJ_D_</a>, <a class="el" href="dwt_8c.html#a9dfda884d0091fcbed7c98012b2e02f0">OPJ_DD_</a>, <a class="el" href="dwt_8c.html#a665395cdbae6aed5f795011b9f2fb9d9">OPJ_S</a>, <a class="el" href="dwt_8c.html#ab69a5e12479c52ceed3d59a9729a7f42">OPJ_S_</a>, and <a class="el" href="dwt_8c.html#a3e7f7c2b83a6d6b6b89173813f66b4c6">OPJ_SS_</a>.</p>
 
 <p>Referenced by <a class="el" href="group___d_w_t.html#ga791590b5a5c6637fc4809fe4dd793ce0">opj_dwt_encode()</a>.</p>
 
@@ -973,92 +925,6 @@ Exported functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ga78a14c7491cf132e1daf5d4c4d83d17e"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void opj_dwt_interleave_h </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *&#160;</td>
-          <td class="paramname"><em>h</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
-          <td class="paramname"><em>a</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Inverse lazy transform (horizontal) </p>
-
-<p>References <a class="el" href="structdwt__local.html#a6edde1cc0a7ac25c1116affd9fcd3991">dwt_local::cas</a>, <a class="el" href="structdwt__local.html#a55352e9122d04587f04e1fcd55904d53">dwt_local::dn</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, and <a class="el" href="structdwt__local.html#af52e06d1d510c7c4b20544183c33ed1d">dwt_local::sn</a>.</p>
-
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga48646519707c1effde28134ac7267f89">opj_dwt_decode_tile()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="gadd8462222aaf0890c0f19868997f8851"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void opj_dwt_interleave_v </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *&#160;</td>
-          <td class="paramname"><em>v</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
-          <td class="paramname"><em>a</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
-          <td class="paramname"><em>x</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Inverse lazy transform (vertical) </p>
-
-<p>References <a class="el" href="structdwt__local.html#a6edde1cc0a7ac25c1116affd9fcd3991">dwt_local::cas</a>, <a class="el" href="structdwt__local.html#a55352e9122d04587f04e1fcd55904d53">dwt_local::dn</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, and <a class="el" href="structdwt__local.html#af52e06d1d510c7c4b20544183c33ed1d">dwt_local::sn</a>.</p>
-
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga48646519707c1effde28134ac7267f89">opj_dwt_decode_tile()</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="gac2fffad328e477aa744b59f2872e5603"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1091,7 +957,7 @@ Exported functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">opj_dwt_decode_real()</a>, <a class="el" href="group___d_w_t.html#ga48646519707c1effde28134ac7267f89">opj_dwt_decode_tile()</a>, and <a class="el" href="group___d_w_t.html#gaf5d11346c5468f428d60d40e7dfced26">opj_dwt_encode_procedure()</a>.</p>
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">opj_dwt_decode_real()</a>, <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>, and <a class="el" href="group___d_w_t.html#gaf5d11346c5468f428d60d40e7dfced26">opj_dwt_encode_procedure()</a>.</p>
 
 </div>
 </div>

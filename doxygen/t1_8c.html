@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -49,6 +49,8 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">t1.c File Reference</div>  </div>
@@ -57,103 +59,1766 @@
 <div class="textblock"><code>#include &quot;<a class="el" href="opj__includes_8h_source.html">opj_includes.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="t1__luts_8h_source.html">t1_luts.h</a>&quot;</code><br />
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__t1__cblk__decode__processing__job__t.html">opj_t1_cblk_decode_processing_job_t</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga92bb87ce88e3bcae03ab6055dc93683f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga92bb87ce88e3bcae03ab6055dc93683f">T1_FLAGS</a>(x,  y)&#160;&#160;&#160;(t1-&gt;flags[x + 1 + ((y / 4) + 1) * (t1-&gt;w+2)])</td></tr>
+<tr class="separator:ga92bb87ce88e3bcae03ab6055dc93683f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9f28f49727b66fc3187e4bf75de7bd41"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga9f28f49727b66fc3187e4bf75de7bd41">opj_t1_setcurctx</a>(curctx,  ctxno)&#160;&#160;&#160;curctx = &amp;(mqc)-&gt;ctxs[(<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>)(ctxno)]</td></tr>
+<tr class="separator:ga9f28f49727b66fc3187e4bf75de7bd41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37f33317ce2489daca85b6633b493350"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a37f33317ce2489daca85b6633b493350">opj_t1_update_flags_macro</a>(flags,  flagsp,  ci,  s,  stride,  vsc)</td></tr>
+<tr class="separator:a37f33317ce2489daca85b6633b493350"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7864a6f76611620da9e43b3c60e30a89"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a7864a6f76611620da9e43b3c60e30a89">opj_t1_dec_sigpass_step_mqc_macro</a>(flags,  flagsp,  flags_stride,  data,  data_stride,  ci,  mqc,  curctx,  v,  a,  c,  ct,  oneplushalf,  vsc)</td></tr>
+<tr class="separator:a7864a6f76611620da9e43b3c60e30a89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae85e30b7d0b52e50addf1f9da45b4b14"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#ae85e30b7d0b52e50addf1f9da45b4b14">opj_t1_dec_sigpass_mqc_internal</a>(t1,  bpno,  vsc,  w,  h,  flags_stride)</td></tr>
+<tr class="separator:ae85e30b7d0b52e50addf1f9da45b4b14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29f376d36862d3b7fa116ea7a6f65744"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a29f376d36862d3b7fa116ea7a6f65744">opj_t1_dec_refpass_step_mqc_macro</a>(flags,  data,  data_stride,  ci,  mqc,  curctx,  v,  a,  c,  ct,  poshalf)</td></tr>
+<tr class="separator:a29f376d36862d3b7fa116ea7a6f65744"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8275e9e67acb0ed3a3c328bdb6142d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a1c8275e9e67acb0ed3a3c328bdb6142d">opj_t1_dec_refpass_mqc_internal</a>(t1,  bpno,  w,  h,  flags_stride)</td></tr>
+<tr class="separator:a1c8275e9e67acb0ed3a3c328bdb6142d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f234a3dc5ef573124be59f558c2ffdd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a9f234a3dc5ef573124be59f558c2ffdd">opj_t1_dec_clnpass_step_macro</a>(check_flags,  partial,  flags,  flagsp,  flags_stride,  data,  data_stride,  ci,  mqc,  curctx,  v,  a,  c,  ct,  oneplushalf,  vsc)</td></tr>
+<tr class="separator:a9f234a3dc5ef573124be59f558c2ffdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae9008a292068ecf9e1317ff58100187"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#aae9008a292068ecf9e1317ff58100187">opj_t1_dec_clnpass_internal</a>(t1,  bpno,  vsc,  w,  h,  flags_stride)</td></tr>
+<tr class="separator:aae9008a292068ecf9e1317ff58100187"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ae2853b72e80778d2d03a0e2d2aac9ea5"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">opj_t1_getctxtno_sc_or_spb_index</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> fX, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> pfX, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> nfX, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> ci)</td></tr>
+<tr class="separator:ae2853b72e80778d2d03a0e2d2aac9ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1440e3faa5db783bda989494e84bf09"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">opj_t1_getctxno_sc</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> lu)</td></tr>
+<tr class="separator:af1440e3faa5db783bda989494e84bf09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d98c3b47a190dda59b46d679b71912a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">opj_t1_getspb</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> lu)</td></tr>
+<tr class="separator:a7d98c3b47a190dda59b46d679b71912a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8f8195ed2a683f7240974fc926d3ce4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#ad8f8195ed2a683f7240974fc926d3ce4">opj_t1_enc_sigpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> one, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> ci, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc)</td></tr>
+<tr class="memdesc:ad8f8195ed2a683f7240974fc926d3ce4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode significant pass.  <a href="#ad8f8195ed2a683f7240974fc926d3ce4">More...</a><br /></td></tr>
+<tr class="separator:ad8f8195ed2a683f7240974fc926d3ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c7f1d8bd841304b7575fcc2d1e70f15"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a0c7f1d8bd841304b7575fcc2d1e70f15">opj_t1_dec_sigpass_mqc_64x64_novsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a0c7f1d8bd841304b7575fcc2d1e70f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b9ccbbfede9ef34edf75cddf698a2f4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a9b9ccbbfede9ef34edf75cddf698a2f4">opj_t1_dec_sigpass_mqc_64x64_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a9b9ccbbfede9ef34edf75cddf698a2f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6675fd69fea5b9d1fd53155ee0555721"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a6675fd69fea5b9d1fd53155ee0555721">opj_t1_dec_sigpass_mqc_generic_novsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a6675fd69fea5b9d1fd53155ee0555721"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6048ce87c54e6a8c9fe2f2db94444ed"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#af6048ce87c54e6a8c9fe2f2db94444ed">opj_t1_dec_sigpass_mqc_generic_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:af6048ce87c54e6a8c9fe2f2db94444ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afad44776606263f0a4ca1838d41607fd"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#afad44776606263f0a4ca1838d41607fd">opj_t1_dec_sigpass_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cblksty)</td></tr>
+<tr class="separator:afad44776606263f0a4ca1838d41607fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa946021b83eb158db2e3a1d475a378ca"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#aa946021b83eb158db2e3a1d475a378ca">opj_t1_enc_refpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> one, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> ci)</td></tr>
+<tr class="memdesc:aa946021b83eb158db2e3a1d475a378ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode refinement pass step.  <a href="#aa946021b83eb158db2e3a1d475a378ca">More...</a><br /></td></tr>
+<tr class="separator:aa946021b83eb158db2e3a1d475a378ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b82f08217395975f908e88cf9497632"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a8b82f08217395975f908e88cf9497632">opj_t1_dec_refpass_mqc_64x64</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a8b82f08217395975f908e88cf9497632"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06f90286e24528a4f4fa71632217a020"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a06f90286e24528a4f4fa71632217a020">opj_t1_dec_refpass_mqc_generic</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a06f90286e24528a4f4fa71632217a020"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace5d13e333a3fcff3ec6ed814f5463f5"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#ace5d13e333a3fcff3ec6ed814f5463f5">opj_t1_dec_refpass_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:ace5d13e333a3fcff3ec6ed814f5463f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64b9e9214000b533d5f243db517d411b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a64b9e9214000b533d5f243db517d411b">opj_t1_enc_clnpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> one, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> agg, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> runlen, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> lim, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty)</td></tr>
+<tr class="memdesc:a64b9e9214000b533d5f243db517d411b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode clean-up pass step.  <a href="#a64b9e9214000b533d5f243db517d411b">More...</a><br /></td></tr>
+<tr class="separator:a64b9e9214000b533d5f243db517d411b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b012076ab1c77674f5d0727bb78bf1d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a5b012076ab1c77674f5d0727bb78bf1d">opj_t1_dec_clnpass_check_segsym</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cblksty)</td></tr>
+<tr class="separator:a5b012076ab1c77674f5d0727bb78bf1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67617bffcac63a0541f94b755f423865"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a67617bffcac63a0541f94b755f423865">opj_t1_dec_clnpass_64x64_novsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a67617bffcac63a0541f94b755f423865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f24b4844ca01e8aae692fd63d420338"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a1f24b4844ca01e8aae692fd63d420338">opj_t1_dec_clnpass_64x64_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a1f24b4844ca01e8aae692fd63d420338"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d53c000e250c4c1d3a6d2d852e23eda"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a8d53c000e250c4c1d3a6d2d852e23eda">opj_t1_dec_clnpass_generic_novsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:a8d53c000e250c4c1d3a6d2d852e23eda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2e7e8800088f45448d17e5f34dd61bb"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#ab2e7e8800088f45448d17e5f34dd61bb">opj_t1_dec_clnpass_generic_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="separator:ab2e7e8800088f45448d17e5f34dd61bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a860ac272932c58c131aa669596936c0b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a860ac272932c58c131aa669596936c0b">opj_t1_dec_clnpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cblksty)</td></tr>
+<tr class="separator:a860ac272932c58c131aa669596936c0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7f1a52a233804744f2c7384ac04117f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga7f1a52a233804744f2c7384ac04117f8">opj_t1_create</a> (<a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> isEncoder)</td></tr>
 <tr class="memdesc:ga7f1a52a233804744f2c7384ac04117f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new Tier 1 handle and initializes the look-up tables of the Tier-1 coder/decoder.  <a href="group___t1.html#ga7f1a52a233804744f2c7384ac04117f8">More...</a><br /></td></tr>
 <tr class="separator:ga7f1a52a233804744f2c7384ac04117f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadbc87000940d2fc0c5f3e2f0ad28938a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gadbc87000940d2fc0c5f3e2f0ad28938a">opj_t1_destroy</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *p_t1)</td></tr>
 <tr class="memdesc:gadbc87000940d2fc0c5f3e2f0ad28938a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys a previously created T1 handle.  <a href="group___t1.html#gadbc87000940d2fc0c5f3e2f0ad28938a">More...</a><br /></td></tr>
 <tr class="separator:gadbc87000940d2fc0c5f3e2f0ad28938a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga66e8b56fa305940438708e06d8e5ea4b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga66e8b56fa305940438708e06d8e5ea4b">opj_t1_decode_cblks</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="group___j2_k.html#ga9c76db3caa96a43b557791b7b7509572">opj_tccp_t</a> *tccp)</td></tr>
-<tr class="memdesc:ga66e8b56fa305940438708e06d8e5ea4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode the code-blocks of a tile.  <a href="group___t1.html#ga66e8b56fa305940438708e06d8e5ea4b">More...</a><br /></td></tr>
-<tr class="separator:ga66e8b56fa305940438708e06d8e5ea4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad100b25cf4492d278d25cae52ace0d2a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#ad100b25cf4492d278d25cae52ace0d2a">opj_t1_destroy_wrapper</a> (void *t1)</td></tr>
+<tr class="separator:ad100b25cf4492d278d25cae52ace0d2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f37cf7aca8eb1313fe5bc320c85ad55"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor</a> (void *user_data, <a class="el" href="structopj__tls__t.html">opj_tls_t</a> *tls)</td></tr>
+<tr class="separator:a4f37cf7aca8eb1313fe5bc320c85ad55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga20cf3c3ce3f470e6311e96bf6e365cb0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga20cf3c3ce3f470e6311e96bf6e365cb0">opj_t1_decode_cblks</a> (<a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *tp, volatile <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> *pret, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="group___j2_k.html#ga9c76db3caa96a43b557791b7b7509572">opj_tccp_t</a> *tccp, <a class="el" href="event_8h.html#a4cba85f9ee037b1f2c6bceb903051d96">opj_event_mgr_t</a> *p_manager, <a class="el" href="group___t_h_r_e_a_d.html#ga29120af1ce48d5ecd651795f2e427755">opj_mutex_t</a> *p_manager_mutex, <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> check_pterm)</td></tr>
+<tr class="memdesc:ga20cf3c3ce3f470e6311e96bf6e365cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode the code-blocks of a tile.  <a href="group___t1.html#ga20cf3c3ce3f470e6311e96bf6e365cb0">More...</a><br /></td></tr>
+<tr class="separator:ga20cf3c3ce3f470e6311e96bf6e365cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gada55dfa54a9324f948a3383ed95aedc5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gada55dfa54a9324f948a3383ed95aedc5">opj_t1_encode_cblks</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t_c_d.html#gae700c818029c01f5f472948de2adf6d0">opj_tcd_tile_t</a> *tile, <a class="el" href="group___j2_k.html#gab33dbea1b312445c437b1bff766c7a9e">opj_tcp_t</a> *<a class="el" href="query__parser_8h.html#a678aedbd2509521578c078f7a356b428a5036938696cb1fd991a6aa47cc514cf7">tcp</a>, const <a class="el" href="openjpeg_8h.html#a2e5e9eaf3c126e11d1f058b78a0bce78">OPJ_FLOAT64</a> *mct_norms, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> mct_numcomps)</td></tr>
 <tr class="memdesc:gada55dfa54a9324f948a3383ed95aedc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode the code-blocks of a tile.  <a href="group___t1.html#gada55dfa54a9324f948a3383ed95aedc5">More...</a><br /></td></tr>
 <tr class="separator:gada55dfa54a9324f948a3383ed95aedc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc60d65d3cd311cbfa95fd2f5a0d7897"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="t1_8c.html#adc60d65d3cd311cbfa95fd2f5a0d7897">opj_t1_enc_is_term_pass</a> (<a class="el" href="group___t_c_d.html#ga88a61662347e9b886f96098b2013a138">opj_tcd_cblk_enc_t</a> *cblk, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> passtype)</td></tr>
+<tr class="separator:adc60d65d3cd311cbfa95fd2f5a0d7897"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Local static functions</div></td></tr>
-<tr class="memitem:ga57a4c362f62705fb9f7fe8a11109ee39"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga57a4c362f62705fb9f7fe8a11109ee39">opj_t1_getctxno_zc</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> f, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient)</td></tr>
-<tr class="separator:ga57a4c362f62705fb9f7fe8a11109ee39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5df8352d4075da04aaa6d56bc4e6c220"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga5df8352d4075da04aaa6d56bc4e6c220">opj_t1_getctxno_sc</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> f)</td></tr>
-<tr class="separator:ga5df8352d4075da04aaa6d56bc4e6c220"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3e967975405b445d94631a383e4fba19"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga3e967975405b445d94631a383e4fba19">opj_t1_getctxno_mag</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> f)</td></tr>
-<tr class="separator:ga3e967975405b445d94631a383e4fba19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae66bfd0474cf9ab54ae23ec1fa204e6a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gae66bfd0474cf9ab54ae23ec1fa204e6a">opj_t1_getspb</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> f)</td></tr>
-<tr class="separator:gae66bfd0474cf9ab54ae23ec1fa204e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab2b5473c81ab12cf44ab28fdc41aa9a6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">opj_t1_getctxno_zc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> f)</td></tr>
+<tr class="separator:gab2b5473c81ab12cf44ab28fdc41aa9a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab81c3e6f2d931ff8ec00123699c00c55"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gab81c3e6f2d931ff8ec00123699c00c55">opj_t1_getctxno_mag</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> f)</td></tr>
+<tr class="separator:gab81c3e6f2d931ff8ec00123699c00c55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadf094116da3b172cf17ffc4ade0933cf"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a5ec5f8a1adf71244e3315c1d10f1af16">OPJ_INT16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gadf094116da3b172cf17ffc4ade0933cf">opj_t1_getnmsedec_sig</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> x, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> bitpos)</td></tr>
 <tr class="separator:gadf094116da3b172cf17ffc4ade0933cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga50d065ba47a7ebe17a06bef5cb26cdca"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a5ec5f8a1adf71244e3315c1d10f1af16">OPJ_INT16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga50d065ba47a7ebe17a06bef5cb26cdca">opj_t1_getnmsedec_ref</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> x, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> bitpos)</td></tr>
 <tr class="separator:ga50d065ba47a7ebe17a06bef5cb26cdca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7ae6b38d23c1ecb724ae88093e436db"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gad7ae6b38d23c1ecb724ae88093e436db">opj_t1_updateflags</a> (<a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> s, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> stride)</td></tr>
-<tr class="separator:gad7ae6b38d23c1ecb724ae88093e436db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga80eebf0e3634a59bd879ea54ee6ea905"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga80eebf0e3634a59bd879ea54ee6ea905">opj_t1_enc_sigpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> one, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc)</td></tr>
-<tr class="memdesc:ga80eebf0e3634a59bd879ea54ee6ea905"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode significant pass.  <a href="group___t1.html#ga80eebf0e3634a59bd879ea54ee6ea905">More...</a><br /></td></tr>
-<tr class="separator:ga80eebf0e3634a59bd879ea54ee6ea905"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7b4fc8f0264a0a1eebc5020986789d7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gad7b4fc8f0264a0a1eebc5020986789d7">opj_t1_dec_sigpass_step_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> vsc)</td></tr>
-<tr class="memdesc:gad7b4fc8f0264a0a1eebc5020986789d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode significant pass.  <a href="group___t1.html#gad7b4fc8f0264a0a1eebc5020986789d7">More...</a><br /></td></tr>
-<tr class="separator:gad7b4fc8f0264a0a1eebc5020986789d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac33a78db8651f3a494737b02d9d65a2e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gac33a78db8651f3a494737b02d9d65a2e">opj_t1_dec_sigpass_step_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf)</td></tr>
-<tr class="separator:gac33a78db8651f3a494737b02d9d65a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaddf560d65ec1fb58f57e881164bcf584"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gaddf560d65ec1fb58f57e881164bcf584">opj_t1_dec_sigpass_step_mqc_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> vsc)</td></tr>
-<tr class="separator:gaddf560d65ec1fb58f57e881164bcf584"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga854a4e227e743c1679c341697885efbf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga854a4e227e743c1679c341697885efbf">opj_t1_enc_sigpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty)</td></tr>
-<tr class="memdesc:ga854a4e227e743c1679c341697885efbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode significant pass.  <a href="group___t1.html#ga854a4e227e743c1679c341697885efbf">More...</a><br /></td></tr>
-<tr class="separator:ga854a4e227e743c1679c341697885efbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga31cc6cb83b69a5a7d5f217743a16b196"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga31cc6cb83b69a5a7d5f217743a16b196">opj_t1_dec_sigpass_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cblksty)</td></tr>
-<tr class="memdesc:ga31cc6cb83b69a5a7d5f217743a16b196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode significant pass.  <a href="group___t1.html#ga31cc6cb83b69a5a7d5f217743a16b196">More...</a><br /></td></tr>
-<tr class="separator:ga31cc6cb83b69a5a7d5f217743a16b196"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0abe12e4e59b25d19edadf956d0f41e6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga0abe12e4e59b25d19edadf956d0f41e6">opj_t1_dec_sigpass_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient)</td></tr>
-<tr class="separator:ga0abe12e4e59b25d19edadf956d0f41e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6610a77592a51ac50fc7448641bc8b52"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga6610a77592a51ac50fc7448641bc8b52">opj_t1_dec_sigpass_mqc_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient)</td></tr>
-<tr class="separator:ga6610a77592a51ac50fc7448641bc8b52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga329c1a66ceaa0e163174a67f49961d17"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga329c1a66ceaa0e163174a67f49961d17">opj_t1_enc_refpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> one, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc)</td></tr>
-<tr class="memdesc:ga329c1a66ceaa0e163174a67f49961d17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode refinement pass.  <a href="group___t1.html#ga329c1a66ceaa0e163174a67f49961d17">More...</a><br /></td></tr>
-<tr class="separator:ga329c1a66ceaa0e163174a67f49961d17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab777e7c3dd22e7f0c11889dfd83049df"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gab777e7c3dd22e7f0c11889dfd83049df">opj_t1_enc_refpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty)</td></tr>
-<tr class="memdesc:gab777e7c3dd22e7f0c11889dfd83049df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode refinement pass.  <a href="group___t1.html#gab777e7c3dd22e7f0c11889dfd83049df">More...</a><br /></td></tr>
-<tr class="separator:gab777e7c3dd22e7f0c11889dfd83049df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaae582c9081d5e25b416f2daa7598ac7"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gaaae582c9081d5e25b416f2daa7598ac7">opj_t1_dec_refpass_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cblksty)</td></tr>
-<tr class="memdesc:gaaae582c9081d5e25b416f2daa7598ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode refinement pass.  <a href="group___t1.html#gaaae582c9081d5e25b416f2daa7598ac7">More...</a><br /></td></tr>
-<tr class="separator:gaaae582c9081d5e25b416f2daa7598ac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gace5d13e333a3fcff3ec6ed814f5463f5"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gace5d13e333a3fcff3ec6ed814f5463f5">opj_t1_dec_refpass_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
-<tr class="separator:gace5d13e333a3fcff3ec6ed814f5463f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6159ec3239bc4fd888a0d91b88c88440"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga6159ec3239bc4fd888a0d91b88c88440">opj_t1_dec_refpass_mqc_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
-<tr class="separator:ga6159ec3239bc4fd888a0d91b88c88440"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac10f219c32faf19a1b5cdf62ef54ad33"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gac10f219c32faf19a1b5cdf62ef54ad33">opj_t1_dec_refpass_step_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> poshalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> neghalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> vsc)</td></tr>
-<tr class="memdesc:gac10f219c32faf19a1b5cdf62ef54ad33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode refinement pass.  <a href="group___t1.html#gac10f219c32faf19a1b5cdf62ef54ad33">More...</a><br /></td></tr>
-<tr class="separator:gac10f219c32faf19a1b5cdf62ef54ad33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf401f6d5dc7efa053efac2695ad7868f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gaf401f6d5dc7efa053efac2695ad7868f">opj_t1_dec_refpass_step_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> poshalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> neghalf)</td></tr>
-<tr class="separator:gaf401f6d5dc7efa053efac2695ad7868f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3534d8f8428ce074d064647bb1495607"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga3534d8f8428ce074d064647bb1495607">opj_t1_dec_refpass_step_mqc_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> poshalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> neghalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> vsc)</td></tr>
-<tr class="separator:ga3534d8f8428ce074d064647bb1495607"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2595a800b851d21ec2cca3a1d57a3688"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga2595a800b851d21ec2cca3a1d57a3688">opj_t1_enc_clnpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> one, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> partial, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc)</td></tr>
-<tr class="memdesc:ga2595a800b851d21ec2cca3a1d57a3688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode clean-up pass.  <a href="group___t1.html#ga2595a800b851d21ec2cca3a1d57a3688">More...</a><br /></td></tr>
-<tr class="separator:ga2595a800b851d21ec2cca3a1d57a3688"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae80bc5bce7e2811e8979a75c8c6066c3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gae80bc5bce7e2811e8979a75c8c6066c3">opj_t1_dec_clnpass_step_partial</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf)</td></tr>
-<tr class="memdesc:gae80bc5bce7e2811e8979a75c8c6066c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode clean-up pass.  <a href="group___t1.html#gae80bc5bce7e2811e8979a75c8c6066c3">More...</a><br /></td></tr>
-<tr class="separator:gae80bc5bce7e2811e8979a75c8c6066c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga14bc4e74cc948eb84b76560f6c293240"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga14bc4e74cc948eb84b76560f6c293240">opj_t1_dec_clnpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf)</td></tr>
-<tr class="separator:ga14bc4e74cc948eb84b76560f6c293240"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8db2d99a01aa0fa42722f685bc853a57"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga8db2d99a01aa0fa42722f685bc853a57">opj_t1_dec_clnpass_step_vsc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9f93807f4324c22eb143d07763d803b">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> partial, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> vsc)</td></tr>
-<tr class="separator:ga8db2d99a01aa0fa42722f685bc853a57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaeb22e0766c89d205091500cb477f680b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gaeb22e0766c89d205091500cb477f680b">opj_t1_enc_clnpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty)</td></tr>
-<tr class="memdesc:gaeb22e0766c89d205091500cb477f680b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode clean-up pass.  <a href="group___t1.html#gaeb22e0766c89d205091500cb477f680b">More...</a><br /></td></tr>
-<tr class="separator:gaeb22e0766c89d205091500cb477f680b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae29fe78fff17d859098068e31e36e885"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gae29fe78fff17d859098068e31e36e885">opj_t1_dec_clnpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cblksty)</td></tr>
-<tr class="memdesc:gae29fe78fff17d859098068e31e36e885"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode clean-up pass.  <a href="group___t1.html#gae29fe78fff17d859098068e31e36e885">More...</a><br /></td></tr>
-<tr class="separator:gae29fe78fff17d859098068e31e36e885"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7d897b856ec35a1c1fbd4fb03bafca6a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga7d897b856ec35a1c1fbd4fb03bafca6a">opj_t1_update_flags</a> (<a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> ci, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> s, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> stride, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc)</td></tr>
+<tr class="separator:ga7d897b856ec35a1c1fbd4fb03bafca6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga637be949c4d76c22bcf308c3454efd93"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga637be949c4d76c22bcf308c3454efd93">opj_t1_dec_sigpass_step_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> row)</td></tr>
+<tr class="memdesc:ga637be949c4d76c22bcf308c3454efd93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode significant pass.  <a href="group___t1.html#ga637be949c4d76c22bcf308c3454efd93">More...</a><br /></td></tr>
+<tr class="separator:ga637be949c4d76c22bcf308c3454efd93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf6ab9b96c0c6f3af01d505066f9d9164"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gaf6ab9b96c0c6f3af01d505066f9d9164">opj_t1_dec_sigpass_step_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> row, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> flags_stride, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc)</td></tr>
+<tr class="separator:gaf6ab9b96c0c6f3af01d505066f9d9164"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4608fc74c44bd6ca766ea02a3d886948"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga4608fc74c44bd6ca766ea02a3d886948">opj_t1_enc_sigpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty)</td></tr>
+<tr class="memdesc:ga4608fc74c44bd6ca766ea02a3d886948"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode significant pass.  <a href="group___t1.html#ga4608fc74c44bd6ca766ea02a3d886948">More...</a><br /></td></tr>
+<tr class="separator:ga4608fc74c44bd6ca766ea02a3d886948"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4a8e7c66427e3bcbf47d8d92c229892b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga4a8e7c66427e3bcbf47d8d92c229892b">opj_t1_dec_sigpass_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cblksty)</td></tr>
+<tr class="memdesc:ga4a8e7c66427e3bcbf47d8d92c229892b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode significant pass.  <a href="group___t1.html#ga4a8e7c66427e3bcbf47d8d92c229892b">More...</a><br /></td></tr>
+<tr class="separator:ga4a8e7c66427e3bcbf47d8d92c229892b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaff8fb497bd8ef0f7f9dc9de53f962cc1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gaff8fb497bd8ef0f7f9dc9de53f962cc1">opj_t1_enc_refpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> type)</td></tr>
+<tr class="memdesc:gaff8fb497bd8ef0f7f9dc9de53f962cc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode refinement pass.  <a href="group___t1.html#gaff8fb497bd8ef0f7f9dc9de53f962cc1">More...</a><br /></td></tr>
+<tr class="separator:gaff8fb497bd8ef0f7f9dc9de53f962cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae2a2445442159db390c6062fccc9d2c0"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gae2a2445442159db390c6062fccc9d2c0">opj_t1_dec_refpass_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno)</td></tr>
+<tr class="memdesc:gae2a2445442159db390c6062fccc9d2c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode refinement pass.  <a href="group___t1.html#gae2a2445442159db390c6062fccc9d2c0">More...</a><br /></td></tr>
+<tr class="separator:gae2a2445442159db390c6062fccc9d2c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab0a7bec44865423db1e55dd10e6b51fe"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gab0a7bec44865423db1e55dd10e6b51fe">opj_t1_dec_refpass_step_raw</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> poshalf, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> row)</td></tr>
+<tr class="memdesc:gab0a7bec44865423db1e55dd10e6b51fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode refinement pass.  <a href="group___t1.html#gab0a7bec44865423db1e55dd10e6b51fe">More...</a><br /></td></tr>
+<tr class="separator:gab0a7bec44865423db1e55dd10e6b51fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga75c4e634295ac2fa331be7c8b0ba0563"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga75c4e634295ac2fa331be7c8b0ba0563">opj_t1_dec_refpass_step_mqc</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> poshalf, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> row)</td></tr>
+<tr class="separator:ga75c4e634295ac2fa331be7c8b0ba0563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d5fd8c3c165fc611d6f3222fe1dffab"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga0d5fd8c3c165fc611d6f3222fe1dffab">opj_t1_dec_clnpass_step</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *flagsp, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *datap, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> oneplushalf, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> row, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> vsc)</td></tr>
+<tr class="memdesc:ga0d5fd8c3c165fc611d6f3222fe1dffab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode clean-up pass.  <a href="group___t1.html#ga0d5fd8c3c165fc611d6f3222fe1dffab">More...</a><br /></td></tr>
+<tr class="separator:ga0d5fd8c3c165fc611d6f3222fe1dffab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8494e1a811e935f0feae5776a9d628e1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga8494e1a811e935f0feae5776a9d628e1">opj_t1_enc_clnpass</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *nmsedec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty)</td></tr>
+<tr class="memdesc:ga8494e1a811e935f0feae5776a9d628e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode clean-up pass.  <a href="group___t1.html#ga8494e1a811e935f0feae5776a9d628e1">More...</a><br /></td></tr>
+<tr class="separator:ga8494e1a811e935f0feae5776a9d628e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga569bb3939e11d7817a297739d06950b0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a2e5e9eaf3c126e11d1f058b78a0bce78">OPJ_FLOAT64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga569bb3939e11d7817a297739d06950b0">opj_t1_getwmsedec</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> nmsedec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> compno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> level, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> bpno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> qmfbid, <a class="el" href="openjpeg_8h.html#a2e5e9eaf3c126e11d1f058b78a0bce78">OPJ_FLOAT64</a> stepsize, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numcomps, const <a class="el" href="openjpeg_8h.html#a2e5e9eaf3c126e11d1f058b78a0bce78">OPJ_FLOAT64</a> *mct_norms, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> mct_numcomps)</td></tr>
 <tr class="memdesc:ga569bb3939e11d7817a297739d06950b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">mod fixed_quality  <a href="group___t1.html#ga569bb3939e11d7817a297739d06950b0">More...</a><br /></td></tr>
 <tr class="separator:ga569bb3939e11d7817a297739d06950b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga129afb46903336a9f911323b47e29b81"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga129afb46903336a9f911323b47e29b81">opj_t1_encode_cblk</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t_c_d.html#ga88a61662347e9b886f96098b2013a138">opj_tcd_cblk_enc_t</a> *cblk, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> compno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> level, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> qmfbid, <a class="el" href="openjpeg_8h.html#a2e5e9eaf3c126e11d1f058b78a0bce78">OPJ_FLOAT64</a> stepsize, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numcomps, <a class="el" href="group___t_c_d.html#gae700c818029c01f5f472948de2adf6d0">opj_tcd_tile_t</a> *tile, const <a class="el" href="openjpeg_8h.html#a2e5e9eaf3c126e11d1f058b78a0bce78">OPJ_FLOAT64</a> *mct_norms, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> mct_numcomps)</td></tr>
 <tr class="memdesc:ga129afb46903336a9f911323b47e29b81"><td class="mdescLeft">&#160;</td><td class="mdescRight">mod fixed_quality  <a href="group___t1.html#ga129afb46903336a9f911323b47e29b81">More...</a><br /></td></tr>
 <tr class="separator:ga129afb46903336a9f911323b47e29b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac0eda7cad23045baec567ddbe0a4da3f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gac0eda7cad23045baec567ddbe0a4da3f">opj_t1_decode_cblk</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t_c_d.html#ga7d3dcb008d88d8382d9de154f4ab0c97">opj_tcd_cblk_dec_t</a> *cblk, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> roishift, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty)</td></tr>
-<tr class="memdesc:gac0eda7cad23045baec567ddbe0a4da3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode 1 code-block.  <a href="group___t1.html#gac0eda7cad23045baec567ddbe0a4da3f">More...</a><br /></td></tr>
-<tr class="separator:gac0eda7cad23045baec567ddbe0a4da3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab90391839b2f56ca40aaae1b8748ca3c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="group___t_c_d.html#ga7d3dcb008d88d8382d9de154f4ab0c97">opj_tcd_cblk_dec_t</a> *cblk, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> roishift, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> cblksty, <a class="el" href="event_8h.html#a4cba85f9ee037b1f2c6bceb903051d96">opj_event_mgr_t</a> *p_manager, <a class="el" href="group___t_h_r_e_a_d.html#ga29120af1ce48d5ecd651795f2e427755">opj_mutex_t</a> *p_manager_mutex, <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> check_pterm)</td></tr>
+<tr class="memdesc:gab90391839b2f56ca40aaae1b8748ca3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode 1 code-block.  <a href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">More...</a><br /></td></tr>
+<tr class="separator:gab90391839b2f56ca40aaae1b8748ca3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga676ae65a9d3daed3299a36fa3842043e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___t1.html#ga676ae65a9d3daed3299a36fa3842043e">opj_t1_allocate_buffers</a> (<a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *t1, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> w, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> h)</td></tr>
 <tr class="separator:ga676ae65a9d3daed3299a36fa3842043e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="aae9008a292068ecf9e1317ff58100187"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define opj_t1_dec_clnpass_internal</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">t1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">bpno, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">vsc, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">w, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">h, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_stride&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="t1_8c.html#a67617bffcac63a0541f94b755f423865">opj_t1_dec_clnpass_64x64_novsc()</a>, <a class="el" href="t1_8c.html#a1f24b4844ca01e8aae692fd63d420338">opj_t1_dec_clnpass_64x64_vsc()</a>, <a class="el" href="t1_8c.html#a8d53c000e250c4c1d3a6d2d852e23eda">opj_t1_dec_clnpass_generic_novsc()</a>, and <a class="el" href="t1_8c.html#ab2e7e8800088f45448d17e5f34dd61bb">opj_t1_dec_clnpass_generic_vsc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9f234a3dc5ef573124be59f558c2ffdd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define opj_t1_dec_clnpass_step_macro</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">check_flags, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">partial, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flagsp, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_stride, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">data, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">data_stride, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ci, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mqc, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">curctx, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">v, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">a, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">c, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ct, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">oneplushalf, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">vsc&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ \</div>
+<div class="line">    if ( !check_flags || !(flags &amp; ((<a class="code" href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a> | <a class="code" href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a>) &lt;&lt; (ci * 3U)))) {\</div>
+<div class="line">        do { \</div>
+<div class="line">            if( !partial ) { \</div>
+<div class="line">                OPJ_UINT32 ctxt1 = <a class="code" href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">opj_t1_getctxno_zc</a>(mqc, flags &gt;&gt; (ci * 3U)); \</div>
+<div class="line">                opj_t1_setcurctx(curctx, ctxt1); \</div>
+<div class="line">                opj_mqc_decode_macro(v, mqc, curctx, a, c, ct); \</div>
+<div class="line">                if( !v ) \</div>
+<div class="line">                    break; \</div>
+<div class="line">            } \</div>
+<div class="line">            { \</div>
+<div class="line">                OPJ_UINT32 lu = <a class="code" href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">opj_t1_getctxtno_sc_or_spb_index</a>( \</div>
+<div class="line">                                    flags, flagsp[-1], flagsp[1], \</div>
+<div class="line">                                    ci); \</div>
+<div class="line">                opj_t1_setcurctx(curctx, <a class="code" href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">opj_t1_getctxno_sc</a>(lu)); \</div>
+<div class="line">                opj_mqc_decode_macro(v, mqc, curctx, a, c, ct); \</div>
+<div class="line">                v = v ^ <a class="code" href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">opj_t1_getspb</a>(lu); \</div>
+<div class="line">                data[ci*data_stride] = v ? -oneplushalf : oneplushalf; \</div>
+<div class="line">                opj_t1_update_flags_macro(flags, flagsp, ci, v, flags_stride, vsc); \</div>
+<div class="line">            } \</div>
+<div class="line">        } <span class="keywordflow">while</span>(0); \</div>
+<div class="line">    } \</div>
+<div class="line">}</div>
+<div class="ttc" id="group___t1_html_gab2b5473c81ab12cf44ab28fdc41aa9a6"><div class="ttname"><a href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">opj_t1_getctxno_zc</a></div><div class="ttdeci">static INLINE OPJ_BYTE opj_t1_getctxno_zc(opj_mqc_t *mqc, OPJ_UINT32 f)</div><div class="ttdef"><b>Definition:</b> t1.c:210</div></div>
+<div class="ttc" id="group___t1_html_gaa498034263c5274720dae103fdeb49e5"><div class="ttname"><a href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a></div><div class="ttdeci">#define T1_PI_THIS</div><div class="ttdef"><b>Definition:</b> t1.h:163</div></div>
+<div class="ttc" id="group___t1_html_ga4c12e1464ea83aa6b6474b8cd2870e50"><div class="ttname"><a href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a></div><div class="ttdeci">#define T1_SIGMA_THIS</div><div class="ttdef"><b>Definition:</b> t1.h:153</div></div>
+<div class="ttc" id="t1_8c_html_a7d98c3b47a190dda59b46d679b71912a"><div class="ttname"><a href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">opj_t1_getspb</a></div><div class="ttdeci">static INLINE OPJ_BYTE opj_t1_getspb(OPJ_UINT32 lu)</div><div class="ttdef"><b>Definition:</b> t1.c:257</div></div>
+<div class="ttc" id="t1_8c_html_ae2853b72e80778d2d03a0e2d2aac9ea5"><div class="ttname"><a href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">opj_t1_getctxtno_sc_or_spb_index</a></div><div class="ttdeci">static INLINE OPJ_UINT32 opj_t1_getctxtno_sc_or_spb_index(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX, OPJ_UINT32 ci)</div><div class="ttdef"><b>Definition:</b> t1.c:215</div></div>
+<div class="ttc" id="t1_8c_html_af1440e3faa5db783bda989494e84bf09"><div class="ttname"><a href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">opj_t1_getctxno_sc</a></div><div class="ttdeci">static INLINE OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 lu)</div><div class="ttdef"><b>Definition:</b> t1.c:245</div></div>
+</div><!-- fragment -->
+<p>Referenced by <a class="el" href="group___t1.html#ga0d5fd8c3c165fc611d6f3222fe1dffab">opj_t1_dec_clnpass_step()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1c8275e9e67acb0ed3a3c328bdb6142d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define opj_t1_dec_refpass_mqc_internal</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">t1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">bpno, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">w, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">h, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_stride&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="t1_8c.html#a8b82f08217395975f908e88cf9497632">opj_t1_dec_refpass_mqc_64x64()</a>, and <a class="el" href="t1_8c.html#a06f90286e24528a4f4fa71632217a020">opj_t1_dec_refpass_mqc_generic()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a29f376d36862d3b7fa116ea7a6f65744"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define opj_t1_dec_refpass_step_mqc_macro</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">data, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">data_stride, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ci, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mqc, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">curctx, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">v, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">a, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">c, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ct, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">poshalf&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ \</div>
+<div class="line">    if ((flags &amp; ((<a class="code" href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a> | <a class="code" href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a>) &lt;&lt; (ci * 3U))) == \</div>
+<div class="line">            (<a class="code" href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a> &lt;&lt; (ci * 3U))) { \</div>
+<div class="line">        OPJ_UINT32 ctxt = <a class="code" href="group___t1.html#gab81c3e6f2d931ff8ec00123699c00c55">opj_t1_getctxno_mag</a>(flags &gt;&gt; (ci * 3U)); \</div>
+<div class="line">        opj_t1_setcurctx(curctx, ctxt); \</div>
+<div class="line">        opj_mqc_decode_macro(v, mqc, curctx, a, c, ct); \</div>
+<div class="line">        data[ci*data_stride] += (v ^ (data[ci*data_stride] &lt; 0)) ? poshalf : -poshalf; \</div>
+<div class="line">        flags |= <a class="code" href="group___t1.html#ga4fd2d8cc26d2b2b515a08e1d503c7d75">T1_MU_THIS</a> &lt;&lt; (ci * 3U); \</div>
+<div class="line">    } \</div>
+<div class="line">}</div>
+<div class="ttc" id="group___t1_html_gab81c3e6f2d931ff8ec00123699c00c55"><div class="ttname"><a href="group___t1.html#gab81c3e6f2d931ff8ec00123699c00c55">opj_t1_getctxno_mag</a></div><div class="ttdeci">static INLINE OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f)</div><div class="ttdef"><b>Definition:</b> t1.c:250</div></div>
+<div class="ttc" id="group___t1_html_gaa498034263c5274720dae103fdeb49e5"><div class="ttname"><a href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a></div><div class="ttdeci">#define T1_PI_THIS</div><div class="ttdef"><b>Definition:</b> t1.h:163</div></div>
+<div class="ttc" id="group___t1_html_ga4c12e1464ea83aa6b6474b8cd2870e50"><div class="ttname"><a href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a></div><div class="ttdeci">#define T1_SIGMA_THIS</div><div class="ttdef"><b>Definition:</b> t1.h:153</div></div>
+<div class="ttc" id="group___t1_html_ga4fd2d8cc26d2b2b515a08e1d503c7d75"><div class="ttname"><a href="group___t1.html#ga4fd2d8cc26d2b2b515a08e1d503c7d75">T1_MU_THIS</a></div><div class="ttdeci">#define T1_MU_THIS</div><div class="ttdef"><b>Definition:</b> t1.h:162</div></div>
+</div><!-- fragment -->
+<p>Referenced by <a class="el" href="group___t1.html#ga75c4e634295ac2fa331be7c8b0ba0563">opj_t1_dec_refpass_step_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae85e30b7d0b52e50addf1f9da45b4b14"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define opj_t1_dec_sigpass_mqc_internal</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">t1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">bpno, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">vsc, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">w, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">h, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_stride&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="t1_8c.html#a0c7f1d8bd841304b7575fcc2d1e70f15">opj_t1_dec_sigpass_mqc_64x64_novsc()</a>, <a class="el" href="t1_8c.html#a9b9ccbbfede9ef34edf75cddf698a2f4">opj_t1_dec_sigpass_mqc_64x64_vsc()</a>, <a class="el" href="t1_8c.html#a6675fd69fea5b9d1fd53155ee0555721">opj_t1_dec_sigpass_mqc_generic_novsc()</a>, and <a class="el" href="t1_8c.html#af6048ce87c54e6a8c9fe2f2db94444ed">opj_t1_dec_sigpass_mqc_generic_vsc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7864a6f76611620da9e43b3c60e30a89"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define opj_t1_dec_sigpass_step_mqc_macro</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flagsp, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_stride, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">data, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">data_stride, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ci, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mqc, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">curctx, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">v, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">a, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">c, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ct, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">oneplushalf, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">vsc&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ \</div>
+<div class="line">    if ((flags &amp; ((<a class="code" href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a> | <a class="code" href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a>) &lt;&lt; (ci * 3U))) == 0U &amp;&amp; \</div>
+<div class="line">        (flags &amp; (<a class="code" href="group___t1.html#ga88a06fb74d07a67b3baef3b9c4d956b7">T1_SIGMA_NEIGHBOURS</a> &lt;&lt; (ci * 3U))) != 0U) { \</div>
+<div class="line">        OPJ_UINT32 ctxt1 = <a class="code" href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">opj_t1_getctxno_zc</a>(mqc, flags &gt;&gt; (ci * 3U)); \</div>
+<div class="line">        opj_t1_setcurctx(curctx, ctxt1); \</div>
+<div class="line">        opj_mqc_decode_macro(v, mqc, curctx, a, c, ct); \</div>
+<div class="line">        if (v) { \</div>
+<div class="line">            OPJ_UINT32 lu = <a class="code" href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">opj_t1_getctxtno_sc_or_spb_index</a>( \</div>
+<div class="line">                                flags, \</div>
+<div class="line">                                flagsp[-1], flagsp[1], \</div>
+<div class="line">                                ci); \</div>
+<div class="line">            OPJ_UINT32 ctxt2 = <a class="code" href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">opj_t1_getctxno_sc</a>(lu); \</div>
+<div class="line">            OPJ_UINT32 spb = <a class="code" href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">opj_t1_getspb</a>(lu); \</div>
+<div class="line">            opj_t1_setcurctx(curctx, ctxt2); \</div>
+<div class="line">            opj_mqc_decode_macro(v, mqc, curctx, a, c, ct); \</div>
+<div class="line">            v = v ^ spb; \</div>
+<div class="line">            data[ci*data_stride] = v ? -oneplushalf : oneplushalf; \</div>
+<div class="line">            opj_t1_update_flags_macro(flags, flagsp, ci, v, flags_stride, vsc); \</div>
+<div class="line">        } \</div>
+<div class="line">        flags |= <a class="code" href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a> &lt;&lt; (ci * 3U); \</div>
+<div class="line">    } \</div>
+<div class="line">}</div>
+<div class="ttc" id="group___t1_html_gab2b5473c81ab12cf44ab28fdc41aa9a6"><div class="ttname"><a href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">opj_t1_getctxno_zc</a></div><div class="ttdeci">static INLINE OPJ_BYTE opj_t1_getctxno_zc(opj_mqc_t *mqc, OPJ_UINT32 f)</div><div class="ttdef"><b>Definition:</b> t1.c:210</div></div>
+<div class="ttc" id="group___t1_html_gaa498034263c5274720dae103fdeb49e5"><div class="ttname"><a href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a></div><div class="ttdeci">#define T1_PI_THIS</div><div class="ttdef"><b>Definition:</b> t1.h:163</div></div>
+<div class="ttc" id="group___t1_html_ga4c12e1464ea83aa6b6474b8cd2870e50"><div class="ttname"><a href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a></div><div class="ttdeci">#define T1_SIGMA_THIS</div><div class="ttdef"><b>Definition:</b> t1.h:153</div></div>
+<div class="ttc" id="group___t1_html_ga88a06fb74d07a67b3baef3b9c4d956b7"><div class="ttname"><a href="group___t1.html#ga88a06fb74d07a67b3baef3b9c4d956b7">T1_SIGMA_NEIGHBOURS</a></div><div class="ttdeci">#define T1_SIGMA_NEIGHBOURS</div><div class="ttdef"><b>Definition:</b> t1.h:158</div></div>
+<div class="ttc" id="t1_8c_html_a7d98c3b47a190dda59b46d679b71912a"><div class="ttname"><a href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">opj_t1_getspb</a></div><div class="ttdeci">static INLINE OPJ_BYTE opj_t1_getspb(OPJ_UINT32 lu)</div><div class="ttdef"><b>Definition:</b> t1.c:257</div></div>
+<div class="ttc" id="t1_8c_html_ae2853b72e80778d2d03a0e2d2aac9ea5"><div class="ttname"><a href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">opj_t1_getctxtno_sc_or_spb_index</a></div><div class="ttdeci">static INLINE OPJ_UINT32 opj_t1_getctxtno_sc_or_spb_index(OPJ_UINT32 fX, OPJ_UINT32 pfX, OPJ_UINT32 nfX, OPJ_UINT32 ci)</div><div class="ttdef"><b>Definition:</b> t1.c:215</div></div>
+<div class="ttc" id="t1_8c_html_af1440e3faa5db783bda989494e84bf09"><div class="ttname"><a href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">opj_t1_getctxno_sc</a></div><div class="ttdeci">static INLINE OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 lu)</div><div class="ttdef"><b>Definition:</b> t1.c:245</div></div>
+</div><!-- fragment -->
+<p>Referenced by <a class="el" href="group___t1.html#gaf6ab9b96c0c6f3af01d505066f9d9164">opj_t1_dec_sigpass_step_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a37f33317ce2489daca85b6633b493350"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define opj_t1_update_flags_macro</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flagsp, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ci, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">s, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">stride, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">vsc&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ \</div>
+<div class="line">    <span class="comment">/* east */</span> \</div>
+<div class="line">    flagsp[-1] |= <a class="code" href="group___t1.html#ga53692c183d3b8a123a773ada5f4675b5">T1_SIGMA_5</a> &lt;&lt; (3U * ci); \</div>
+<div class="line"> \</div>
+<div class="line">    <span class="comment">/* mark target as significant */</span> \</div>
+<div class="line">    flags |= ((s &lt;&lt; <a class="code" href="group___t1.html#ga4ca52c33d33eaed1e9fd5a62cc0f5850">T1_CHI_1_I</a>) | <a class="code" href="group___t1.html#ga69860b399ffb7da2e9be76400dc70f0b">T1_SIGMA_4</a>) &lt;&lt; (3U * ci); \</div>
+<div class="line"> \</div>
+<div class="line">    <span class="comment">/* west */</span> \</div>
+<div class="line">    flagsp[1] |= <a class="code" href="group___t1.html#ga5325cf5cc054dcc0573af55bd7e0c555">T1_SIGMA_3</a> &lt;&lt; (3U * ci); \</div>
+<div class="line"> \</div>
+<div class="line">    <span class="comment">/* north-west, north, north-east */</span> \</div>
+<div class="line">    if (ci == 0U &amp;&amp; !(vsc)) { \</div>
+<div class="line">        opj_flag_t* north = flagsp - (stride); \</div>
+<div class="line">        *north |= (s &lt;&lt; <a class="code" href="group___t1.html#gaef4ef493acd4367d873a158fba72b004">T1_CHI_5_I</a>) | <a class="code" href="group___t1.html#ga3b48854666939eab9af4f2815cfa0fef">T1_SIGMA_16</a>; \</div>
+<div class="line">        north[-1] |= <a class="code" href="group___t1.html#ga4a4d9d9fe53a8b61df03ee5d2cdf1f9c">T1_SIGMA_17</a>; \</div>
+<div class="line">        north[1] |= <a class="code" href="group___t1.html#ga31929ebab83f65f87b6eec41aa2dd5f0">T1_SIGMA_15</a>; \</div>
+<div class="line">    } \</div>
+<div class="line"> \</div>
+<div class="line">    <span class="comment">/* south-west, south, south-east */</span> \</div>
+<div class="line">    if (ci == 3U) { \</div>
+<div class="line">        opj_flag_t* south = flagsp + (stride); \</div>
+<div class="line">        *south |= (s &lt;&lt; <a class="code" href="group___t1.html#ga47c5ba91282d11225a57d061c2a42fea">T1_CHI_0_I</a>) | <a class="code" href="group___t1.html#gad178e75a325c47c131ebebd11f744042">T1_SIGMA_1</a>; \</div>
+<div class="line">        south[-1] |= <a class="code" href="group___t1.html#gae0388f791fcf4366ee86874d8629f938">T1_SIGMA_2</a>; \</div>
+<div class="line">        south[1] |= <a class="code" href="group___t1.html#gaa961bf71aed298d9331468182c243c80">T1_SIGMA_0</a>; \</div>
+<div class="line">    } \</div>
+<div class="line">}</div>
+<div class="ttc" id="group___t1_html_ga31929ebab83f65f87b6eec41aa2dd5f0"><div class="ttname"><a href="group___t1.html#ga31929ebab83f65f87b6eec41aa2dd5f0">T1_SIGMA_15</a></div><div class="ttdeci">#define T1_SIGMA_15</div><div class="ttdef"><b>Definition:</b> t1.h:106</div></div>
+<div class="ttc" id="group___t1_html_ga3b48854666939eab9af4f2815cfa0fef"><div class="ttname"><a href="group___t1.html#ga3b48854666939eab9af4f2815cfa0fef">T1_SIGMA_16</a></div><div class="ttdeci">#define T1_SIGMA_16</div><div class="ttdef"><b>Definition:</b> t1.h:107</div></div>
+<div class="ttc" id="group___t1_html_ga4ca52c33d33eaed1e9fd5a62cc0f5850"><div class="ttname"><a href="group___t1.html#ga4ca52c33d33eaed1e9fd5a62cc0f5850">T1_CHI_1_I</a></div><div class="ttdeci">#define T1_CHI_1_I</div><div class="ttdef"><b>Definition:</b> t1.h:113</div></div>
+<div class="ttc" id="group___t1_html_gae0388f791fcf4366ee86874d8629f938"><div class="ttname"><a href="group___t1.html#gae0388f791fcf4366ee86874d8629f938">T1_SIGMA_2</a></div><div class="ttdeci">#define T1_SIGMA_2</div><div class="ttdef"><b>Definition:</b> t1.h:93</div></div>
+<div class="ttc" id="group___t1_html_gaef4ef493acd4367d873a158fba72b004"><div class="ttname"><a href="group___t1.html#gaef4ef493acd4367d873a158fba72b004">T1_CHI_5_I</a></div><div class="ttdeci">#define T1_CHI_5_I</div><div class="ttdef"><b>Definition:</b> t1.h:127</div></div>
+<div class="ttc" id="group___t1_html_ga4a4d9d9fe53a8b61df03ee5d2cdf1f9c"><div class="ttname"><a href="group___t1.html#ga4a4d9d9fe53a8b61df03ee5d2cdf1f9c">T1_SIGMA_17</a></div><div class="ttdeci">#define T1_SIGMA_17</div><div class="ttdef"><b>Definition:</b> t1.h:108</div></div>
+<div class="ttc" id="group___t1_html_gaa961bf71aed298d9331468182c243c80"><div class="ttname"><a href="group___t1.html#gaa961bf71aed298d9331468182c243c80">T1_SIGMA_0</a></div><div class="ttdeci">#define T1_SIGMA_0</div><div class="ttdoc">We hold the state of individual data points for the T1 encoder using a single 32-bit flags word to ho...</div><div class="ttdef"><b>Definition:</b> t1.h:91</div></div>
+<div class="ttc" id="group___t1_html_ga69860b399ffb7da2e9be76400dc70f0b"><div class="ttname"><a href="group___t1.html#ga69860b399ffb7da2e9be76400dc70f0b">T1_SIGMA_4</a></div><div class="ttdeci">#define T1_SIGMA_4</div><div class="ttdef"><b>Definition:</b> t1.h:95</div></div>
+<div class="ttc" id="group___t1_html_ga53692c183d3b8a123a773ada5f4675b5"><div class="ttname"><a href="group___t1.html#ga53692c183d3b8a123a773ada5f4675b5">T1_SIGMA_5</a></div><div class="ttdeci">#define T1_SIGMA_5</div><div class="ttdef"><b>Definition:</b> t1.h:96</div></div>
+<div class="ttc" id="group___t1_html_ga5325cf5cc054dcc0573af55bd7e0c555"><div class="ttname"><a href="group___t1.html#ga5325cf5cc054dcc0573af55bd7e0c555">T1_SIGMA_3</a></div><div class="ttdeci">#define T1_SIGMA_3</div><div class="ttdef"><b>Definition:</b> t1.h:94</div></div>
+<div class="ttc" id="group___t1_html_gad178e75a325c47c131ebebd11f744042"><div class="ttname"><a href="group___t1.html#gad178e75a325c47c131ebebd11f744042">T1_SIGMA_1</a></div><div class="ttdeci">#define T1_SIGMA_1</div><div class="ttdef"><b>Definition:</b> t1.h:92</div></div>
+<div class="ttc" id="group___t1_html_ga47c5ba91282d11225a57d061c2a42fea"><div class="ttname"><a href="group___t1.html#ga47c5ba91282d11225a57d061c2a42fea">T1_CHI_0_I</a></div><div class="ttdeci">#define T1_CHI_0_I</div><div class="ttdef"><b>Definition:</b> t1.h:111</div></div>
+</div><!-- fragment -->
+<p>Referenced by <a class="el" href="group___t1.html#ga7d897b856ec35a1c1fbd4fb03bafca6a">opj_t1_update_flags()</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="a4f37cf7aca8eb1313fe5bc320c85ad55"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_clbl_decode_processor </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>user_data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structopj__tls__t.html">opj_tls_t</a> *&#160;</td>
+          <td class="paramname"><em>tls</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#a23306224ce5ebbaedceb088f386ef33c">opj_t1_cblk_decode_processing_job_t::band</a>, <a class="el" href="structopj__tcd__band.html#a42509ecd35f2a30e80e9c957cc5deb9c">opj_tcd_band::bandno</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#abe348de7538cd2568552ec10df3d91cf">opj_t1_cblk_decode_processing_job_t::cblk</a>, <a class="el" href="structopj__tccp.html#abccd67d9df94acef748e841d0809ce14">opj_tccp::cblksty</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#a72a3b9f79533ae2b095eb7be009c1556">opj_t1_cblk_decode_processing_job_t::check_pterm</a>, <a class="el" href="structopj__t1.html#a73394701209d19d06afd56f089bbcd7f">opj_t1::data</a>, <a class="el" href="structopj__tcd__tilecomp.html#ad5618371884e54026423ef59e57395d8">opj_tcd_tilecomp::data</a>, <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="structopj__t1.html#ad857b30ad6967bcd9314fdff281451e1">opj_t1::mustuse_cblkdatabuffer</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#a8e70a93e1155c2ed7ff838b59e58d347">opj_t1_cblk_decode_processing_job_t::mustuse_cblkdatabuffer</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, <a class="el" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free()</a>, <a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a>, <a class="el" href="group___t1.html#ga7f1a52a233804744f2c7384ac04117f8">opj_t1_create()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, <a class="el" href="t1_8c.html#ad100b25cf4492d278d25cae52ace0d2a">opj_t1_destroy_wrapper()</a>, <a class="el" href="group___t_h_r_e_a_d.html#ga90caa0ff9c1e54033ef1e3010faf03a9">opj_tls_get()</a>, <a class="el" href="tls__keys_8h.html#a92d51080bfe1af6001244cfc346e9a31">OPJ_TLS_KEY_T1</a>, <a class="el" href="group___t_h_r_e_a_d.html#gab1b97098aabc89f98eca8f8f7274f3e7">opj_tls_set()</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#a55506d3065ddef626c175061967f7733">opj_t1_cblk_decode_processing_job_t::p_manager</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#a39f31e8547a8b7f8fd9d35669a38d4a4">opj_t1_cblk_decode_processing_job_t::p_manager_mutex</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#aef8c56cd13031f96b31d78c69c130144">opj_t1_cblk_decode_processing_job_t::pret</a>, <a class="el" href="structopj__tccp.html#a38ec604e02abf9b03186d2b8e27a901a">opj_tccp::qmfbid</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#aad037e49e6f74eaffb31757dcb4fcc8e">opj_t1_cblk_decode_processing_job_t::resno</a>, <a class="el" href="structopj__tcd__tilecomp.html#a98466597d37dad1b049ffae6b9722885">opj_tcd_tilecomp::resolutions</a>, <a class="el" href="structopj__tccp.html#a8101ea87292aa03905eb91e940995afb">opj_tccp::roishift</a>, <a class="el" href="structopj__tcd__band.html#a2f97fac02fd0401b3c5f31968c233eb7">opj_tcd_band::stepsize</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#abf076fc8f4d5d468f3bb525a91e79180">opj_t1_cblk_decode_processing_job_t::tccp</a>, <a class="el" href="structopj__t1__cblk__decode__processing__job__t.html#a0b31dc8af573ceba15cd801d222897d1">opj_t1_cblk_decode_processing_job_t::tilec</a>, <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>, <a class="el" href="structopj__tcd__cblk__dec.html#aeb0a80dd174713abc3744560abf10dbe">opj_tcd_cblk_dec::x0</a>, <a class="el" href="structopj__tcd__band.html#a81baded80392eb94c8414decc5ad597f">opj_tcd_band::x0</a>, <a class="el" href="structopj__tcd__resolution.html#ac65adbcc5c51d8aaf0e5e9315243d6a1">opj_tcd_resolution::x0</a>, <a class="el" href="structopj__tcd__tilecomp.html#a38cdc1ca5c18fa64e2dabfb025dd9784">opj_tcd_tilecomp::x0</a>, <a class="el" href="structopj__tcd__resolution.html#a4544bfa885feb38635dd2770a9114ecf">opj_tcd_resolution::x1</a>, <a class="el" href="structopj__tcd__tilecomp.html#a0209cbaa880e6901e3a2aec6c108b982">opj_tcd_tilecomp::x1</a>, <a class="el" href="structopj__tcd__cblk__dec.html#a3f2e8149bda51a5e6bf06377411adffb">opj_tcd_cblk_dec::y0</a>, <a class="el" href="structopj__tcd__band.html#a9dcfb05333ffca193a1577c0670a4b2e">opj_tcd_band::y0</a>, <a class="el" href="structopj__tcd__resolution.html#ae4fb93aaa054fc66cc93021badc18cec">opj_tcd_resolution::y0</a>, and <a class="el" href="structopj__tcd__resolution.html#a4b68d3bd5fbaccd293e6a773be9d1a7f">opj_tcd_resolution::y1</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#ga20cf3c3ce3f470e6311e96bf6e365cb0">opj_t1_decode_cblks()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a860ac272932c58c131aa669596936c0b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_clnpass </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>cblksty</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="group___j2_k.html#ga65e3c90067fca47af235e73afbc65c97">J2K_CCP_CBLKSTY_VSC</a>, <a class="el" href="t1_8c.html#a67617bffcac63a0541f94b755f423865">opj_t1_dec_clnpass_64x64_novsc()</a>, <a class="el" href="t1_8c.html#a1f24b4844ca01e8aae692fd63d420338">opj_t1_dec_clnpass_64x64_vsc()</a>, <a class="el" href="t1_8c.html#a5b012076ab1c77674f5d0727bb78bf1d">opj_t1_dec_clnpass_check_segsym()</a>, <a class="el" href="t1_8c.html#a8d53c000e250c4c1d3a6d2d852e23eda">opj_t1_dec_clnpass_generic_novsc()</a>, <a class="el" href="t1_8c.html#ab2e7e8800088f45448d17e5f34dd61bb">opj_t1_dec_clnpass_generic_vsc()</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a67617bffcac63a0541f94b755f423865"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_clnpass_64x64_novsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, and <a class="el" href="t1_8c.html#aae9008a292068ecf9e1317ff58100187">opj_t1_dec_clnpass_internal</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a860ac272932c58c131aa669596936c0b">opj_t1_dec_clnpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1f24b4844ca01e8aae692fd63d420338"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_clnpass_64x64_vsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="t1_8c.html#aae9008a292068ecf9e1317ff58100187">opj_t1_dec_clnpass_internal</a>, and <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a860ac272932c58c131aa669596936c0b">opj_t1_dec_clnpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a5b012076ab1c77674f5d0727bb78bf1d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_clnpass_check_segsym </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>cblksty</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___j2_k.html#ga31341b13011138b0ec1f7075d5c14042">J2K_CCP_CBLKSTY_SEGSYM</a>, <a class="el" href="structopj__t1.html#a5c19283cc36f821a697b9e2c0f586eed">opj_t1::mqc</a>, <a class="el" href="mqc__inl_8h.html#a89ab47f40f5de66906de82d3e5bd724b">opj_mqc_decode</a>, <a class="el" href="group___m_q_c.html#ga6c870476b8f893310c80b6bb3c09afe2">opj_mqc_setcurctx</a>, and <a class="el" href="group___t1.html#ga27ee56916ef86bcbb5c07e55fb719b20">T1_CTXNO_UNI</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a860ac272932c58c131aa669596936c0b">opj_t1_dec_clnpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a8d53c000e250c4c1d3a6d2d852e23eda"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_clnpass_generic_novsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, <a class="el" href="t1_8c.html#aae9008a292068ecf9e1317ff58100187">opj_t1_dec_clnpass_internal</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a860ac272932c58c131aa669596936c0b">opj_t1_dec_clnpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab2e7e8800088f45448d17e5f34dd61bb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_clnpass_generic_vsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="t1_8c.html#aae9008a292068ecf9e1317ff58100187">opj_t1_dec_clnpass_internal</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a860ac272932c58c131aa669596936c0b">opj_t1_dec_clnpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ace5d13e333a3fcff3ec6ed814f5463f5"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_refpass_mqc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="t1_8c.html#a8b82f08217395975f908e88cf9497632">opj_t1_dec_refpass_mqc_64x64()</a>, <a class="el" href="t1_8c.html#a06f90286e24528a4f4fa71632217a020">opj_t1_dec_refpass_mqc_generic()</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a8b82f08217395975f908e88cf9497632"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_refpass_mqc_64x64 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="t1_8c.html#a1c8275e9e67acb0ed3a3c328bdb6142d">opj_t1_dec_refpass_mqc_internal</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#ace5d13e333a3fcff3ec6ed814f5463f5">opj_t1_dec_refpass_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a06f90286e24528a4f4fa71632217a020"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_refpass_mqc_generic </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="t1_8c.html#a1c8275e9e67acb0ed3a3c328bdb6142d">opj_t1_dec_refpass_mqc_internal</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#ace5d13e333a3fcff3ec6ed814f5463f5">opj_t1_dec_refpass_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="afad44776606263f0a4ca1838d41607fd"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_sigpass_mqc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>cblksty</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="group___j2_k.html#ga65e3c90067fca47af235e73afbc65c97">J2K_CCP_CBLKSTY_VSC</a>, <a class="el" href="t1_8c.html#a0c7f1d8bd841304b7575fcc2d1e70f15">opj_t1_dec_sigpass_mqc_64x64_novsc()</a>, <a class="el" href="t1_8c.html#a9b9ccbbfede9ef34edf75cddf698a2f4">opj_t1_dec_sigpass_mqc_64x64_vsc()</a>, <a class="el" href="t1_8c.html#a6675fd69fea5b9d1fd53155ee0555721">opj_t1_dec_sigpass_mqc_generic_novsc()</a>, <a class="el" href="t1_8c.html#af6048ce87c54e6a8c9fe2f2db94444ed">opj_t1_dec_sigpass_mqc_generic_vsc()</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a0c7f1d8bd841304b7575fcc2d1e70f15"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_sigpass_mqc_64x64_novsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, and <a class="el" href="t1_8c.html#ae85e30b7d0b52e50addf1f9da45b4b14">opj_t1_dec_sigpass_mqc_internal</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#afad44776606263f0a4ca1838d41607fd">opj_t1_dec_sigpass_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9b9ccbbfede9ef34edf75cddf698a2f4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_sigpass_mqc_64x64_vsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="t1_8c.html#ae85e30b7d0b52e50addf1f9da45b4b14">opj_t1_dec_sigpass_mqc_internal</a>, and <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#afad44776606263f0a4ca1838d41607fd">opj_t1_dec_sigpass_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6675fd69fea5b9d1fd53155ee0555721"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_sigpass_mqc_generic_novsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, <a class="el" href="t1_8c.html#ae85e30b7d0b52e50addf1f9da45b4b14">opj_t1_dec_sigpass_mqc_internal</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#afad44776606263f0a4ca1838d41607fd">opj_t1_dec_sigpass_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af6048ce87c54e6a8c9fe2f2db94444ed"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_dec_sigpass_mqc_generic_vsc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__t1.html#a4e88b0ed321f39a5bd2507b3d403914d">opj_t1::h</a>, <a class="el" href="t1_8c.html#ae85e30b7d0b52e50addf1f9da45b4b14">opj_t1_dec_sigpass_mqc_internal</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#afad44776606263f0a4ca1838d41607fd">opj_t1_dec_sigpass_mqc()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad100b25cf4492d278d25cae52ace0d2a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_destroy_wrapper </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>t1</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___t1.html#gadbc87000940d2fc0c5f3e2f0ad28938a">opj_t1_destroy()</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a64b9e9214000b533d5f243db517d411b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_t1_enc_clnpass_step </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *&#160;</td>
+          <td class="paramname"><em>flagsp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>datap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>one</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>nmsedec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>agg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>runlen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>lim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>cblksty</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Encode clean-up pass step. </p>
+
+<p>References <a class="el" href="structopj__t1.html#ab69667aaa6e6e52d70eaeafc42e586a1">opj_t1::data_stride</a>, <a class="el" href="group___j2_k.html#ga65e3c90067fca47af235e73afbc65c97">J2K_CCP_CBLKSTY_VSC</a>, <a class="el" href="structopj__t1.html#a5c19283cc36f821a697b9e2c0f586eed">opj_t1::mqc</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gacaef279a9031adbd9319990646328a01">opj_int_abs()</a>, <a class="el" href="group___m_q_c.html#gabe330c18fbdee2676a2201f88a756be2">opj_mqc_encode()</a>, <a class="el" href="group___m_q_c.html#ga6c870476b8f893310c80b6bb3c09afe2">opj_mqc_setcurctx</a>, <a class="el" href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">opj_t1_getctxno_sc()</a>, <a class="el" href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">opj_t1_getctxno_zc()</a>, <a class="el" href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">opj_t1_getctxtno_sc_or_spb_index()</a>, <a class="el" href="group___t1.html#gadf094116da3b172cf17ffc4ade0933cf">opj_t1_getnmsedec_sig()</a>, <a class="el" href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">opj_t1_getspb()</a>, <a class="el" href="group___t1.html#ga7d897b856ec35a1c1fbd4fb03bafca6a">opj_t1_update_flags()</a>, <a class="el" href="group___t1.html#gafa77179984d3c4fc7b4d68741eac0211">T1_PI_0</a>, <a class="el" href="group___t1.html#ga13c56e60bd0e0d3c9e36025994ce395d">T1_PI_1</a>, <a class="el" href="group___t1.html#ga89aa23cbc819bfc122653e34f737f65b">T1_PI_2</a>, <a class="el" href="group___t1.html#ga30c27730d92b803755e486915ef71131">T1_PI_3</a>, <a class="el" href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a>, <a class="el" href="group___t1.html#ga7d78e993d5332b026ffe5abe50aa9071">T1_SIGMA_10</a>, <a class="el" href="group___t1.html#gae9e2b1582f7ad4e8a7ace7fce8a7ebfb">T1_SIGMA_13</a>, <a class="el" href="group___t1.html#ga69860b399ffb7da2e9be76400dc70f0b">T1_SIGMA_4</a>, <a class="el" href="group___t1.html#ga8c955cf3bdff80504f96af1c01476fe8">T1_SIGMA_7</a>, <a class="el" href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#ga8494e1a811e935f0feae5776a9d628e1">opj_t1_enc_clnpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="adc60d65d3cd311cbfa95fd2f5a0d7897"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int opj_t1_enc_is_term_pass </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t_c_d.html#ga88a61662347e9b886f96098b2013a138">opj_tcd_cblk_enc_t</a> *&#160;</td>
+          <td class="paramname"><em>cblk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>cblksty</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>passtype</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___j2_k.html#ga91356287e81596bc55b42a1edb2b97d2">J2K_CCP_CBLKSTY_LAZY</a>, <a class="el" href="group___j2_k.html#gab4a11b37d608c28c255a723fc6fd2c08">J2K_CCP_CBLKSTY_TERMALL</a>, <a class="el" href="structopj__tcd__cblk__enc.html#aaadfdf791e63c0049b867a6be072fca3">opj_tcd_cblk_enc::numbps</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, and <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#ga129afb46903336a9f911323b47e29b81">opj_t1_encode_cblk()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa946021b83eb158db2e3a1d475a378ca"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void opj_t1_enc_refpass_step </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *&#160;</td>
+          <td class="paramname"><em>flagsp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>datap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>one</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>nmsedec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>ci</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Encode refinement pass step. </p>
+
+<p>References <a class="el" href="structopj__t1.html#a5c19283cc36f821a697b9e2c0f586eed">opj_t1::mqc</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gacaef279a9031adbd9319990646328a01">opj_int_abs()</a>, <a class="el" href="group___m_q_c.html#gad886df66150746e1a41d3e20037683fb">opj_mqc_bypass_enc()</a>, <a class="el" href="group___m_q_c.html#gabe330c18fbdee2676a2201f88a756be2">opj_mqc_encode()</a>, <a class="el" href="group___m_q_c.html#ga6c870476b8f893310c80b6bb3c09afe2">opj_mqc_setcurctx</a>, <a class="el" href="group___t1.html#gab81c3e6f2d931ff8ec00123699c00c55">opj_t1_getctxno_mag()</a>, <a class="el" href="group___t1.html#ga50d065ba47a7ebe17a06bef5cb26cdca">opj_t1_getnmsedec_ref()</a>, <a class="el" href="group___t1.html#ga4fd2d8cc26d2b2b515a08e1d503c7d75">T1_MU_THIS</a>, <a class="el" href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a>, <a class="el" href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a>, and <a class="el" href="group___t1.html#ga8bbc756ee85009898c5232621760de89">T1_TYPE_RAW</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#gaff8fb497bd8ef0f7f9dc9de53f962cc1">opj_t1_enc_refpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad8f8195ed2a683f7240974fc926d3ce4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> void opj_t1_enc_sigpass_step </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t1.html#ga7965e493799541b7c0e6ce3968aea464">opj_t1_t</a> *&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___t1.html#gab9520ada8305b3d288b86c380a64330d">opj_flag_t</a> *&#160;</td>
+          <td class="paramname"><em>flagsp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>datap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>bpno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>one</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>nmsedec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>ci</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>vsc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Encode significant pass. </p>
+
+<p>References <a class="el" href="structopj__t1.html#a5c19283cc36f821a697b9e2c0f586eed">opj_t1::mqc</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gacaef279a9031adbd9319990646328a01">opj_int_abs()</a>, <a class="el" href="group___m_q_c.html#gad886df66150746e1a41d3e20037683fb">opj_mqc_bypass_enc()</a>, <a class="el" href="group___m_q_c.html#gabe330c18fbdee2676a2201f88a756be2">opj_mqc_encode()</a>, <a class="el" href="group___m_q_c.html#ga6c870476b8f893310c80b6bb3c09afe2">opj_mqc_setcurctx</a>, <a class="el" href="t1_8c.html#af1440e3faa5db783bda989494e84bf09">opj_t1_getctxno_sc()</a>, <a class="el" href="group___t1.html#gab2b5473c81ab12cf44ab28fdc41aa9a6">opj_t1_getctxno_zc()</a>, <a class="el" href="t1_8c.html#ae2853b72e80778d2d03a0e2d2aac9ea5">opj_t1_getctxtno_sc_or_spb_index()</a>, <a class="el" href="group___t1.html#gadf094116da3b172cf17ffc4ade0933cf">opj_t1_getnmsedec_sig()</a>, <a class="el" href="t1_8c.html#a7d98c3b47a190dda59b46d679b71912a">opj_t1_getspb()</a>, <a class="el" href="group___t1.html#ga7d897b856ec35a1c1fbd4fb03bafca6a">opj_t1_update_flags()</a>, <a class="el" href="group___t1.html#gaa498034263c5274720dae103fdeb49e5">T1_PI_THIS</a>, <a class="el" href="group___t1.html#ga88a06fb74d07a67b3baef3b9c4d956b7">T1_SIGMA_NEIGHBOURS</a>, <a class="el" href="group___t1.html#ga4c12e1464ea83aa6b6474b8cd2870e50">T1_SIGMA_THIS</a>, <a class="el" href="group___t1.html#ga8bbc756ee85009898c5232621760de89">T1_TYPE_RAW</a>, and <a class="el" href="structopj__t1.html#a0307370eb4a1cb47d8e4011cb88c37a7">opj_t1::w</a>.</p>
+
+<p>Referenced by <a class="el" href="group___t1.html#ga4608fc74c44bd6ca766ea02a3d886948">opj_t1_enc_sigpass()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af1440e3faa5db783bda989494e84bf09"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> opj_t1_getctxno_sc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>lu</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="t1__luts_8h.html#a5b8df62174004db15a6b7bb640c0e9cd">lut_ctxno_sc</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a64b9e9214000b533d5f243db517d411b">opj_t1_enc_clnpass_step()</a>, and <a class="el" href="t1_8c.html#ad8f8195ed2a683f7240974fc926d3ce4">opj_t1_enc_sigpass_step()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae2853b72e80778d2d03a0e2d2aac9ea5"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> opj_t1_getctxtno_sc_or_spb_index </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>fX</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>pfX</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>nfX</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>ci</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___t1.html#ga47c5ba91282d11225a57d061c2a42fea">T1_CHI_0_I</a>, <a class="el" href="group___t1.html#ga4ca52c33d33eaed1e9fd5a62cc0f5850">T1_CHI_1_I</a>, <a class="el" href="group___t1.html#ga162e46b32d89320a466eefda06f9adbb">T1_CHI_2_I</a>, <a class="el" href="group___t1.html#gac609c5ccee43ea1d4a1adfaa472d58fe">T1_CHI_THIS_I</a>, <a class="el" href="group___t1.html#gad178e75a325c47c131ebebd11f744042">T1_SIGMA_1</a>, <a class="el" href="group___t1.html#ga5325cf5cc054dcc0573af55bd7e0c555">T1_SIGMA_3</a>, <a class="el" href="group___t1.html#ga53692c183d3b8a123a773ada5f4675b5">T1_SIGMA_5</a>, and <a class="el" href="group___t1.html#ga8c955cf3bdff80504f96af1c01476fe8">T1_SIGMA_7</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a64b9e9214000b533d5f243db517d411b">opj_t1_enc_clnpass_step()</a>, and <a class="el" href="t1_8c.html#ad8f8195ed2a683f7240974fc926d3ce4">opj_t1_enc_sigpass_step()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7d98c3b47a190dda59b46d679b71912a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="openjpeg_8h.html#a2eb6f9e0395b47b8d5e3eeae4fe0c116">INLINE</a> <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> opj_t1_getspb </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>lu</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="t1__luts_8h.html#a4541ad164783346cd3aefc98ad700dbd">lut_spb</a>.</p>
+
+<p>Referenced by <a class="el" href="t1_8c.html#a64b9e9214000b533d5f243db517d411b">opj_t1_enc_clnpass_step()</a>, and <a class="el" href="t1_8c.html#ad8f8195ed2a683f7240974fc926d3ce4">opj_t1_enc_sigpass_step()</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -164,8 +164,8 @@ Typedefs</h2></td></tr>
 <tr class="separator:ga6426e82c7d636762ae35b39f0d47cff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6dddaee86f9af386faddb221f893ff0d"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structopj__jp2__header__handler.html">opj_jp2_header_handler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#ga6dddaee86f9af386faddb221f893ff0d">opj_jp2_header_handler_t</a></td></tr>
 <tr class="separator:ga6dddaee86f9af386faddb221f893ff0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga76b56a66574ad86a63e6fc3ee6046cbf"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structopj__jp2__img__header__writer__handler.html">opj_jp2_img_header_writer_handler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#ga76b56a66574ad86a63e6fc3ee6046cbf">opj_jp2_img_header_writer_handler_t</a></td></tr>
-<tr class="separator:ga76b56a66574ad86a63e6fc3ee6046cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5003c62b01b25040cf41e94d0852f647"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structopj__jp2__img__header__writer__handler.html">opj_jp2_img_header_writer_handler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#ga5003c62b01b25040cf41e94d0852f647">opj_jp2_img_header_writer_handler_t</a></td></tr>
+<tr class="separator:ga5003c62b01b25040cf41e94d0852f647"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -193,6 +193,8 @@ Functions</h2></td></tr>
 <tr class="memitem:ga24d94a6f5cf51200b3366a77e25e547d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#ga24d94a6f5cf51200b3366a77e25e547d">opj_jp2_setup_decoder</a> (<a class="el" href="group___j_p2.html#gad416d216ba57f4e7d1255f94ce52fef9">opj_jp2_t</a> *jp2, <a class="el" href="openjpeg_8h.html#a6b6650daf87a8d475f9a33f1744d8356">opj_dparameters_t</a> *parameters)</td></tr>
 <tr class="memdesc:ga24d94a6f5cf51200b3366a77e25e547d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup the decoder decoding parameters using user parameters.  <a href="group___j_p2.html#ga24d94a6f5cf51200b3366a77e25e547d">More...</a><br /></td></tr>
 <tr class="separator:ga24d94a6f5cf51200b3366a77e25e547d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabe8ec92a2ec7c342926f81a166b6b59c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#gabe8ec92a2ec7c342926f81a166b6b59c">opj_jp2_set_threads</a> (<a class="el" href="group___j_p2.html#gad416d216ba57f4e7d1255f94ce52fef9">opj_jp2_t</a> *jp2, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> num_threads)</td></tr>
+<tr class="separator:gabe8ec92a2ec7c342926f81a166b6b59c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaab973979e00628ffd8b3d99a402d85aa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#gaab973979e00628ffd8b3d99a402d85aa">opj_jp2_decode</a> (<a class="el" href="group___j_p2.html#gad416d216ba57f4e7d1255f94ce52fef9">opj_jp2_t</a> *jp2, <a class="el" href="group___c_i_o.html#gacd21503a80c1803724c96c8baf9fd645">opj_stream_private_t</a> *p_stream, <a class="el" href="openjpeg_8h.html#a5c557180c59d54a2f1d29e8639687aa4">opj_image_t</a> *p_image, <a class="el" href="event_8h.html#a4cba85f9ee037b1f2c6bceb903051d96">opj_event_mgr_t</a> *p_manager)</td></tr>
 <tr class="memdesc:gaab973979e00628ffd8b3d99a402d85aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode an image from a JPEG-2000 file stream.  <a href="group___j_p2.html#gaab973979e00628ffd8b3d99a402d85aa">More...</a><br /></td></tr>
 <tr class="separator:gaab973979e00628ffd8b3d99a402d85aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -242,7 +244,7 @@ Functions</h2></td></tr>
 <tr class="memitem:ga5ed9ca90035485efa93e1e7dce474780"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a6450987526732e77d4477b02e466b89e">opj_codestream_info_v2_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#ga5ed9ca90035485efa93e1e7dce474780">jp2_get_cstr_info</a> (<a class="el" href="group___j_p2.html#gad416d216ba57f4e7d1255f94ce52fef9">opj_jp2_t</a> *p_jp2)</td></tr>
 <tr class="memdesc:ga5ed9ca90035485efa93e1e7dce474780"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the codestream info from a JPEG2000 codec.  <a href="group___j_p2.html#ga5ed9ca90035485efa93e1e7dce474780">More...</a><br /></td></tr>
 <tr class="separator:ga5ed9ca90035485efa93e1e7dce474780"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga195430af9298b6633ff7a2aa754e2d31"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#aef4e40da13534ecda530816e133bfce8">opj_codestream_index_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#ga195430af9298b6633ff7a2aa754e2d31">jp2_get_cstr_index</a> (<a class="el" href="group___j_p2.html#gad416d216ba57f4e7d1255f94ce52fef9">opj_jp2_t</a> *p_jp2)</td></tr>
+<tr class="memitem:ga195430af9298b6633ff7a2aa754e2d31"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#ae966d4f546d13751ce3de7765de7fc53">opj_codestream_index_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___j_p2.html#ga195430af9298b6633ff7a2aa754e2d31">jp2_get_cstr_index</a> (<a class="el" href="group___j_p2.html#gad416d216ba57f4e7d1255f94ce52fef9">opj_jp2_t</a> *p_jp2)</td></tr>
 <tr class="memdesc:ga195430af9298b6633ff7a2aa754e2d31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the codestream index from a JPEG2000 codec.  <a href="group___j_p2.html#ga195430af9298b6633ff7a2aa754e2d31">More...</a><br /></td></tr>
 <tr class="separator:ga195430af9298b6633ff7a2aa754e2d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>

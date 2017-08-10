@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -50,6 +50,7 @@
 <div class="header">
   <div class="summary">
 <a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">opj_includes.h File Reference</div>  </div>
@@ -66,6 +67,7 @@
 <code>#include &lt;stdarg.h&gt;</code><br />
 <code>#include &lt;ctype.h&gt;</code><br />
 <code>#include &lt;assert.h&gt;</code><br />
+<code>#include &lt;limits.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="openjpeg_8h_source.html">openjpeg.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="opj__inttypes_8h_source.html">opj_inttypes.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="opj__clock_8h_source.html">opj_clock.h</a>&quot;</code><br />
@@ -74,12 +76,13 @@
 <code>#include &quot;<a class="el" href="function__list_8h_source.html">function_list.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="bio_8h_source.html">bio.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="cio_8h_source.html">cio.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="thread_8h_source.html">thread.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="tls__keys_8h_source.html">tls_keys.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="image_8h_source.html">image.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="invert_8h_source.html">invert.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="j2k_8h_source.html">j2k.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="jp2_8h_source.html">jp2.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="mqc_8h_source.html">mqc.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="raw_8h_source.html">raw.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="pi_8h_source.html">pi.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="tgt_8h_source.html">tgt.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="tcd_8h_source.html">tcd.h</a>&quot;</code><br />
@@ -109,6 +112,11 @@ Macros</h2></td></tr>
 <tr class="separator:a47acbf7ae97e1ef7371a1c92a42505b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cd74f16e8d8d462ad6f4c7a6103ba40"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="opj__includes_8h.html#a8cd74f16e8d8d462ad6f4c7a6103ba40">OPJ_NOSANITIZE</a>(kind)</td></tr>
 <tr class="separator:a8cd74f16e8d8d462ad6f4c7a6103ba40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ae64d2795e8dbcd9ff6d8e1ebd904ce80"><td class="memItemLeft" align="right" valign="top">typedef unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="opj__includes_8h.html#ae64d2795e8dbcd9ff6d8e1ebd904ce80">OPJ_BITFIELD</a></td></tr>
+<tr class="separator:ae64d2795e8dbcd9ff6d8e1ebd904ce80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -220,7 +228,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">opj_dwt_decode_real()</a>, <a class="el" href="group___d_w_t.html#ga48646519707c1effde28134ac7267f89">opj_dwt_decode_tile()</a>, <a class="el" href="group___t1.html#ga66e8b56fa305940438708e06d8e5ea4b">opj_t1_decode_cblks()</a>, <a class="el" href="group___t1.html#gada55dfa54a9324f948a3383ed95aedc5">opj_t1_encode_cblks()</a>, <a class="el" href="group___d_w_t.html#ga8894826af3ccbb0ca37f78750eb4e891">opj_v4dwt_decode_step1()</a>, <a class="el" href="group___d_w_t.html#ga094fd3d3e5a1a1f8b00c5340872f037e">opj_v4dwt_interleave_h()</a>, and <a class="el" href="group___d_w_t.html#gafd9564a93feba5c3a554ee00b2332ef8">opj_v4dwt_interleave_v()</a>.</p>
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">opj_dwt_decode_real()</a>, <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#ga20cf3c3ce3f470e6311e96bf6e365cb0">opj_t1_decode_cblks()</a>, <a class="el" href="group___t1.html#gada55dfa54a9324f948a3383ed95aedc5">opj_t1_encode_cblks()</a>, <a class="el" href="group___d_w_t.html#ga8894826af3ccbb0ca37f78750eb4e891">opj_v4dwt_decode_step1()</a>, <a class="el" href="group___d_w_t.html#ga094fd3d3e5a1a1f8b00c5340872f037e">opj_v4dwt_interleave_h()</a>, and <a class="el" href="group___d_w_t.html#gafd9564a93feba5c3a554ee00b2332ef8">opj_v4dwt_interleave_v()</a>.</p>
 
 </div>
 </div>
@@ -256,6 +264,19 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define OPJ_STAT_STRUCT_T&#160;&#160;&#160;struct stat</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a class="anchor" id="ae64d2795e8dbcd9ff6d8e1ebd904ce80"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef unsigned int <a class="el" href="opj__includes_8h.html#ae64d2795e8dbcd9ff6d8e1ebd904ce80">OPJ_BITFIELD</a></td>
         </tr>
       </table>
 </div><div class="memdoc">

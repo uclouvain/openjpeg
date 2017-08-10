@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -53,8 +53,8 @@
 </div><!--header-->
 <div class="contents">
 <a href="opj__malloc_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * The copyright in this software is being made available under the 2-clauses </span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * BSD License, included below. This software may be subject to other third </span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * The copyright in this software is being made available under the 2-clauses</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * BSD License, included below. This software may be subject to other third</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * party and contributor rights, including patent rights, and no such rights</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * are granted under this license.</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> *</span></div>
@@ -83,8 +83,8 @@
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * POSSIBILITY OF SUCH DAMAGE.</span></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#ifndef __OPJ_MALLOC_H</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#define __OPJ_MALLOC_H</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#ifndef OPJ_MALLOC_H</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#define OPJ_MALLOC_H</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;stddef.h&gt;</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
@@ -98,25 +98,30 @@
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span> * <a class="code" href="group___m_i_s_c.html#ga0fdc9e5dfa748e01dd87621a12a0e102">opj_aligned_realloc</a>(<span class="keywordtype">void</span> *ptr, <span class="keywordtype">size_t</span> size);</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free</a>(<span class="keywordtype">void</span>* ptr);</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keywordtype">void</span> * <a class="code" href="group___m_i_s_c.html#ga95862b2a456efdc436c61beba816fb25">opj_realloc</a>(<span class="keywordtype">void</span> * m, <span class="keywordtype">size_t</span> s);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keywordtype">void</span> * <a class="code" href="group___m_i_s_c.html#gaca33611a393378b0314a07d239b66099">opj_aligned_32_malloc</a>(<span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keywordtype">void</span> * <a class="code" href="group___m_i_s_c.html#ga42f91b38d00506a6851fc1dde0fba402">opj_aligned_32_realloc</a>(<span class="keywordtype">void</span> *ptr, <span class="keywordtype">size_t</span> size);</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free</a>(<span class="keywordtype">void</span> * m);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#if defined(__GNUC__) &amp;&amp; !defined(OPJ_SKIP_POISON)</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#pragma GCC poison malloc calloc realloc free</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">/* ----------------------------------------------------------------------- */</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __OPJ_MALLOC_H */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="ttc" id="group___m_i_s_c_html_ga49c70931cbed786f6eef5f095bcb2917"><div class="ttname"><a href="group___m_i_s_c.html#ga49c70931cbed786f6eef5f095bcb2917">opj_malloc</a></div><div class="ttdeci">void * opj_malloc(size_t size)</div><div class="ttdoc">Allocate an uninitialized memory block. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:190</div></div>
-<div class="ttc" id="group___m_i_s_c_html_gaefeccfbb22ba64c00f94f7f66fc97126"><div class="ttname"><a href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free</a></div><div class="ttdeci">void opj_aligned_free(void *ptr)</div><div class="ttdef"><b>Definition:</b> opj_malloc.c:215</div></div>
-<div class="ttc" id="group___m_i_s_c_html_ga0fdc9e5dfa748e01dd87621a12a0e102"><div class="ttname"><a href="group___m_i_s_c.html#ga0fdc9e5dfa748e01dd87621a12a0e102">opj_aligned_realloc</a></div><div class="ttdeci">void * opj_aligned_realloc(void *ptr, size_t size)</div><div class="ttdef"><b>Definition:</b> opj_malloc.c:210</div></div>
-<div class="ttc" id="group___m_i_s_c_html_ga95862b2a456efdc436c61beba816fb25"><div class="ttname"><a href="group___m_i_s_c.html#ga95862b2a456efdc436c61beba816fb25">opj_realloc</a></div><div class="ttdeci">void * opj_realloc(void *m, size_t s)</div><div class="ttdoc">Reallocate memory blocks. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:229</div></div>
-<div class="ttc" id="group___m_i_s_c_html_ga2bd00e2482ae36197631bde0665cfdfe"><div class="ttname"><a href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free</a></div><div class="ttdeci">void opj_free(void *m)</div><div class="ttdoc">Deallocates or frees a memory block. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:236</div></div>
-<div class="ttc" id="group___m_i_s_c_html_ga7fe6dfcb0a623dbec30daf0f48624bf7"><div class="ttname"><a href="group___m_i_s_c.html#ga7fe6dfcb0a623dbec30daf0f48624bf7">opj_calloc</a></div><div class="ttdeci">void * opj_calloc(size_t numOfElements, size_t sizeOfElements)</div><div class="ttdoc">Allocate a memory block with elements initialized to 0. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:197</div></div>
-<div class="ttc" id="group___m_i_s_c_html_ga4418db34754a5b9ac5a79fece518c601"><div class="ttname"><a href="group___m_i_s_c.html#ga4418db34754a5b9ac5a79fece518c601">opj_aligned_malloc</a></div><div class="ttdeci">void * opj_aligned_malloc(size_t size)</div><div class="ttdoc">Allocate memory aligned to a 16 byte boundary. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:206</div></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keywordtype">void</span> * <a class="code" href="group___m_i_s_c.html#ga95862b2a456efdc436c61beba816fb25">opj_realloc</a>(<span class="keywordtype">void</span> * m, <span class="keywordtype">size_t</span> s);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free</a>(<span class="keywordtype">void</span> * m);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#if defined(__GNUC__) &amp;&amp; !defined(OPJ_SKIP_POISON)</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#pragma GCC poison malloc calloc realloc free</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">/* ----------------------------------------------------------------------- */</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* OPJ_MALLOC_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="ttc" id="group___m_i_s_c_html_ga49c70931cbed786f6eef5f095bcb2917"><div class="ttname"><a href="group___m_i_s_c.html#ga49c70931cbed786f6eef5f095bcb2917">opj_malloc</a></div><div class="ttdeci">void * opj_malloc(size_t size)</div><div class="ttdoc">Allocate an uninitialized memory block. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:191</div></div>
+<div class="ttc" id="group___m_i_s_c_html_gaefeccfbb22ba64c00f94f7f66fc97126"><div class="ttname"><a href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free</a></div><div class="ttdeci">void opj_aligned_free(void *ptr)</div><div class="ttdef"><b>Definition:</b> opj_malloc.c:225</div></div>
+<div class="ttc" id="group___m_i_s_c_html_ga0fdc9e5dfa748e01dd87621a12a0e102"><div class="ttname"><a href="group___m_i_s_c.html#ga0fdc9e5dfa748e01dd87621a12a0e102">opj_aligned_realloc</a></div><div class="ttdeci">void * opj_aligned_realloc(void *ptr, size_t size)</div><div class="ttdef"><b>Definition:</b> opj_malloc.c:211</div></div>
+<div class="ttc" id="group___m_i_s_c_html_ga42f91b38d00506a6851fc1dde0fba402"><div class="ttname"><a href="group___m_i_s_c.html#ga42f91b38d00506a6851fc1dde0fba402">opj_aligned_32_realloc</a></div><div class="ttdeci">void * opj_aligned_32_realloc(void *ptr, size_t size)</div><div class="ttdef"><b>Definition:</b> opj_malloc.c:220</div></div>
+<div class="ttc" id="group___m_i_s_c_html_ga95862b2a456efdc436c61beba816fb25"><div class="ttname"><a href="group___m_i_s_c.html#ga95862b2a456efdc436c61beba816fb25">opj_realloc</a></div><div class="ttdeci">void * opj_realloc(void *m, size_t s)</div><div class="ttdoc">Reallocate memory blocks. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:239</div></div>
+<div class="ttc" id="group___m_i_s_c_html_ga2bd00e2482ae36197631bde0665cfdfe"><div class="ttname"><a href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free</a></div><div class="ttdeci">void opj_free(void *m)</div><div class="ttdoc">Deallocates or frees a memory block. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:246</div></div>
+<div class="ttc" id="group___m_i_s_c_html_ga7fe6dfcb0a623dbec30daf0f48624bf7"><div class="ttname"><a href="group___m_i_s_c.html#ga7fe6dfcb0a623dbec30daf0f48624bf7">opj_calloc</a></div><div class="ttdeci">void * opj_calloc(size_t numOfElements, size_t sizeOfElements)</div><div class="ttdoc">Allocate a memory block with elements initialized to 0. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:198</div></div>
+<div class="ttc" id="group___m_i_s_c_html_gaca33611a393378b0314a07d239b66099"><div class="ttname"><a href="group___m_i_s_c.html#gaca33611a393378b0314a07d239b66099">opj_aligned_32_malloc</a></div><div class="ttdeci">void * opj_aligned_32_malloc(size_t size)</div><div class="ttdoc">Allocate memory aligned to a 32 byte boundary. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:216</div></div>
+<div class="ttc" id="group___m_i_s_c_html_ga4418db34754a5b9ac5a79fece518c601"><div class="ttname"><a href="group___m_i_s_c.html#ga4418db34754a5b9ac5a79fece518c601">opj_aligned_malloc</a></div><div class="ttdeci">void * opj_aligned_malloc(size_t size)</div><div class="ttdoc">Allocate memory aligned to a 16 byte boundary. </div><div class="ttdef"><b>Definition:</b> opj_malloc.c:207</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

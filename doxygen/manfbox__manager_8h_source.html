@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -82,43 +82,43 @@
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * POSSIBILITY OF SUCH DAMAGE.</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef         MANFBOX_MANAGER_H_</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"># define        MANFBOX_MANAGER_H_</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef     MANFBOX_MANAGER_H_</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"># define    MANFBOX_MANAGER_H_</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="byte__manager_8h.html">byte_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="box__manager_8h.html">box_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="boxheader__manager_8h.html">boxheader_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structmanfbox__param.html">   41</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structmanfbox__param.html">manfbox_param</a>{</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structmanfbox__param.html#a84984a1b9a534a0c88d0667ffe6db3df">   42</a></span>&#160;  <a class="code" href="structboxheader__param.html">boxheader_param_t</a> *<a class="code" href="structmanfbox__param.html#a84984a1b9a534a0c88d0667ffe6db3df">first</a>; </div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structmanfbox__param.html">   41</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structmanfbox__param.html">manfbox_param</a> {</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structmanfbox__param.html#a84984a1b9a534a0c88d0667ffe6db3df">   42</a></span>&#160;    <a class="code" href="structboxheader__param.html">boxheader_param_t</a> *<a class="code" href="structmanfbox__param.html#a84984a1b9a534a0c88d0667ffe6db3df">first</a>; </div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;} <a class="code" href="manfbox__manager_8h.html#aeee69ac5ac0899069b9a8fa454d64f6b">manfbox_param_t</a>;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<a class="code" href="structmanfbox__param.html">manfbox_param_t</a> * <a class="code" href="manfbox__manager_8h.html#a7c8a7b0c84e1ad9d858c16ed4888b7f1">gene_manfbox</a>( <a class="code" href="structbox__param.html">box_param_t</a> *box);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<a class="code" href="structmanfbox__param.html">manfbox_param_t</a> * <a class="code" href="manfbox__manager_8h.html#a7c8a7b0c84e1ad9d858c16ed4888b7f1">gene_manfbox</a>(<a class="code" href="structbox__param.html">box_param_t</a> *box);</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordtype">void</span> <a class="code" href="manfbox__manager_8h.html#a79f039f4170fa5673abd188e4649b717">delete_manfbox</a>( <a class="code" href="structmanfbox__param.html">manfbox_param_t</a> **manf);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordtype">void</span> <a class="code" href="manfbox__manager_8h.html#a79f039f4170fa5673abd188e4649b717">delete_manfbox</a>(<a class="code" href="structmanfbox__param.html">manfbox_param_t</a> **manf);</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keywordtype">void</span> <a class="code" href="manfbox__manager_8h.html#afffa66277d7b16d789f1c78683f7fc53">print_manfbox</a>( <a class="code" href="structmanfbox__param.html">manfbox_param_t</a> *manf);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keywordtype">void</span> <a class="code" href="manfbox__manager_8h.html#afffa66277d7b16d789f1c78683f7fc53">print_manfbox</a>(<a class="code" href="structmanfbox__param.html">manfbox_param_t</a> *manf);</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<a class="code" href="structboxheader__param.html">boxheader_param_t</a> * <a class="code" href="manfbox__manager_8h.html#a6574f4f07559e5bffc3fafc4a8689249">search_boxheader</a>( <span class="keyword">const</span> <span class="keywordtype">char</span> type[], <a class="code" href="structmanfbox__param.html">manfbox_param_t</a> *manf);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<a class="code" href="structboxheader__param.html">boxheader_param_t</a> * <a class="code" href="manfbox__manager_8h.html#a6574f4f07559e5bffc3fafc4a8689249">search_boxheader</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> type[], <a class="code" href="structmanfbox__param.html">manfbox_param_t</a> *manf);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif      </span><span class="comment">/* !MANFBOX_MANAGER_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="structbox__param_html"><div class="ttname"><a href="structbox__param.html">box_param</a></div><div class="ttdoc">box parameters </div><div class="ttdef"><b>Definition:</b> box_manager.h:37</div></div>
 <div class="ttc" id="structmanfbox__param_html"><div class="ttname"><a href="structmanfbox__param.html">manfbox_param</a></div><div class="ttdoc">manifest box parameters </div><div class="ttdef"><b>Definition:</b> manfbox_manager.h:41</div></div>
 <div class="ttc" id="structboxheader__param_html"><div class="ttname"><a href="structboxheader__param.html">boxheader_param</a></div><div class="ttdoc">box header parameters </div><div class="ttdef"><b>Definition:</b> boxheader_manager.h:39</div></div>
-<div class="ttc" id="manfbox__manager_8h_html_afffa66277d7b16d789f1c78683f7fc53"><div class="ttname"><a href="manfbox__manager_8h.html#afffa66277d7b16d789f1c78683f7fc53">print_manfbox</a></div><div class="ttdeci">void print_manfbox(manfbox_param_t *manf)</div><div class="ttdoc">print manf box parameters </div><div class="ttdef"><b>Definition:</b> manfbox_manager.c:88</div></div>
+<div class="ttc" id="manfbox__manager_8h_html_afffa66277d7b16d789f1c78683f7fc53"><div class="ttname"><a href="manfbox__manager_8h.html#afffa66277d7b16d789f1c78683f7fc53">print_manfbox</a></div><div class="ttdeci">void print_manfbox(manfbox_param_t *manf)</div><div class="ttdoc">print manf box parameters </div><div class="ttdef"><b>Definition:</b> manfbox_manager.c:89</div></div>
 <div class="ttc" id="manfbox__manager_8h_html_aeee69ac5ac0899069b9a8fa454d64f6b"><div class="ttname"><a href="manfbox__manager_8h.html#aeee69ac5ac0899069b9a8fa454d64f6b">manfbox_param_t</a></div><div class="ttdeci">struct manfbox_param manfbox_param_t</div><div class="ttdoc">manifest box parameters </div></div>
 <div class="ttc" id="boxheader__manager_8h_html"><div class="ttname"><a href="boxheader__manager_8h.html">boxheader_manager.h</a></div></div>
 <div class="ttc" id="structmanfbox__param_html_a84984a1b9a534a0c88d0667ffe6db3df"><div class="ttname"><a href="structmanfbox__param.html#a84984a1b9a534a0c88d0667ffe6db3df">manfbox_param::first</a></div><div class="ttdeci">boxheader_param_t * first</div><div class="ttdoc">top of the box header list </div><div class="ttdef"><b>Definition:</b> manfbox_manager.h:42</div></div>
 <div class="ttc" id="byte__manager_8h_html"><div class="ttname"><a href="byte__manager_8h.html">byte_manager.h</a></div></div>
-<div class="ttc" id="manfbox__manager_8h_html_a6574f4f07559e5bffc3fafc4a8689249"><div class="ttname"><a href="manfbox__manager_8h.html#a6574f4f07559e5bffc3fafc4a8689249">search_boxheader</a></div><div class="ttdeci">boxheader_param_t * search_boxheader(const char type[], manfbox_param_t *manf)</div><div class="ttdoc">search a boxheader by box type from manifest box </div><div class="ttdef"><b>Definition:</b> manfbox_manager.c:99</div></div>
+<div class="ttc" id="manfbox__manager_8h_html_a6574f4f07559e5bffc3fafc4a8689249"><div class="ttname"><a href="manfbox__manager_8h.html#a6574f4f07559e5bffc3fafc4a8689249">search_boxheader</a></div><div class="ttdeci">boxheader_param_t * search_boxheader(const char type[], manfbox_param_t *manf)</div><div class="ttdoc">search a boxheader by box type from manifest box </div><div class="ttdef"><b>Definition:</b> manfbox_manager.c:100</div></div>
 <div class="ttc" id="manfbox__manager_8h_html_a7c8a7b0c84e1ad9d858c16ed4888b7f1"><div class="ttname"><a href="manfbox__manager_8h.html#a7c8a7b0c84e1ad9d858c16ed4888b7f1">gene_manfbox</a></div><div class="ttdeci">manfbox_param_t * gene_manfbox(box_param_t *box)</div><div class="ttdoc">generate manifest box </div><div class="ttdef"><b>Definition:</b> manfbox_manager.c:45</div></div>
-<div class="ttc" id="manfbox__manager_8h_html_a79f039f4170fa5673abd188e4649b717"><div class="ttname"><a href="manfbox__manager_8h.html#a79f039f4170fa5673abd188e4649b717">delete_manfbox</a></div><div class="ttdeci">void delete_manfbox(manfbox_param_t **manf)</div><div class="ttdoc">delete manifest box </div><div class="ttdef"><b>Definition:</b> manfbox_manager.c:72</div></div>
+<div class="ttc" id="manfbox__manager_8h_html_a79f039f4170fa5673abd188e4649b717"><div class="ttname"><a href="manfbox__manager_8h.html#a79f039f4170fa5673abd188e4649b717">delete_manfbox</a></div><div class="ttdeci">void delete_manfbox(manfbox_param_t **manf)</div><div class="ttdoc">delete manifest box </div><div class="ttdef"><b>Definition:</b> manfbox_manager.c:73</div></div>
 <div class="ttc" id="box__manager_8h_html"><div class="ttname"><a href="box__manager_8h.html">box_manager.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

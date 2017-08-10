@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -59,7 +59,9 @@
 
 <p>Implementation of an MQ-Coder (MQC)  
 <a href="#details">More...</a></p>
-
+<div class="textblock"><code>#include &quot;<a class="el" href="opj__common_8h_source.html">opj_common.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="mqc__inl_8h_source.html">mqc_inl.h</a>&quot;</code><br />
+</div>
 <p><a href="mqc_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
@@ -87,15 +89,9 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="member-group"></a>
 Exported functions</h2></td></tr>
-<tr class="memitem:ga7315986b3a52b2e2287a49ab1780ae4f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga7315986b3a52b2e2287a49ab1780ae4f">opj_mqc_setcurctx</a>(mqc,  ctxno)&#160;&#160;&#160;(mqc)-&gt;curctx = &amp;(mqc)-&gt;ctxs[(<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>)(ctxno)]</td></tr>
-<tr class="memdesc:ga7315986b3a52b2e2287a49ab1780ae4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the current context used for coding/decoding.  <a href="group___m_q_c.html#ga7315986b3a52b2e2287a49ab1780ae4f">More...</a><br /></td></tr>
-<tr class="separator:ga7315986b3a52b2e2287a49ab1780ae4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3acb7e6dd9ce8878a97e1f023510be28"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga3acb7e6dd9ce8878a97e1f023510be28">opj_mqc_create</a> (void)</td></tr>
-<tr class="memdesc:ga3acb7e6dd9ce8878a97e1f023510be28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new MQC handle.  <a href="group___m_q_c.html#ga3acb7e6dd9ce8878a97e1f023510be28">More...</a><br /></td></tr>
-<tr class="separator:ga3acb7e6dd9ce8878a97e1f023510be28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga136e9f02b4e53ede318511f7d42bf190"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga136e9f02b4e53ede318511f7d42bf190">opj_mqc_destroy</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
-<tr class="memdesc:ga136e9f02b4e53ede318511f7d42bf190"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a previously created MQC handle.  <a href="group___m_q_c.html#ga136e9f02b4e53ede318511f7d42bf190">More...</a><br /></td></tr>
-<tr class="separator:ga136e9f02b4e53ede318511f7d42bf190"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6c870476b8f893310c80b6bb3c09afe2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga6c870476b8f893310c80b6bb3c09afe2">opj_mqc_setcurctx</a>(mqc,  ctxno)  &#160;&#160;&#160;(mqc)-&gt;curctx = &amp;(mqc)-&gt;ctxs[(<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>)(ctxno)]</td></tr>
+<tr class="memdesc:ga6c870476b8f893310c80b6bb3c09afe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the current context used for coding/decoding.  <a href="group___m_q_c.html#ga6c870476b8f893310c80b6bb3c09afe2">More...</a><br /></td></tr>
+<tr class="separator:ga6c870476b8f893310c80b6bb3c09afe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac9c6d11f48074e5064584d1e5d0dcd0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#gac9c6d11f48074e5064584d1e5d0dcd0f">opj_mqc_numbytes</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
 <tr class="memdesc:gac9c6d11f48074e5064584d1e5d0dcd0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of bytes written/read since initialisation.  <a href="group___m_q_c.html#gac9c6d11f48074e5064584d1e5d0dcd0f">More...</a><br /></td></tr>
 <tr class="separator:gac9c6d11f48074e5064584d1e5d0dcd0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -117,18 +113,18 @@ Exported functions</h2></td></tr>
 <tr class="memitem:gaba5f2d1b605d35e514aeb7a2827996b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#gaba5f2d1b605d35e514aeb7a2827996b9">opj_mqc_bypass_init_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
 <tr class="memdesc:gaba5f2d1b605d35e514aeb7a2827996b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">BYPASS mode switch, initialization operation.  <a href="group___m_q_c.html#gaba5f2d1b605d35e514aeb7a2827996b9">More...</a><br /></td></tr>
 <tr class="separator:gaba5f2d1b605d35e514aeb7a2827996b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4a259d02eadde28d92edac74dbc40323"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga4a259d02eadde28d92edac74dbc40323">opj_mqc_bypass_get_extra_bytes</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc, <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> erterm)</td></tr>
+<tr class="memdesc:ga4a259d02eadde28d92edac74dbc40323"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return number of extra bytes to add to <a class="el" href="group___m_q_c.html#gac9c6d11f48074e5064584d1e5d0dcd0f" title="Return the number of bytes written/read since initialisation. ">opj_mqc_numbytes()</a> for the² size of a non-terminating BYPASS pass.  <a href="group___m_q_c.html#ga4a259d02eadde28d92edac74dbc40323">More...</a><br /></td></tr>
+<tr class="separator:ga4a259d02eadde28d92edac74dbc40323"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad886df66150746e1a41d3e20037683fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#gad886df66150746e1a41d3e20037683fb">opj_mqc_bypass_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> d)</td></tr>
 <tr class="memdesc:gad886df66150746e1a41d3e20037683fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">BYPASS mode switch, coding operation.  <a href="group___m_q_c.html#gad886df66150746e1a41d3e20037683fb">More...</a><br /></td></tr>
 <tr class="separator:gad886df66150746e1a41d3e20037683fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga06f573a8ddf3566cd663a3fc65a69bc6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga06f573a8ddf3566cd663a3fc65a69bc6">opj_mqc_bypass_flush_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
-<tr class="memdesc:ga06f573a8ddf3566cd663a3fc65a69bc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">BYPASS mode switch, flush operation.  <a href="group___m_q_c.html#ga06f573a8ddf3566cd663a3fc65a69bc6">More...</a><br /></td></tr>
-<tr class="separator:ga06f573a8ddf3566cd663a3fc65a69bc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9eb31de8e3ede6acad7469f9ea0b0d1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga9eb31de8e3ede6acad7469f9ea0b0d1b">opj_mqc_bypass_flush_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc, <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> erterm)</td></tr>
+<tr class="memdesc:ga9eb31de8e3ede6acad7469f9ea0b0d1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">BYPASS mode switch, flush operation.  <a href="group___m_q_c.html#ga9eb31de8e3ede6acad7469f9ea0b0d1b">More...</a><br /></td></tr>
+<tr class="separator:ga9eb31de8e3ede6acad7469f9ea0b0d1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga858901a7f568a2845885e537aaeab825"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga858901a7f568a2845885e537aaeab825">opj_mqc_reset_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
 <tr class="memdesc:ga858901a7f568a2845885e537aaeab825"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESET mode switch.  <a href="group___m_q_c.html#ga858901a7f568a2845885e537aaeab825">More...</a><br /></td></tr>
 <tr class="separator:ga858901a7f568a2845885e537aaeab825"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae7894baeeb49e44f6135cd77e076dd16"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#gae7894baeeb49e44f6135cd77e076dd16">opj_mqc_restart_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
-<tr class="memdesc:gae7894baeeb49e44f6135cd77e076dd16"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESTART mode switch (TERMALL)  <a href="group___m_q_c.html#gae7894baeeb49e44f6135cd77e076dd16">More...</a><br /></td></tr>
-<tr class="separator:gae7894baeeb49e44f6135cd77e076dd16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga178f2a2119c59ae30169835162bd73e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga178f2a2119c59ae30169835162bd73e7">opj_mqc_restart_init_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
 <tr class="memdesc:ga178f2a2119c59ae30169835162bd73e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESTART mode switch (TERMALL) reinitialisation.  <a href="group___m_q_c.html#ga178f2a2119c59ae30169835162bd73e7">More...</a><br /></td></tr>
 <tr class="separator:ga178f2a2119c59ae30169835162bd73e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,12 +134,15 @@ Exported functions</h2></td></tr>
 <tr class="memitem:gaf6195cf3fe837a5acbaa721c3e453465"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#gaf6195cf3fe837a5acbaa721c3e453465">opj_mqc_segmark_enc</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
 <tr class="memdesc:gaf6195cf3fe837a5acbaa721c3e453465"><td class="mdescLeft">&#160;</td><td class="mdescRight">SEGMARK mode switch (SEGSYM)  <a href="group___m_q_c.html#gaf6195cf3fe837a5acbaa721c3e453465">More...</a><br /></td></tr>
 <tr class="separator:gaf6195cf3fe837a5acbaa721c3e453465"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga379332e36caa09ac0741988b65e64625"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga379332e36caa09ac0741988b65e64625">opj_mqc_init_dec</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> *bp, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> len)</td></tr>
-<tr class="memdesc:ga379332e36caa09ac0741988b65e64625"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the decoder.  <a href="group___m_q_c.html#ga379332e36caa09ac0741988b65e64625">More...</a><br /></td></tr>
-<tr class="separator:ga379332e36caa09ac0741988b65e64625"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3eb5cf91b899a932c19f3a24f04a3c0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga3eb5cf91b899a932c19f3a24f04a3c0f">opj_mqc_decode</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *const mqc)</td></tr>
-<tr class="memdesc:ga3eb5cf91b899a932c19f3a24f04a3c0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode a symbol.  <a href="group___m_q_c.html#ga3eb5cf91b899a932c19f3a24f04a3c0f">More...</a><br /></td></tr>
-<tr class="separator:ga3eb5cf91b899a932c19f3a24f04a3c0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa0e4b75040d645307e25dd53528e8512"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#gaa0e4b75040d645307e25dd53528e8512">opj_mqc_init_dec</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> *bp, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> len, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> extra_writable_bytes)</td></tr>
+<tr class="memdesc:gaa0e4b75040d645307e25dd53528e8512"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the decoder for MQ decoding.  <a href="group___m_q_c.html#gaa0e4b75040d645307e25dd53528e8512">More...</a><br /></td></tr>
+<tr class="separator:gaa0e4b75040d645307e25dd53528e8512"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga683734858d69085fd07394d1d3fae633"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga683734858d69085fd07394d1d3fae633">opj_mqc_raw_init_dec</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc, <a class="el" href="openjpeg_8h.html#a22de44e15bddae7edfacf4e9ac9bb199">OPJ_BYTE</a> *bp, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> len, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> extra_writable_bytes)</td></tr>
+<tr class="memdesc:ga683734858d69085fd07394d1d3fae633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the decoder for RAW decoding.  <a href="group___m_q_c.html#ga683734858d69085fd07394d1d3fae633">More...</a><br /></td></tr>
+<tr class="separator:ga683734858d69085fd07394d1d3fae633"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5bdec54dabf502c578e46d6b34ce8b93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_q_c.html#ga5bdec54dabf502c578e46d6b34ce8b93">opq_mqc_finish_dec</a> (<a class="el" href="group___m_q_c.html#ga49560555308b38694eddc876275ed4bc">opj_mqc_t</a> *mqc)</td></tr>
+<tr class="memdesc:ga5bdec54dabf502c578e46d6b34ce8b93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate RAW/MQC decoding.  <a href="group___m_q_c.html#ga5bdec54dabf502c578e46d6b34ce8b93">More...</a><br /></td></tr>
+<tr class="separator:ga5bdec54dabf502c578e46d6b34ce8b93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of an MQ-Coder (MQC) </p>

@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -82,28 +82,29 @@
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * POSSIBILITY OF SUCH DAMAGE.</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef         BOXHEADER_MANAGER_H_</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"># define        BOXHEADER_MANAGER_H_</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef     BOXHEADER_MANAGER_H_</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"># define    BOXHEADER_MANAGER_H_</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="openjpeg_8h.html">openjpeg.h</a>&quot;</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="byte__manager_8h.html">byte_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="box__manager_8h.html">box_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structboxheader__param.html">   39</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structboxheader__param.html">boxheader_param</a>{</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structboxheader__param.html#aabf782e3d43e158e4477308c11670ac4">   40</a></span>&#160;  <a class="code" href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a>  <a class="code" href="structboxheader__param.html#aabf782e3d43e158e4477308c11670ac4">headlen</a>;              </div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structboxheader__param.html#a2a90e59fdad1a3ff2c0f40b4dfff7ed1">   41</a></span>&#160;  <a class="code" href="byte__manager_8h.html#a89544bfd8f79b949793e43e323e1ace1">Byte8_t</a> <a class="code" href="structboxheader__param.html#a2a90e59fdad1a3ff2c0f40b4dfff7ed1">length</a>;               </div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structboxheader__param.html#ad64aefab7bef517b0bfe152352f89d99">   42</a></span>&#160;  <span class="keywordtype">char</span>    <a class="code" href="structboxheader__param.html#ad64aefab7bef517b0bfe152352f89d99">type</a>[4];              </div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structboxheader__param.html#a24a521b8c32b65e2354e67191c14f232">   43</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structboxheader__param.html">boxheader_param</a> *<a class="code" href="structboxheader__param.html#a24a521b8c32b65e2354e67191c14f232">next</a>; </div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structboxheader__param.html">   39</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structboxheader__param.html">boxheader_param</a> {</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structboxheader__param.html#aabf782e3d43e158e4477308c11670ac4">   40</a></span>&#160;    <a class="code" href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a>  <a class="code" href="structboxheader__param.html#aabf782e3d43e158e4477308c11670ac4">headlen</a>;              </div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structboxheader__param.html#a2a90e59fdad1a3ff2c0f40b4dfff7ed1">   41</a></span>&#160;    <a class="code" href="byte__manager_8h.html#a89544bfd8f79b949793e43e323e1ace1">Byte8_t</a> <a class="code" href="structboxheader__param.html#a2a90e59fdad1a3ff2c0f40b4dfff7ed1">length</a>;               </div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structboxheader__param.html#ad64aefab7bef517b0bfe152352f89d99">   42</a></span>&#160;    <span class="keywordtype">char</span>    <a class="code" href="structboxheader__param.html#ad64aefab7bef517b0bfe152352f89d99">type</a>[4];              </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structboxheader__param.html#a24a521b8c32b65e2354e67191c14f232">   43</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structboxheader__param.html">boxheader_param</a> *<a class="code" href="structboxheader__param.html#a24a521b8c32b65e2354e67191c14f232">next</a>; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;} <a class="code" href="boxheader__manager_8h.html#a52219183b1007413e580aa9ba6504669">boxheader_param_t</a>;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<a class="code" href="structboxheader__param.html">boxheader_param_t</a> * <a class="code" href="boxheader__manager_8h.html#ad67b5454e29ddcd711d07eaddbe29f67">gene_boxheader</a>( <span class="keywordtype">int</span> fd, <a class="code" href="openjpeg_8h.html#a64948c8a524dee101c5a4d7293e6158c">OPJ_OFF_T</a> offset);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<a class="code" href="structboxheader__param.html">boxheader_param_t</a> * <a class="code" href="boxheader__manager_8h.html#ad67b5454e29ddcd711d07eaddbe29f67">gene_boxheader</a>(<span class="keywordtype">int</span> fd, <a class="code" href="openjpeg_8h.html#a64948c8a524dee101c5a4d7293e6158c">OPJ_OFF_T</a> offset);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<a class="code" href="structboxheader__param.html">boxheader_param_t</a> * <a class="code" href="boxheader__manager_8h.html#acef0f9dedbcfe391a86a87b5693fda5a">gene_childboxheader</a>( <a class="code" href="structbox__param.html">box_param_t</a> *superbox, <a class="code" href="openjpeg_8h.html#a64948c8a524dee101c5a4d7293e6158c">OPJ_OFF_T</a> offset);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span> <a class="code" href="boxheader__manager_8h.html#a366e577597bfcd3e2d8c6db97f802a26">print_boxheader</a>( <a class="code" href="structboxheader__param.html">boxheader_param_t</a> *boxheader);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif      </span><span class="comment">/* !BOXHEADER_MANAGER_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<a class="code" href="structboxheader__param.html">boxheader_param_t</a> * <a class="code" href="boxheader__manager_8h.html#acef0f9dedbcfe391a86a87b5693fda5a">gene_childboxheader</a>(<a class="code" href="structbox__param.html">box_param_t</a> *superbox,</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                                        <a class="code" href="openjpeg_8h.html#a64948c8a524dee101c5a4d7293e6158c">OPJ_OFF_T</a> offset);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span> <a class="code" href="boxheader__manager_8h.html#a366e577597bfcd3e2d8c6db97f802a26">print_boxheader</a>(<a class="code" href="structboxheader__param.html">boxheader_param_t</a> *boxheader);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">#endif      </span><span class="comment">/* !BOXHEADER_MANAGER_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="byte__manager_8h_html_ade896f5d51f03e046a004d006b53a8b0"><div class="ttname"><a href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a></div><div class="ttdeci">uint8_t Byte_t</div><div class="ttdef"><b>Definition:</b> byte_manager.h:37</div></div>
 <div class="ttc" id="openjpeg_8h_html_a64948c8a524dee101c5a4d7293e6158c"><div class="ttname"><a href="openjpeg_8h.html#a64948c8a524dee101c5a4d7293e6158c">OPJ_OFF_T</a></div><div class="ttdeci">int64_t OPJ_OFF_T</div><div class="ttdef"><b>Definition:</b> openjpeg.h:130</div></div>
 <div class="ttc" id="structboxheader__param_html_a24a521b8c32b65e2354e67191c14f232"><div class="ttname"><a href="structboxheader__param.html#a24a521b8c32b65e2354e67191c14f232">boxheader_param::next</a></div><div class="ttdeci">struct boxheader_param * next</div><div class="ttdoc">pointer to the next header box </div><div class="ttdef"><b>Definition:</b> boxheader_manager.h:43</div></div>

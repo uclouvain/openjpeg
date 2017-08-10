@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.1.2</span>
+   &#160;<span id="projectnumber">2.2.0</span>
    </div>
   </td>
  </tr>
@@ -82,24 +82,25 @@
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * POSSIBILITY OF SUCH DAMAGE.</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef         IHDRBOX_MANAGER_H_</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"># define        IHDRBOX_MANAGER_H_</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef     IHDRBOX_MANAGER_H_</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"># define    IHDRBOX_MANAGER_H_</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="byte__manager_8h.html">byte_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="box__manager_8h.html">box_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="metadata__manager_8h.html">metadata_manager.h</a>&quot;</span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structihdrbox__param.html">   39</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structihdrbox__param.html">ihdrbox_param</a>{</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#a2b025acc6283288e882fed39c20a929e">   40</a></span>&#160;  <a class="code" href="byte__manager_8h.html#aad2d957f29839c12c87e4dd945807d36">Byte4_t</a> <a class="code" href="structihdrbox__param.html#a2b025acc6283288e882fed39c20a929e">height</a>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#ad3760ecc26048cde5501e8eb646539fd">   41</a></span>&#160;  <a class="code" href="byte__manager_8h.html#aad2d957f29839c12c87e4dd945807d36">Byte4_t</a> <a class="code" href="structihdrbox__param.html#ad3760ecc26048cde5501e8eb646539fd">width</a>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#aa604b90fd6ffc3d82336cf80436d8b7d">   42</a></span>&#160;  <a class="code" href="byte__manager_8h.html#a633aa9ecff048e1b8bfbdac4c4dfdb33">Byte2_t</a> <a class="code" href="structihdrbox__param.html#aa604b90fd6ffc3d82336cf80436d8b7d">nc</a>;       </div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#a7e84d5dedd304c262aa564009253fb09">   43</a></span>&#160;  <a class="code" href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a>  <a class="code" href="structihdrbox__param.html#a7e84d5dedd304c262aa564009253fb09">bpc</a>;      </div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structihdrbox__param.html">   39</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structihdrbox__param.html">ihdrbox_param</a> {</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#a2b025acc6283288e882fed39c20a929e">   40</a></span>&#160;    <a class="code" href="byte__manager_8h.html#aad2d957f29839c12c87e4dd945807d36">Byte4_t</a> <a class="code" href="structihdrbox__param.html#a2b025acc6283288e882fed39c20a929e">height</a>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#ad3760ecc26048cde5501e8eb646539fd">   41</a></span>&#160;    <a class="code" href="byte__manager_8h.html#aad2d957f29839c12c87e4dd945807d36">Byte4_t</a> <a class="code" href="structihdrbox__param.html#ad3760ecc26048cde5501e8eb646539fd">width</a>;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#aa604b90fd6ffc3d82336cf80436d8b7d">   42</a></span>&#160;    <a class="code" href="byte__manager_8h.html#a633aa9ecff048e1b8bfbdac4c4dfdb33">Byte2_t</a> <a class="code" href="structihdrbox__param.html#aa604b90fd6ffc3d82336cf80436d8b7d">nc</a>;       </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structihdrbox__param.html#a7e84d5dedd304c262aa564009253fb09">   43</a></span>&#160;    <a class="code" href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a>  <a class="code" href="structihdrbox__param.html#a7e84d5dedd304c262aa564009253fb09">bpc</a>;      </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;} <a class="code" href="ihdrbox__manager_8h.html#ae88b004f80ae7e57d50cdbee20e25199">ihdrbox_param_t</a>;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<a class="code" href="structihdrbox__param.html">ihdrbox_param_t</a> * <a class="code" href="ihdrbox__manager_8h.html#acdf07688caab4b647bb302cfeed5a718">gene_ihdrbox</a>( <a class="code" href="structmetadatalist__param.html">metadatalist_param_t</a> *metadatalist, <a class="code" href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a> *jpipstream);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<a class="code" href="structihdrbox__param.html">ihdrbox_param_t</a> * <a class="code" href="ihdrbox__manager_8h.html#acdf07688caab4b647bb302cfeed5a718">gene_ihdrbox</a>(<a class="code" href="structmetadatalist__param.html">metadatalist_param_t</a> *metadatalist,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                               <a class="code" href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a> *jpipstream);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#endif      </span><span class="comment">/* !IHDRBOX_MANAGER_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#endif      </span><span class="comment">/* !IHDRBOX_MANAGER_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="byte__manager_8h_html_ade896f5d51f03e046a004d006b53a8b0"><div class="ttname"><a href="byte__manager_8h.html#ade896f5d51f03e046a004d006b53a8b0">Byte_t</a></div><div class="ttdeci">uint8_t Byte_t</div><div class="ttdef"><b>Definition:</b> byte_manager.h:37</div></div>
 <div class="ttc" id="metadata__manager_8h_html"><div class="ttname"><a href="metadata__manager_8h.html">metadata_manager.h</a></div></div>
 <div class="ttc" id="structihdrbox__param_html_a2b025acc6283288e882fed39c20a929e"><div class="ttname"><a href="structihdrbox__param.html#a2b025acc6283288e882fed39c20a929e">ihdrbox_param::height</a></div><div class="ttdeci">Byte4_t height</div><div class="ttdef"><b>Definition:</b> ihdrbox_manager.h:40</div></div>
@@ -112,7 +113,7 @@
 <div class="ttc" id="structihdrbox__param_html_aa604b90fd6ffc3d82336cf80436d8b7d"><div class="ttname"><a href="structihdrbox__param.html#aa604b90fd6ffc3d82336cf80436d8b7d">ihdrbox_param::nc</a></div><div class="ttdeci">Byte2_t nc</div><div class="ttdoc">number of components </div><div class="ttdef"><b>Definition:</b> ihdrbox_manager.h:42</div></div>
 <div class="ttc" id="ihdrbox__manager_8h_html_ae88b004f80ae7e57d50cdbee20e25199"><div class="ttname"><a href="ihdrbox__manager_8h.html#ae88b004f80ae7e57d50cdbee20e25199">ihdrbox_param_t</a></div><div class="ttdeci">struct ihdrbox_param ihdrbox_param_t</div><div class="ttdoc">I.5.3.1 Image Header box. </div></div>
 <div class="ttc" id="box__manager_8h_html"><div class="ttname"><a href="box__manager_8h.html">box_manager.h</a></div></div>
-<div class="ttc" id="structmetadatalist__param_html"><div class="ttname"><a href="structmetadatalist__param.html">metadatalist_param</a></div><div class="ttdoc">metadata-bin list parameters </div><div class="ttdef"><b>Definition:</b> metadata_manager.h:52</div></div>
+<div class="ttc" id="structmetadatalist__param_html"><div class="ttname"><a href="structmetadatalist__param.html">metadatalist_param</a></div><div class="ttdoc">metadata-bin list parameters </div><div class="ttdef"><b>Definition:</b> metadata_manager.h:54</div></div>
 <div class="ttc" id="byte__manager_8h_html_a633aa9ecff048e1b8bfbdac4c4dfdb33"><div class="ttname"><a href="byte__manager_8h.html#a633aa9ecff048e1b8bfbdac4c4dfdb33">Byte2_t</a></div><div class="ttdeci">uint16_t Byte2_t</div><div class="ttdef"><b>Definition:</b> byte_manager.h:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
