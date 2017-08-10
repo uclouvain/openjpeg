@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="OpenJPEG, 2.2.0, changes, changelog" />
+    <meta name="description" content="Log of changes in the package" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/changelog.css" />
+    
+    
+    <title>
+        OpenJPEG 2.2.0: changelog
+    </title>
+    
+    </head>
+
+<body>
+<table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
+<br/>
+<br/>
+<h1>Changelog for <span class='version'>2.2.0</span> version</h1><br/><br/>
+<div class='changelog'>
+<pre class='wrap'># Changelog
+
+## [v2.2.0]("https://github.com/uclouvain/openjpeg/releases/v2.2.0" ) (2017-08-10)
+[Full Changelog](https://github.com/uclouvain/openjpeg/compare/v2.1.2...v2.2.0)
+
+**Implemented enhancements:**
+
+- Memory consumption reduction at decoding side [\#968](https://github.com/uclouvain/openjpeg/pull/968) ([rouault](https://github.com/rouault))
+- T1 &amp; DWT multithreading decoding optimizations [\#786](https://github.com/uclouvain/openjpeg/pull/786) ([rouault](https://github.com/rouault))
+- Tier1 decoder speed optimizations [\#783](https://github.com/uclouvain/openjpeg/pull/783) ([rouault](https://github.com/rouault))
+- Inverse DWT 5x3: lift implementation / SSE accelerated version [\#953](https://github.com/uclouvain/openjpeg/issues/953)
+- install static libraries [\#969](https://github.com/uclouvain/openjpeg/pull/969) ([jeroen](https://github.com/jeroen))
+- IDWT 5x3 single-pass lifting and SSE2/AVX2 implementation [\#957](https://github.com/uclouvain/openjpeg/pull/957) ([rouault](https://github.com/rouault))
+- build both shared and static library [\#954](https://github.com/uclouvain/openjpeg/pull/954) ([jeroen](https://github.com/jeroen))
+- T1 flag optimizations \(\#172\) [\#945](https://github.com/uclouvain/openjpeg/pull/945) ([rouault](https://github.com/rouault))
+- CMake: add stronger warnings for openjp2 lib/bin by default, and error out on declaration-after-statement [\#936](https://github.com/uclouvain/openjpeg/pull/936) ([rouault](https://github.com/rouault))
+- Quiet mode for opj\_decompress via -quiet long parameter. [\#928](https://github.com/uclouvain/openjpeg/pull/928) ([RussellMcOrmond](https://github.com/RussellMcOrmond))
+- Implement predictive termination check [\#800](https://github.com/uclouvain/openjpeg/pull/800) ([rouault](https://github.com/rouault))
+
+**Fixed bugs:**
+
+- Several issues spotted by Google OSS Fuzz - [see here](https://github.com/search?l=&amp;q=OSS+Fuzz+author-date%3A2017-07-04..2017-08-01+repo%3Auclouvain%2Fopenjpeg&amp;ref=advsearch&amp;type=Commits&amp;utf8=%E2%9C%93)
+- Missing fclose [\#976](https://github.com/uclouvain/openjpeg/issues/976)
+- Heap buffer overflow read in openjpeg imagetopnm [\#970](https://github.com/uclouvain/openjpeg/issues/970)
+- opj\_decompress opj\_j2k\_update\_image\_data\(\) Segment falut [\#948](https://github.com/uclouvain/openjpeg/issues/948)
+- Generic Crash in 1.5.0 [\#941](https://github.com/uclouvain/openjpeg/issues/941)
+- Segmentation Faults [\#940](https://github.com/uclouvain/openjpeg/issues/940)
+- Assertions thrown [\#939](https://github.com/uclouvain/openjpeg/issues/939)
+- Floating Point Errors [\#938](https://github.com/uclouvain/openjpeg/issues/938)
+- Division by zero crash [\#937](https://github.com/uclouvain/openjpeg/issues/937)
+- malformed jp2 can cause heap-buffer-overflow  [\#909](https://github.com/uclouvain/openjpeg/issues/909)
+- NULL dereference can cause by malformed file [\#908](https://github.com/uclouvain/openjpeg/issues/908)
+- Out of bound read in opj\_j2k\_add\_mct [\#907](https://github.com/uclouvain/openjpeg/issues/907)
+- Check bpno\_plus\_one in opj\_t1\_decode\_cblk [\#903](https://github.com/uclouvain/openjpeg/issues/903)
+- Undefined-shift in opj\_j2k\_read\_siz [\#902](https://github.com/uclouvain/openjpeg/issues/902)
+- opj\_compress v2.1.2 can create images opj\_decompress cannot read [\#891](https://github.com/uclouvain/openjpeg/issues/891)
+- Improper usage of opj\_int\_ceildiv can cause overflows [\#889](https://github.com/uclouvain/openjpeg/issues/889)
+- Undefined shift in opj\_get\_all\_encoding\_parameters [\#885](https://github.com/uclouvain/openjpeg/issues/885)
+- Denial of service \(crash\) due to use-after-free when decoding an illegal JPEG2000 image file v2.1.2 \(2017-04 [\#880](https://github.com/uclouvain/openjpeg/issues/880)
+- Denial of service \(crash\) when decoding an illegal JPEG2000 image file v2.1.2 \(2017-03\) [\#879](https://github.com/uclouvain/openjpeg/issues/879)
+- bug png 2 j2k [\#868](https://github.com/uclouvain/openjpeg/issues/868)
+- Inconsistent compression using cinema settings on folder of non-compliant image [\#864](https://github.com/uclouvain/openjpeg/issues/864)
+- Openjpeg-2.1.2 Heap Buffer Overflow Vulnerability due to Insufficient check [\#862](https://github.com/uclouvain/openjpeg/issues/862)
+- Heap Buffer Overflow in function pnmtoimage of convert.c [\#861](https://github.com/uclouvain/openjpeg/issues/861)
+- CVE-2016-9112 FPE\(Floating Point Exception\) in lib/openjp2/pi.c:523 [\#855](https://github.com/uclouvain/openjpeg/issues/855)
+- CVE-2016-5139, CVE-2016-5152, CVE-2016-5158, CVE-2016-5159 [\#854](https://github.com/uclouvain/openjpeg/issues/854)
+- Undefined Reference error [\#853](https://github.com/uclouvain/openjpeg/issues/853)
+- opj\_compress with lossy compression results in strange pixel values [\#851](https://github.com/uclouvain/openjpeg/issues/851)
+- CVE-2016-1626 and CVE-2016-1628 [\#850](https://github.com/uclouvain/openjpeg/issues/850)
+- Out-of-Bounds Write in opj\_mqc\_byteout of mqc.c [\#835](https://github.com/uclouvain/openjpeg/issues/835)
+- WARNING in tgt\_create tree-\&gt;numnodes == 0, no tree created. [\#794](https://github.com/uclouvain/openjpeg/issues/794)
+- Potential overflow when precision is larger than 32 [\#781](https://github.com/uclouvain/openjpeg/issues/781)
+- division-by-zero in function opj\_pi\_next\_rpcl of pi.c \(line 366\) [\#780](https://github.com/uclouvain/openjpeg/issues/780)
+- division-by-zero in function opj\_pi\_next\_rpcl of pi.c \(line 363\) [\#779](https://github.com/uclouvain/openjpeg/issues/779)
+- division-by-zero in function opj\_pi\_next\_pcrl of pi.c \(line 447\) [\#778](https://github.com/uclouvain/openjpeg/issues/778)
+- division-by-zero in function opj\_pi\_next\_pcrl of pi.c \(line 444\) [\#777](https://github.com/uclouvain/openjpeg/issues/777)
+- Encoding the following file with 32x32 tiling produces jp2 image with artifact [\#737](https://github.com/uclouvain/openjpeg/issues/737)
+- division-by-zero \(SIGFPE\) error in opj\_pi\_next\_cprl function \(line 526 of pi.c\) [\#732](https://github.com/uclouvain/openjpeg/issues/732)
+- division-by-zero \(SIGFPE\) error in opj\_pi\_next\_cprl function \(line 523 of pi.c\) [\#731](https://github.com/uclouvain/openjpeg/issues/731)
+- OpenJpeg 2.1 and 1.4 fails to decompress this file correctly [\#721](https://github.com/uclouvain/openjpeg/issues/721)
+- MQ Encode :uninitialized memory access when first pass does not output any bytes [\#709](https://github.com/uclouvain/openjpeg/issues/709)
+- Out-of-bounds read in opj\_j2k\_update\_image\_data and opj\_tgt\_reset function [\#704](https://github.com/uclouvain/openjpeg/issues/704)
+- Remove opj\_aligned\_malloc / opj\_aligned\_realloc / opj\_aligned\_free? [\#689](https://github.com/uclouvain/openjpeg/issues/689)
+- There is an issue with rendering some type of jpeg file. Please ref the link. [\#672](https://github.com/uclouvain/openjpeg/issues/672)
+- Null Dereference in tcd\_malloc\_decode\_tile [\#657](https://github.com/uclouvain/openjpeg/issues/657)
+- ETS-C1P0-p0\_12.j2k-compare2ref &amp; NR-C1P0-p0\_12.j2k-compare2base failing under windows [\#655](https://github.com/uclouvain/openjpeg/issues/655)
+- Memory leak [\#631](https://github.com/uclouvain/openjpeg/issues/631)
+- Test 481 reports error in valgrind memcheck [\#612](https://github.com/uclouvain/openjpeg/issues/612)
+- reserved identifier violation [\#587](https://github.com/uclouvain/openjpeg/issues/587)
+- Buffer overflow when compressing some 16 bits images of the test suite [\#539](https://github.com/uclouvain/openjpeg/issues/539)
+- Heap-buffer-overflow in opj\_dwt\_decode\_1 [\#480](https://github.com/uclouvain/openjpeg/issues/480)
+- Automated fuzz testing [\#468](https://github.com/uclouvain/openjpeg/issues/468)
+- Expected to find EPH marker  [\#425](https://github.com/uclouvain/openjpeg/issues/425)
+- read: segment too long \(6182\) with max \(35872\) for codeblock 0 \(p=19, b=2, r=5, c=1\) [\#284](https://github.com/uclouvain/openjpeg/issues/284)
+- building 64bit version has lots of warnings [\#244](https://github.com/uclouvain/openjpeg/issues/244)
+- Wrong encoding of small tiles with high level number [\#239](https://github.com/uclouvain/openjpeg/issues/239)
+- Errors raised in pi.c by VS11 analyzer  [\#190](https://github.com/uclouvain/openjpeg/issues/190)
+- Undocumented optimization found in v2 branch of openjpeg [\#183](https://github.com/uclouvain/openjpeg/issues/183)
+- T1 optimisations jpeg2000 [\#172](https://github.com/uclouvain/openjpeg/issues/172)
+- Remove OPJ\_NOSANITIZE in opj\_bio\_read\(\) and opj\_bio\_write\(\) \(\#761\) [\#955](https://github.com/uclouvain/openjpeg/pull/955) ([rouault](https://github.com/rouault))
+- Fix bypass pterm termall and lossless decomposition issue \(\#891, \#892\) [\#949](https://github.com/uclouvain/openjpeg/pull/949) ([rouault](https://github.com/rouault))
+- Escape quotes to ensure README renders on GitHub correctly [\#914](https://github.com/uclouvain/openjpeg/pull/914) ([alexwlchan](https://github.com/alexwlchan))
+- Remove spurious .R macros from manpages [\#899](https://github.com/uclouvain/openjpeg/pull/899) ([jwilk](https://github.com/jwilk))
+- Remove warnings related to empty tag-trees. [\#893](https://github.com/uclouvain/openjpeg/pull/893) ([rouault](https://github.com/rouault))
+
+**Maintenance-related tasks:**
+
+- Submit OpenJPEG to oss-fuzz [\#965](https://github.com/uclouvain/openjpeg/issues/965)
+- Updates for Doxygen to suppress warnings [\#849](https://github.com/uclouvain/openjpeg/issues/849)
+- Remove useless knownfailures \(since LAZY encoding is fixed\) [\#964](https://github.com/uclouvain/openjpeg/pull/964) ([rouault](https://github.com/rouault))
+- Enable AVX2 at runtime on Travis-CI and AppVeyor [\#963](https://github.com/uclouvain/openjpeg/pull/963) ([rouault](https://github.com/rouault))
+- Tests: test opj\_compress in VSC mode \(related to \#172\) [\#935](https://github.com/uclouvain/openjpeg/pull/935) ([rouault](https://github.com/rouault))
+- Reformat: apply reformattin on .h files \(\#128\) [\#926](https://github.com/uclouvain/openjpeg/pull/926) ([rouault](https://github.com/rouault))
+- Add mechanisms to reformat and check code style, and reformat whole codebase \(\#128\) [\#919](https://github.com/uclouvain/openjpeg/pull/919) ([rouault](https://github.com/rouault))
+- Add profiling of CPU and memory usage \(\#912\) [\#918](https://github.com/uclouvain/openjpeg/pull/918) ([rouault](https://github.com/rouault))
+- Add performance benchmarking scripts [\#917](https://github.com/uclouvain/openjpeg/pull/917) ([rouault](https://github.com/rouault))
+- Fix retrieval of jpylyzer in AppVeyor [\#915](https://github.com/uclouvain/openjpeg/pull/915) ([rouault](https://github.com/rouault))
+
+## [v2.1.2](https://github.com/uclouvain/openjpeg/releases/v2.1.2) (2016-09-28)
+[Full Changelog](https://github.com/uclouvain/openjpeg/compare/v2.1.1...v2.1.2)
+
+**Closed issues:**
+
+- null ptr dereference in convert.c:1331 [\#843](https://github.com/uclouvain/openjpeg/issues/843)
+- Out-of-Bounds Read in function bmp24toimage of convertbmp.c [\#833](https://github.com/uclouvain/openjpeg/issues/833)
+- Disable automatic compilation of t1\_generate\_luts in CMakeLists.txt [\#831](https://github.com/uclouvain/openjpeg/issues/831)
+- CVE-2016-7163 Integer overflow in opj\_pi\_create\_decode [\#826](https://github.com/uclouvain/openjpeg/issues/826)
+- Security Advisory for OpenJPEG [\#810](https://github.com/uclouvain/openjpeg/issues/810)
+- Add dashboard with static lib [\#804](https://github.com/uclouvain/openjpeg/issues/804)
+- hidden visibility for the static library / building with -DOPJ\_STATIC against shared lib [\#802](https://github.com/uclouvain/openjpeg/issues/802)
+- Optimization when building library from source [\#799](https://github.com/uclouvain/openjpeg/issues/799)
+- unsigned int16 on Solaris 11.2/sparc [\#796](https://github.com/uclouvain/openjpeg/issues/796)
+- appveyor [\#793](https://github.com/uclouvain/openjpeg/issues/793)
+- FFMpeg will not link to 2.1.1 release built as shared library [\#766](https://github.com/uclouvain/openjpeg/issues/766)
+- API change since v2: opj\_event\_mgr\_t not available [\#754](https://github.com/uclouvain/openjpeg/issues/754)
+- openjpeg.h needs dependencies [\#673](https://github.com/uclouvain/openjpeg/issues/673)
+- "master" does not build on ubuntu [\#658](https://github.com/uclouvain/openjpeg/issues/658)
+- Package 'openjp2', required by 'libopenjpip', not found [\#594](https://github.com/uclouvain/openjpeg/issues/594)
+
+**Merged pull requests:**
+
+- Fix PNM file reading [\#847](https://github.com/uclouvain/openjpeg/pull/847) ([mayeut](https://github.com/mayeut))
+- Fix some issues reported by Coverity Scan [\#846](https://github.com/uclouvain/openjpeg/pull/846) ([stweil](https://github.com/stweil))
+- Fix potential out-of-bounds read \(coverity\)  [\#844](https://github.com/uclouvain/openjpeg/pull/844) ([stweil](https://github.com/stweil))
+- Remove TODO for overflow check [\#842](https://github.com/uclouvain/openjpeg/pull/842) ([mayeut](https://github.com/mayeut))
+- Add overflow checks for opj\_aligned\_malloc [\#841](https://github.com/uclouvain/openjpeg/pull/841) ([mayeut](https://github.com/mayeut))
+- Flags in T1 shall be unsigned [\#840](https://github.com/uclouvain/openjpeg/pull/840) ([mayeut](https://github.com/mayeut))
+- Fix some warnings [\#838](https://github.com/uclouvain/openjpeg/pull/838) ([mayeut](https://github.com/mayeut))
+- Fix issue 833. [\#834](https://github.com/uclouvain/openjpeg/pull/834) ([trylab](https://github.com/trylab))
+- Add overflow checks for opj\_aligned\_malloc [\#832](https://github.com/uclouvain/openjpeg/pull/832) ([mayeut](https://github.com/mayeut))
+- Add test for issue 820 [\#829](https://github.com/uclouvain/openjpeg/pull/829) ([mayeut](https://github.com/mayeut))
+- Add test for issue 826 [\#827](https://github.com/uclouvain/openjpeg/pull/827) ([mayeut](https://github.com/mayeut))
+- Fix coverity 113065 \(CWE-484\) [\#824](https://github.com/uclouvain/openjpeg/pull/824) ([mayeut](https://github.com/mayeut))
+- Add sanity check for tile coordinates [\#823](https://github.com/uclouvain/openjpeg/pull/823) ([mayeut](https://github.com/mayeut))
+- Add test for PR 818 [\#822](https://github.com/uclouvain/openjpeg/pull/822) ([mayeut](https://github.com/mayeut))
+- Update to libpng 1.6.25 [\#821](https://github.com/uclouvain/openjpeg/pull/821) ([mayeut](https://github.com/mayeut))
+- CVE-2016-8332: fix incrementing of "l\_tcp-\&gt;m\_nb\_mcc\_records" in opj\_j2k\_read\_mcc [\#820](https://github.com/uclouvain/openjpeg/pull/820) ([mayeut](https://github.com/mayeut))
+- Add overflow check in opj\_tcd\_init\_tile [\#819](https://github.com/uclouvain/openjpeg/pull/819) ([mayeut](https://github.com/mayeut))
+- Fix leak &amp; invalid behavior of opj\_jp2\_read\_ihdr [\#818](https://github.com/uclouvain/openjpeg/pull/818) ([mayeut](https://github.com/mayeut))
+- Add overflow check in opj\_j2k\_update\_image\_data [\#817](https://github.com/uclouvain/openjpeg/pull/817) ([mayeut](https://github.com/mayeut))
+- Change 'restrict' define to 'OPJ\_RESTRICT' [\#816](https://github.com/uclouvain/openjpeg/pull/816) ([mayeut](https://github.com/mayeut))
+- Switch to clang 3.8 [\#814](https://github.com/uclouvain/openjpeg/pull/814) ([mayeut](https://github.com/mayeut))
+- Fix an integer overflow issue [\#809](https://github.com/uclouvain/openjpeg/pull/809) ([trylab](https://github.com/trylab))
+- Update to lcms 2.8 [\#808](https://github.com/uclouvain/openjpeg/pull/808) ([mayeut](https://github.com/mayeut))
+- Update to libpng 1.6.24 [\#807](https://github.com/uclouvain/openjpeg/pull/807) ([mayeut](https://github.com/mayeut))
+- Reenable clang-3.9 build on travis [\#806](https://github.com/uclouvain/openjpeg/pull/806) ([mayeut](https://github.com/mayeut))
+- Bit fields type [\#805](https://github.com/uclouvain/openjpeg/pull/805) ([smuehlst](https://github.com/smuehlst))
+- Add compilation test for standalone inclusion of openjpeg.h [\#798](https://github.com/uclouvain/openjpeg/pull/798) ([mayeut](https://github.com/mayeut))
+- jpwl: Remove non-portable data type u\_int16\_t \(fix issue \#796\) [\#797](https://github.com/uclouvain/openjpeg/pull/797) ([stweil](https://github.com/stweil))
+- Fix dependency for pkg-config \(issue \#594\) [\#795](https://github.com/uclouvain/openjpeg/pull/795) ([stweil](https://github.com/stweil))
+- Add .gitignore [\#787](https://github.com/uclouvain/openjpeg/pull/787) ([stweil](https://github.com/stweil))
+
+## [v2.1.1](https://github.com/uclouvain/openjpeg/releases/tag/v2.1.1) (2016-07-05)
+[Full Changelog](https://github.com/uclouvain/openjpeg/compare/version.2.1...v2.1.1)
+
+**Implemented enhancements:**
+
+- opj\_malloc replacement [\#625](https://github.com/uclouvain/openjpeg/issues/625)
+- backport "-p" and "-force-rgb" options in 1.5 [\#606](https://github.com/uclouvain/openjpeg/issues/606)
+- Use travis-ci matrix build [\#581](https://github.com/uclouvain/openjpeg/issues/581)
+- Add Coverity Scan analysis [\#580](https://github.com/uclouvain/openjpeg/issues/580)
+- Unnecessary rate distortion calculations  [\#479](https://github.com/uclouvain/openjpeg/issues/479)
+- Add images from various security issues to test suite [\#415](https://github.com/uclouvain/openjpeg/issues/415)
+- Coding speed for 9/7 on 32bits platforms \(x86/ARM\) can be improved with a quick fix [\#220](https://github.com/uclouvain/openjpeg/issues/220)
+
+**Fixed bugs:**
+
+- Out-of-Bounds Access in function opj\_tgt\_reset of tgt.c [\#775](https://github.com/uclouvain/openjpeg/issues/775)
+- Heap Buffer Overflow in function color\_cmyk\_to\_rgb of color.c [\#774](https://github.com/uclouvain/openjpeg/issues/774)
+- division-by-zero \(SIGFPE\) error in opj\_tcd\_init\_tile function \(line 730 of tcd.c\) [\#733](https://github.com/uclouvain/openjpeg/issues/733)
+- Out-Of-Bounds Read in sycc422\_to\_rgb function [\#726](https://github.com/uclouvain/openjpeg/issues/726)
+- Heap Corruption in opj\_free function [\#725](https://github.com/uclouvain/openjpeg/issues/725)
+- Out-Of-Bounds Read in opj\_tcd\_free\_tile function [\#724](https://github.com/uclouvain/openjpeg/issues/724)
+- Cannot handle box of undefined size [\#653](https://github.com/uclouvain/openjpeg/issues/653)
+- Compilation fails without platform-supplied aligned malloc [\#642](https://github.com/uclouvain/openjpeg/issues/642)
+- HP compiler warns about redeclaration of static function [\#640](https://github.com/uclouvain/openjpeg/issues/640)
+- Implementation-defined behavior of malloc causes different behavior on Linux and AIX [\#635](https://github.com/uclouvain/openjpeg/issues/635)
+- Build on AIX fails because "opj\_includes.h" is included after system headers [\#633](https://github.com/uclouvain/openjpeg/issues/633)
+- Compiling with SSE2 on Linux 32-bit causes crashes in OpenJPEG [\#624](https://github.com/uclouvain/openjpeg/issues/624)
+- Build on AIX fails because of "restrict" pointers [\#620](https://github.com/uclouvain/openjpeg/issues/620)
+- bug in new tif conversion code [\#609](https://github.com/uclouvain/openjpeg/issues/609)
+- bin/jp2/convert.c line 1085 Resource leak [\#607](https://github.com/uclouvain/openjpeg/issues/607)
+- bin/jp2/convert.c  memory leak [\#601](https://github.com/uclouvain/openjpeg/issues/601)
+- Resource leak in opj\_j2k\_create\_cstr\_index in case of failure [\#599](https://github.com/uclouvain/openjpeg/issues/599)
+- Resource leak in opj\_j2k\_encode in case of failure [\#598](https://github.com/uclouvain/openjpeg/issues/598)
+- Resource leak in opj\_j2k\_decode\_one\_tile in case of failure [\#597](https://github.com/uclouvain/openjpeg/issues/597)
+- Resource Leak [\#573](https://github.com/uclouvain/openjpeg/issues/573)
+- opj\_compress fails to compress lossless on gcc/x86 \(-m32\) [\#571](https://github.com/uclouvain/openjpeg/issues/571)
+- Use-after-free in opj\_j2k\_write\_mco [\#563](https://github.com/uclouvain/openjpeg/issues/563)
+- openjpeg-master-2015-07-30 failed to compile on LINUX [\#556](https://github.com/uclouvain/openjpeg/issues/556)
+- PNG images are always read as RGB\(A\) images [\#536](https://github.com/uclouvain/openjpeg/issues/536)
+- g4\_colr.j2c not handled properly [\#532](https://github.com/uclouvain/openjpeg/issues/532)
+- Bigendian: opj\_compress + opj\_decompress fails [\#518](https://github.com/uclouvain/openjpeg/issues/518)
+- Suspicious code in j2k.c [\#517](https://github.com/uclouvain/openjpeg/issues/517)
+- Decode times almost double\(!!\) on Visual Studio 2013, 2015 [\#505](https://github.com/uclouvain/openjpeg/issues/505)
+- opj\_data/input/nonregression/issue226.j2k [\#500](https://github.com/uclouvain/openjpeg/issues/500)
+- opj\_setup\_encoder always returns true [\#497](https://github.com/uclouvain/openjpeg/issues/497)
+- Double free in j2k\_read\_ppm\_v3 parsing \(\(presumably invalid\) image. [\#496](https://github.com/uclouvain/openjpeg/issues/496)
+- Invalid write in opj\_j2k\_update\_image\_data [\#495](https://github.com/uclouvain/openjpeg/issues/495)
+- Undefined printf format specifier %ud used in code [\#494](https://github.com/uclouvain/openjpeg/issues/494)
+- Potential double free on malloc failure in opj\_j2k\_copy\_default\_tcp\_and\_create\_tcp\(\) [\#492](https://github.com/uclouvain/openjpeg/issues/492)
+- Do not link with -ffast-math [\#488](https://github.com/uclouvain/openjpeg/issues/488)
+- Heap-buffer-overflow in opj\_dwt\_decode [\#486](https://github.com/uclouvain/openjpeg/issues/486)
+- opj\_dump fails on Windows 7, 64 bits [\#482](https://github.com/uclouvain/openjpeg/issues/482)
+- SIGSEGV in opj\_j2k\_update\_image\_data via pdfium\_test [\#481](https://github.com/uclouvain/openjpeg/issues/481)
+- Heap-buffer-overflow in opj\_j2k\_tcp\_destroy [\#477](https://github.com/uclouvain/openjpeg/issues/477)
+- Invalid image causes write past end of heap buffer [\#476](https://github.com/uclouvain/openjpeg/issues/476)
+- Assertion `l\_res-\&gt;x0 \&gt;= 0' fails when parsing invalid images  [\#475](https://github.com/uclouvain/openjpeg/issues/475)
+- Bug on opj\_write\_bytes\_BE function  [\#472](https://github.com/uclouvain/openjpeg/issues/472)
+- Refactor j2k\_read\_ppm\_v3 function [\#470](https://github.com/uclouvain/openjpeg/issues/470)
+- compression: strange precinct dimensions [\#466](https://github.com/uclouvain/openjpeg/issues/466)
+- \(:- Console message in opj\_decompress -:\) [\#465](https://github.com/uclouvain/openjpeg/issues/465)
+- opj\_decompress fails to decompress any files [\#463](https://github.com/uclouvain/openjpeg/issues/463)
+- bio-\&gt;ct is unnecessarily set to zero in opj\_bio\_flush method [\#461](https://github.com/uclouvain/openjpeg/issues/461)
+- Maximal unsigned short is 65535, not 65536 [\#460](https://github.com/uclouvain/openjpeg/issues/460)
+- OpenJpeg fails to encode components with different precision properly [\#459](https://github.com/uclouvain/openjpeg/issues/459)
+- component precision upscaling isn't correct in opj\_decompress [\#458](https://github.com/uclouvain/openjpeg/issues/458)
+- Multiple precision components won't get encoded to jp2 if 1 component is unsigned 1 bit [\#457](https://github.com/uclouvain/openjpeg/issues/457)
+- Incorrect code in ../bin/jp2/convert.c,  function rawtoimage\_common\(...\) [\#456](https://github.com/uclouvain/openjpeg/issues/456)
+- \[OpenJPEG-trunk\] opj\_stream\_get\_number\_byte\_left throws assert [\#455](https://github.com/uclouvain/openjpeg/issues/455)
+- NR-DEC-kodak\_2layers\_lrcp.j2c-31-decode-md5 fails randomly when running tests in parallel [\#454](https://github.com/uclouvain/openjpeg/issues/454)
+- compare\_raw\_files doesn't report an error on invalid arguments / missing input files [\#453](https://github.com/uclouvain/openjpeg/issues/453)
+- Forward discrete wavelet transform: implement periodic symmetric extension at boundaries [\#452](https://github.com/uclouvain/openjpeg/issues/452)
+- Bug in tiff reading method in convert.c [\#449](https://github.com/uclouvain/openjpeg/issues/449)
+- Image in pdf don't display [\#447](https://github.com/uclouvain/openjpeg/issues/447)
+- Multiple issues causing opj\_decompress to segfault [\#446](https://github.com/uclouvain/openjpeg/issues/446)
+- opj\_compress: 40% of encode time is spent freeing data [\#445](https://github.com/uclouvain/openjpeg/issues/445)
+- Multiple warnings when configuring OpenJPEG on MacOS with CMake 3.x \(trunk\) [\#443](https://github.com/uclouvain/openjpeg/issues/443)
+- valgrind memleak found [\#437](https://github.com/uclouvain/openjpeg/issues/437)
+- global-buffer-overflow src/lib/openjp2/t1.c:1146 opj\_t1\_getwmsedec [\#436](https://github.com/uclouvain/openjpeg/issues/436)
+- Warning introduced on trunk r2923 &amp; r2924 [\#435](https://github.com/uclouvain/openjpeg/issues/435)
+- heap-buffer-overflow in opj\_t1\_decode\_cblks [\#432](https://github.com/uclouvain/openjpeg/issues/432)
+- Heap-buffer-overflow in opj\_tcd\_init\_decode\_tile [\#431](https://github.com/uclouvain/openjpeg/issues/431)
+- He
+...</pre></div>
+
+</body>
+</html>
