@@ -568,7 +568,8 @@ int imagetotif(opj_image_t * image, const char *outfile)
 {
     TIFF *tif;
     tdata_t buf;
-    uint32 width, height, bps, tiPhoto;
+    uint32 width, height;
+    uint16 bps, tiPhoto;
     int adjust, sgnd;
     int64_t strip_size, rowStride, TIFF_MAX;
     OPJ_UINT32 i, numcomps;
@@ -577,7 +578,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
     convert_32s_PXCX cvtPxToCx = NULL;
     convert_32sXXx_C1R cvt32sToTif = NULL;
 
-    bps = (uint32)image->comps[0].prec;
+    bps = (uint16)image->comps[0].prec;
     planes[0] = image->comps[0].data;
 
     numcomps = image->numcomps;
@@ -692,7 +693,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, height);
-    TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, (uint32)numcomps);
+    TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, (uint16)numcomps);
     TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps);
     TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
     TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
@@ -1254,7 +1255,8 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     opj_image_cmptparm_t cmptparm[4]; /* RGBA */
     opj_image_t *image = NULL;
     int has_alpha = 0;
-    uint32 tiBps, tiPhoto, tiSf, tiSpp, tiPC, tiWidth, tiHeight;
+    uint16 tiBps, tiPhoto, tiSf, tiSpp, tiPC;
+    uint32 tiWidth, tiHeight;
     OPJ_BOOL is_cinema = OPJ_IS_CINEMA(parameters->rsiz);
     convert_XXx32s_C1R cvtTifTo32s = NULL;
     convert_32s_CXPX cvtCxToPx = NULL;
