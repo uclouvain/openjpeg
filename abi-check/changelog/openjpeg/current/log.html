@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 0b4c3ce75d11600ebc6675bd871f78ca3c95bc60
+<pre class='wrap'>commit afb308b9ccbe129608c9205cf3bb39bbefad90b9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-14 17:20:37 +0200
+
+    Encoder: grow buffer size in opj_tcd_code_block_enc_allocate_data() to avoid write heap buffer overflow in opj_mqc_flush (#982)
+
+commit 0b4c3ce75d11600ebc6675bd871f78ca3c95bc60
 Merge: a35b489 9f75088
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-08-11 15:13:35 +0200
@@ -556,24 +562,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 15:52:11 +0200
 
     opj_pi_next_pcrl(): avoid undefined shift behaviour. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2787. Credit to OSS Fuzz
-
-commit d6654d906c1ae66590b6d600458a91f1ee923de5
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-28 22:15:47 +0200
-
-    opj_int_ceildiv(): fix int32 overflow. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2494. Credit to OSS Fuzz
-
-commit 361c4506fdfb9b6f0e41d86d5d0ea1efb5704ecf
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-28 22:06:26 +0200
-
-    opj_tcd_dc_level_shift_decode(): avoid int overflow. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2516. Credit to OSS Fuzz
-
-commit 7bdbe490cba9990916f94a40379cc787434340ff
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-28 21:55:22 +0200
-
-    Fix null pointer dereference in opj_jp2_apply_pclr(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2558. Credit to OSS Fuzz
 
 ...</pre></div>
 
