@@ -61,9 +61,9 @@ typedef struct opj_mqc_state {
     /** the Most Probable Symbol (0 or 1) */
     OPJ_UINT32 mps;
     /** next state if the next encoded symbol is the MPS */
-    struct opj_mqc_state *nmps;
+    const struct opj_mqc_state *nmps;
     /** next state if the next encoded symbol is the LPS */
-    struct opj_mqc_state *nlps;
+    const struct opj_mqc_state *nlps;
 } opj_mqc_state_t;
 
 #define MQC_NUMCTXS 19
@@ -87,9 +87,9 @@ typedef struct opj_mqc {
     /** pointer to the end of the buffer */
     OPJ_BYTE *end;
     /** Array of contexts */
-    opj_mqc_state_t *ctxs[MQC_NUMCTXS];
+    const opj_mqc_state_t *ctxs[MQC_NUMCTXS];
     /** Active context */
-    opj_mqc_state_t **curctx;
+    const opj_mqc_state_t **curctx;
     /* lut_ctxno_zc shifted by (1 << 9) * bandno */
     const OPJ_BYTE* lut_ctxno_zc_orient;
     /** Original value of the 2 bytes at end[0] and end[1] */
