@@ -617,7 +617,7 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
 /**
 Converts an enum type progression order to string type
 */
-char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
+const char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

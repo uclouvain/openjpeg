@@ -1305,7 +1305,7 @@ typedef struct j2k_prog_order {
     char str_prog[5];
 } j2k_prog_order_t;
 
-static j2k_prog_order_t j2k_prog_order_list[] = {
+static const j2k_prog_order_t j2k_prog_order_list[] = {
     {OPJ_CPRL, "CPRL"},
     {OPJ_LRCP, "LRCP"},
     {OPJ_PCRL, "PCRL"},
@@ -1602,9 +1602,9 @@ static void  opj_j2k_write_float_to_float64(const void * p_src_data,
     }
 }
 
-char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order)
+const char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order)
 {
-    j2k_prog_order_t *po;
+    const j2k_prog_order_t *po;
     for (po = j2k_prog_order_list; po->enum_prog != -1; po++) {
         if (po->enum_prog == prg_order) {
             return po->str_prog;

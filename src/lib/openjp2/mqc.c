@@ -79,7 +79,7 @@ static void opj_mqc_setbits(opj_mqc_t *mqc);
 /* <summary> */
 /* This array defines all the possible states for a context. */
 /* </summary> */
-static opj_mqc_state_t mqc_states[47 * 2] = {
+static const opj_mqc_state_t mqc_states[47 * 2] = {
     {0x5601, 0, &mqc_states[2], &mqc_states[3]},
     {0x5601, 1, &mqc_states[3], &mqc_states[2]},
     {0x3401, 0, &mqc_states[4], &mqc_states[12]},
