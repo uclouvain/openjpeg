@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit baf0c1ad4572daa89caa3b12985bdd93530f0dd7
+<pre class='wrap'>commit 52d5690a6fcba86b5f117eeac8aca1971cac3688
+Merge: baf0c1a bc59410
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-08-14 17:28:26 +0200
+
+    Merge pull request #984 from stweil/const
+    
+    Use more const qualifiers
+
+commit baf0c1ad4572daa89caa3b12985bdd93530f0dd7
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-14 17:26:58 +0200
 
@@ -31,6 +40,26 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-14 17:20:37 +0200
 
     Encoder: grow buffer size in opj_tcd_code_block_enc_allocate_data() to avoid write heap buffer overflow in opj_mqc_flush (#982)
+
+commit bc59410f253b0cd3d4818ec06ce957cbdbfe4341
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2017-08-14 14:36:06 +0200
+
+    Use const qualifier for mqc_states
+    
+    This allows more compiler optimizations.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 10e6ce2c2cfacf51fdde7e9c69bf2365840f4bb0
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2017-08-13 22:57:31 +0200
+
+    Use const qualifier for j2k_prog_order_list
+    
+    This allows more compiler optimizations.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 0b4c3ce75d11600ebc6675bd871f78ca3c95bc60
 Merge: a35b489 9f75088
