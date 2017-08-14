@@ -392,6 +392,10 @@ static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
 
     header->biBitCount  = (OPJ_UINT16)getc(IN);
     header->biBitCount |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
+    if (header->biBitCount == 0) {
+        fprintf(stderr, "Error, invalid biBitCount %d\n", 0);
+        return OPJ_FALSE;
+    }
 
     if (header->biSize >= 40U) {
         header->biCompression  = (OPJ_UINT32)getc(IN);
