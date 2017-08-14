@@ -1751,7 +1751,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
 }
 
 
-void opj_t1_decode_cblks(opj_thread_pool_t* tp,
+void opj_t1_decode_cblks(opj_tcd_t* tcd,
                          volatile OPJ_BOOL* pret,
                          opj_tcd_tilecomp_t* tilec,
                          opj_tccp_t* tccp,
@@ -1760,6 +1760,7 @@ void opj_t1_decode_cblks(opj_thread_pool_t* tp,
                          OPJ_BOOL check_pterm
                         )
 {
+    opj_thread_pool_t* tp = tcd->thread_pool;
     OPJ_UINT32 resno, bandno, precno, cblkno;
 
     for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
@@ -1774,6 +1775,17 @@ void opj_t1_decode_cblks(opj_thread_pool_t* tp,
                 for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
                     opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
                     opj_t1_cblk_decode_processing_job_t* job;
+
+                    if (!opj_tcd_is_subband_area_of_interest(tcd,
+                            tilec->compno,
+                            resno,
+                            band->bandno,
+                            (OPJ_UINT32)cblk->x0,
+                            (OPJ_UINT32)cblk->y0,
+                            (OPJ_UINT32)cblk->x1,
+                            (OPJ_UINT32)cblk->y1)) {
+                        continue;
+                    }
 
                     job = (opj_t1_cblk_decode_processing_job_t*) opj_calloc(1,
                             sizeof(opj_t1_cblk_decode_processing_job_t));

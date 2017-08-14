@@ -16,6 +16,7 @@
  * Copyright (c) 2010-2011, Kaori Hagihara
  * Copyright (c) 2011-2012, Centre National d'Etudes Spatiales (CNES), France
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2017, IntoPIX SA <support@intopix.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5162,7 +5163,13 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
         ++l_img_comp;
     }
 
-    l_tile_size = (OPJ_UINT32)(l_tile_size * 0.1625);  /* 1.3/8 = 0.1625 */
+    /* TODO: where does this magic value come from ? */
+    /* This used to be 1.3 / 8, but with random data and very small code */
+    /* block sizes, this is not enough. For example with */
+    /* bin/test_tile_encoder 1 256 256 32 32 8 0 reversible_with_precinct.j2k 4 4 3 0 0 1 16 16 */
+    /* TODO revise this to take into account the overhead linked to the */
+    /* number of packets and number of code blocks in packets */
+    l_tile_size = (OPJ_UINT32)(l_tile_size * 1.4 / 8);
 
     l_tile_size += opj_j2k_get_specific_header_sizes(p_j2k);
 
@@ -8770,6 +8777,7 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
     OPJ_UINT32 l_current_marker;
     OPJ_BYTE l_data [2];
     opj_tcp_t * l_tcp;
+    opj_image_t* l_image_for_bounds;
 
     /* preconditions */
     assert(p_stream != 00);
@@ -8787,7 +8795,18 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
         return OPJ_FALSE;
     }
 
+    /* When using the opj_read_tile_header / opj_decode_tile_data API */
+    /* such as in test_tile_decoder, m_output_image is NULL, so fall back */
+    /* to the full image dimension. This is a bit surprising that */
+    /* opj_set_decode_area() is only used to determinte intersecting tiles, */
+    /* but full tile decoding is done */
+    l_image_for_bounds = p_j2k->m_output_image ? p_j2k->m_output_image :
+                         p_j2k->m_private_image;
     if (! opj_tcd_decode_tile(p_j2k->m_tcd,
+                              l_image_for_bounds->x0,
+                              l_image_for_bounds->y0,
+                              l_image_for_bounds->x1,
+                              l_image_for_bounds->y1,
                               l_tcp->m_data,
                               l_tcp->m_data_size,
                               p_tile_index,

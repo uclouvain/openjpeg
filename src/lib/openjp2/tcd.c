@@ -14,6 +14,7 @@
  * Copyright (c) 2006-2007, Parvatha Elangovan
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2017, IntoPIX SA <support@intopix.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -790,6 +791,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
         l_tilec->y0 = opj_int_ceildiv(l_tile->y0, (OPJ_INT32)l_image_comp->dy);
         l_tilec->x1 = opj_int_ceildiv(l_tile->x1, (OPJ_INT32)l_image_comp->dx);
         l_tilec->y1 = opj_int_ceildiv(l_tile->y1, (OPJ_INT32)l_image_comp->dy);
+        l_tilec->compno = compno;
         /*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/
 
         /* compute l_data_size with overflow check */
@@ -1399,6 +1401,10 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
 }
 
 OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
+                             OPJ_UINT32 decoded_x0,
+                             OPJ_UINT32 decoded_y0,
+                             OPJ_UINT32 decoded_x1,
+                             OPJ_UINT32 decoded_y1,
                              OPJ_BYTE *p_src,
                              OPJ_UINT32 p_max_length,
                              OPJ_UINT32 p_tile_no,
@@ -1409,6 +1415,10 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
     OPJ_UINT32 l_data_read;
     p_tcd->tcd_tileno = p_tile_no;
     p_tcd->tcp = &(p_tcd->cp->tcps[p_tile_no]);
+    p_tcd->decoded_x0 = decoded_x0;
+    p_tcd->decoded_y0 = decoded_y0;
+    p_tcd->decoded_x1 = decoded_x1;
+    p_tcd->decoded_y1 = decoded_y1;
 
 #ifdef TODO_MSD /* FIXME */
     /* INDEX >>  */
@@ -1690,6 +1700,7 @@ static OPJ_BOOL opj_tcd_t2_decode(opj_tcd_t *p_tcd,
     }
 
     if (! opj_t2_decode_packets(
+                p_tcd,
                 l_t2,
                 p_tcd->tcd_tileno,
                 p_tcd->tcd_image->tiles,
@@ -1727,7 +1738,7 @@ static OPJ_BOOL opj_tcd_t1_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
     }
 
     for (compno = 0; compno < l_tile->numcomps; ++compno) {
-        opj_t1_decode_cblks(p_tcd->thread_pool, &ret, l_tile_comp, l_tccp,
+        opj_t1_decode_cblks(p_tcd, &ret, l_tile_comp, l_tccp,
                             p_manager, p_manager_mutex, check_pterm);
         if (!ret) {
             break;
@@ -2358,4 +2369,73 @@ OPJ_BOOL opj_tcd_copy_tile_data(opj_tcd_t *p_tcd,
 OPJ_BOOL opj_tcd_is_band_empty(opj_tcd_band_t* band)
 {
     return (band->x1 - band->x0 == 0) || (band->y1 - band->y0 == 0);
+}
+
+OPJ_BOOL opj_tcd_is_subband_area_of_interest(opj_tcd_t *tcd,
+        OPJ_UINT32 compno,
+        OPJ_UINT32 resno,
+        OPJ_UINT32 bandno,
+        OPJ_UINT32 band_x0,
+        OPJ_UINT32 band_y0,
+        OPJ_UINT32 band_x1,
+        OPJ_UINT32 band_y1)
+{
+    OPJ_UINT32 filter_margin = (tcd->tcp->tccps[compno].qmfbid == 1) ? 2 : 3;
+    opj_tcd_tilecomp_t *tilec = &(tcd->tcd_image->tiles->comps[compno]);
+    opj_image_comp_t* image_comp = &(tcd->image->comps[compno]);
+    /* Compute the intersection of the area of interest, expressed in tile coordinates */
+    /* with the tile coordinates */
+    OPJ_UINT32 tcx0 = opj_uint_max(
+                          (OPJ_UINT32)tilec->x0,
+                          opj_uint_ceildiv(tcd->decoded_x0, image_comp->dx));
+    OPJ_UINT32 tcy0 = opj_uint_max(
+                          (OPJ_UINT32)tilec->y0,
+                          opj_uint_ceildiv(tcd->decoded_y0, image_comp->dy));
+    OPJ_UINT32 tcx1 = opj_uint_min(
+                          (OPJ_UINT32)tilec->x1,
+                          opj_uint_ceildiv(tcd->decoded_x1, image_comp->dx));
+    OPJ_UINT32 tcy1 = opj_uint_min(
+                          (OPJ_UINT32)tilec->y1,
+                          opj_uint_ceildiv(tcd->decoded_y1, image_comp->dy));
+    /* Compute number of decomposition for this band. See table F-1 */
+    OPJ_UINT32 nb = (resno == 0) ?
+                    tilec->numresolutions - 1 :
+                    tilec->numresolutions - resno;
+    /* Map above tile-based coordinates to sub-band-based coordinates per */
+    /* equation B-15 of the standard */
+    OPJ_UINT32 x0b = bandno & 1;
+    OPJ_UINT32 y0b = bandno >> 1;
+    OPJ_UINT32 tbx0 = (nb == 0) ? tcx0 : opj_uint_ceildiv(tcx0 - (1U <<
+                      (nb - 1)) * x0b, 1U << nb);
+    OPJ_UINT32 tby0 = (nb == 0) ? tcy0 : opj_uint_ceildiv(tcy0 - (1U <<
+                      (nb - 1)) * y0b, 1U << nb);
+    OPJ_UINT32 tbx1 = (nb == 0) ? tcx1 : opj_uint_ceildiv(tcx1 - (1U <<
+                      (nb - 1)) * x0b, 1U << nb);
+    OPJ_UINT32 tby1 = (nb == 0) ? tcy1 : opj_uint_ceildiv(tcy1 - (1U <<
+                      (nb - 1)) * y0b, 1U << nb);
+    OPJ_BOOL intersects;
+
+    if (tbx0 < filter_margin) {
+        tbx0 = 0;
+    } else {
+        tbx0 -= filter_margin;
+    }
+    if (tby0 < filter_margin) {
+        tby0 = 0;
+    } else {
+        tby0 -= filter_margin;
+    }
+    tbx1 = opj_uint_adds(tbx1, filter_margin);
+    tby1 = opj_uint_adds(tby1, filter_margin);
+
+    intersects = band_x0 < tbx1 && band_y0 < tby1 && band_x1 > tbx0 &&
+                 band_y1 > tby0;
+
+#ifdef DEBUG_VERBOSE
+    printf("compno=%u resno=%u nb=%u bandno=%u x0b=%u y0b=%u band=%u,%u,%u,%u tb=%u,%u,%u,%u -> %u\n",
+           compno, resno, nb, bandno, x0b, y0b,
+           band_x0, band_y0, band_x1, band_y1,
+           tbx0, tby0, tbx1, tby1, intersects);
+#endif
+    return intersects;
 }
