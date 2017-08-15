@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 52d5690a6fcba86b5f117eeac8aca1971cac3688
+<pre class='wrap'>commit 4241ae6fbbf1de9658764a80944dc8108f2b4154
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-15 11:55:58 +0200
+
+    Fix assertion in debug mode / heap-based buffer overflow in opj_write_bytes_LE for Cinema profiles with numresolutions = 1 (#985)
+
+commit 52d5690a6fcba86b5f117eeac8aca1971cac3688
 Merge: baf0c1a bc59410
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-08-14 17:28:26 +0200
@@ -591,12 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 16:22:36 +0200
 
     Avoid assertion in opj_j2k_merge_ppt() in case premature EOC is encountered in opj_j2k_read_tile_header(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785. Credit to OSS Fuzz
-
-commit 71b4f5b124d14ed609763b11e19d2d480bc32f58
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 15:52:11 +0200
-
-    opj_pi_next_pcrl(): avoid undefined shift behaviour. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2787. Credit to OSS Fuzz
 
 ...</pre></div>
 
