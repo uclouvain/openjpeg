@@ -6573,10 +6573,16 @@ static void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters,
 
     /* Precincts */
     parameters->csty |= 0x01;
-    parameters->res_spec = parameters->numresolution - 1;
-    for (i = 0; i < parameters->res_spec; i++) {
-        parameters->prcw_init[i] = 256;
-        parameters->prch_init[i] = 256;
+    if (parameters->numresolution == 1) {
+        parameters->res_spec = 1;
+        parameters->prcw_init[0] = 128;
+        parameters->prch_init[0] = 128;
+    } else {
+        parameters->res_spec = parameters->numresolution - 1;
+        for (i = 0; i < parameters->res_spec; i++) {
+            parameters->prcw_init[i] = 256;
+            parameters->prch_init[i] = 256;
+        }
     }
 
     /* The progression order shall be CPRL */
