@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9624b2fa4722edf77fbac631e7dacaae12c91672
+<pre class='wrap'>commit ab4de904e7dc1deee83122cd2bf6e0e7f4eb2eb0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-16 13:11:36 +0200
+
+    imagetotga(): fix read heap buffer overflow if numcomps &lt; 3 (#987)
+
+commit 9624b2fa4722edf77fbac631e7dacaae12c91672
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 12:52:33 +0200
 
@@ -591,12 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 16:34:35 +0200
 
     opj_t1_decode_cblk(): avoid undefined shift behaviour. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2487. Credit to OSS Fuzz
-
-commit f6551f822fe020843299bd807ec6989abd070b2c
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 16:29:11 +0200
-
-    opj_t1_clbl_decode_processor(): avoid undefined behaviour if roishift &gt;= 31. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2506. Credit to OSS Fuzz
 
 ...</pre></div>
 
