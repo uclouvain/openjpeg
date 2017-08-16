@@ -4215,7 +4215,6 @@ static OPJ_BOOL opj_j2k_write_sot(opj_j2k_t *p_j2k,
     assert(p_stream != 00);
 
     OPJ_UNUSED(p_stream);
-    OPJ_UNUSED(p_manager);
 
     if (p_total_data_size < 12) {
         opj_event_msg(p_manager, EVT_ERROR,
@@ -4616,6 +4615,12 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
     assert(p_stream != 00);
 
     OPJ_UNUSED(p_stream);
+
+    if (p_total_data_size < 4) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Not enough bytes in output buffer to write SOD marker\n");
+        return OPJ_FALSE;
+    }
 
     opj_write_bytes(p_data, J2K_MS_SOD,
                     2);                                 /* SOD */

@@ -629,6 +629,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
     /* <SOP 0xff91> */
     if (tcp->csty & J2K_CP_CSTY_SOP) {
+        if (length < 6) {
+            if (p_t2_mode == FINAL_PASS) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "opj_t2_encode_packet(): only %u bytes remaining in "
+                              "output buffer. %u needed.\n",
+                              length, 6);
+            }
+            return OPJ_FALSE;
+        }
         c[0] = 255;
         c[1] = 145;
         c[2] = 0;
@@ -817,6 +826,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
 
     /* <EPH 0xff92> */
     if (tcp->csty & J2K_CP_CSTY_EPH) {
+        if (length < 2) {
+            if (p_t2_mode == FINAL_PASS) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "opj_t2_encode_packet(): only %u bytes remaining in "
+                              "output buffer. %u needed.\n",
+                              length, 2);
+            }
+            return OPJ_FALSE;
+        }
         c[0] = 255;
         c[1] = 146;
         c += 2;
