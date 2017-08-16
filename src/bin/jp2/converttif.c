@@ -1254,7 +1254,6 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     OPJ_COLOR_SPACE color_space = OPJ_CLRSPC_UNKNOWN;
     opj_image_cmptparm_t cmptparm[4]; /* RGBA */
     opj_image_t *image = NULL;
-    int has_alpha = 0;
     uint16 tiBps, tiPhoto, tiSf, tiSpp, tiPC;
     uint32 tiWidth, tiHeight;
     OPJ_BOOL is_cinema = OPJ_IS_CINEMA(parameters->rsiz);
@@ -1357,34 +1356,6 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         break;
     }
 
-    {/* From: tiff-4.0.x/libtiff/tif_getimage.c : */
-        uint16* sampleinfo;
-        uint16 extrasamples;
-
-        TIFFGetFieldDefaulted(tif, TIFFTAG_EXTRASAMPLES,
-                              &extrasamples, &sampleinfo);
-
-        if (extrasamples >= 1) {
-            switch (sampleinfo[0]) {
-            case EXTRASAMPLE_UNSPECIFIED:
-                /* Workaround for some images without correct info about alpha channel
-                 */
-                if (tiSpp > 3) {
-                    has_alpha = 1;
-                }
-                break;
-
-            case EXTRASAMPLE_ASSOCALPHA: /* data pre-multiplied */
-            case EXTRASAMPLE_UNASSALPHA: /* data not pre-multiplied */
-                has_alpha = 1;
-                break;
-            }
-        } else /* extrasamples == 0 */
-            if (tiSpp == 4 || tiSpp == 2) {
-                has_alpha = 1;
-            }
-    }
-
     /* initialize image components */
     memset(&cmptparm[0], 0, 4 * sizeof(opj_image_cmptparm_t));
 
@@ -1398,11 +1369,10 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         is_cinema = 0U;
     }
 
+    numcomps = tiSpp;
     if (tiPhoto == PHOTOMETRIC_RGB) { /* RGB(A) */
-        numcomps = 3 + has_alpha;
         color_space = OPJ_CLRSPC_SRGB;
     } else if (tiPhoto == PHOTOMETRIC_MINISBLACK) { /* GRAY(A) */
-        numcomps = 1 + has_alpha;
         color_space = OPJ_CLRSPC_GRAY;
     }
 
