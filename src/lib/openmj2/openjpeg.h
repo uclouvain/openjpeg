@@ -763,6 +763,27 @@ Deallocate any resources associated with an image
 */
 OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
 
+/**
+ * Allocator for opj_image_t->comps[].data
+ * To be paired with opj_image_data_free.
+ *
+ * @param   size    number of bytes to allocate
+ *
+ * @return  a new pointer if successful, NULL otherwise.
+ * @since 2.2.0
+*/
+OPJ_API void* OPJ_CALLCONV opj_image_data_alloc(size_t size);
+
+/**
+ * Destructor for opj_image_t->comps[].data
+ * To be paired with opj_image_data_alloc.
+ *
+ * @param   ptr    Pointer to free
+ *
+ * @since 2.2.0
+*/
+OPJ_API void OPJ_CALLCONV opj_image_data_free(void* ptr);
+
 /*
 ==========================================================
    stream functions definitions
