@@ -2155,6 +2155,10 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 
     cblk->numbps = max ? (OPJ_UINT32)((opj_int_floorlog2(max) + 1) -
                                       T1_NMSEDEC_FRACBITS) : 0;
+    if (cblk->numbps == 0) {
+        cblk->totalpasses = 0;
+        return;
+    }
 
     bpno = (OPJ_INT32)(cblk->numbps - 1);
     passtype = 2;
