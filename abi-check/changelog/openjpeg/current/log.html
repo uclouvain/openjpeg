@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 1e387de74273c4dac618df94475556541c1caf3e
+<pre class='wrap'>commit 8e6c371e66d9c579048fd336cc3365869486080a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-16 18:29:59 +0200
+
+    opj_t1_encode_cblk(): avoid uint32 overflow when numbps = 0 (which is well defined behaviour, and is properly handled here, but better avoid it to detect real issues)
+
+commit 1e387de74273c4dac618df94475556541c1caf3e
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 17:38:47 +0200
 
@@ -594,14 +600,6 @@ Date:   2017-07-29 19:03:13 +0200
     
     This has been recently fixed in a less elegant way per
     80818c39f5bfbac37768fcee95b0ffeceaa77264
-
-commit 3fbe71369019df0b47c7a2be4fab8c05768f2f32
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 18:38:16 +0200
-
-    opj_tcd_get_decoded_tile_size(): fix potential UINT32 overflow (#854, CVE-2016-5152)
-    
-    Fix derived from https://pdfium.googlesource.com/pdfium.git/+/d8cc503575463ff3d81b22dad292665f2c88911e/third_party/libopenjpeg20/0018-tcd_get_decoded_tile_size.patch
 
 ...</pre></div>
 
