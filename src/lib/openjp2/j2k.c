@@ -832,13 +832,15 @@ static OPJ_BOOL opj_j2k_write_tlm(opj_j2k_t *p_j2k,
  * Writes the SOT marker (Start of tile-part)
  *
  * @param       p_j2k            J2K codec.
- * @param       p_data           FIXME DOC
- * @param       p_data_written   FIXME DOC
+ * @param       p_data           Output buffer
+ * @param       p_total_data_size Output buffer size
+ * @param       p_data_written   Number of bytes written into stream
  * @param       p_stream         the stream to write data to.
  * @param       p_manager        the user event manager.
 */
 static OPJ_BOOL opj_j2k_write_sot(opj_j2k_t *p_j2k,
                                   OPJ_BYTE * p_data,
+                                  OPJ_UINT32 p_total_data_size,
                                   OPJ_UINT32 * p_data_written,
                                   const opj_stream_private_t *p_stream,
                                   opj_event_mgr_t * p_manager);
@@ -4201,6 +4203,7 @@ static OPJ_BOOL opj_j2k_write_tlm(opj_j2k_t *p_j2k,
 
 static OPJ_BOOL opj_j2k_write_sot(opj_j2k_t *p_j2k,
                                   OPJ_BYTE * p_data,
+                                  OPJ_UINT32 p_total_data_size,
                                   OPJ_UINT32 * p_data_written,
                                   const opj_stream_private_t *p_stream,
                                   opj_event_mgr_t * p_manager
@@ -4213,6 +4216,12 @@ static OPJ_BOOL opj_j2k_write_sot(opj_j2k_t *p_j2k,
 
     OPJ_UNUSED(p_stream);
     OPJ_UNUSED(p_manager);
+
+    if (p_total_data_size < 12) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Not enough bytes in output buffer to write SOT marker\n");
+        return OPJ_FALSE;
+    }
 
     opj_write_bytes(p_data, J2K_MS_SOT,
                     2);                                 /* SOT */
@@ -11480,7 +11489,8 @@ static OPJ_BOOL opj_j2k_write_first_tile_part(opj_j2k_t *p_j2k,
 
     l_current_nb_bytes_written = 0;
     l_begin_data = p_data;
-    if (! opj_j2k_write_sot(p_j2k, p_data, &l_current_nb_bytes_written, p_stream,
+    if (! opj_j2k_write_sot(p_j2k, p_data, p_total_data_size,
+                            &l_current_nb_bytes_written, p_stream,
                             p_manager)) {
         return OPJ_FALSE;
     }
@@ -11572,7 +11582,10 @@ static OPJ_BOOL opj_j2k_write_all_tile_parts(opj_j2k_t *p_j2k,
         l_part_tile_size = 0;
         l_begin_data = p_data;
 
-        if (! opj_j2k_write_sot(p_j2k, p_data, &l_current_nb_bytes_written, p_stream,
+        if (! opj_j2k_write_sot(p_j2k, p_data,
+                                p_total_data_size,
+                                &l_current_nb_bytes_written,
+                                p_stream,
                                 p_manager)) {
             return OPJ_FALSE;
         }
@@ -11615,7 +11628,9 @@ static OPJ_BOOL opj_j2k_write_all_tile_parts(opj_j2k_t *p_j2k,
             l_part_tile_size = 0;
             l_begin_data = p_data;
 
-            if (! opj_j2k_write_sot(p_j2k, p_data, &l_current_nb_bytes_written, p_stream,
+            if (! opj_j2k_write_sot(p_j2k, p_data,
+                                    p_total_data_size,
+                                    &l_current_nb_bytes_written, p_stream,
                                     p_manager)) {
                 return OPJ_FALSE;
             }
