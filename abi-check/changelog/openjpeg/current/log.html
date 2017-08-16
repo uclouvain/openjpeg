@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit af760007711bf93041d3eba3a41b9a48d365f303
+<pre class='wrap'>commit dcac91b8c72f743bda7dbfa9032356bc8110098a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-16 17:09:10 +0200
+
+    opj_j2k_write_sot(): fix potential write heap buffer overflow (#991)
+
+commit af760007711bf93041d3eba3a41b9a48d365f303
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 13:36:52 +0200
 
@@ -590,18 +596,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 17:56:12 +0200
 
     color_cielab_to_rgb(): reject images with components of different dimensions to void read heap buffer overflow (#909)
-
-commit 784d4d47e97b5d0fccccbd931349997a0e2074cc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 17:51:10 +0200
-
-    Fix breakage of 2fa0fc61f2d546c8b67e7c5a9cbc61d98e1f7af0 (#970)
-
-commit 2fa0fc61f2d546c8b67e7c5a9cbc61d98e1f7af0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 17:28:55 +0200
-
-    imagetopnm(): make sure the alpha component has same dimension as other components to avoid read heap buffer overflow (#970)
 
 ...</pre></div>
 
