@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 4241ae6fbbf1de9658764a80944dc8108f2b4154
+<pre class='wrap'>commit 9624b2fa4722edf77fbac631e7dacaae12c91672
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-16 12:52:33 +0200
+
+    opj_t2_encode_packet(): only emit an error about insufficiently large output buffer in FINAL_PASS mode. Fixes (master-only) regression added in 0b4fef6d1901254e41ab74ed681daba477d724c3
+
+commit 4241ae6fbbf1de9658764a80944dc8108f2b4154
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-15 11:55:58 +0200
 
@@ -591,12 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 16:29:11 +0200
 
     opj_t1_clbl_decode_processor(): avoid undefined behaviour if roishift &gt;= 31. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2506. Credit to OSS Fuzz
-
-commit 9906fbf737692486cebabe98169988d818e2e66a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 16:22:36 +0200
-
-    Avoid assertion in opj_j2k_merge_ppt() in case premature EOC is encountered in opj_j2k_read_tile_header(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785. Credit to OSS Fuzz
 
 ...</pre></div>
 
