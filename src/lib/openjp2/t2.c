@@ -68,6 +68,7 @@ Encode a packet of a tile to a destination buffer
 @param p_data_written   FIXME DOC
 @param len Length of the destination buffer
 @param cstr_info Codestream information structure
+@param p_t2_mode If == THRESH_CALC In Threshold calculation ,If == FINAL_PASS Final pass
 @param p_manager the user event manager
 @return
 */
@@ -79,6 +80,7 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
                                      OPJ_UINT32 * p_data_written,
                                      OPJ_UINT32 len,
                                      opj_codestream_info_t *cstr_info,
+                                     J2K_T2_MODE p_t2_mode,
                                      opj_event_mgr_t *p_manager);
 
 /**
@@ -273,6 +275,7 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* p_t2,
                         if (! opj_t2_encode_packet(p_tile_no, p_tile, l_tcp, l_current_pi,
                                                    l_current_data, &l_nb_bytes,
                                                    p_max_len, cstr_info,
+                                                   p_t2_mode,
                                                    p_manager)) {
                             opj_pi_destroy(l_pi, l_nb_pocs);
                             return OPJ_FALSE;
@@ -311,7 +314,8 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* p_t2,
                 l_nb_bytes = 0;
 
                 if (! opj_t2_encode_packet(p_tile_no, p_tile, l_tcp, l_current_pi,
-                                           l_current_data, &l_nb_bytes, p_max_len, cstr_info, p_manager)) {
+                                           l_current_data, &l_nb_bytes, p_max_len,
+                                           cstr_info, p_t2_mode, p_manager)) {
                     opj_pi_destroy(l_pi, l_nb_pocs);
                     return OPJ_FALSE;
                 }
@@ -602,6 +606,7 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
                                      OPJ_UINT32 * p_data_written,
                                      OPJ_UINT32 length,
                                      opj_codestream_info_t *cstr_info,
+                                     J2K_T2_MODE p_t2_mode,
                                      opj_event_mgr_t *p_manager)
 {
     OPJ_UINT32 bandno, cblkno;
@@ -851,10 +856,12 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
             }
 
             if (layer->len > length) {
-                opj_event_msg(p_manager, EVT_ERROR,
-                              "opj_t2_encode_packet(): only %u bytes remaining in "
-                              "output buffer. %u needed.\n",
-                              length, layer->len);
+                if (p_t2_mode == FINAL_PASS) {
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "opj_t2_encode_packet(): only %u bytes remaining in "
+                                  "output buffer. %u needed.\n",
+                                  length, layer->len);
+                }
                 return OPJ_FALSE;
             }
 
