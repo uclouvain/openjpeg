@@ -165,6 +165,22 @@ int LLVMFuzzerTestOneInput(const uint8_t *buf, size_t len)
         return 0;
     }
 
+    // Also reject too big tiles.
+    // TODO: remove this limitation when subtile decoding no longer imply
+    // allocation memory for whole tile
+    opj_codestream_info_v2_t* pCodeStreamInfo = opj_get_cstr_info(pCodec);
+    OPJ_UINT32 nTileW, nTileH;
+    nTileW = pCodeStreamInfo->tdx;
+    nTileH = pCodeStreamInfo->tdy;
+    opj_destroy_cstr_info(&pCodeStreamInfo);
+    if (nTileW > 2048 || nTileH > 2048) {
+        opj_stream_destroy(pStream);
+        opj_destroy_codec(pCodec);
+        opj_image_destroy(psImage);
+
+        return 0;
+    }
+
     OPJ_UINT32 width_to_read = width;
     if (width_to_read > 1024) {
         width_to_read = 1024;
