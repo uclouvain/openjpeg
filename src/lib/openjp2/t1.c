@@ -1771,19 +1771,62 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
 
             for (precno = 0; precno < res->pw * res->ph; ++precno) {
                 opj_tcd_precinct_t* precinct = &band->precincts[precno];
+                OPJ_BOOL skip_precinct = OPJ_FALSE;
+
+                if (!opj_tcd_is_subband_area_of_interest(tcd,
+                        tilec->compno,
+                        resno,
+                        band->bandno,
+                        (OPJ_UINT32)precinct->x0,
+                        (OPJ_UINT32)precinct->y0,
+                        (OPJ_UINT32)precinct->x1,
+                        (OPJ_UINT32)precinct->y1)) {
+                    skip_precinct = OPJ_TRUE;
+                    /* TODO: do a continue here once the below 0 initialization */
+                    /* of tiledp is removed */
+                }
 
                 for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
                     opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
                     opj_t1_cblk_decode_processing_job_t* job;
 
-                    if (!opj_tcd_is_subband_area_of_interest(tcd,
-                            tilec->compno,
-                            resno,
-                            band->bandno,
-                            (OPJ_UINT32)cblk->x0,
-                            (OPJ_UINT32)cblk->y0,
-                            (OPJ_UINT32)cblk->x1,
-                            (OPJ_UINT32)cblk->y1)) {
+                    if (skip_precinct ||
+                            !opj_tcd_is_subband_area_of_interest(tcd,
+                                    tilec->compno,
+                                    resno,
+                                    band->bandno,
+                                    (OPJ_UINT32)cblk->x0,
+                                    (OPJ_UINT32)cblk->y0,
+                                    (OPJ_UINT32)cblk->x1,
+                                    (OPJ_UINT32)cblk->y1)) {
+
+                        /* TODO: remove this once we don't iterate over */
+                        /* tile pixels that are not in the subwindow of interest */
+                        OPJ_UINT32 j, i;
+                        OPJ_INT32 x = cblk->x0 - band->x0;
+                        OPJ_INT32 y = cblk->y0 - band->y0;
+                        OPJ_INT32* OPJ_RESTRICT tiledp;
+                        OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+                        OPJ_UINT32 cblk_w = (OPJ_UINT32)(cblk->x1 - cblk->x0);
+                        OPJ_UINT32 cblk_h = (OPJ_UINT32)(cblk->y1 - cblk->y0);
+
+                        if (band->bandno & 1) {
+                            opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
+                            x += pres->x1 - pres->x0;
+                        }
+                        if (band->bandno & 2) {
+                            opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
+                            y += pres->y1 - pres->y0;
+                        }
+
+                        tiledp = &tilec->data[(OPJ_UINT32)y * tile_w +
+                                                            (OPJ_UINT32)x];
+
+                        for (j = 0; j < cblk_h; ++j) {
+                            for (i = 0; i < cblk_w; ++i) {
+                                ((OPJ_INT32*)tiledp)[(j * tile_w) + i] = 0;
+                            }
+                        }
                         continue;
                     }
 
