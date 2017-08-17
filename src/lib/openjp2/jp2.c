@@ -958,25 +958,34 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color,
         }
         /* verify that no component is targeted more than once */
         for (i = 0; i < nr_channels; i++) {
-            OPJ_UINT16 pcol = cmap[i].pcol;
+            OPJ_BYTE mtyp = cmap[i].mtyp;
+            OPJ_BYTE pcol = cmap[i].pcol;
             /* See ISO 15444-1 Table I.14 – MTYPi field values */
-            if (cmap[i].mtyp != 0 && cmap[i].mtyp != 1) {
+            if (mtyp != 0 && mtyp != 1) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid value for cmap[%d].mtyp = %d.\n", i,
-                              cmap[i].mtyp);
+                              mtyp);
                 is_sane = OPJ_FALSE;
             } else if (pcol >= nr_channels) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid component/palette index for direct mapping %d.\n", pcol);
                 is_sane = OPJ_FALSE;
-            } else if (pcol_usage[pcol] && cmap[i].mtyp == 1) {
+            } else if (pcol_usage[pcol] && mtyp == 1) {
                 opj_event_msg(p_manager, EVT_ERROR, "Component %d is mapped twice.\n", pcol);
                 is_sane = OPJ_FALSE;
-            } else if (cmap[i].mtyp == 0 && cmap[i].pcol != 0) {
+            } else if (mtyp == 0 && pcol != 0) {
                 /* I.5.3.5 PCOL: If the value of the MTYP field for this channel is 0, then
                  * the value of this field shall be 0. */
                 opj_event_msg(p_manager, EVT_ERROR, "Direct use at #%d however pcol=%d.\n", i,
                               pcol);
+                is_sane = OPJ_FALSE;
+            } else if (mtyp == 1 && pcol != i) {
+                /* OpenJPEG implementation limitation. See assert(i == pcol); */
+                /* in opj_jp2_apply_pclr() */
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Implementation limitation: for palette mapping, "
+                              "pcol[%d] should be equal to %d, but is equal "
+                              "to %d.\n", i, i, pcol);
                 is_sane = OPJ_FALSE;
             } else {
                 pcol_usage[pcol] = OPJ_TRUE;
