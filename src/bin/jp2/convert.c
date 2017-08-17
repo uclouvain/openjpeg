@@ -583,7 +583,7 @@ struct tga_header {
 /* Returns a ushort from a little-endian serialized value */
 static unsigned short get_tga_ushort(const unsigned char *data)
 {
-    return data[0] | (data[1] << 8);
+    return (unsigned short)data[0] | (unsigned short)(data[1] << 8);
 }
 
 #define TGA_HEADER_SIZE 18
@@ -816,10 +816,11 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
 
     /* If the declared file size is > 10 MB, check that the file is big */
     /* enough to avoid excessive memory allocations */
-    if (image_height != 0 && image_width > 10000000 / image_height / numcomps) {
+    if (image_height != 0 &&
+            image_width > 10000000U / image_height / (OPJ_UINT32)numcomps) {
         char ch;
         OPJ_UINT64 expected_file_size =
-            (OPJ_UINT64)image_width * image_height * numcomps;
+            (OPJ_UINT64)image_width * image_height * (OPJ_UINT32)numcomps;
         long curpos = ftell(f);
         if (expected_file_size > (OPJ_UINT64)INT_MAX) {
             expected_file_size = (OPJ_UINT64)INT_MAX;
