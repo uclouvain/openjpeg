@@ -583,7 +583,7 @@ struct tga_header {
 /* Returns a ushort from a little-endian serialized value */
 static unsigned short get_tga_ushort(const unsigned char *data)
 {
-    return (unsigned short)data[0] | (unsigned short)(data[1] << 8);
+    return (unsigned short)(data[0] | (data[1] << 8));
 }
 
 #define TGA_HEADER_SIZE 18
