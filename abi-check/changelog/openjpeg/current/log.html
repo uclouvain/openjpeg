@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit fd8448ed446a935da3210821a783e794ede3c599
+<pre class='wrap'>commit 17ea17f487a777d14bd322ac06c4e6cb9124a226
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 19:05:29 +0200
+
+    Fix -Wconversion warning
+
+commit fd8448ed446a935da3210821a783e794ede3c599
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-17 17:04:48 +0200
 
@@ -591,12 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 17:26:03 +0200
 
     j2k.c: remove hardcoded constants related to m_state, and useless FIXME
-
-commit e23e0c94d0eb30623bc67be19c38c22ee5378344
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 16:48:15 +0200
-
-    Avoid p_stream-&gt;m_user_data_length &gt;= (OPJ_UINT64)p_stream-&gt;m_byte_offset assertion in opj_stream_get_number_byte_left(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2786. Credit to OSS Fuzz
 
 ...</pre></div>
 
