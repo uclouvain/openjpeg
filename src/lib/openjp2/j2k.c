@@ -5171,6 +5171,10 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
     /* number of packets and number of code blocks in packets */
     l_tile_size = (OPJ_UINT32)(l_tile_size * 1.4 / 8);
 
+    /* Arbitrary amount to make the following work: */
+    /* bin/test_tile_encoder 1 256 256 17 16 8 0 reversible_no_precinct.j2k 4 4 3 0 0 1 */
+    l_tile_size += 500;
+
     l_tile_size += opj_j2k_get_specific_header_sizes(p_j2k);
 
     p_j2k->m_specific_param.m_encoder.m_encoded_tile_size = l_tile_size;
