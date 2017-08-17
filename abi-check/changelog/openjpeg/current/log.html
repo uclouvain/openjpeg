@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 09e83407fa2b53c606d3179031b8d8b31272e20c
+<pre class='wrap'>commit 2cd30c2b06ce332dede81cccad8b334cde997281
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 11:47:40 +0200
+
+    tgatoimage(): avoid excessive memory allocation attempt, and fixes unaligned load (#995)
+
+commit 09e83407fa2b53c606d3179031b8d8b31272e20c
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-17 11:05:53 +0200
 
@@ -585,18 +591,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 21:11:23 +0200
 
     src/bin/jpwl/convert.c: fix memleak (fix suggested by maddin200, #631)
-
-commit 51eb86d8f7a6297a4f0e8ca44977b72532de0353
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 19:43:23 +0200
-
-    Fix warnings in pi.c raised by VS11 analyze (#190)
-
-commit 397f62c0a838e15d667ef50e27d5d011d2c79c04
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 19:13:49 +0200
-
-    Fix write heap buffer overflow in opj_mqc_byteout(). Discovered by Ke Liu of Tencent's Xuanwu LAB (#835)
 
 ...</pre></div>
 
