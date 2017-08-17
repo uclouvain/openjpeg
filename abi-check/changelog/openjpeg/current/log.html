@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 1ab6e0e07a67193564811c5720a69cb28f09a809
+<pre class='wrap'>commit 9f7d79fd30df3712e6bfc6d475bfa143c069c4df
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 14:52:10 +0200
+
+    opj_getopt_long(): avoid infinite loop on invalid or missing value for an option (#736)
+
+commit 1ab6e0e07a67193564811c5720a69cb28f09a809
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-17 12:01:16 +0200
 
@@ -591,12 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 15:22:24 +0200
 
     opj_tcd_dc_level_shift_decode: avoid int32 overflow when prec == 31. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2799. Credit to OSS Fuzz
-
-commit 517bf6fd86dae18b62390a03533d30da0e5bb701
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 21:11:23 +0200
-
-    src/bin/jpwl/convert.c: fix memleak (fix suggested by maddin200, #631)
 
 ...</pre></div>
 
