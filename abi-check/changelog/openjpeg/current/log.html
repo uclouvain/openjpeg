@@ -20,7 +20,19 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9f7d79fd30df3712e6bfc6d475bfa143c069c4df
+<pre class='wrap'>commit fd8448ed446a935da3210821a783e794ede3c599
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 17:04:48 +0200
+
+    bench_dwt.c: fix signedness related warnings
+
+commit da046b73a89806eae2f7f461c2a46bda7e07aaa8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 17:02:40 +0200
+
+    convert.c: fix recently introduced -Wsign-conversion warnings
+
+commit 9f7d79fd30df3712e6bfc6d475bfa143c069c4df
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-17 14:52:10 +0200
 
@@ -585,18 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 16:48:15 +0200
 
     Avoid p_stream-&gt;m_user_data_length &gt;= (OPJ_UINT64)p_stream-&gt;m_byte_offset assertion in opj_stream_get_number_byte_left(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2786. Credit to OSS Fuzz
-
-commit 1ed8d67797ef57143e2c855b602016bf9d89337d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 15:35:47 +0200
-
-    opj_j2k_set_decode_area: replace assertions by runtime checks. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2795. Credit to OSS Fuzz
-
-commit 68832af20e3b3710424947e12762b6b52d3b6ac0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 15:22:24 +0200
-
-    opj_tcd_dc_level_shift_decode: avoid int32 overflow when prec == 31. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2799. Credit to OSS Fuzz
 
 ...</pre></div>
 
