@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8e6c371e66d9c579048fd336cc3365869486080a
+<pre class='wrap'>commit 09e83407fa2b53c606d3179031b8d8b31272e20c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 11:05:53 +0200
+
+    Avoid asserting on assert(i == pcol) in opj_jp2_apply_pclr() by adding new check in opj_jp2_check_color(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3068. Credit to OSS Fuzz
+
+commit 8e6c371e66d9c579048fd336cc3365869486080a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 18:29:59 +0200
 
@@ -591,15 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-29 19:13:49 +0200
 
     Fix write heap buffer overflow in opj_mqc_byteout(). Discovered by Ke Liu of Tencent's Xuanwu LAB (#835)
-
-commit 11445eddad7e7fa5b273d1c83c91011c44e5d586
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-29 19:03:13 +0200
-
-    opj_pi_update_decode_poc(): limit layno1 to the number of layers (CVE-2016-1626 and CVE-2016-1628, #850)
-    
-    This has been recently fixed in a less elegant way per
-    80818c39f5bfbac37768fcee95b0ffeceaa77264
 
 ...</pre></div>
 
