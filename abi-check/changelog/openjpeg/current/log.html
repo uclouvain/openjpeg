@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5597522cac96b1bc6d48a447751b1c6049248eef
+<pre class='wrap'>commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 13:39:20 +0200
+
+    pgxtoimage(): fix write stack buffer overflow (#997)
+
+commit 5597522cac96b1bc6d48a447751b1c6049248eef
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-18 10:16:38 +0200
 
@@ -591,12 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 18:43:25 +0200
 
     Avoid heap buffer overflow in function pnmtoimage of convert.c, and unsigned integer overflow in opj_image_create() (CVE-2016-9118, #861)
-
-commit 83342f2aafcab4599b49f780e35fd249e8402b61
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 18:18:59 +0200
-
-    Fix Doxygen warnings (patch derived from Winfried's doxygen-dif.txt.zip, #849)
 
 ...</pre></div>
 
