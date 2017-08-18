@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 17ea17f487a777d14bd322ac06c4e6cb9124a226
+<pre class='wrap'>commit 5597522cac96b1bc6d48a447751b1c6049248eef
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 10:16:38 +0200
+
+    bmp_read_rle8_data(): avoid potential infinite loop (#996)
+
+commit 17ea17f487a777d14bd322ac06c4e6cb9124a226
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-17 19:05:29 +0200
 
@@ -591,12 +597,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 18:18:59 +0200
 
     Fix Doxygen warnings (patch derived from Winfried's doxygen-dif.txt.zip, #849)
-
-commit 4748318136626dd9e841ea1aa8b52adfbab26772
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 17:26:03 +0200
-
-    j2k.c: remove hardcoded constants related to m_state, and useless FIXME
 
 ...</pre></div>
 
