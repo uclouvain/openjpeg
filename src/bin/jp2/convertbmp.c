@@ -529,10 +529,19 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
     x = y = 0U;
     while (y < height) {
         int c = getc(IN);
+        if (c == EOF) {
+            return OPJ_FALSE;
+        }
 
         if (c) {
-            int j;
-            OPJ_UINT8 c1 = (OPJ_UINT8)getc(IN);
+            int j, c1_int;
+            OPJ_UINT8 c1;
+
+            c1_int = getc(IN);
+            if (c1_int == EOF) {
+                return OPJ_FALSE;
+            }
+            c1 = (OPJ_UINT8)c1_int;
 
             for (j = 0; (j < c) && (x < width) &&
                     ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
@@ -540,6 +549,10 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
             }
         } else {
             c = getc(IN);
+            if (c == EOF) {
+                return OPJ_FALSE;
+            }
+
             if (c == 0x00) { /* EOL */
                 x = 0;
                 ++y;
@@ -548,19 +561,34 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
                 break;
             } else if (c == 0x02) { /* MOVE by dxdy */
                 c = getc(IN);
+                if (c == EOF) {
+                    return OPJ_FALSE;
+                }
                 x += (OPJ_UINT32)c;
                 c = getc(IN);
+                if (c == EOF) {
+                    return OPJ_FALSE;
+                }
                 y += (OPJ_UINT32)c;
                 pix = pData + y * stride + x;
             } else { /* 03 .. 255 */
                 int j;
                 for (j = 0; (j < c) && (x < width) &&
                         ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
-                    OPJ_UINT8 c1 = (OPJ_UINT8)getc(IN);
+                    int c1_int;
+                    OPJ_UINT8 c1;
+                    c1_int = getc(IN);
+                    if (c1_int == EOF) {
+                        return OPJ_FALSE;
+                    }
+                    c1 = (OPJ_UINT8)c1_int;
                     *pix = c1;
                 }
                 if ((OPJ_UINT32)c & 1U) { /* skip padding byte */
-                    getc(IN);
+                    c = getc(IN);
+                    if (c == EOF) {
+                        return OPJ_FALSE;
+                    }
                 }
             }
         }
