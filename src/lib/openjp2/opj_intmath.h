@@ -96,6 +96,15 @@ static INLINE OPJ_UINT32 opj_uint_adds(OPJ_UINT32 a, OPJ_UINT32 b)
 }
 
 /**
+ Get the saturated difference of two unsigned integers
+ @return Returns saturated sum of a-b
+ */
+static INLINE OPJ_UINT32 opj_uint_subs(OPJ_UINT32 a, OPJ_UINT32 b)
+{
+    return (a >= b) ? a - b : 0;
+}
+
+/**
 Clamp an integer inside an interval
 @return
 <ul>

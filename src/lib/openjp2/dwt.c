@@ -147,6 +147,10 @@ Inverse wavelet transform in 2-D.
 static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
                                     opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i);
 
+static OPJ_BOOL opj_dwt_decode_partial_tile(opj_tcd_t *p_tcd,
+        opj_tcd_tilecomp_t* tilec,
+        OPJ_UINT32 numres);
+
 static OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,
         void (*p_function)(OPJ_INT32 *, OPJ_INT32, OPJ_INT32, OPJ_INT32));
 
@@ -1173,13 +1177,41 @@ OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
     return opj_dwt_encode_procedure(tilec, opj_dwt_encode_1);
 }
 
+static OPJ_BOOL opj_dwt_is_whole_tile_decoding(opj_tcd_t *p_tcd,
+        opj_tcd_tilecomp_t* tilec)
+{
+    opj_image_comp_t* image_comp = &(p_tcd->image->comps[tilec->compno]);
+    /* Compute the intersection of the area of interest, expressed in tile coordinates */
+    /* with the tile coordinates */
+    OPJ_UINT32 tcx0 = opj_uint_max(
+                          (OPJ_UINT32)tilec->x0,
+                          opj_uint_ceildiv(p_tcd->decoded_x0, image_comp->dx));
+    OPJ_UINT32 tcy0 = opj_uint_max(
+                          (OPJ_UINT32)tilec->y0,
+                          opj_uint_ceildiv(p_tcd->decoded_y0, image_comp->dy));
+    OPJ_UINT32 tcx1 = opj_uint_min(
+                          (OPJ_UINT32)tilec->x1,
+                          opj_uint_ceildiv(p_tcd->decoded_x1, image_comp->dx));
+    OPJ_UINT32 tcy1 = opj_uint_min(
+                          (OPJ_UINT32)tilec->y1,
+                          opj_uint_ceildiv(p_tcd->decoded_y1, image_comp->dy));
+    return (tcx0 == (OPJ_UINT32)tilec->x0 &&
+            tcy0 == (OPJ_UINT32)tilec->y0 &&
+            tcx1 == (OPJ_UINT32)tilec->x1 &&
+            tcy1 == (OPJ_UINT32)tilec->y1);
+}
+
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-OPJ_BOOL opj_dwt_decode(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* tilec,
+OPJ_BOOL opj_dwt_decode(opj_tcd_t *p_tcd, opj_tcd_tilecomp_t* tilec,
                         OPJ_UINT32 numres)
 {
-    return opj_dwt_decode_tile(tp, tilec, numres);
+    if (opj_dwt_is_whole_tile_decoding(p_tcd, tilec)) {
+        return opj_dwt_decode_tile(p_tcd->thread_pool, tilec, numres);
+    } else {
+        return opj_dwt_decode_partial_tile(p_tcd, tilec, numres);
+    }
 }
 
 
@@ -1485,6 +1517,322 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
                 opj_thread_pool_submit_job(tp, opj_dwt_decode_v_func, job);
             }
             opj_thread_pool_wait_completion(tp, 0);
+        }
+    }
+    opj_aligned_free(h.mem);
+    return OPJ_TRUE;
+}
+
+static void opj_dwt_interleave_partial_h(OPJ_INT32 *dest,
+        OPJ_INT32 cas,
+        const OPJ_INT32* src,
+        OPJ_INT32 sn,
+        OPJ_INT32 win_l_x0,
+        OPJ_INT32 win_l_x1,
+        OPJ_INT32 win_h_x0,
+        OPJ_INT32 win_h_x1)
+{
+    const OPJ_INT32 *ai = src;
+    OPJ_INT32 *bi = dest + cas;
+    OPJ_INT32  i;
+
+    for (i = win_l_x0; i < win_l_x1; i++) {
+        bi[2 * i] = ai[i];
+    }
+
+    ai  = src + sn;
+    bi  = dest + 1 - cas;
+    for (i = win_h_x0; i < win_h_x1; i++) {
+        bi[2 * i] = ai[i];
+    }
+}
+
+static void opj_dwt_interleave_partial_v(OPJ_INT32 *dest,
+        OPJ_INT32 cas,
+        const OPJ_INT32* src,
+        OPJ_INT32 sn,
+        OPJ_INT32 stride,
+        OPJ_INT32 win_l_y0,
+        OPJ_INT32 win_l_y1,
+        OPJ_INT32 win_h_y0,
+        OPJ_INT32 win_h_y1)
+{
+    const OPJ_INT32 *ai = src;
+    OPJ_INT32 *bi = dest + cas;
+    OPJ_INT32  i;
+
+    for (i = win_l_y0; i < win_l_y1; i++) {
+        bi[2 * i] = ai[i * stride];
+    }
+
+    ai  = src + sn * stride;
+    bi  = dest + 1 - cas;
+    for (i = win_h_y0; i < win_h_y1; i++) {
+        bi[2 * i] = ai[i * stride];
+    }
+}
+
+static void opj_dwt_decode_partial_1(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn,
+                                     OPJ_INT32 cas,
+                                     OPJ_INT32 win_l_x0,
+                                     OPJ_INT32 win_l_x1,
+                                     OPJ_INT32 win_h_x0,
+                                     OPJ_INT32 win_h_x1)
+{
+    OPJ_INT32 i;
+
+    if (!cas) {
+        if ((dn > 0) || (sn > 1)) { /* NEW :  CASE ONE ELEMENT */
+            for (i = win_l_x0; i < win_l_x1; i++) {
+                OPJ_S(i) -= (OPJ_D_(i - 1) + OPJ_D_(i) + 2) >> 2;
+            }
+            for (i = win_h_x0; i < win_h_x1; i++) {
+                OPJ_D(i) += (OPJ_S_(i) + OPJ_S_(i + 1)) >> 1;
+            }
+        }
+    } else {
+        if (!sn  && dn == 1) {        /* NEW :  CASE ONE ELEMENT */
+            OPJ_S(0) /= 2;
+        } else {
+            for (i = win_l_x0; i < win_l_x1; i++) {
+                OPJ_D(i) -= (OPJ_SS_(i) + OPJ_SS_(i + 1) + 2) >> 2;
+            }
+            for (i = win_h_x0; i < win_h_x1; i++) {
+                OPJ_S(i) += (OPJ_DD_(i) + OPJ_DD_(i - 1)) >> 1;
+            }
+        }
+    }
+}
+
+static void opj_dwt_get_band_coordinates(opj_tcd_tilecomp_t* tilec,
+        OPJ_UINT32 resno,
+        OPJ_UINT32 bandno,
+        OPJ_UINT32 tcx0,
+        OPJ_UINT32 tcy0,
+        OPJ_UINT32 tcx1,
+        OPJ_UINT32 tcy1,
+        OPJ_UINT32* tbx0,
+        OPJ_UINT32* tby0,
+        OPJ_UINT32* tbx1,
+        OPJ_UINT32* tby1)
+{
+    /* Compute number of decomposition for this band. See table F-1 */
+    OPJ_UINT32 nb = (resno == 0) ?
+                    tilec->numresolutions - 1 :
+                    tilec->numresolutions - resno;
+    /* Map above tile-based coordinates to sub-band-based coordinates per */
+    /* equation B-15 of the standard */
+    OPJ_UINT32 x0b = bandno & 1;
+    OPJ_UINT32 y0b = bandno >> 1;
+    if (tbx0) {
+        *tbx0 = (nb == 0) ? tcx0 : opj_uint_ceildiv(tcx0 - (1U <<
+                (nb - 1)) * x0b, 1U << nb);
+    }
+    if (tby0) {
+        *tby0 = (nb == 0) ? tcy0 : opj_uint_ceildiv(tcy0 - (1U <<
+                (nb - 1)) * y0b, 1U << nb);
+    }
+    if (tbx1) {
+        *tbx1 = (nb == 0) ? tcx1 : opj_uint_ceildiv(tcx1 - (1U <<
+                (nb - 1)) * x0b, 1U << nb);
+    }
+    if (tby1) {
+        *tby1 = (nb == 0) ? tcy1 : opj_uint_ceildiv(tcy1 - (1U <<
+                (nb - 1)) * y0b, 1U << nb);
+    }
+}
+
+static void opj_dwt_segment_grow(OPJ_UINT32 filter_width,
+                                 OPJ_UINT32 max_size,
+                                 OPJ_UINT32* start,
+                                 OPJ_UINT32* end)
+{
+    *start = opj_uint_subs(*start, filter_width);
+    *end = opj_uint_adds(*end, filter_width);
+    *end = opj_uint_min(*end, max_size);
+}
+
+static OPJ_BOOL opj_dwt_decode_partial_tile(opj_tcd_t *tcd,
+        opj_tcd_tilecomp_t* tilec,
+        OPJ_UINT32 numres)
+{
+    opj_dwt_t h;
+    opj_dwt_t v;
+    OPJ_UINT32 resno;
+    const OPJ_UINT32 filter_width = 2U;
+
+    opj_tcd_resolution_t* tr = tilec->resolutions;
+
+    OPJ_UINT32 rw = (OPJ_UINT32)(tr->x1 -
+                                 tr->x0);  /* width of the resolution level computed */
+    OPJ_UINT32 rh = (OPJ_UINT32)(tr->y1 -
+                                 tr->y0);  /* height of the resolution level computed */
+
+    OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+    size_t h_mem_size;
+
+    opj_image_comp_t* image_comp = &(tcd->image->comps[tilec->compno]);
+    /* Compute the intersection of the area of interest, expressed in tile coordinates */
+    /* with the tile coordinates */
+    OPJ_UINT32 win_tcx0 = opj_uint_max(
+                              (OPJ_UINT32)tilec->x0,
+                              opj_uint_ceildiv(tcd->decoded_x0, image_comp->dx));
+    OPJ_UINT32 win_tcy0 = opj_uint_max(
+                              (OPJ_UINT32)tilec->y0,
+                              opj_uint_ceildiv(tcd->decoded_y0, image_comp->dy));
+    OPJ_UINT32 win_tcx1 = opj_uint_min(
+                              (OPJ_UINT32)tilec->x1,
+                              opj_uint_ceildiv(tcd->decoded_x1, image_comp->dx));
+    OPJ_UINT32 win_tcy1 = opj_uint_min(
+                              (OPJ_UINT32)tilec->y1,
+                              opj_uint_ceildiv(tcd->decoded_y1, image_comp->dy));
+
+    if (numres == 1U) {
+        return OPJ_TRUE;
+    }
+    h_mem_size = opj_dwt_max_resolution(tr, numres);
+    /* overflow check */
+    if (h_mem_size > (SIZE_MAX / PARALLEL_COLS_53 / sizeof(OPJ_INT32))) {
+        /* FIXME event manager error callback */
+        return OPJ_FALSE;
+    }
+    /* We need PARALLEL_COLS_53 times the height of the array, */
+    /* since for the vertical pass */
+    /* we process PARALLEL_COLS_53 columns at a time */
+    h_mem_size *= PARALLEL_COLS_53 * sizeof(OPJ_INT32);
+    h.mem = (OPJ_INT32*)opj_aligned_32_malloc(h_mem_size);
+    if (! h.mem) {
+        /* FIXME event manager error callback */
+        return OPJ_FALSE;
+    }
+
+    v.mem = h.mem;
+
+    for (resno = 1; --numres > 0; resno ++) {
+        OPJ_INT32 * OPJ_RESTRICT tiledp = tilec->data;
+        OPJ_UINT32 i, j;
+        /* Window of interest subband-based coordinates */
+        OPJ_UINT32 win_ll_x0, win_ll_y0, win_ll_x1, win_ll_y1;
+        OPJ_UINT32 win_hl_x0, win_hl_x1;
+        OPJ_UINT32 win_lh_y0, win_lh_y1;
+        /* Window of interest tile-resolution-based coordinates */
+        OPJ_UINT32 win_tr_x0, win_tr_x1, win_tr_y0, win_tr_y1;
+        /* Tile-resolution subband-based coordinates */
+        OPJ_UINT32 tr_ll_x0, tr_ll_y0, tr_hl_x0, tr_lh_y0;
+
+        ++tr;
+
+        h.sn = (OPJ_INT32)rw;
+        v.sn = (OPJ_INT32)rh;
+
+        rw = (OPJ_UINT32)(tr->x1 - tr->x0);
+        rh = (OPJ_UINT32)(tr->y1 - tr->y0);
+
+        h.dn = (OPJ_INT32)(rw - (OPJ_UINT32)h.sn);
+        h.cas = tr->x0 % 2;
+
+        v.dn = (OPJ_INT32)(rh - (OPJ_UINT32)v.sn);
+        v.cas = tr->y0 % 2;
+
+        /* Get the subband coordinates for the window of interest */
+        /* LL band */
+        opj_dwt_get_band_coordinates(tilec, resno, 0,
+                                     win_tcx0, win_tcy0, win_tcx1, win_tcy1,
+                                     &win_ll_x0, &win_ll_y0,
+                                     &win_ll_x1, &win_ll_y1);
+
+        /* HL band */
+        opj_dwt_get_band_coordinates(tilec, resno, 1,
+                                     win_tcx0, win_tcy0, win_tcx1, win_tcy1,
+                                     &win_hl_x0, NULL, &win_hl_x1, NULL);
+
+        /* LH band */
+        opj_dwt_get_band_coordinates(tilec, resno, 2,
+                                     win_tcx0, win_tcy0, win_tcx1, win_tcy1,
+                                     NULL, &win_lh_y0, NULL, &win_lh_y1);
+
+        /* Beware: band index for non-LL0 resolution are 0=HL, 1=LH and 2=HH */
+        tr_ll_x0 = (OPJ_UINT32)tr->bands[1].x0;
+        tr_ll_y0 = (OPJ_UINT32)tr->bands[0].y0;
+        tr_hl_x0 = (OPJ_UINT32)tr->bands[0].x0;
+        tr_lh_y0 = (OPJ_UINT32)tr->bands[1].y0;
+
+        /* Substract the origin of the bands for this tile, to the subwindow */
+        /* of interest band coordinates, so as to get them relative to the */
+        /* tile */
+        win_ll_x0 = opj_uint_subs(win_ll_x0, tr_ll_x0);
+        win_ll_y0 = opj_uint_subs(win_ll_y0, tr_ll_y0);
+        win_ll_x1 = opj_uint_subs(win_ll_x1, tr_ll_x0);
+        win_ll_y1 = opj_uint_subs(win_ll_y1, tr_ll_y0);
+        win_hl_x0 = opj_uint_subs(win_hl_x0, tr_hl_x0);
+        win_hl_x1 = opj_uint_subs(win_hl_x1, tr_hl_x0);
+        win_lh_y0 = opj_uint_subs(win_lh_y0, tr_lh_y0);
+        win_lh_y1 = opj_uint_subs(win_lh_y1, tr_lh_y0);
+
+        opj_dwt_segment_grow(filter_width, (OPJ_UINT32)h.sn, &win_ll_x0, &win_ll_x1);
+        opj_dwt_segment_grow(filter_width, (OPJ_UINT32)h.dn, &win_hl_x0, &win_hl_x1);
+
+        opj_dwt_segment_grow(filter_width, (OPJ_UINT32)v.sn, &win_ll_y0, &win_ll_y1);
+        opj_dwt_segment_grow(filter_width, (OPJ_UINT32)v.dn, &win_lh_y0, &win_lh_y1);
+
+        /* Compute the tile-resolution-based coordinates for the window of interest */
+        if (h.cas == 0) {
+            win_tr_x0 = opj_uint_min(2 * win_ll_x0, 2 * win_hl_x0 + 1);
+            win_tr_x1 = opj_uint_min(opj_uint_max(2 * win_ll_x1, 2 * win_hl_x1 + 1), rw);
+        } else {
+            win_tr_x0 = opj_uint_min(2 * win_hl_x0, 2 * win_ll_x0 + 1);
+            win_tr_x1 = opj_uint_min(opj_uint_max(2 * win_hl_x1, 2 * win_ll_x1 + 1), rw);
+        }
+
+        if (v.cas == 0) {
+            win_tr_y0 = opj_uint_min(2 * win_ll_y0, 2 * win_lh_y0 + 1);
+            win_tr_y1 = opj_uint_min(opj_uint_max(2 * win_ll_y1, 2 * win_lh_y1 + 1), rh);
+        } else {
+            win_tr_y0 = opj_uint_min(2 * win_lh_y0, 2 * win_ll_y0 + 1);
+            win_tr_y1 = opj_uint_min(opj_uint_max(2 * win_lh_y1, 2 * win_ll_y1 + 1), rh);
+        }
+
+        for (j = 0; j < rh; ++j) {
+            if ((j >= win_ll_y0 && j < win_ll_y1) ||
+                    (j >= win_lh_y0 + (OPJ_UINT32)v.sn && j < win_lh_y1 + (OPJ_UINT32)v.sn)) {
+                memset(h.mem, 0, (OPJ_UINT32)(h.sn + h.dn) * sizeof(OPJ_INT32));
+                opj_dwt_interleave_partial_h(h.mem,
+                                             h.cas,
+                                             &tiledp[j * w],
+                                             h.sn,
+                                             (OPJ_INT32)win_ll_x0,
+                                             (OPJ_INT32)win_ll_x1,
+                                             (OPJ_INT32)win_hl_x0,
+                                             (OPJ_INT32)win_hl_x1);
+                opj_dwt_decode_partial_1(h.mem, h.dn, h.sn, h.cas,
+                                         (OPJ_INT32)win_ll_x0,
+                                         (OPJ_INT32)win_ll_x1,
+                                         (OPJ_INT32)win_hl_x0,
+                                         (OPJ_INT32)win_hl_x1);
+                memcpy(&tiledp[j * w] + win_tr_x0, h.mem + win_tr_x0,
+                       (win_tr_x1 - win_tr_x0) * sizeof(OPJ_INT32));
+            }
+        }
+
+        for (i = win_tr_x0; i < win_tr_x1; ++i) {
+            memset(v.mem, 0, (OPJ_UINT32)(v.sn + v.dn) * sizeof(OPJ_INT32));
+            opj_dwt_interleave_partial_v(v.mem,
+                                         v.cas,
+                                         tiledp + i,
+                                         v.sn,
+                                         (OPJ_INT32)w,
+                                         (OPJ_INT32)win_ll_y0,
+                                         (OPJ_INT32)win_ll_y1,
+                                         (OPJ_INT32)win_lh_y0,
+                                         (OPJ_INT32)win_lh_y1);
+            opj_dwt_decode_partial_1(v.mem, v.dn, v.sn, v.cas,
+                                     (OPJ_INT32)win_ll_y0,
+                                     (OPJ_INT32)win_ll_y1,
+                                     (OPJ_INT32)win_lh_y0,
+                                     (OPJ_INT32)win_lh_y1);
+            for (j = win_tr_y0; j < win_tr_y1; j++) {
+                tiledp[j * w + i] = v.mem[j];
+            }
         }
     }
     opj_aligned_free(h.mem);

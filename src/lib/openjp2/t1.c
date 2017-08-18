@@ -1802,7 +1802,7 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
 
                         /* TODO: remove this once we don't iterate over */
                         /* tile pixels that are not in the subwindow of interest */
-                        OPJ_UINT32 j, i;
+                        OPJ_UINT32 j;
                         OPJ_INT32 x = cblk->x0 - band->x0;
                         OPJ_INT32 y = cblk->y0 - band->y0;
                         OPJ_INT32* OPJ_RESTRICT tiledp;
@@ -1823,9 +1823,7 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                                                             (OPJ_UINT32)x];
 
                         for (j = 0; j < cblk_h; ++j) {
-                            for (i = 0; i < cblk_w; ++i) {
-                                ((OPJ_INT32*)tiledp)[(j * tile_w) + i] = 0;
-                            }
+                            memset(tiledp + j * tile_w, 0, cblk_w * sizeof(OPJ_INT32));
                         }
                         continue;
                     }

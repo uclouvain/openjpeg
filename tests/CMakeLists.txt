@@ -87,6 +87,10 @@ add_test(NAME tda_prep_reversible_no_precinct COMMAND test_tile_encoder 1 256 25
 add_test(NAME tda_reversible_no_precinct COMMAND test_decode_area -q reversible_no_precinct.j2k)
 set_property(TEST tda_reversible_no_precinct APPEND PROPERTY DEPENDS tda_prep_reversible_no_precinct)
 
+add_test(NAME tda_prep_reversible_203_201_17_19_no_precinct COMMAND test_tile_encoder 1 203 201 17 19 8 0 reversible_203_201_17_19_no_precinct.j2k 4 4 3 0 0 1)
+add_test(NAME tda_reversible_203_201_17_19_no_precinct COMMAND test_decode_area -q reversible_203_201_17_19_no_precinct.j2k)
+set_property(TEST tda_reversible_203_201_17_19_no_precinct APPEND PROPERTY DEPENDS tda_prep_reversible_203_201_17_19_no_precinct)
+
 add_test(NAME tda_prep_reversible_with_precinct COMMAND test_tile_encoder 1 256 256 32 32 8 0 reversible_with_precinct.j2k 4 4 3 0 0 1 16 16)
 add_test(NAME tda_reversible_with_precinct COMMAND test_decode_area -q reversible_with_precinct.j2k)
 set_property(TEST tda_reversible_with_precinct APPEND PROPERTY DEPENDS tda_prep_reversible_with_precinct)

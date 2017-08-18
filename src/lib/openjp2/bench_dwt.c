@@ -133,7 +133,12 @@ OPJ_FLOAT64 opj_clock(void)
 int main(int argc, char** argv)
 {
     int num_threads = 0;
+    opj_tcd_t tcd;
+    opj_tcd_image_t tcd_image;
+    opj_tcd_tile_t tcd_tile;
     opj_tcd_tilecomp_t tilec;
+    opj_image_t image;
+    opj_image_comp_t image_comp;
     opj_thread_pool_t* tp;
     OPJ_INT32 i, j, k;
     OPJ_BOOL display = OPJ_FALSE;
@@ -191,8 +196,32 @@ int main(int argc, char** argv)
         }
     }
 
+    memset(&tcd, 0, sizeof(tcd));
+    tcd.thread_pool = tp;
+    tcd.decoded_x0 = (OPJ_UINT32)tilec.x0;
+    tcd.decoded_y0 = (OPJ_UINT32)tilec.y0;
+    tcd.decoded_x1 = (OPJ_UINT32)tilec.x1;
+    tcd.decoded_y1 = (OPJ_UINT32)tilec.y1;
+    tcd.tcd_image = &tcd_image;
+    memset(&tcd_image, 0, sizeof(tcd_image));
+    tcd_image.tiles = &tcd_tile;
+    memset(&tcd_tile, 0, sizeof(tcd_tile));
+    tcd_tile.x0 = tilec.x0;
+    tcd_tile.y0 = tilec.y0;
+    tcd_tile.x1 = tilec.x1;
+    tcd_tile.y1 = tilec.y1;
+    tcd_tile.numcomps = 1;
+    tcd_tile.comps = &tilec;
+    tcd.image = &image;
+    memset(&image, 0, sizeof(image));
+    image.numcomps = 1;
+    image.comps = &image_comp;
+    memset(&image_comp, 0, sizeof(image_comp));
+    image_comp.dx = 1;
+    image_comp.dy = 1;
+
     start = opj_clock();
-    opj_dwt_decode(tp, &tilec, tilec.numresolutions);
+    opj_dwt_decode(&tcd, &tilec, tilec.numresolutions);
     stop = opj_clock();
     printf("time for dwt_decode: %.03f s\n", stop - start);
 
