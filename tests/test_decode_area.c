@@ -367,24 +367,26 @@ int main(int argc, char** argv)
                     da_y0 = (OPJ_INT32)opj_uint_min(l_image->y1, (OPJ_UINT32)da_y0 + 1);
                     da_y1 = (OPJ_INT32)opj_uint_min(l_image->y1, (OPJ_UINT32)da_y1 + 1);
                 }
-                l_sub_image = decode(quiet, input_file, da_x0, da_y0, da_x1, da_y1,
-                                     NULL, NULL, NULL, NULL);
-                if (!l_sub_image) {
-                    fprintf(stderr, "decode failed for %d,%d,%d,%d\n",
-                            da_x0, da_y0, da_x1, da_y1);
-                    opj_image_destroy(l_sub_image);
-                    opj_image_destroy(l_image);
-                    return 1;
-                }
+                if (da_x0 < (OPJ_INT32)l_image->x1 && da_y0 < (OPJ_INT32)l_image->y1) {
+                    l_sub_image = decode(quiet, input_file, da_x0, da_y0, da_x1, da_y1,
+                                         NULL, NULL, NULL, NULL);
+                    if (!l_sub_image) {
+                        fprintf(stderr, "decode failed for %d,%d,%d,%d\n",
+                                da_x0, da_y0, da_x1, da_y1);
+                        opj_image_destroy(l_sub_image);
+                        opj_image_destroy(l_image);
+                        return 1;
+                    }
 
-                if (!check_consistency(l_image, l_sub_image)) {
-                    fprintf(stderr, "Consistency checked failed for %d,%d,%d,%d\n",
-                            da_x0, da_y0, da_x1, da_y1);
+                    if (!check_consistency(l_image, l_sub_image)) {
+                        fprintf(stderr, "Consistency checked failed for %d,%d,%d,%d\n",
+                                da_x0, da_y0, da_x1, da_y1);
+                        opj_image_destroy(l_sub_image);
+                        opj_image_destroy(l_image);
+                        return 1;
+                    }
                     opj_image_destroy(l_sub_image);
-                    opj_image_destroy(l_image);
-                    return 1;
                 }
-                opj_image_destroy(l_sub_image);
             }
         }
     }
