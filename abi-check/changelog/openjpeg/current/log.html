@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
+<pre class='wrap'>commit 3eed024eb45534f86537404e08d08fa572a40782
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-19 15:45:54 +0200
+
+    pgxtoimage(): avoid excessive memory allocation attempt (#999)
+
+commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-18 13:39:20 +0200
 
@@ -450,76 +456,6 @@ Date:   2017-07-06 01:05:24 +0200
     Note: this might have some compatibility impact in case user code does itself
     the allocation/free of image-&gt;comps[].data
 
-commit 793edc38e41700e9b4cda4b7f9c79aba95b8d989
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-05 23:48:28 +0200
-
-    Decrease memory consumption for whole image single tile decoding.
-    
-    We can use the same buffer for the tile decoding and the final image, and
-    save the intermediate buffer to transfer between those.
-    
-    Effect on the decoding of MAPA (9944 x 13498 x 3 components of size byte)
-    
-    Peak memory from 4.5 GB to 2.7 GB
-    
-    Now:
-    n5: 2699708767 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
-     n1: 1610689344 0x4E77E07: opj_aligned_malloc (opj_malloc.c:61) &lt;-- final image
-      n1: 1610689344 0x4E7195B: opj_alloc_tile_component_data (tcd.c:676)
-       n1: 1610689344 0x4E722D2: opj_tcd_init_decode_tile (tcd.c:816)
-        n1: 1610689344 0x4E4BCF1: opj_j2k_read_tile_header (j2k.c:8597)
-         n1: 1610689344 0x4E4C742: opj_j2k_decode_tiles (j2k.c:10324)
-          n1: 1610689344 0x4E4E20E: opj_j2k_decode (j2k.c:7826)
-           n1: 1610689344 0x4E52E42: opj_jp2_decode (jp2.c:1564)
-            n0: 1610689344 0x40369E: main (opj_decompress.c:1459)
-     n1: 815554560 0x4E72231: opj_tcd_init_decode_tile (tcd.c:1217) &lt;-- working memory for code blocks: 9944*13498/64/64*8192*3
-      n1: 815554560 0x4E4BCF1: opj_j2k_read_tile_header (j2k.c:8597)
-       n1: 815554560 0x4E4C742: opj_j2k_decode_tiles (j2k.c:10324)
-        n1: 815554560 0x4E4E20E: opj_j2k_decode (j2k.c:7826)
-         n1: 815554560 0x4E52E42: opj_jp2_decode (jp2.c:1564)
-          n0: 815554560 0x40369E: main (opj_decompress.c:1459)
-     n1: 219758391 0x4E4C0BF: opj_j2k_read_tile_header (j2k.c:4661) &lt;-- ingestion of code stream
-      n1: 219758391 0x4E4C742: opj_j2k_decode_tiles (j2k.c:10324)
-       n1: 219758391 0x4E4E20E: opj_j2k_decode (j2k.c:7826)
-        n1: 219758391 0x4E52E42: opj_jp2_decode (jp2.c:1564)
-         n0: 219758391 0x40369E: main (opj_decompress.c:1459)
-     n1: 39822000 0x4E7224F: opj_tcd_init_decode_tile (tcd.c:1224) &lt;-- OPJ_J2K_DEFAULT_NB_SEGS*sizeof(opj_tcd_seg_t) per codeblock
-      n1: 39822000 0x4E4BCF1: opj_j2k_read_tile_header (j2k.c:8597)
-       n1: 39822000 0x4E4C742: opj_j2k_decode_tiles (j2k.c:10324)
-        n1: 39822000 0x4E4E20E: opj_j2k_decode (j2k.c:7826)
-         n1: 39822000 0x4E52E42: opj_jp2_decode (jp2.c:1564)
-          n0: 39822000 0x40369E: main (opj_decompress.c:1459)
-     n0: 13884472 in 49 places, all below massif's threshold (1.00%)
-    
-    Before:
-    n5: 4493329848 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
-     n2: 1610709160 0x4E77C87: opj_aligned_malloc (opj_malloc.c:61)
-      n1: 1610689344 0x4E717DB: opj_alloc_tile_component_data (tcd.c:676)
-       n1: 1610689344 0x4E72152: opj_tcd_init_decode_tile (tcd.c:816)
-        n1: 1610689344 0x4E4BCF1: opj_j2k_read_tile_header (j2k.c:8597)
-         n1: 1610689344 0x4E4C64A: opj_j2k_decode_tiles (j2k.c:10318)
-          n1: 1610689344 0x4E4E08E: opj_j2k_decode (j2k.c:7826)
-           n1: 1610689344 0x4E52CC2: opj_jp2_decode (jp2.c:1564)
-            n0: 1610689344 0x40369E: main (opj_decompress.c:1459)
-      n0: 19816 in 2 places, all below massif's threshold (1.00%)
-     n1: 1610689344 0x4E43F36: opj_j2k_update_image_data.isra.7 (j2k.c:8743)
-      n1: 1610689344 0x4E4C5C1: opj_j2k_decode_tiles (j2k.c:10358)
-       n1: 1610689344 0x4E4E08E: opj_j2k_decode (j2k.c:7826)
-        n1: 1610689344 0x4E52CC2: opj_jp2_decode (jp2.c:1564)
-         n0: 1610689344 0x40369E: main (opj_decompress.c:1459)
-     n1: 815554560 0x4E720B1: opj_tcd_init_decode_tile (tcd.c:1217)
-      n1: 815554560 0x4E4BCF1: opj_j2k_read_tile_header (j2k.c:8597)
-       n1: 815554560 0x4E4C64A: opj_j2k_decode_tiles (j2k.c:10318)
-        n1: 815554560 0x4E4E08E: opj_j2k_decode (j2k.c:7826)
-         n1: 815554560 0x4E52CC2: opj_jp2_decode (jp2.c:1564)
-          n0: 815554560 0x40369E: main (opj_decompress.c:1459)
-     n1: 402672336 0x4E4C545: opj_j2k_decode_tiles (j2k.c:10336)
-      n1: 402672336 0x4E4E08E: opj_j2k_decode (j2k.c:7826)
-       n1: 402672336 0x4E52CC2: opj_jp2_decode (jp2.c:1564)
-        n0: 402672336 0x40369E: main (opj_decompress.c:1459)
-     n0: 53704448 in 58 places, all below massif's threshold (1.00%)
-
 commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-08-07 16:44:28 +0200
@@ -591,12 +527,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 18:46:34 +0200
 
     Fix warnings in USE_JPIP compilation mode
-
-commit c22cbd8bdf8ff2ae372f94391a4be2d322b36b41
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 18:43:25 +0200
-
-    Avoid heap buffer overflow in function pnmtoimage of convert.c, and unsigned integer overflow in opj_image_create() (CVE-2016-9118, #861)
 
 ...</pre></div>
 
