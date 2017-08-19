@@ -1163,6 +1163,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
     opj_image_cmptparm_t cmptparm;  /* maximum of 1 component  */
     opj_image_t * image = NULL;
     int adjustS, ushift, dshift, force8;
+    OPJ_UINT64 expected_file_size;
 
     char endian1, endian2, sign;
     char signtmp[32];
@@ -1211,6 +1212,29 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
         fclose(f);
         fprintf(stderr, "Bad pgx header, please check input file\n");
         return NULL;
+    }
+
+    if (w < 1 || h < 1 || prec < 1 || prec > 31) {
+        fclose(f);
+        fprintf(stderr, "Bad pgx header, please check input file\n");
+        return NULL;
+    }
+
+    expected_file_size =
+        (OPJ_UINT64)w * (OPJ_UINT64)h * (prec > 16 ? 4 : prec > 8 ? 2 : 1);
+    if (expected_file_size > 10000000U) {
+        char ch;
+        long curpos = ftell(f);
+        if (expected_file_size > (OPJ_UINT64)INT_MAX) {
+            expected_file_size = (OPJ_UINT64)INT_MAX;
+        }
+        fseek(f, (long)expected_file_size - 1, SEEK_SET);
+        if (fread(&ch, 1, 1, f) != 1) {
+            fprintf(stderr, "File too short\n");
+            fclose(f);
+            return NULL;
+        }
+        fseek(f, curpos, SEEK_SET);
     }
 
     /* initialize image component */
