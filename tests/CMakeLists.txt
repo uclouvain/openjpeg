@@ -99,6 +99,10 @@ add_test(NAME tda_prep_irreversible_no_precinct COMMAND test_tile_encoder 1 256 
 add_test(NAME tda_irreversible_no_precinct COMMAND test_decode_area -q irreversible_no_precinct.j2k)
 set_property(TEST tda_irreversible_no_precinct APPEND PROPERTY DEPENDS tda_prep_irreversible_no_precinct)
 
+add_test(NAME tda_prep_irreversible_203_201_17_19_no_precinct COMMAND test_tile_encoder 1 203 201 17 19 8 1 irreversible_203_201_17_19_no_precinct.j2k 4 4 3 0 0 1)
+add_test(NAME tda_irreversible_203_201_17_19_no_precinct COMMAND test_decode_area -q irreversible_203_201_17_19_no_precinct.j2k)
+set_property(TEST tda_irreversible_203_201_17_19_no_precinct APPEND PROPERTY DEPENDS tda_prep_irreversible_203_201_17_19_no_precinct)
+
 add_executable(include_openjpeg include_openjpeg.c)
 
 # No image send to the dashboard if lib PNG is not available.

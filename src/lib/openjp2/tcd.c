@@ -1783,7 +1783,8 @@ static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd)
                 return OPJ_FALSE;
             }
         } else {
-            if (! opj_dwt_decode_real(l_tile_comp, l_img_comp->resno_decoded + 1)) {
+            if (! opj_dwt_decode_real(p_tcd, l_tile_comp,
+                                      l_img_comp->resno_decoded + 1)) {
                 return OPJ_FALSE;
             }
         }
