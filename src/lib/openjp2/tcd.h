@@ -255,6 +255,7 @@ typedef struct opj_tcd {
     OPJ_BITFIELD m_is_decoder : 1;
     /** Thread pool */
     opj_thread_pool_t* thread_pool;
+    /** Coordinates of the window of interest, in grid reference space */
     OPJ_UINT32 decoded_x0;
     OPJ_UINT32 decoded_y0;
     OPJ_UINT32 decoded_x1;
