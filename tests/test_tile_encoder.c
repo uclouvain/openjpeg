@@ -128,12 +128,12 @@ int main(int argc, char *argv[])
         comp_prec = atoi(argv[6]);
         irreversible = atoi(argv[7]);
         output_file = argv[8];
-        if (argc >= 12) {
+        if (argc >= 11) {
             quality_loss = 0;
             cblockw_init = atoi(argv[9]);
             cblockh_init = atoi(argv[10]);
         }
-        if (argc >= 13) {
+        if (argc >= 12) {
             numresolution = atoi(argv[11]);
         }
         if (argc >= 14) {
