@@ -20,11 +20,41 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 3eed024eb45534f86537404e08d08fa572a40782
+<pre class='wrap'>commit e9bbc6d3dde946bdb5195f053f24b91335d5d84c
+Merge: 3eed024 17a7ac4
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-08-21 13:02:07 +0200
+
+    Merge pull request #1001 from rouault/subtile_decoding_stage2
+    
+    Subtile decoding: only apply IDWT on areas that participate to the window of interest
+
+commit 17a7ac42d581c537cfc1da4324e53047ad82b13e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 12:25:38 +0200
+
+    Add comments for filter_width values
+
+commit f87c5ef7ebef3d7a908e98f2de1b6a0336ae57ae
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-20 22:02:41 +0200
+
+    Subtile decoding: only do 9x7 IDWT computations on relevant areas of tile-component buffer.
+
+commit 3eed024eb45534f86537404e08d08fa572a40782
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-19 15:45:54 +0200
 
     pgxtoimage(): avoid excessive memory allocation attempt (#999)
+
+commit 5d403250561398f7ba3041d9eb8c893bd680dd72
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 15:08:51 +0200
+
+    Subtile decoding: only do 5x3 IDWT computations on relevant areas of tile-component buffer.
+    
+    This lowers 'bin/opj_decompress -i ../MAPA.jp2 -o out.tif -d 0,0,256,256'
+    down to 0.860s
 
 commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -32,11 +62,35 @@ Date:   2017-08-18 13:39:20 +0200
 
     pgxtoimage(): fix write stack buffer overflow (#997)
 
+commit 028c504a43e962a725c4fd73d6642ee73c653e1b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 12:30:11 +0200
+
+    test_decode_area: fix to make it work with odd image dimensions
+
 commit 5597522cac96b1bc6d48a447751b1c6049248eef
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-18 10:16:38 +0200
 
     bmp_read_rle8_data(): avoid potential infinite loop (#996)
+
+commit 5d12806091eab0659431fefcefdb797b09f8e884
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 19:18:48 +0200
+
+    opj_j2k_update_rates(): grow tile size buffer for some situations
+
+commit 4b0bfbfabc3ce1cc4c6d18dc7113b9f6335372d4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 16:07:19 +0200
+
+    Zero-initialize tile buffer regions of skipped code-blocks, so as to make Valgrind happy
+
+commit fe338a057c39797bf61939471ebaef09e44464c7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-14 13:23:57 +0200
+
+    Sub-tile decoding: only decode precincts and codeblocks that intersect the window specified in opj_set_decode_area()
 
 commit 17ea17f487a777d14bd322ac06c4e6cb9124a226
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -441,21 +495,6 @@ Date:   2017-07-06 01:47:40 +0200
     As bin/common/color.c used to directly call malloc()/free(), we need
     to export functions dedicated to allocating/freeing image component data.
 
-commit 61fb5dd7f81c2e3dfabbb99f59dc89572d59fa37
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-06 01:05:24 +0200
-
-    Fix crash on Windows due to b7594c0fcb9dd3aa6356d72c4a525d76168da689
-    
-    b7594c0fcb9dd3aa6356d72c4a525d76168da689 may put opj_tcd_tilecomp_t-&gt;data
-    allocated by opj_alloc_tile_component_data() as the image-&gt;comps[].data. As
-    opj_alloc_tile_component_data() use opj_aligned_malloc() we must be sure to
-    ue opj_alined_malloc()/_free() in all places where we alloc/free
-    image-&gt;comps[].data.
-    
-    Note: this might have some compatibility impact in case user code does itself
-    the allocation/free of image-&gt;comps[].data
-
 commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-08-07 16:44:28 +0200
@@ -521,12 +560,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 19:07:16 +0200
 
     Test return value of opj_j2k_setup_decoding_tile() (commit https://github.com/uclouvain/openjpeg/pull/561/commits/ec31fa0c7f1ff8979312c07296cba41584c458a0 by  ak-dxdy, #561)
-
-commit ffa9a4f6585dc199fb850dee4255e7a7b84aad63
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 18:46:34 +0200
-
-    Fix warnings in USE_JPIP compilation mode
 
 ...</pre></div>
 
