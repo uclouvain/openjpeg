@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit c97666f72ba26a7ceb64931963b988a6f8f377f9
+<pre class='wrap'>commit 8180eeace13ffceef5dd7c3f80be156e36181846
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:06:53 +0200
+
+    test_tile_encoder: fix checks on argc
+
+commit c97666f72ba26a7ceb64931963b988a6f8f377f9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-21 19:02:04 +0200
 
@@ -486,12 +492,6 @@ Date:   2017-07-06 13:23:29 +0200
 
     Add documentation for magic values in the code
 
-commit 434ace4ff74cc3eee401d4d3c02668c1d85f2a0d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-06 02:17:26 +0200
-
-    opj_jp2_apply_pclr() also needs to use opj_image_data_alloc/opj_image_data_free
-
 commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-08-07 16:44:28 +0200
@@ -522,12 +522,6 @@ Date:   2017-08-02 16:50:11 +0200
 
     WIP: fix abi-check and automatic upload
 
-commit 48125b0d124bc668b971b1f5df5a3c39798cfcf9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-31 17:35:10 +0200
-
-    src/bin/jpwl/convert.c: add missing fclose() in error code path (suggested by maddin200, #976)
-
 commit 00f45684a8339e69ed55df2397f3c19d09fecaed
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-07-31 13:58:08 +0200
@@ -539,12 +533,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 19:46:52 +0200
 
     src/lib/openjp2/*.h: use OPJ_ prefix for inclusion guards instead of reserved __ (#587)
-
-commit 9a6d41d22b1a4f17a376d2f6f208c52c58b8e4b3
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 19:27:01 +0200
-
-    opj_event_msg(): force zero termination of buffer
 
 ...</pre></div>
 
