@@ -6730,6 +6730,7 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
 {
     OPJ_UINT32 i, j, tileno, numpocs_tile;
     opj_cp_t *cp = 00;
+    OPJ_UINT32 cblkw, cblkh;
 
     if (!p_j2k || !parameters || ! image) {
         return OPJ_FALSE;
@@ -6740,6 +6741,38 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
         opj_event_msg(p_manager, EVT_ERROR,
                       "Invalid number of resolutions : %d not in range [1,%d]\n",
                       parameters->numresolution, OPJ_J2K_MAXRLVLS);
+        return OPJ_FALSE;
+    }
+
+    if (parameters->cblockw_init < 4 || parameters->cblockw_init > 1024) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Invalid value for cblockw_init: %d not a power of 2 in range [4,1024]\n",
+                      parameters->cblockw_init);
+        return OPJ_FALSE;
+    }
+    if (parameters->cblockh_init < 4 || parameters->cblockh_init > 1024) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Invalid value for cblockh_init: %d not a power of 2 not in range [4,1024]\n",
+                      parameters->cblockh_init);
+        return OPJ_FALSE;
+    }
+    if (parameters->cblockw_init * parameters->cblockh_init > 4096) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Invalid value for cblockw_init * cblockh_init: should be <= 4096\n");
+        return OPJ_FALSE;
+    }
+    cblkw = (OPJ_UINT32)opj_int_floorlog2(parameters->cblockw_init);
+    cblkh = (OPJ_UINT32)opj_int_floorlog2(parameters->cblockh_init);
+    if (parameters->cblockw_init != (1 << cblkw)) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Invalid value for cblockw_init: %d not a power of 2 in range [4,1024]\n",
+                      parameters->cblockw_init);
+        return OPJ_FALSE;
+    }
+    if (parameters->cblockh_init != (1 << cblkh)) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Invalid value for cblockw_init: %d not a power of 2 in range [4,1024]\n",
+                      parameters->cblockh_init);
         return OPJ_FALSE;
     }
 
