@@ -13,6 +13,7 @@
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2017, IntoPIX SA <support@intopix.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -180,6 +181,8 @@ typedef struct opj_tcd_resolution {
 typedef struct opj_tcd_tilecomp {
     /* dimension of component : left upper corner (x0, y0) right low corner (x1,y1) */
     OPJ_INT32 x0, y0, x1, y1;
+    /* component number */
+    OPJ_UINT32 compno;
     /* number of resolutions level */
     OPJ_UINT32 numresolutions;
     /* number of resolutions level to decode (at max)*/
@@ -252,6 +255,10 @@ typedef struct opj_tcd {
     OPJ_BITFIELD m_is_decoder : 1;
     /** Thread pool */
     opj_thread_pool_t* thread_pool;
+    OPJ_UINT32 decoded_x0;
+    OPJ_UINT32 decoded_y0;
+    OPJ_UINT32 decoded_x1;
+    OPJ_UINT32 decoded_y1;
 } opj_tcd_t;
 
 /** @name Exported functions */
@@ -348,6 +355,10 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
 /**
 Decode a tile from a buffer into a raw image
 @param tcd TCD handle
+@param decoded_x0 Upper left x of region to decode (in grid coordinates)
+@param decoded_y0 Upper left y of region to decode (in grid coordinates)
+@param decoded_x1 Lower right x of region to decode (in grid coordinates)
+@param decoded_y1 Lower right y of region to decode (in grid coordinates)
 @param src Source buffer
 @param len Length of source buffer
 @param tileno Number that identifies one of the tiles to be decoded
@@ -355,6 +366,10 @@ Decode a tile from a buffer into a raw image
 @param manager the event manager.
 */
 OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *tcd,
+                             OPJ_UINT32 decoded_x0,
+                             OPJ_UINT32 decoded_y0,
+                             OPJ_UINT32 decoded_x1,
+                             OPJ_UINT32 decoded_y1,
                              OPJ_BYTE *src,
                              OPJ_UINT32 len,
                              OPJ_UINT32 tileno,
@@ -408,6 +423,31 @@ OPJ_BOOL opj_tcd_is_band_empty(opj_tcd_band_t* band);
 
 /** Reinitialize a segment */
 void opj_tcd_reinit_segment(opj_tcd_seg_t* seg);
+
+
+/** Returns whether a sub-band region contributes to the area of interest
+ * tcd->decoded_x0,tcd->decoded_y0,tcd->decoded_x1,tcd->decoded_y1.
+ *
+ * @param tcd    TCD handle.
+ * @param compno Component number
+ * @param resno  Resolution number
+ * @param bandno Band number (*not* band index, ie 0, 1, 2 or 3)
+ * @param x0     Upper left x in subband coordinates
+ * @param y0     Upper left y in subband coordinates
+ * @param x1     Lower right x in subband coordinates
+ * @param y1     Lower right y in subband coordinates
+ * @return OPJ_TRUE whether the sub-band region contributs to the area of
+ *                  interest.
+ */
+OPJ_BOOL opj_tcd_is_subband_area_of_interest(opj_tcd_t *tcd,
+        OPJ_UINT32 compno,
+        OPJ_UINT32 resno,
+        OPJ_UINT32 bandno,
+        OPJ_UINT32 x0,
+        OPJ_UINT32 y0,
+        OPJ_UINT32 x1,
+        OPJ_UINT32 y1);
+
 
 /* ----------------------------------------------------------------------- */
 /*@}*/
