@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e9bbc6d3dde946bdb5195f053f24b91335d5d84c
+<pre class='wrap'>commit 24d069e3ffa2286930a2e7e2638431ea1de6846a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 17:19:13 +0200
+
+    Add comment
+
+commit e9bbc6d3dde946bdb5195f053f24b91335d5d84c
 Merge: 3eed024 17a7ac4
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-08-21 13:02:07 +0200
@@ -486,15 +492,6 @@ Date:   2017-07-06 02:02:25 +0200
 
     Complementary fix to previous commit
 
-commit f58aab9d6a57e48bdc60e15dd373c24de74719a9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-06 01:47:40 +0200
-
-    Add opj_image_data_alloc() / opj_image_data_free()
-    
-    As bin/common/color.c used to directly call malloc()/free(), we need
-    to export functions dedicated to allocating/freeing image component data.
-
 commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-08-07 16:44:28 +0200
@@ -554,12 +551,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-07-30 19:26:47 +0200
 
     Fix breakage of 22bf99ce0220811bfce1562ee61423cb0245b683
-
-commit 22bf99ce0220811bfce1562ee61423cb0245b683
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 19:07:16 +0200
-
-    Test return value of opj_j2k_setup_decoding_tile() (commit https://github.com/uclouvain/openjpeg/pull/561/commits/ec31fa0c7f1ff8979312c07296cba41584c458a0 by  ak-dxdy, #561)
 
 ...</pre></div>
 
