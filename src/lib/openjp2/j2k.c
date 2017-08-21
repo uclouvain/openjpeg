@@ -138,7 +138,7 @@ static OPJ_BOOL opj_j2k_build_encoder(opj_j2k_t * p_j2k,
                                       opj_event_mgr_t * p_manager);
 
 /**
- * Creates a tile-coder decoder.
+ * Creates a tile-coder encoder.
  *
  * @param       p_stream                        the stream to write data to.
  * @param       p_j2k                           J2K codec.
@@ -8121,7 +8121,7 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd(opj_j2k_t * p_j2k,
     }
 
     /* Create the current tile decoder*/
-    p_j2k->m_tcd = (opj_tcd_t*)opj_tcd_create(OPJ_TRUE); /* FIXME why a cast ? */
+    p_j2k->m_tcd = opj_tcd_create(OPJ_TRUE);
     if (! p_j2k->m_tcd) {
         return OPJ_FALSE;
     }
@@ -11846,7 +11846,7 @@ static OPJ_BOOL opj_j2k_init_info(opj_j2k_t *p_j2k,
 }
 
 /**
- * Creates a tile-coder decoder.
+ * Creates a tile-coder encoder.
  *
  * @param       p_stream                the stream to write data to.
  * @param       p_j2k                   J2K codec.
