@@ -1676,6 +1676,8 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(opj_tcd_t *tcd,
     opj_dwt_t h;
     opj_dwt_t v;
     OPJ_UINT32 resno;
+    /* This value matches the maximum left/right extension given in tables */
+    /* F.2 and F.3 of the standard. */
     const OPJ_UINT32 filter_width = 2U;
 
     opj_tcd_resolution_t* tr = tilec->resolutions;
@@ -2255,6 +2257,9 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_t *tcd,
     opj_v4dwt_t h;
     opj_v4dwt_t v;
     OPJ_UINT32 resno;
+    /* This value matches the maximum left/right extension given in tables */
+    /* F.2 and F.3 of the standard. Note: in opj_tcd_is_subband_area_of_interest() */
+    /* we currently use 3. */
     const OPJ_UINT32 filter_width = 4U;
 
     opj_tcd_resolution_t* tr = tilec->resolutions;

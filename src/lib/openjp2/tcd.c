@@ -2381,6 +2381,14 @@ OPJ_BOOL opj_tcd_is_subband_area_of_interest(opj_tcd_t *tcd,
         OPJ_UINT32 band_x1,
         OPJ_UINT32 band_y1)
 {
+    /* Note: those values for filter_margin are in part the result of */
+    /* experimentation. The value 2 for QMFBID=1 (5x3 filter) can be linked */
+    /* to the maximum left/right extension given in tables F.2 and F.3 of the */
+    /* standard. The value 3 for QMFBID=0 (9x7 filter) is more suspicious, */
+    /* since F.2 and F.3 would lead to 4 instead, so the current 3 might be */
+    /* needed to be bumped to 4, in case inconsistencies are found while */
+    /* decoding parts of irreversible coded images. */
+    /* See opj_dwt_decode_partial_53 and opj_dwt_decode_partial_97 as well */
     OPJ_UINT32 filter_margin = (tcd->tcp->tccps[compno].qmfbid == 1) ? 2 : 3;
     opj_tcd_tilecomp_t *tilec = &(tcd->tcd_image->tiles->comps[compno]);
     opj_image_comp_t* image_comp = &(tcd->image->comps[compno]);
