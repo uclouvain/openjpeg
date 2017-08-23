@@ -2404,7 +2404,7 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_t *tcd,
                 opj_v4dwt_interleave_h(&h, aj, w, rh - j);
                 opj_v4dwt_decode(&h);
 
-                for (k = 0; k < rw; k++) {
+                for (k = win_tr_x0; k < win_tr_x1; k++) {
                     aj[k        ] = h.wavelet[k].f[0];
                     aj[k + w    ] = h.wavelet[k].f[1];
                     aj[k + w * 2] = h.wavelet[k].f[2];
@@ -2420,7 +2420,7 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_t *tcd,
             OPJ_UINT32 k;
             opj_v4dwt_interleave_h(&h, aj, w, rh - j);
             opj_v4dwt_decode(&h);
-            for (k = 0; k < rw; k++) {
+            for (k = win_tr_x0; k < win_tr_x1; k++) {
                 switch (rh - j) {
                 case 3:
                     aj[k + w * 2] = h.wavelet[k].f[2];
