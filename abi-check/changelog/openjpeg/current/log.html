@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8180eeace13ffceef5dd7c3f80be156e36181846
+<pre class='wrap'>commit bc71bd1219269057ea18e6acbc77a96ec37aba82
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-23 18:58:32 +0200
+
+    opj_dwt_decode_partial_97(): perf improvement: limit copy of coefficients at end of horizontal pass to actual range of interest
+
+commit 8180eeace13ffceef5dd7c3f80be156e36181846
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-21 23:06:53 +0200
 
@@ -486,12 +492,6 @@ Date:   2017-07-06 16:11:11 +0200
           n0: 39822000 0x40374E: main (opj_decompress.c:1459)
      n0: 15904584 in 52 places, all below massif's threshold (1.00%)
 
-commit 373520db309430b68dd9ff09cba03a25f711a88e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-06 13:23:29 +0200
-
-    Add documentation for magic values in the code
-
 commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-08-07 16:44:28 +0200
@@ -516,23 +516,11 @@ Date:   2017-08-02 17:07:29 +0200
 
     Update abi-check to take into account new defaults for "add" git command
 
-commit eb90d8ec935eba934bfd260cc80c8ef445dff4fd
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2017-08-02 16:50:11 +0200
-
-    WIP: fix abi-check and automatic upload
-
 commit 00f45684a8339e69ed55df2397f3c19d09fecaed
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-07-31 13:58:08 +0200
 
     Catch images broken by AFL
-
-commit 13cde9fa37249628af6b6f10601b733f87a025f4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-30 19:46:52 +0200
-
-    src/lib/openjp2/*.h: use OPJ_ prefix for inclusion guards instead of reserved __ (#587)
 
 ...</pre></div>
 
