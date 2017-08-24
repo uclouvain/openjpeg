@@ -304,3 +304,6 @@ f3081c8e9e9a175f223382a7443b480f  issue559-eci-091-CIELab.jp2_2.pgx
 f004b48eafb2e52529cc9c7b6a3ff5d2  issue979.j2k_1.pgx
 3127bd0a591d113c3c2428c8d2c14ec8  issue979.j2k_2.pgx
 dacaf60e4c430916a8c2a9ebec32e71c  issue979.j2k_3.pgx
+3d710c406d4c9a53f33945db781ee544  broken.jpc_0.pgx
+d1bb7f93f4c0eb984b2e9c54e544b7e9  broken.jpc_1.pgx
+8cc41ccf2ef66261f1a440b8753a3f90  broken.jpc_2.pgx
