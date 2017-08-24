@@ -403,7 +403,8 @@ opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_4.j2k.png -
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_5.j2k.png -d 4,4,7,7 -r 1
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_6.j2k.png -d 4,4,5,5 -r 1
 
-opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_8_6.j2k.png -d 9,9,12,12 -r 2
+# result is empty at this resolution
+!opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_8_6.j2k.png -d 9,9,12,12 -r 2
 
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9.j2k.png -t 0
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9_1.j2k.png -t 5
@@ -413,7 +414,9 @@ opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9_3.j2k.png -
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10.j2k.png -t 0 -r 2
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_1.j2k.png -t 5 -r 2
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_2.j2k.png -t 9 -r 2
-opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_3.j2k.png -t 15 -r 2
+
+# this tile is empty at this resolution
+!opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_3.j2k.png -t 15 -r 2
 
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_11.j2k.png -r 4
 
