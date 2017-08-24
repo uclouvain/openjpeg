@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit bc71bd1219269057ea18e6acbc77a96ec37aba82
+<pre class='wrap'>commit fdcd4e6365731cc1015213e424068131bcd1f31f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-24 13:23:25 +0200
+
+    Remove -NR-DEC-p1_06.j2k-156-decode and NR-DEC-p1_06.j2k-164-decode from knownfailures
+    
+    and make them explicit failures. The result images are empty at the requested resolution
+
+commit bc71bd1219269057ea18e6acbc77a96ec37aba82
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-23 18:58:32 +0200
 
@@ -450,48 +458,6 @@ Date:   2017-07-06 19:34:21 +0200
           n0: 23893200 0x40374E: main (opj_decompress.c:1459)
      n0: 17497464 in 52 places, all below massif's threshold (1.00%)
 
-commit ca34d13e76a588a00171e57690c1deeaf068723a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-06 16:11:11 +0200
-
-    Decoding: do not allocate memory for the codestream of each codeblock
-    
-    Currently we allocate at least 8192 bytes for each codeblock, and copy
-    the relevant parts of the codestream in that per-codeblock buffer as we
-    decode packets.
-    As the whole codestream for the tile is ingested in memory and alive
-    during the decoding, we can directly point to it instead of copying. But
-    to do that, we need an intermediate concept, a 'chunk' of code-stream segment,
-    given that segments may be made of data at different places in the code-stream
-    when quality layers are used.
-    
-    With that change, the decoding of MAPA_005.jp2 goes down from the previous
-    improvement of 2.7 GB down to 1.9 GB.
-    
-    New profile:
-    
-    n4: 1885648469 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
-     n1: 1610689344 0x4E78287: opj_aligned_malloc (opj_malloc.c:61)
-      n1: 1610689344 0x4E71D7B: opj_alloc_tile_component_data (tcd.c:676)
-       n1: 1610689344 0x4E7272C: opj_tcd_init_decode_tile (tcd.c:816)
-        n1: 1610689344 0x4E4BDD9: opj_j2k_read_tile_header (j2k.c:8618)
-         n1: 1610689344 0x4E4C8A2: opj_j2k_decode_tiles (j2k.c:10349)
-          n1: 1610689344 0x4E4E36E: opj_j2k_decode (j2k.c:7847)
-           n1: 1610689344 0x4E52FA2: opj_jp2_decode (jp2.c:1564)
-            n0: 1610689344 0x40374E: main (opj_decompress.c:1459)
-     n1: 219232541 0x4E4BBF0: opj_j2k_read_tile_header (j2k.c:4685)
-      n1: 219232541 0x4E4C8A2: opj_j2k_decode_tiles (j2k.c:10349)
-       n1: 219232541 0x4E4E36E: opj_j2k_decode (j2k.c:7847)
-        n1: 219232541 0x4E52FA2: opj_jp2_decode (jp2.c:1564)
-         n0: 219232541 0x40374E: main (opj_decompress.c:1459)
-     n1: 39822000 0x4E727A9: opj_tcd_init_decode_tile (tcd.c:1219)
-      n1: 39822000 0x4E4BDD9: opj_j2k_read_tile_header (j2k.c:8618)
-       n1: 39822000 0x4E4C8A2: opj_j2k_decode_tiles (j2k.c:10349)
-        n1: 39822000 0x4E4E36E: opj_j2k_decode (j2k.c:7847)
-         n1: 39822000 0x4E52FA2: opj_jp2_decode (jp2.c:1564)
-          n0: 39822000 0x40374E: main (opj_decompress.c:1459)
-     n0: 15904584 in 52 places, all below massif's threshold (1.00%)
-
 commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-08-07 16:44:28 +0200
@@ -509,18 +475,6 @@ Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2017-08-02 17:27:08 +0200
 
     First change on changes-for-afl-tests
-
-commit 155fc2e279b85bd04709967b2797de4f69b0cf3e
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2017-08-02 17:07:29 +0200
-
-    Update abi-check to take into account new defaults for "add" git command
-
-commit 00f45684a8339e69ed55df2397f3c19d09fecaed
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2017-07-31 13:58:08 +0200
-
-    Catch images broken by AFL
 
 ...</pre></div>
 
