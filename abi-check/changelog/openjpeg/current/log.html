@@ -20,7 +20,37 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit fdcd4e6365731cc1015213e424068131bcd1f31f
+<pre class='wrap'>commit 5a4a10120a648848de7522245f8671c3ce285dbc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-24 14:38:24 +0200
+
+    Another cleanup in knownfailures-* files
+
+commit e0a5d148f7e84d18a52c97bd08b21b1dffa9570a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-24 14:32:36 +0200
+
+    Remove test steps from specialized knownfailures- that are already in knownfailures-all.txt
+
+commit 79aa0b54ddd3e4e3ca09374cb82bd3302a65783a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-24 14:31:13 +0200
+
+    issue104_jpxstream.jp2 decompresses just fine (and like Kakadu). Update md5refs.txt and remove from knownfailures
+
+commit c059f431e6262fe5ce296e8137dd478dfe4d1af1
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-24 14:09:34 +0200
+
+    Remove broken.jpc test from known failures, by avoiding too long processing time
+
+commit 5146abc02ebd871aa1e737373cdc7654e8e4b07f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-24 14:09:31 +0200
+
+    imagetopgx(): improve performance in 8 bit case (relates to broken.jpc test case)
+
+commit fdcd4e6365731cc1015213e424068131bcd1f31f
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-24 13:23:25 +0200
 
@@ -391,90 +421,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-09 09:50:39 +0200
 
     src/bin/jpwl/convert.c pgxtoimage(): add missing fclose() (#977)
-
-commit 5a560ebf5138ebc241e9962306ce74bfc50fc69c
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-09 09:42:30 +0200
-
-    imagetobmp: avoid shift by -1 (relates to #811)
-
-commit 0c07950cb3f318df5b2051ae5d96bef553bb9966
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2017-08-08 18:05:37 -0700
-
-    Fix remaining warning
-    
-    format specifier mismatch in #975
-
-commit 0394f8d0f1c981e0bc587beddc14d1fb0b265b1b
-Merge: 3b1b067 bc3cb74
-Author: Antonin Descampe &lt;antonin@descampe.net&gt;
-Date:   2017-08-08 16:51:54 -0700
-
-    Merge pull request #975 from szukw000/changes-for-afl-tests
-    
-    Catch images broken by AFL
-
-commit 3b1b0672663b59853b63d48f94b63ca497883527
-Merge: 2fbd4bb 9211469
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-08-07 20:17:36 +0200
-
-    Merge pull request #968 from rouault/reduce_memory_decoding
-    
-    Reduce memory decoding
-
-commit 92114694a48638e86c07e4adf11b78878045c8a9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-07-06 19:34:21 +0200
-
-    Slight improvement in management of code block chunks
-    
-    Instead of having the chunk array at the segment level, we can move it down to
-    the codeblock itself since segments are filled in sequential order.
-    Limit the number of memory allocation, and decrease slightly the memory usage.
-    
-    On MAPA_005.jp2
-    
-    n4: 1871312549 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
-     n1: 1610689344 0x4E781E7: opj_aligned_malloc (opj_malloc.c:61)
-      n1: 1610689344 0x4E71D1B: opj_alloc_tile_component_data (tcd.c:676)
-       n1: 1610689344 0x4E726CF: opj_tcd_init_decode_tile (tcd.c:816)
-        n1: 1610689344 0x4E4BE39: opj_j2k_read_tile_header (j2k.c:8617)
-         n1: 1610689344 0x4E4C902: opj_j2k_decode_tiles (j2k.c:10348)
-          n1: 1610689344 0x4E4E3CE: opj_j2k_decode (j2k.c:7846)
-           n1: 1610689344 0x4E53002: opj_jp2_decode (jp2.c:1564)
-            n0: 1610689344 0x40374E: main (opj_decompress.c:1459)
-     n1: 219232541 0x4E4BC50: opj_j2k_read_tile_header (j2k.c:4683)
-      n1: 219232541 0x4E4C902: opj_j2k_decode_tiles (j2k.c:10348)
-       n1: 219232541 0x4E4E3CE: opj_j2k_decode (j2k.c:7846)
-        n1: 219232541 0x4E53002: opj_jp2_decode (jp2.c:1564)
-         n0: 219232541 0x40374E: main (opj_decompress.c:1459)
-     n1: 23893200 0x4E72735: opj_tcd_init_decode_tile (tcd.c:1225)
-      n1: 23893200 0x4E4BE39: opj_j2k_read_tile_header (j2k.c:8617)
-       n1: 23893200 0x4E4C902: opj_j2k_decode_tiles (j2k.c:10348)
-        n1: 23893200 0x4E4E3CE: opj_j2k_decode (j2k.c:7846)
-         n1: 23893200 0x4E53002: opj_jp2_decode (jp2.c:1564)
-          n0: 23893200 0x40374E: main (opj_decompress.c:1459)
-     n0: 17497464 in 52 places, all below massif's threshold (1.00%)
-
-commit bc3cb7410023e9d0c7ff9972a0bc8cf1fe9b32a4
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2017-08-07 16:44:28 +0200
-
-    Changes for converttif.c to fix tsize_t
-
-commit 2fbd4bb0b9c6178f12c852dc40db6ab05734bfe2
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-04 18:01:29 +0200
-
-    opj_j2k_read_sot(): check current TPSot number regarding previous (non-zero) TNsot to avoid opj_j2k_merge_ppt() to be called several times. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2851. Credit to OSS Fuzz
-
-commit 57e36dbfeb57451444c5c20eab66ab0bedd3d3b3
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2017-08-02 17:27:08 +0200
-
-    First change on changes-for-afl-tests
 
 ...</pre></div>
 
