@@ -50,10 +50,53 @@
       <tr><td class="lineno" valign="top"></td><td class="left">    /** stepsizes used for quantization */</td><td> </td><td class="right">    /** stepsizes used for quantization */</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 stepsizes_mant[OPJ_J2K_MAXBANDS];</td><td> </td><td class="right">    OPJ_UINT32 stepsizes_mant[OPJ_J2K_MAXBANDS];</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    /** stepsizes used for quantization */</td><td> </td><td class="right">    /** stepsizes used for quantization */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 1329</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 1329</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @return true             if the main header of the codestream and the JP
+2 header is correctly read.</td><td> </td><td class="right"> * @return true             if the main header of the codestream and the JP
+2 header is correctly read.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        opj_codec_t *p_codec,</td><td> </td><td class="right">        opj_codec_t *p_codec,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        opj_image_t **p_image);</td><td> </td><td class="right">        opj_image_t **p_image);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Sets the given area to be decoded. This function should be called right 
+after opj_read_header and before any tile header reading.</td><td> </td><td class="right"> * Sets the given area to be decoded. This function should be called right 
+after opj_read_header and before any tile header reading.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0003" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* The coordinates passed to this function should be expressed in the refer</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ence grid,</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * that is to say at the highest resolution level, even if requesting the i</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">mage at lower</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * resolution levels.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_codec         the jpeg2000 codec.</td><td> </td><td class="right"> * @param   p_codec         the jpeg2000 codec.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_image         the decoded image previously setted by opj_read
+_header</td><td> </td><td class="right"> * @param   p_image         the decoded image previously setted by opj_read
+_header</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_start_x       the left position of the rectangle to decode (i
+n image coordinates).</td><td> </td><td class="right"> * @param   p_start_x       the left position of the rectangle to decode (i
+n image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_end_x         the right position of the rectangle to decode (
+in image coordinates).</td><td> </td><td class="right"> * @param   p_end_x         the right position of the rectangle to decode (
+in image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_start_y       the up position of the rectangle to decode (in 
+image coordinates).</td><td> </td><td class="right"> * @param   p_start_y       the up position of the rectangle to decode (in 
+image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_end_y         the bottom position of the rectangle to decode 
+(in image coordinates).</td><td> </td><td class="right"> * @param   p_end_y         the bottom position of the rectangle to decode 
+(in image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @return  true            if the area could be set.</td><td> </td><td class="right"> * @return  true            if the area could be set.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(opj_codec_t *p_codec,</td><td class="lineno" valign="top"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
-     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 2 change blocks.&nbsp;</a></th></tr>
-     <tr class="stats"><td></td><th><i>2 lines changed or deleted</i></th><th><i> </i></th><th><i>2 lines changed or added</i></th><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 3 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>2 lines changed or deleted</i></th><th><i> </i></th><th><i>8 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"></td></tr>
    </table>
    <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>

@@ -1336,6 +1336,10 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,
 /**
  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
  *
+ * The coordinates passed to this function should be expressed in the reference grid,
+ * that is to say at the highest resolution level, even if requesting the image at lower
+ * resolution levels.
+ *
  * @param   p_codec         the jpeg2000 codec.
  * @param   p_image         the decoded image previously setted by opj_read_header
  * @param   p_start_x       the left position of the rectangle to decode (in image coordinates).

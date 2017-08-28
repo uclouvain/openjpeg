@@ -20,7 +20,24 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5a4a10120a648848de7522245f8671c3ce285dbc
+<pre class='wrap'>commit 8f92fc97913bec7ffa2dc10d062c0cdd19da20e4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-28 14:57:49 +0200
+
+    Make opj_set_decode_area() and opj_decode() take into account opj_set_decoded_resolution_factor() (#1006, affect API use)
+    
+    * Better document usage of opj_set_decode_area(), ie expecting coordinates
+      in full resolution/reference grid even if requesting at a lower resolution
+      factor
+    * Make sure that image-&gt;comps[].factor is set by opj_set_decode_area() and
+      opj_decode() from the value specified in opj_set_decoded_resolution_factor()
+    * opj_decompress: add 2 environmenet variables to test alternate ways of
+      using the API, namely USE_OPJ_SET_DECODED_RESOLUTION_FACTOR=YES to use
+      opj_set_decoded_resolution_factor() instead of parameters.cp_reduce, and
+      SKIP_OPJ_SET_DECODE_AREA=YES to not call opj_set_decode_area() if -d is
+      not specified.
+
+commit 5a4a10120a648848de7522245f8671c3ce285dbc
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-24 14:38:24 +0200
 
@@ -415,12 +432,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-09 10:03:59 +0200
 
     opj_decompress: document -quiet option, and remove spurious newline output
-
-commit 0eceb4494c23d141ddf242209b92f07bc942b437
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-09 09:50:39 +0200
-
-    src/bin/jpwl/convert.c pgxtoimage(): add missing fclose() (#977)
 
 ...</pre></div>
 
