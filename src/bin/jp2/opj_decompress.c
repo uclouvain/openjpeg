@@ -1297,6 +1297,7 @@ int main(int argc, char **argv)
     int failed = 0;
     OPJ_FLOAT64 t, tCumulative = 0;
     OPJ_UINT32 numDecompressedImages = 0;
+    OPJ_UINT32 cp_reduce;
 
     /* set decoding parameters to default values */
     set_default_parameters(&parameters);
@@ -1308,6 +1309,14 @@ int main(int argc, char **argv)
     if (parse_cmdline_decoder(argc, argv, &parameters, &img_fol) == 1) {
         failed = 1;
         goto fin;
+    }
+
+    cp_reduce = parameters.core.cp_reduce;
+    if (getenv("USE_OPJ_SET_DECODED_RESOLUTION_FACTOR") != NULL) {
+        /* For debugging/testing purposes, do not set the cp_reduce member */
+        /* if USE_OPJ_SET_DECODED_RESOLUTION_FACTOR is defined, but used */
+        /* the opj_set_decoded_resolution_factor() API instead */
+        parameters.core.cp_reduce = 0;
     }
 
 
@@ -1446,11 +1455,35 @@ int main(int argc, char **argv)
             goto fin;
         }
 
+        if (getenv("USE_OPJ_SET_DECODED_RESOLUTION_FACTOR") != NULL) {
+            /* For debugging/testing purposes, and also an illustration on how to */
+            /* use the alternative API opj_set_decoded_resolution_factor() instead */
+            /* of setting parameters.cp_reduce */
+            if (! opj_set_decoded_resolution_factor(l_codec, cp_reduce)) {
+                fprintf(stderr,
+                        "ERROR -> opj_decompress: failed to set the resolution factor tile!\n");
+                opj_destroy_codec(l_codec);
+                opj_stream_destroy(l_stream);
+                opj_image_destroy(image);
+                failed = 1;
+                goto fin;
+            }
+        }
+
         if (!parameters.nb_tile_to_decode) {
+            if (getenv("SKIP_OPJ_SET_DECODE_AREA") != NULL &&
+                    parameters.DA_x0 == 0 &&
+                    parameters.DA_y0 == 0 &&
+                    parameters.DA_x1 == 0 &&
+                    parameters.DA_y1 == 0) {
+                /* For debugging/testing purposes, */
+                /* do nothing if SKIP_OPJ_SET_DECODE_AREA env variable */
+                /* is defined and no decoded area has been set */
+            }
             /* Optional if you want decode the entire image */
-            if (!opj_set_decode_area(l_codec, image, (OPJ_INT32)parameters.DA_x0,
-                                     (OPJ_INT32)parameters.DA_y0, (OPJ_INT32)parameters.DA_x1,
-                                     (OPJ_INT32)parameters.DA_y1)) {
+            else if (!opj_set_decode_area(l_codec, image, (OPJ_INT32)parameters.DA_x0,
+                                          (OPJ_INT32)parameters.DA_y0, (OPJ_INT32)parameters.DA_x1,
+                                          (OPJ_INT32)parameters.DA_y1)) {
                 fprintf(stderr, "ERROR -> opj_decompress: failed to set the decoded area\n");
                 opj_stream_destroy(l_stream);
                 opj_destroy_codec(l_codec);
@@ -1470,15 +1503,6 @@ int main(int argc, char **argv)
                 goto fin;
             }
         } else {
-
-            /* It is just here to illustrate how to use the resolution after set parameters */
-            /*if (!opj_set_decoded_resolution_factor(l_codec, 5)) {
-                fprintf(stderr, "ERROR -> opj_decompress: failed to set the resolution factor tile!\n");
-                opj_destroy_codec(l_codec);
-                opj_stream_destroy(l_stream);
-                opj_image_destroy(image);
-                failed = 1; goto fin;
-            }*/
 
             if (!opj_get_decoded_tile(l_codec, l_stream, image, parameters.tile_index)) {
                 fprintf(stderr, "ERROR -> opj_decompress: failed to decode tile!\n");

@@ -9143,6 +9143,51 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
     return OPJ_TRUE;
 }
 
+static OPJ_BOOL opj_j2k_update_image_dimensions(opj_image_t* p_image,
+        opj_event_mgr_t * p_manager)
+{
+    OPJ_UINT32 it_comp;
+    OPJ_INT32 l_comp_x1, l_comp_y1;
+    opj_image_comp_t* l_img_comp = NULL;
+
+    l_img_comp = p_image->comps;
+    for (it_comp = 0; it_comp < p_image->numcomps; ++it_comp) {
+        OPJ_INT32 l_h, l_w;
+
+        l_img_comp->x0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->x0,
+                         (OPJ_INT32)l_img_comp->dx);
+        l_img_comp->y0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->y0,
+                         (OPJ_INT32)l_img_comp->dy);
+        l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
+        l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
+
+        l_w = opj_int_ceildivpow2(l_comp_x1, (OPJ_INT32)l_img_comp->factor)
+              - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->x0, (OPJ_INT32)l_img_comp->factor);
+        if (l_w < 0) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Size x of the decoded component image is incorrect (comp[%d].w=%d).\n",
+                          it_comp, l_w);
+            return OPJ_FALSE;
+        }
+        l_img_comp->w = (OPJ_UINT32)l_w;
+
+        l_h = opj_int_ceildivpow2(l_comp_y1, (OPJ_INT32)l_img_comp->factor)
+              - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->y0, (OPJ_INT32)l_img_comp->factor);
+        if (l_h < 0) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Size y of the decoded component image is incorrect (comp[%d].h=%d).\n",
+                          it_comp, l_h);
+            return OPJ_FALSE;
+        }
+        l_img_comp->h = (OPJ_UINT32)l_h;
+
+        l_img_comp++;
+    }
+
+    return OPJ_TRUE;
+}
+
+
 OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
                                  opj_image_t* p_image,
                                  OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
@@ -9151,16 +9196,20 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
 {
     opj_cp_t * l_cp = &(p_j2k->m_cp);
     opj_image_t * l_image = p_j2k->m_private_image;
-
+    OPJ_BOOL ret;
     OPJ_UINT32 it_comp;
-    OPJ_INT32 l_comp_x1, l_comp_y1;
-    opj_image_comp_t* l_img_comp = NULL;
 
     /* Check if we are read the main header */
     if (p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Need to decode the main header before begin to decode the remaining codestream");
         return OPJ_FALSE;
+    }
+
+    /* Update the comps[].factor member of the output image with the one */
+    /* of m_reduce */
+    for (it_comp = 0; it_comp < p_image->numcomps; ++it_comp) {
+        p_image->comps[it_comp].factor = p_j2k->m_cp.m_specific_param.m_dec.m_reduce;
     }
 
     if (!p_start_x && !p_start_y && !p_end_x && !p_end_y) {
@@ -9172,7 +9221,12 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
         p_j2k->m_specific_param.m_decoder.m_end_tile_x = l_cp->tw;
         p_j2k->m_specific_param.m_decoder.m_end_tile_y = l_cp->th;
 
-        return OPJ_TRUE;
+        p_image->x0 = l_image->x0;
+        p_image->y0 = l_image->y0;
+        p_image->x1 = l_image->x1;
+        p_image->y1 = l_image->y1;
+
+        return opj_j2k_update_image_dimensions(p_image, p_manager);
     }
 
     /* ----- */
@@ -9274,44 +9328,14 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
 
     p_j2k->m_specific_param.m_decoder.m_discard_tiles = 1;
 
-    l_img_comp = p_image->comps;
-    for (it_comp = 0; it_comp < p_image->numcomps; ++it_comp) {
-        OPJ_INT32 l_h, l_w;
+    ret = opj_j2k_update_image_dimensions(p_image, p_manager);
 
-        l_img_comp->x0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->x0,
-                         (OPJ_INT32)l_img_comp->dx);
-        l_img_comp->y0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->y0,
-                         (OPJ_INT32)l_img_comp->dy);
-        l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
-        l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
-
-        l_w = opj_int_ceildivpow2(l_comp_x1, (OPJ_INT32)l_img_comp->factor)
-              - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->x0, (OPJ_INT32)l_img_comp->factor);
-        if (l_w < 0) {
-            opj_event_msg(p_manager, EVT_ERROR,
-                          "Size x of the decoded component image is incorrect (comp[%d].w=%d).\n",
-                          it_comp, l_w);
-            return OPJ_FALSE;
-        }
-        l_img_comp->w = (OPJ_UINT32)l_w;
-
-        l_h = opj_int_ceildivpow2(l_comp_y1, (OPJ_INT32)l_img_comp->factor)
-              - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->y0, (OPJ_INT32)l_img_comp->factor);
-        if (l_h < 0) {
-            opj_event_msg(p_manager, EVT_ERROR,
-                          "Size y of the decoded component image is incorrect (comp[%d].h=%d).\n",
-                          it_comp, l_h);
-            return OPJ_FALSE;
-        }
-        l_img_comp->h = (OPJ_UINT32)l_h;
-
-        l_img_comp++;
+    if (ret) {
+        opj_event_msg(p_manager, EVT_INFO, "Setting decoding area to %d,%d,%d,%d\n",
+                      p_image->x0, p_image->y0, p_image->x1, p_image->y1);
     }
 
-    opj_event_msg(p_manager, EVT_INFO, "Setting decoding area to %d,%d,%d,%d\n",
-                  p_image->x0, p_image->y0, p_image->x1, p_image->y1);
-
-    return OPJ_TRUE;
+    return ret;
 }
 
 opj_j2k_t* opj_j2k_create_decompress(void)
@@ -10794,6 +10818,31 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
 
     if (!p_image) {
         return OPJ_FALSE;
+    }
+
+    /* Heuristics to detect sequence opj_read_header(), opj_set_decoded_resolution_factor() */
+    /* and finally opj_decode_image() without manual setting of comps[].factor */
+    /* We could potentially always execute it, if we don't allow people to do */
+    /* opj_read_header(), modify x0,y0,x1,y1 of returned image an call opj_decode_image() */
+    if (p_j2k->m_cp.m_specific_param.m_dec.m_reduce > 0 &&
+            p_j2k->m_private_image != NULL &&
+            p_j2k->m_private_image->numcomps > 0 &&
+            p_j2k->m_private_image->comps[0].factor ==
+            p_j2k->m_cp.m_specific_param.m_dec.m_reduce &&
+            p_image->numcomps > 0 &&
+            p_image->comps[0].factor == 0 &&
+            /* Don't mess with image dimension if the user has allocated it */
+            p_image->comps[0].data == NULL) {
+        OPJ_UINT32 it_comp;
+
+        /* Update the comps[].factor member of the output image with the one */
+        /* of m_reduce */
+        for (it_comp = 0; it_comp < p_image->numcomps; ++it_comp) {
+            p_image->comps[it_comp].factor = p_j2k->m_cp.m_specific_param.m_dec.m_reduce;
+        }
+        if (!opj_j2k_update_image_dimensions(p_image, p_manager)) {
+            return OPJ_FALSE;
+        }
     }
 
     p_j2k->m_output_image = opj_image_create0();
