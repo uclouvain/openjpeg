@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8f92fc97913bec7ffa2dc10d062c0cdd19da20e4
+<pre class='wrap'>commit a55c024fc6b917a409b85aeafd7326421c4aea34
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-28 17:18:33 +0200
+
+    Subtile decoding: fix overflows in subband coordinate computation that cause later buffer overflow. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3115. Credit to OSS Fuzz. master only
+
+commit 8f92fc97913bec7ffa2dc10d062c0cdd19da20e4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-28 14:57:49 +0200
 
@@ -426,12 +432,6 @@ Date:   2017-08-09 11:34:08 +0200
     
     Note: we could also check that the content of JP2 BPCC box is consistant with the one
     of the SIZ marker.
-
-commit c38bdbef4f3a5888948903247532fc8cf4284c00
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-09 10:03:59 +0200
-
-    opj_decompress: document -quiet option, and remove spurious newline output
 
 ...</pre></div>
 
