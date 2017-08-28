@@ -2414,14 +2414,18 @@ OPJ_BOOL opj_tcd_is_subband_area_of_interest(opj_tcd_t *tcd,
     /* equation B-15 of the standard */
     OPJ_UINT32 x0b = bandno & 1;
     OPJ_UINT32 y0b = bandno >> 1;
-    OPJ_UINT32 tbx0 = (nb == 0) ? tcx0 : opj_uint_ceildiv(tcx0 - (1U <<
-                      (nb - 1)) * x0b, 1U << nb);
-    OPJ_UINT32 tby0 = (nb == 0) ? tcy0 : opj_uint_ceildiv(tcy0 - (1U <<
-                      (nb - 1)) * y0b, 1U << nb);
-    OPJ_UINT32 tbx1 = (nb == 0) ? tcx1 : opj_uint_ceildiv(tcx1 - (1U <<
-                      (nb - 1)) * x0b, 1U << nb);
-    OPJ_UINT32 tby1 = (nb == 0) ? tcy1 : opj_uint_ceildiv(tcy1 - (1U <<
-                      (nb - 1)) * y0b, 1U << nb);
+    OPJ_UINT32 tbx0 = (nb == 0) ? tcx0 :
+                      (tcx0 <= (1U << (nb - 1)) * x0b) ? 0 :
+                      opj_uint_ceildivpow2(tcx0 - (1U << (nb - 1)) * x0b, nb);
+    OPJ_UINT32 tby0 = (nb == 0) ? tcy0 :
+                      (tcy0 <= (1U << (nb - 1)) * y0b) ? 0 :
+                      opj_uint_ceildivpow2(tcy0 - (1U << (nb - 1)) * y0b, nb);
+    OPJ_UINT32 tbx1 = (nb == 0) ? tcx1 :
+                      (tcx1 <= (1U << (nb - 1)) * x0b) ? 0 :
+                      opj_uint_ceildivpow2(tcx1 - (1U << (nb - 1)) * x0b, nb);
+    OPJ_UINT32 tby1 = (nb == 0) ? tcy1 :
+                      (tcy1 <= (1U << (nb - 1)) * y0b) ? 0 :
+                      opj_uint_ceildivpow2(tcy1 - (1U << (nb - 1)) * y0b, nb);
     OPJ_BOOL intersects;
 
     if (tbx0 < filter_margin) {
