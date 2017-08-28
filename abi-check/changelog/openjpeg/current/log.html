@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit a55c024fc6b917a409b85aeafd7326421c4aea34
+<pre class='wrap'>commit 4776b15fa7ec2afa74f65cd471f94513ea08205a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-28 18:07:44 +0200
+
+    Add test for fix of a55c024fc6b917a409b85aeafd7326421c4aea34
+
+commit a55c024fc6b917a409b85aeafd7326421c4aea34
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-28 17:18:33 +0200
 
@@ -411,27 +417,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-09 14:13:58 +0200
 
     Document qmfbid values
-
-commit ac375ac9f5b4ae47501b60795e905e3d25dd00f8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-09 11:34:08 +0200
-
-    Partial revert BPC related check of #975 (#979)
-    
-    PR #975 introduced a check that rejects images that have different bit depth/sign
-    per compoment in SIZ marker if the JP2 IHDR box has BPC != 255
-    This didn't work properly if decoding a .j2k file since the new bit added in
-    opj_cp_t wasn't initialized to the right value.
-    For clarity, tThis new bit has also been renamed to allow_different_bit_depth_sign
-    
-    But looking closer at the code, it seems we were already tolerant to inconsistencies.
-    For example we parsed a JP2 BPCC box even if BPC != 255 (just a warning is emitted)
-    So failing hard in opj_j2k_read_siz() wouldn't be very inconsistent, and that
-    alone cannot protect against other issues, so just emit a warning if BPC != 255
-    and the SIZ marker contains different bit depth/sign per component.
-    
-    Note: we could also check that the content of JP2 BPCC box is consistant with the one
-    of the SIZ marker.
 
 ...</pre></div>
 
