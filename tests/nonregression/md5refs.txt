@@ -307,3 +307,6 @@ dacaf60e4c430916a8c2a9ebec32e71c  issue979.j2k_3.pgx
 3d710c406d4c9a53f33945db781ee544  broken.jpc_0.pgx
 d1bb7f93f4c0eb984b2e9c54e544b7e9  broken.jpc_1.pgx
 8cc41ccf2ef66261f1a440b8753a3f90  broken.jpc_2.pgx
+b704ad4c0cfefffd78c20a54f5541265  dwt_interleave_h.gsr105.jp2_d_1_1_33_33_0.pgx
+9d7fe43cd7a50b7bbaf712926ee11980  dwt_interleave_h.gsr105.jp2_d_1_1_33_33_1.pgx
+0960b580f991ff10f693b24aa41ad58b  dwt_interleave_h.gsr105.jp2_d_1_1_33_33_2.pgx
