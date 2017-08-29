@@ -1195,7 +1195,7 @@ OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
 }
 
 static OPJ_BOOL opj_dwt_is_whole_tile_decoding(opj_tcd_t *p_tcd,
-        opj_tcd_tilecomp_t* tilec)
+        opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres)
 {
     opj_image_comp_t* image_comp = &(p_tcd->image->comps[tilec->compno]);
     /* Compute the intersection of the area of interest, expressed in tile coordinates */
@@ -1212,10 +1212,19 @@ static OPJ_BOOL opj_dwt_is_whole_tile_decoding(opj_tcd_t *p_tcd,
     OPJ_UINT32 tcy1 = opj_uint_min(
                           (OPJ_UINT32)tilec->y1,
                           opj_uint_ceildiv(p_tcd->decoded_y1, image_comp->dy));
-    return (tcx0 == (OPJ_UINT32)tilec->x0 &&
-            tcy0 == (OPJ_UINT32)tilec->y0 &&
-            tcx1 == (OPJ_UINT32)tilec->x1 &&
-            tcy1 == (OPJ_UINT32)tilec->y1);
+
+    OPJ_UINT32 shift = tilec->numresolutions - numres;
+
+    /* Tolerate small margin within the reduced resolution factor to consider if */
+    /* the whole tile path must be taken */
+    return (tcx0 >= (OPJ_UINT32)tilec->x0 &&
+            ((tcx0 - (OPJ_UINT32)tilec->x0) >> shift) == 0 &&
+            tcy0 >= (OPJ_UINT32)tilec->y0 &&
+            ((tcy0 - (OPJ_UINT32)tilec->y0) >> shift) == 0 &&
+            tcx1 <= (OPJ_UINT32)tilec->x1 &&
+            (((OPJ_UINT32)tilec->x1 - tcx1) >> shift) == 0 &&
+            tcy1 <= (OPJ_UINT32)tilec->y1 &&
+            (((OPJ_UINT32)tilec->y1 - tcy1) >> shift) == 0);
 }
 
 /* <summary>                            */
@@ -1224,7 +1233,7 @@ static OPJ_BOOL opj_dwt_is_whole_tile_decoding(opj_tcd_t *p_tcd,
 OPJ_BOOL opj_dwt_decode(opj_tcd_t *p_tcd, opj_tcd_tilecomp_t* tilec,
                         OPJ_UINT32 numres)
 {
-    if (opj_dwt_is_whole_tile_decoding(p_tcd, tilec)) {
+    if (opj_dwt_is_whole_tile_decoding(p_tcd, tilec, numres)) {
         return opj_dwt_decode_tile(p_tcd->thread_pool, tilec, numres);
     } else {
         return opj_dwt_decode_partial_tile(p_tcd, tilec, numres);
@@ -2464,7 +2473,7 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_t *p_tcd,
                              opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
                              OPJ_UINT32 numres)
 {
-    if (opj_dwt_is_whole_tile_decoding(p_tcd, tilec)) {
+    if (opj_dwt_is_whole_tile_decoding(p_tcd, tilec, numres)) {
         return opj_dwt_decode_tile_97(tilec, numres);
     } else {
         return opj_dwt_decode_partial_97(p_tcd, tilec, numres);
