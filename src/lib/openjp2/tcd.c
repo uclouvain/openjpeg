@@ -269,28 +269,33 @@ void opj_tcd_makelayer(opj_tcd_t *tcd,
 
                         n = cblk->numpassesinlayers;
 
-                        for (passno = cblk->numpassesinlayers; passno < cblk->totalpasses; passno++) {
-                            OPJ_UINT32 dr;
-                            OPJ_FLOAT64 dd;
-                            opj_tcd_pass_t *pass = &cblk->passes[passno];
+                        if (thresh < 0) {
+                            /* Special value to indicate to use all passes */
+                            n = cblk->totalpasses;
+                        } else {
+                            for (passno = cblk->numpassesinlayers; passno < cblk->totalpasses; passno++) {
+                                OPJ_UINT32 dr;
+                                OPJ_FLOAT64 dd;
+                                opj_tcd_pass_t *pass = &cblk->passes[passno];
 
-                            if (n == 0) {
-                                dr = pass->rate;
-                                dd = pass->distortiondec;
-                            } else {
-                                dr = pass->rate - cblk->passes[n - 1].rate;
-                                dd = pass->distortiondec - cblk->passes[n - 1].distortiondec;
-                            }
+                                if (n == 0) {
+                                    dr = pass->rate;
+                                    dd = pass->distortiondec;
+                                } else {
+                                    dr = pass->rate - cblk->passes[n - 1].rate;
+                                    dd = pass->distortiondec - cblk->passes[n - 1].distortiondec;
+                                }
 
-                            if (!dr) {
-                                if (dd != 0) {
+                                if (!dr) {
+                                    if (dd != 0) {
+                                        n = passno + 1;
+                                    }
+                                    continue;
+                                }
+                                if (thresh - (dd / dr) <
+                                        DBL_EPSILON) { /* do not rely on float equality, check with DBL_EPSILON margin */
                                     n = passno + 1;
                                 }
-                                continue;
-                            }
-                            if (thresh - (dd / dr) <
-                                    DBL_EPSILON) { /* do not rely on float equality, check with DBL_EPSILON margin */
-                                n = passno + 1;
                             }
                         }
 
@@ -613,7 +618,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
 
             opj_t2_destroy(t2);
         } else {
-            goodthresh = min;
+            /* Special value to indicate to use all passes */
+            goodthresh = -1;
         }
 
         if (cstr_info) { /* Threshold for Marcela Index */
