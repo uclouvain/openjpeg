@@ -6808,6 +6808,61 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
         parameters->tcp_rates[0] = 0;
     }
 
+    if (parameters->cp_disto_alloc) {
+        /* Emit warnings if tcp_rates are not decreasing */
+        for (i = 1; i < (OPJ_UINT32) parameters->tcp_numlayers; i++) {
+            OPJ_FLOAT32 rate_i_corr = parameters->tcp_rates[i];
+            OPJ_FLOAT32 rate_i_m_1_corr = parameters->tcp_rates[i - 1];
+            if (rate_i_corr <= 1.0) {
+                rate_i_corr = 1.0;
+            }
+            if (rate_i_m_1_corr <= 1.0) {
+                rate_i_m_1_corr = 1.0;
+            }
+            if (rate_i_corr >= rate_i_m_1_corr) {
+                if (rate_i_corr != parameters->tcp_rates[i] &&
+                        rate_i_m_1_corr != parameters->tcp_rates[i - 1]) {
+                    opj_event_msg(p_manager, EVT_WARNING,
+                                  "tcp_rates[%d]=%f (corrected as %f) should be strictly lesser "
+                                  "than tcp_rates[%d]=%f (corrected as %f)\n",
+                                  i, parameters->tcp_rates[i], rate_i_corr,
+                                  i - 1, parameters->tcp_rates[i - 1], rate_i_m_1_corr);
+                } else if (rate_i_corr != parameters->tcp_rates[i]) {
+                    opj_event_msg(p_manager, EVT_WARNING,
+                                  "tcp_rates[%d]=%f (corrected as %f) should be strictly lesser "
+                                  "than tcp_rates[%d]=%f\n",
+                                  i, parameters->tcp_rates[i], rate_i_corr,
+                                  i - 1, parameters->tcp_rates[i - 1]);
+                } else if (rate_i_m_1_corr != parameters->tcp_rates[i - 1]) {
+                    opj_event_msg(p_manager, EVT_WARNING,
+                                  "tcp_rates[%d]=%f should be strictly lesser "
+                                  "than tcp_rates[%d]=%f (corrected as %f)\n",
+                                  i, parameters->tcp_rates[i],
+                                  i - 1, parameters->tcp_rates[i - 1], rate_i_m_1_corr);
+                } else {
+                    opj_event_msg(p_manager, EVT_WARNING,
+                                  "tcp_rates[%d]=%f should be strictly lesser "
+                                  "than tcp_rates[%d]=%f\n",
+                                  i, parameters->tcp_rates[i],
+                                  i - 1, parameters->tcp_rates[i - 1]);
+                }
+            }
+        }
+    } else if (parameters->cp_fixed_quality) {
+        /* Emit warnings if tcp_distoratio are not increasing */
+        for (i = 1; i < (OPJ_UINT32) parameters->tcp_numlayers; i++) {
+            if (parameters->tcp_distoratio[i] < parameters->tcp_distoratio[i - 1] &&
+                    !(i == (OPJ_UINT32)parameters->tcp_numlayers - 1 &&
+                      parameters->tcp_distoratio[i] == 0)) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                              "tcp_distoratio[%d]=%f should be strictly greater "
+                              "than tcp_distoratio[%d]=%f\n",
+                              i, parameters->tcp_distoratio[i], i - 1,
+                              parameters->tcp_distoratio[i - 1]);
+            }
+        }
+    }
+
     /* see if max_codestream_size does limit input rate */
     if (parameters->max_cs_size <= 0) {
         if (parameters->tcp_rates[parameters->tcp_numlayers - 1] > 0) {
