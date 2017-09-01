@@ -205,9 +205,9 @@ typedef struct opj_tcd_tilecomp {
     /* if true, then need to free after usage, otherwise do not free */
     OPJ_BOOL  ownsData;
     /* we may either need to allocate this amount of data, or re-use image data and ignore this value */
-    OPJ_UINT32 data_size_needed;
+    size_t data_size_needed;
     /* size of the data of the component */
-    OPJ_UINT32 data_size;
+    size_t data_size;
 
     /** data of the component limited to window of interest. Only valid for decoding and if tcd->whole_tile_decoding is NOT set (so exclusive of data member) */
     OPJ_INT32 *data_win;
