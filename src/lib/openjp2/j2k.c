@@ -2142,13 +2142,6 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         return OPJ_FALSE;
     }
 
-    /* testcase 1610.pdf.SIGSEGV.59c.681 */
-    if ((0xFFFFFFFFU / l_image->x1) < l_image->y1) {
-        opj_event_msg(p_manager, EVT_ERROR,
-                      "Prevent buffer overflow (x1: %d, y1: %d)\n", l_image->x1, l_image->y1);
-        return OPJ_FALSE;
-    }
-
     /* testcase issue427-illegal-tile-offset.jp2 */
     l_tx1 = opj_uint_adds(l_cp->tx0, l_cp->tdx); /* manage overflow */
     l_ty1 = opj_uint_adds(l_cp->ty0, l_cp->tdy); /* manage overflow */
@@ -8787,9 +8780,13 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
 
     *p_tile_index = p_j2k->m_current_tile_number;
     *p_go_on = OPJ_TRUE;
-    *p_data_size = opj_tcd_get_decoded_tile_size(p_j2k->m_tcd, OPJ_FALSE);
-    if (*p_data_size == UINT_MAX) {
-        return OPJ_FALSE;
+    if (p_data_size) {
+        /* For internal use in j2k.c, we don't need this */
+        /* This is just needed for folks using the opj_read_tile_header() / opj_decode_tile_data() combo */
+        *p_data_size = opj_tcd_get_decoded_tile_size(p_j2k->m_tcd, OPJ_FALSE);
+        if (*p_data_size == UINT_MAX) {
+            return OPJ_FALSE;
+        }
     }
     *p_tile_x0 = p_j2k->m_tcd->tcd_image->tiles->x0;
     *p_tile_y0 = p_j2k->m_tcd->tcd_image->tiles->y0;
@@ -10466,7 +10463,6 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
 {
     OPJ_BOOL l_go_on = OPJ_TRUE;
     OPJ_UINT32 l_current_tile_no;
-    OPJ_UINT32 l_data_size;
     OPJ_INT32 l_tile_x0, l_tile_y0, l_tile_x1, l_tile_y1;
     OPJ_UINT32 l_nb_comps;
     OPJ_UINT32 nr_tiles = 0;
@@ -10483,7 +10479,7 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
         OPJ_UINT32 i;
         if (! opj_j2k_read_tile_header(p_j2k,
                                        &l_current_tile_no,
-                                       &l_data_size,
+                                       NULL,
                                        &l_tile_x0, &l_tile_y0,
                                        &l_tile_x1, &l_tile_y1,
                                        &l_nb_comps,
@@ -10515,7 +10511,7 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
     for (;;) {
         if (! opj_j2k_read_tile_header(p_j2k,
                                        &l_current_tile_no,
-                                       &l_data_size,
+                                       NULL,
                                        &l_tile_x0, &l_tile_y0,
                                        &l_tile_x1, &l_tile_y1,
                                        &l_nb_comps,
@@ -10589,7 +10585,6 @@ static OPJ_BOOL opj_j2k_decode_one_tile(opj_j2k_t *p_j2k,
     OPJ_BOOL l_go_on = OPJ_TRUE;
     OPJ_UINT32 l_current_tile_no;
     OPJ_UINT32 l_tile_no_to_dec;
-    OPJ_UINT32 l_data_size;
     OPJ_INT32 l_tile_x0, l_tile_y0, l_tile_x1, l_tile_y1;
     OPJ_UINT32 l_nb_comps;
     OPJ_UINT32 l_nb_tiles;
@@ -10640,7 +10635,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile(opj_j2k_t *p_j2k,
     for (;;) {
         if (! opj_j2k_read_tile_header(p_j2k,
                                        &l_current_tile_no,
-                                       &l_data_size,
+                                       NULL,
                                        &l_tile_x0, &l_tile_y0,
                                        &l_tile_x1, &l_tile_y1,
                                        &l_nb_comps,

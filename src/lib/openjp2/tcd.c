@@ -886,27 +886,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
             l_res->x1 = opj_int_ceildivpow2(l_tilec->x1, (OPJ_INT32)l_level_no);
             l_res->y1 = opj_int_ceildivpow2(l_tilec->y1, (OPJ_INT32)l_level_no);
 
-            if (!isEncoder && resno + 1 == l_tilec->minimum_num_resolutions) {
-                /* compute l_data_size with overflow check */
-                OPJ_UINT32 res_w = (OPJ_UINT32)(l_res->x1 - l_res->x0);
-                OPJ_UINT32 res_h = (OPJ_UINT32)(l_res->y1 - l_res->y0);
-
-                /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
-                if (res_h > 0 && res_w > (((OPJ_UINT32) - 1) / res_h)) {
-                    opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
-                    return OPJ_FALSE;
-                }
-                l_data_size = res_w * res_h;
-
-                if ((((OPJ_UINT32) - 1) / (OPJ_UINT32)sizeof(OPJ_UINT32)) < l_data_size) {
-                    opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
-                    return OPJ_FALSE;
-                }
-                l_data_size *= (OPJ_UINT32)sizeof(OPJ_UINT32);
-
-                l_tilec->data_size_needed = l_data_size;
-            }
-
             /*fprintf(stderr, "\t\t\tres_x0= %d, res_y0 =%d, res_x1=%d, res_y1=%d\n", l_res->x0, l_res->y0, l_res->x1, l_res->y1);*/
             /* p. 35, table A-23, ISO/IEC FDIS154444-1 : 2000 (18 august 2000) */
             l_pdx = l_tccp->prcw[resno];
@@ -1312,6 +1291,7 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size(opj_tcd_t *p_tcd,
     l_img_comp = p_tcd->image->comps;
 
     for (i = 0; i < p_tcd->image->numcomps; ++i) {
+        OPJ_UINT32 w, h;
         l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
         l_remaining = l_img_comp->prec & 7;  /* (%8) */
 
@@ -1325,12 +1305,16 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size(opj_tcd_t *p_tcd,
 
         l_res = l_tile_comp->resolutions + l_tile_comp->minimum_num_resolutions - 1;
         if (take_into_account_partial_decoding && !p_tcd->whole_tile_decoding) {
-            l_temp = (l_res->win_x1 - l_res->win_x0) *
-                     (l_res->win_y1 - l_res->win_y0);
+            w = l_res->win_x1 - l_res->win_x0;
+            h = l_res->win_y1 - l_res->win_y0;
         } else {
-            l_temp = (OPJ_UINT32)((l_res->x1 - l_res->x0) * (l_res->y1 -
-                                  l_res->y0)); /* x1*y1 can't overflow */
+            w = (OPJ_UINT32)(l_res->x1 - l_res->x0);
+            h = (OPJ_UINT32)(l_res->y1 - l_res->y0);
         }
+        if (h > 0 && UINT_MAX / w < h) {
+            return UINT_MAX;
+        }
+        l_temp = w * h;
         if (l_size_comp && UINT_MAX / l_size_comp < l_temp) {
             return UINT_MAX;
         }
@@ -1473,7 +1457,31 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
 
     if (p_tcd->whole_tile_decoding) {
         for (compno = 0; compno < p_tcd->image->numcomps; compno++) {
-            if (!opj_alloc_tile_component_data(&(p_tcd->tcd_image->tiles->comps[compno]))) {
+            opj_tcd_tilecomp_t* tilec = &(p_tcd->tcd_image->tiles->comps[compno]);
+            opj_tcd_resolution_t *l_res = &
+                                          (tilec->resolutions[tilec->minimum_num_resolutions - 1]);
+            OPJ_UINT32 l_data_size;
+
+            /* compute l_data_size with overflow check */
+            OPJ_UINT32 res_w = (OPJ_UINT32)(l_res->x1 - l_res->x0);
+            OPJ_UINT32 res_h = (OPJ_UINT32)(l_res->y1 - l_res->y0);
+
+            /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
+            if (res_h > 0 && res_w > (((OPJ_UINT32) - 1) / res_h)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                return OPJ_FALSE;
+            }
+            l_data_size = res_w * res_h;
+
+            if ((((OPJ_UINT32) - 1) / (OPJ_UINT32)sizeof(OPJ_UINT32)) < l_data_size) {
+                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                return OPJ_FALSE;
+            }
+            l_data_size *= (OPJ_UINT32)sizeof(OPJ_UINT32);
+
+            tilec->data_size_needed = l_data_size;
+
+            if (!opj_alloc_tile_component_data(tilec)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
                 return OPJ_FALSE;
             }
