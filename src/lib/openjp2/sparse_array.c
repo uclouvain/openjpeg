@@ -200,6 +200,21 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                             for (; k < x_incr; k++) {
                                 dest_ptr[k * buf_col_stride] = src_ptr[k];
                             }
+                        } else if (x_incr >= 8 && buf_col_stride == 8) {
+                            for (j = 0; j < y_incr; j++) {
+                                OPJ_UINT32 k;
+                                for (k = 0; k < (x_incr & ~3U); k += 4) {
+                                    dest_ptr[k * buf_col_stride] = src_ptr[k];
+                                    dest_ptr[(k + 1) * buf_col_stride] = src_ptr[k + 1];
+                                    dest_ptr[(k + 2) * buf_col_stride] = src_ptr[k + 2];
+                                    dest_ptr[(k + 3) * buf_col_stride] = src_ptr[k + 3];
+                                }
+                                for (; k < x_incr; k++) {
+                                    dest_ptr[k * buf_col_stride] = src_ptr[k];
+                                }
+                                dest_ptr += buf_line_stride;
+                                src_ptr += block_width;
+                            }
                         } else {
                             /* General case */
                             for (j = 0; j < y_incr; j++) {
@@ -251,6 +266,21 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                     if (x_incr == 1) {
                         for (j = 0; j < y_incr; j++) {
                             *dest_ptr = *src_ptr;
+                            src_ptr += buf_line_stride;
+                            dest_ptr += block_width;
+                        }
+                    } else if (x_incr >= 8 && buf_col_stride == 8) {
+                        for (j = 0; j < y_incr; j++) {
+                            OPJ_UINT32 k;
+                            for (k = 0; k < (x_incr & ~3U); k += 4) {
+                                dest_ptr[k] = src_ptr[k * buf_col_stride];
+                                dest_ptr[k + 1] = src_ptr[(k + 1) * buf_col_stride];
+                                dest_ptr[k + 2] = src_ptr[(k + 2) * buf_col_stride];
+                                dest_ptr[k + 3] = src_ptr[(k + 3) * buf_col_stride];
+                            }
+                            for (; k < x_incr; k++) {
+                                dest_ptr[k] = src_ptr[k * buf_col_stride];
+                            }
                             src_ptr += buf_line_stride;
                             dest_ptr += block_width;
                         }
