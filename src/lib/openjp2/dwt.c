@@ -2248,23 +2248,20 @@ static void opj_v4dwt_interleave_partial_v(opj_v4dwt_t* OPJ_RESTRICT dwt,
         OPJ_UINT32 sa_col,
         OPJ_UINT32 nb_elts_read)
 {
-    OPJ_UINT32 i;
-    for (i = 0; i < nb_elts_read; i++) {
-        OPJ_BOOL ret;
-        ret = opj_sparse_array_int32_read(sa,
-                                          sa_col + i, dwt->win_l_x0,
-                                          sa_col + i + 1, dwt->win_l_x1,
-                                          (OPJ_INT32*)(dwt->wavelet + dwt->cas + 2 * dwt->win_l_x0) + i,
-                                          0, 8, OPJ_TRUE);
-        assert(ret);
-        ret = opj_sparse_array_int32_read(sa,
-                                          sa_col + i, (OPJ_UINT32)dwt->sn + dwt->win_h_x0,
-                                          sa_col + i + 1, (OPJ_UINT32)dwt->sn + dwt->win_h_x1,
-                                          (OPJ_INT32*)(dwt->wavelet + 1 - dwt->cas + 2 * dwt->win_h_x0) + i,
-                                          0, 8, OPJ_TRUE);
-        assert(ret);
-        OPJ_UNUSED(ret);
-    }
+    OPJ_BOOL ret;
+    ret = opj_sparse_array_int32_read(sa,
+                                      sa_col, dwt->win_l_x0,
+                                      sa_col + nb_elts_read, dwt->win_l_x1,
+                                      (OPJ_INT32*)(dwt->wavelet + dwt->cas + 2 * dwt->win_l_x0),
+                                      1, 8, OPJ_TRUE);
+    assert(ret);
+    ret = opj_sparse_array_int32_read(sa,
+                                      sa_col, (OPJ_UINT32)dwt->sn + dwt->win_h_x0,
+                                      sa_col + nb_elts_read, (OPJ_UINT32)dwt->sn + dwt->win_h_x1,
+                                      (OPJ_INT32*)(dwt->wavelet + 1 - dwt->cas + 2 * dwt->win_h_x0),
+                                      1, 8, OPJ_TRUE);
+    assert(ret);
+    OPJ_UNUSED(ret);
 }
 
 #ifdef __SSE__
@@ -2743,20 +2740,17 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
             if ((j + 3 >= win_ll_y0 && j < win_ll_y1) ||
                     (j + 3 >= win_lh_y0 + (OPJ_UINT32)v.sn &&
                      j < win_lh_y1 + (OPJ_UINT32)v.sn)) {
-                OPJ_UINT32 k;
                 opj_v4dwt_interleave_partial_h(&h, sa, j, opj_uint_min(4U, rh - j));
                 opj_v4dwt_decode(&h);
-                for (k = 0; k < 4; k++) {
-                    if (!opj_sparse_array_int32_write(sa,
-                                                      win_tr_x0, j + k,
-                                                      win_tr_x1, j + k + 1,
-                                                      (OPJ_INT32*)&h.wavelet[win_tr_x0].f[k],
-                                                      4, 0, OPJ_TRUE)) {
-                        /* FIXME event manager error callback */
-                        opj_sparse_array_int32_free(sa);
-                        opj_aligned_free(h.wavelet);
-                        return OPJ_FALSE;
-                    }
+                if (!opj_sparse_array_int32_write(sa,
+                                                  win_tr_x0, j,
+                                                  win_tr_x1, j + 4,
+                                                  (OPJ_INT32*)&h.wavelet[win_tr_x0].f[0],
+                                                  4, 1, OPJ_TRUE)) {
+                    /* FIXME event manager error callback */
+                    opj_sparse_array_int32_free(sa);
+                    opj_aligned_free(h.wavelet);
+                    return OPJ_FALSE;
                 }
             }
         }
@@ -2765,20 +2759,17 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
                 ((j + 3 >= win_ll_y0 && j < win_ll_y1) ||
                  (j + 3 >= win_lh_y0 + (OPJ_UINT32)v.sn &&
                   j < win_lh_y1 + (OPJ_UINT32)v.sn))) {
-            OPJ_UINT32 k;
             opj_v4dwt_interleave_partial_h(&h, sa, j, rh - j);
             opj_v4dwt_decode(&h);
-            for (k = 0; k < rh - j; k++) {
-                if (!opj_sparse_array_int32_write(sa,
-                                                  win_tr_x0, j + k,
-                                                  win_tr_x1, j + k + 1,
-                                                  (OPJ_INT32*)&h.wavelet[win_tr_x0].f[k],
-                                                  4, 0, OPJ_TRUE)) {
-                    /* FIXME event manager error callback */
-                    opj_sparse_array_int32_free(sa);
-                    opj_aligned_free(h.wavelet);
-                    return OPJ_FALSE;
-                }
+            if (!opj_sparse_array_int32_write(sa,
+                                              win_tr_x0, j,
+                                              win_tr_x1, rh,
+                                              (OPJ_INT32*)&h.wavelet[win_tr_x0].f[0],
+                                              4, 1, OPJ_TRUE)) {
+                /* FIXME event manager error callback */
+                opj_sparse_array_int32_free(sa);
+                opj_aligned_free(h.wavelet);
+                return OPJ_FALSE;
             }
         }
 
@@ -2788,22 +2779,19 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
         v.win_h_x1 = win_lh_y1;
         for (j = win_tr_x0; j < win_tr_x1; j += 4) {
             OPJ_UINT32 nb_elts = opj_uint_min(4U, win_tr_x1 - j);
-            OPJ_UINT32 k;
 
             opj_v4dwt_interleave_partial_v(&v, sa, j, nb_elts);
             opj_v4dwt_decode(&v);
 
-            for (k = 0; k < nb_elts; k++) {
-                if (!opj_sparse_array_int32_write(sa,
-                                                  j + k, win_tr_y0,
-                                                  j + k + 1, win_tr_y1,
-                                                  (OPJ_INT32*)&h.wavelet[win_tr_y0].f[k],
-                                                  0, 4, OPJ_TRUE)) {
-                    /* FIXME event manager error callback */
-                    opj_sparse_array_int32_free(sa);
-                    opj_aligned_free(h.wavelet);
-                    return OPJ_FALSE;
-                }
+            if (!opj_sparse_array_int32_write(sa,
+                                              j, win_tr_y0,
+                                              j + nb_elts, win_tr_y1,
+                                              (OPJ_INT32*)&h.wavelet[win_tr_y0].f[0],
+                                              1, 4, OPJ_TRUE)) {
+                /* FIXME event manager error callback */
+                opj_sparse_array_int32_free(sa);
+                opj_aligned_free(h.wavelet);
+                return OPJ_FALSE;
             }
         }
     }
