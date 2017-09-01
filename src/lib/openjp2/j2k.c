@@ -9147,10 +9147,15 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
     OPJ_BOOL ret;
     OPJ_UINT32 it_comp;
 
+    if (p_j2k->m_cp.tw == 1 && p_j2k->m_cp.th == 1 &&
+            &p_j2k->m_cp.tcps[0].m_data != NULL) {
+        /* In the case of a single-tiled image whose codestream we have already */
+        /* ingested, go on */
+    }
     /* Check if we are read the main header */
-    if (p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT) {
+    else if (p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT) {
         opj_event_msg(p_manager, EVT_ERROR,
-                      "Need to decode the main header before begin to decode the remaining codestream");
+                      "Need to decode the main header before begin to decode the remaining codestream.\n");
         return OPJ_FALSE;
     }
 
@@ -10508,20 +10513,27 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
     }
 
     for (;;) {
-        if (! opj_j2k_read_tile_header(p_j2k,
-                                       &l_current_tile_no,
-                                       NULL,
-                                       &l_tile_x0, &l_tile_y0,
-                                       &l_tile_x1, &l_tile_y1,
-                                       &l_nb_comps,
-                                       &l_go_on,
-                                       p_stream,
-                                       p_manager)) {
-            return OPJ_FALSE;
-        }
+        if (p_j2k->m_cp.tw == 1 && p_j2k->m_cp.th == 1 &&
+                p_j2k->m_cp.tcps[0].m_data != NULL) {
+            l_current_tile_no = 0;
+            p_j2k->m_current_tile_number = 0;
+            p_j2k->m_specific_param.m_decoder.m_state |= J2K_STATE_DATA;
+        } else {
+            if (! opj_j2k_read_tile_header(p_j2k,
+                                           &l_current_tile_no,
+                                           NULL,
+                                           &l_tile_x0, &l_tile_y0,
+                                           &l_tile_x1, &l_tile_y1,
+                                           &l_nb_comps,
+                                           &l_go_on,
+                                           p_stream,
+                                           p_manager)) {
+                return OPJ_FALSE;
+            }
 
-        if (! l_go_on) {
-            break;
+            if (! l_go_on) {
+                break;
+            }
         }
 
         if (! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
@@ -10538,7 +10550,16 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
                                         p_j2k->m_output_image)) {
             return OPJ_FALSE;
         }
-        opj_j2k_tcp_data_destroy(&p_j2k->m_cp.tcps[l_current_tile_no]);
+
+        if (p_j2k->m_cp.tw == 1 && p_j2k->m_cp.th == 1 &&
+                !(p_j2k->m_output_image->x0 == p_j2k->m_private_image->x0 &&
+                  p_j2k->m_output_image->y0 == p_j2k->m_private_image->y0 &&
+                  p_j2k->m_output_image->x1 == p_j2k->m_private_image->x1 &&
+                  p_j2k->m_output_image->y1 == p_j2k->m_private_image->y1)) {
+            /* Keep current tcp data */
+        } else {
+            opj_j2k_tcp_data_destroy(&p_j2k->m_cp.tcps[l_current_tile_no]);
+        }
 
         opj_event_msg(p_manager, EVT_INFO,
                       "Image data has been updated with tile %d.\n\n", l_current_tile_no + 1);
@@ -10738,9 +10759,11 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
         }
     }
 
-    p_j2k->m_output_image = opj_image_create0();
-    if (!(p_j2k->m_output_image)) {
-        return OPJ_FALSE;
+    if (p_j2k->m_output_image == NULL) {
+        p_j2k->m_output_image = opj_image_create0();
+        if (!(p_j2k->m_output_image)) {
+            return OPJ_FALSE;
+        }
     }
     opj_copy_image_header(p_image, p_j2k->m_output_image);
 
@@ -10760,6 +10783,7 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
     for (compno = 0; compno < p_image->numcomps; compno++) {
         p_image->comps[compno].resno_decoded =
             p_j2k->m_output_image->comps[compno].resno_decoded;
+        opj_image_data_free(p_image->comps[compno].data);
         p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
 #if 0
         char fn[256];

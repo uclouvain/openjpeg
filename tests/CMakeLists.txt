@@ -103,6 +103,10 @@ add_test(NAME tda_prep_irreversible_203_201_17_19_no_precinct COMMAND test_tile_
 add_test(NAME tda_irreversible_203_201_17_19_no_precinct COMMAND test_decode_area -q irreversible_203_201_17_19_no_precinct.j2k)
 set_property(TEST tda_irreversible_203_201_17_19_no_precinct APPEND PROPERTY DEPENDS tda_prep_irreversible_203_201_17_19_no_precinct)
 
+add_test(NAME tda_prep_strip COMMAND test_tile_encoder 1 256 256 256 256 8 0 tda_single_tile.j2k)
+add_test(NAME tda_strip COMMAND test_decode_area -q -strip_height 3 -strip_check tda_single_tile.j2k)
+set_property(TEST tda_strip APPEND PROPERTY DEPENDS tda_prep_strip)
+
 add_executable(include_openjpeg include_openjpeg.c)
 
 # No image send to the dashboard if lib PNG is not available.

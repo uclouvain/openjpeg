@@ -1668,6 +1668,11 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         }
     }
 
+    /* Both can be non NULL if for example decoding a full tile and then */
+    /* partially a tile. In which case partial decoding should be the */
+    /* priority */
+    assert((cblk->decoded_data != NULL) || (tilec->data != NULL));
+
     if (cblk->decoded_data) {
         if (tccp->qmfbid == 1) {
             for (j = 0; j < cblk_h; ++j) {
@@ -1763,14 +1768,23 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                         (OPJ_UINT32)precinct->y0,
                         (OPJ_UINT32)precinct->x1,
                         (OPJ_UINT32)precinct->y1)) {
+                    for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
+                        opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
+                        if (cblk->decoded_data) {
+#ifdef DEBUG_VERBOSE
+                            printf("Discarding codeblock %d,%d at resno=%d, bandno=%d\n",
+                                   cblk->x0, cblk->y0, resno, bandno);
+#endif
+                            opj_free(cblk->decoded_data);
+                            cblk->decoded_data = NULL;
+                        }
+                    }
                     continue;
                 }
 
                 for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
                     opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
                     opj_t1_cblk_decode_processing_job_t* job;
-
-                    assert(cblk->decoded_data == NULL);
 
                     if (!opj_tcd_is_subband_area_of_interest(tcd,
                             tilec->compno,
@@ -1780,15 +1794,34 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                             (OPJ_UINT32)cblk->y0,
                             (OPJ_UINT32)cblk->x1,
                             (OPJ_UINT32)cblk->y1)) {
+                        if (cblk->decoded_data) {
+#ifdef DEBUG_VERBOSE
+                            printf("Discarding codeblock %d,%d at resno=%d, bandno=%d\n",
+                                   cblk->x0, cblk->y0, resno, bandno);
+#endif
+                            opj_free(cblk->decoded_data);
+                            cblk->decoded_data = NULL;
+                        }
                         continue;
                     }
 
                     if (!tcd->whole_tile_decoding) {
                         OPJ_UINT32 cblk_w = (OPJ_UINT32)(cblk->x1 - cblk->x0);
                         OPJ_UINT32 cblk_h = (OPJ_UINT32)(cblk->y1 - cblk->y0);
+                        if (cblk->decoded_data != NULL) {
+#ifdef DEBUG_VERBOSE
+                            printf("Reusing codeblock %d,%d at resno=%d, bandno=%d\n",
+                                   cblk->x0, cblk->y0, resno, bandno);
+#endif
+                            continue;
+                        }
                         if (cblk_w == 0 || cblk_h == 0) {
                             continue;
                         }
+#ifdef DEBUG_VERBOSE
+                        printf("Decoding codeblock %d,%d at resno=%d, bandno=%d\n",
+                               cblk->x0, cblk->y0, resno, bandno);
+#endif
                         /* Zero-init required */
                         cblk->decoded_data = opj_calloc(1, cblk_w * cblk_h * sizeof(OPJ_INT32));
                         if (cblk->decoded_data == NULL) {
@@ -1803,6 +1836,11 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                             *pret = OPJ_FALSE;
                             return;
                         }
+                    } else if (cblk->decoded_data) {
+                        /* Not sure if that code path can happen, but better be */
+                        /* safe than sorry */
+                        opj_free(cblk->decoded_data);
+                        cblk->decoded_data = NULL;
                     }
 
                     job = (opj_t1_cblk_decode_processing_job_t*) opj_calloc(1,
