@@ -38,7 +38,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define OPJ_SKIP_POISON
 #include "opj_includes.h"
+
+#ifdef __SSE__
+#include <xmmintrin.h>
+#endif
+#ifdef __SSE2__
+#include <emmintrin.h>
+#endif
+
+#if defined(__GNUC__)
+#pragma GCC poison malloc calloc realloc free
+#endif
+
 #include "t1_luts.h"
 
 /** @defgroup T1 T1 - Implementation of the tier-1 coding */
@@ -1710,7 +1723,28 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
                 datap[i] /= 2;
             }
         } else {        /* if (tccp->qmfbid == 0) */
-            for (i = 0; i < cblk_size; ++i) {
+            i = 0;
+#ifdef __SSE2__
+            {
+                const __m128 xmm_stepsize = _mm_set1_ps(band->stepsize);
+                for (; i < (cblk_size & ~15U); i += 16) {
+                    __m128 xmm0_data = _mm_cvtepi32_ps(_mm_load_si128((__m128i * const)(
+                                                           datap + 0)));
+                    __m128 xmm1_data = _mm_cvtepi32_ps(_mm_load_si128((__m128i * const)(
+                                                           datap + 4)));
+                    __m128 xmm2_data = _mm_cvtepi32_ps(_mm_load_si128((__m128i * const)(
+                                                           datap + 8)));
+                    __m128 xmm3_data = _mm_cvtepi32_ps(_mm_load_si128((__m128i * const)(
+                                                           datap + 12)));
+                    _mm_store_ps((float*)(datap +  0), _mm_mul_ps(xmm0_data, xmm_stepsize));
+                    _mm_store_ps((float*)(datap +  4), _mm_mul_ps(xmm1_data, xmm_stepsize));
+                    _mm_store_ps((float*)(datap +  8), _mm_mul_ps(xmm2_data, xmm_stepsize));
+                    _mm_store_ps((float*)(datap + 12), _mm_mul_ps(xmm3_data, xmm_stepsize));
+                    datap += 16;
+                }
+            }
+#endif
+            for (; i < cblk_size; ++i) {
                 OPJ_FLOAT32 tmp = ((OPJ_FLOAT32)(*datap)) * band->stepsize;
                 memcpy(datap, &tmp, sizeof(tmp));
                 datap++;
