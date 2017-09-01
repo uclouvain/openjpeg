@@ -245,6 +245,10 @@ opj_image_t* decode(
 int decode_by_strip(OPJ_BOOL quiet,
                     const char* input_file,
                     OPJ_UINT32 strip_height,
+                    OPJ_INT32 da_x0,
+                    OPJ_INT32 da_y0,
+                    OPJ_INT32 da_x1,
+                    OPJ_INT32 da_y1,
                     opj_image_t* full_image)
 {
     /* OPJ_UINT32 tilew, tileh; */
@@ -252,6 +256,7 @@ int decode_by_strip(OPJ_BOOL quiet,
     opj_image_t * l_image = NULL;
     opj_stream_t * l_stream = NULL;
     OPJ_UINT32 x0, y0, x1, y1, y;
+    OPJ_UINT32 full_x0, full_y0, full_x1, full_y1;
 
     l_codec = create_codec_and_stream(input_file, &l_stream);
     if (l_codec == NULL) {
@@ -266,10 +271,22 @@ int decode_by_strip(OPJ_BOOL quiet,
         return 1;
     }
 
-    x0 = l_image->x0;
-    y0 = l_image->y0;
-    x1 = l_image->x1;
-    y1 = l_image->y1;
+    full_x0 = l_image->x0;
+    full_y0 = l_image->y0;
+    full_x1 = l_image->x1;
+    full_y1 = l_image->y1;
+
+    if (da_x0 != 0 || da_y0 != 0 || da_x1 != 0 || da_y1 != 0) {
+        x0 = (OPJ_UINT32)da_x0;
+        y0 = (OPJ_UINT32)da_y0;
+        x1 = (OPJ_UINT32)da_x1;
+        y1 = (OPJ_UINT32)da_y1;
+    } else {
+        x0 = l_image->x0;
+        y0 = l_image->y0;
+        x1 = l_image->x1;
+        y1 = l_image->y1;
+    }
     for (y = y0; y < y1; y += strip_height) {
         OPJ_UINT32 h_req = strip_height;
         if (y + h_req > y1) {
@@ -303,9 +320,9 @@ int decode_by_strip(OPJ_BOOL quiet,
                 for (y_check = 0; y_check < h_req; y_check++) {
                     for (x = x0; x < x1; x++) {
                         OPJ_INT32 sub_image_val =
-                            l_image->comps[compno].data[y_check * (x1 - x0) + x];
+                            l_image->comps[compno].data[y_check * (x1 - x0) + (x - x0)];
                         OPJ_INT32 image_val =
-                            full_image->comps[compno].data[(y + y_check) * (x1 - x0) + x];
+                            full_image->comps[compno].data[(y + y_check) * (x1 - x0) + (x - x0)];
                         if (sub_image_val != image_val) {
                             fprintf(stderr,
                                     "Difference found at subimage pixel (%u,%u) "
@@ -321,12 +338,13 @@ int decode_by_strip(OPJ_BOOL quiet,
     }
 
     /* If image is small enough, try a final whole image read */
-    if (x1 - x0 < 10000 && y1 - y0 < 10000) {
+    if (full_x1 - full_x0 < 10000 && full_y1 - full_y0 < 10000) {
         if (!quiet) {
             printf("Decoding full image\n");
         }
-        if (!opj_set_decode_area(l_codec, l_image, (OPJ_INT32)x0, (OPJ_INT32)y0,
-                                 (OPJ_INT32)x1, (OPJ_INT32)y1)) {
+        if (!opj_set_decode_area(l_codec, l_image,
+                                 (OPJ_INT32)full_x0, (OPJ_INT32)full_y0,
+                                 (OPJ_INT32)full_x1, (OPJ_INT32)full_y1)) {
             fprintf(stderr, "ERROR -> failed to set the decoded area\n");
             opj_stream_destroy(l_stream);
             opj_destroy_codec(l_codec);
@@ -411,7 +429,7 @@ int main(int argc, char** argv)
     if (argc < 2) {
         fprintf(stderr,
                 "Usage: test_decode_area [-q] [-steps n] input_file_jp2_or_jk2 [x0 y0 x1 y1]\n"
-                "or   : test_decode_area [-q] [-strip_height h] [-strip_check] input_file_jp2_or_jk2\n");
+                "or   : test_decode_area [-q] [-strip_height h] [-strip_check] input_file_jp2_or_jk2 [x0 y0 x1 y1]\n");
         return 1;
     }
 
@@ -435,6 +453,10 @@ int main(int argc, char** argv)
                 da_y0 = atoi(argv[iarg + 1]);
                 da_x1 = atoi(argv[iarg + 2]);
                 da_y1 = atoi(argv[iarg + 3]);
+                if (da_x0 < 0 || da_y0 < 0 || da_x1 < 0 || da_y1 < 0) {
+                    fprintf(stderr, "Wrong bounds\n");
+                    return 1;
+                }
                 iarg += 3;
             }
         }
@@ -449,7 +471,8 @@ int main(int argc, char** argv)
     }
 
     if (strip_height) {
-        int ret = decode_by_strip(quiet, input_file, strip_height, l_image);
+        int ret = decode_by_strip(quiet, input_file, strip_height, da_x0, da_y0, da_x1,
+                                  da_y1, l_image);
         if (l_image) {
             opj_image_destroy(l_image);
         }
