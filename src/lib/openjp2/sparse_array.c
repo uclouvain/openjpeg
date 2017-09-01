@@ -91,7 +91,7 @@ void opj_sparse_array_int32_free(opj_sparse_array_int32_t* sa)
     }
 }
 
-OPJ_BOOL opj_sparse_array_is_region_valid(opj_sparse_array_int32_t* sa,
+OPJ_BOOL opj_sparse_array_is_region_valid(const opj_sparse_array_int32_t* sa,
         OPJ_UINT32 x0,
         OPJ_UINT32 y0,
         OPJ_UINT32 x1,
@@ -102,7 +102,7 @@ OPJ_BOOL opj_sparse_array_is_region_valid(opj_sparse_array_int32_t* sa,
 }
 
 static OPJ_BOOL opj_sparse_array_int32_read_or_write(
-    opj_sparse_array_int32_t* sa,
+    const opj_sparse_array_int32_t* sa,
     OPJ_UINT32 x0,
     OPJ_UINT32 y0,
     OPJ_UINT32 x1,
@@ -115,6 +115,8 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
 {
     OPJ_UINT32 y, block_y;
     OPJ_UINT32 y_incr = 0;
+    const OPJ_UINT32 block_width = sa->block_width;
+
     if (!opj_sparse_array_is_region_valid(sa, x0, y0, x1, y1)) {
         return forgiving;
     }
@@ -128,43 +130,64 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                  sa->block_height;
         block_y_offset = sa->block_height - y_incr;
         y_incr = opj_uint_min(y_incr, y1 - y);
-        block_x = x0 / sa->block_width;
+        block_x = x0 / block_width;
         for (x = x0; x < x1; block_x ++, x += x_incr) {
             OPJ_UINT32 j;
             OPJ_UINT32 block_x_offset;
             OPJ_INT32* src_block;
-            x_incr = (x == x0) ? sa->block_width - (x0 % sa->block_width) : sa->block_width;
-            block_x_offset = sa->block_width - x_incr;
+            x_incr = (x == x0) ? block_width - (x0 % block_width) : block_width;
+            block_x_offset = block_width - x_incr;
             x_incr = opj_uint_min(x_incr, x1 - x);
             src_block = sa->data_blocks[block_y * sa->block_count_hor + block_x];
             if (is_read_op) {
                 if (src_block == NULL) {
-                    for (j = 0; j < y_incr; j++) {
-                        if (buf_col_stride == 1) {
-                            memset(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0) * buf_col_stride,
-                                   0,
-                                   sizeof(OPJ_INT32) * x_incr);
-                        } else {
+                    if (buf_col_stride == 1) {
+                        OPJ_INT32* dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                                              (x - x0) * buf_col_stride;
+                        for (j = 0; j < y_incr; j++) {
+                            memset(dest_ptr, 0, sizeof(OPJ_INT32) * x_incr);
+                            dest_ptr += buf_line_stride;
+                        }
+                    } else {
+                        OPJ_INT32* dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                                              (x - x0) * buf_col_stride;
+                        for (j = 0; j < y_incr; j++) {
                             OPJ_UINT32 k;
                             for (k = 0; k < x_incr; k++) {
-                                *(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0 + k) * buf_col_stride)
-                                    = 0;
+                                dest_ptr[k * buf_col_stride] = 0;
                             }
+                            dest_ptr += buf_line_stride;
                         }
                     }
                 } else {
-                    for (j = 0; j < y_incr; j++) {
-                        if (buf_col_stride == 1) {
-                            memcpy(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0) * buf_col_stride,
-                                   src_block + (block_y_offset + j) * (size_t)sa->block_width + block_x_offset,
-                                   sizeof(OPJ_INT32) * x_incr);
+                    const OPJ_INT32* OPJ_RESTRICT src_ptr = src_block + block_y_offset *
+                                                            (size_t)block_width + block_x_offset;
+                    if (buf_col_stride == 1) {
+                        OPJ_INT32* OPJ_RESTRICT dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                                                           (x - x0) * buf_col_stride;
+                        for (j = 0; j < y_incr; j++) {
+                            memcpy(dest_ptr, src_ptr, sizeof(OPJ_INT32) * x_incr);
+                            dest_ptr += buf_line_stride;
+                            src_ptr += block_width;
+                        }
+                    } else {
+                        OPJ_INT32* OPJ_RESTRICT dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                                                           (x - x0) * buf_col_stride;
+                        if (x_incr == 1) {
+                            for (j = 0; j < y_incr; j++) {
+                                *dest_ptr = *src_ptr;
+                                dest_ptr += buf_line_stride;
+                                src_ptr += block_width;
+                            }
                         } else {
-                            OPJ_UINT32 k;
-                            for (k = 0; k < x_incr; k++) {
-                                *(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0 + k) * buf_col_stride)
-                                    =
-                                        *(src_block + (block_y_offset + j) * (size_t)sa->block_width + block_x_offset +
-                                          k);
+                            /* General case */
+                            for (j = 0; j < y_incr; j++) {
+                                OPJ_UINT32 k;
+                                for (k = 0; k < x_incr; k++) {
+                                    dest_ptr[k * buf_col_stride] = src_ptr[k];
+                                }
+                                dest_ptr += buf_line_stride;
+                                src_ptr += block_width;
                             }
                         }
                     }
@@ -179,18 +202,36 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                     sa->data_blocks[block_y * sa->block_count_hor + block_x] = src_block;
                 }
 
-                for (j = 0; j < y_incr; j++) {
-                    if (buf_col_stride == 1) {
-                        memcpy(src_block + (block_y_offset + j) * (size_t)sa->block_width +
-                               block_x_offset,
-                               buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0) * buf_col_stride,
-                               sizeof(OPJ_INT32) * x_incr);
+                if (buf_col_stride == 1) {
+                    OPJ_INT32* OPJ_RESTRICT dest_ptr = src_block + block_y_offset *
+                                                       (size_t)block_width + block_x_offset;
+                    const OPJ_INT32* OPJ_RESTRICT src_ptr = buf + (y - y0) *
+                                                            (size_t)buf_line_stride + (x - x0) * buf_col_stride;
+                    for (j = 0; j < y_incr; j++) {
+                        memcpy(dest_ptr, src_ptr, sizeof(OPJ_INT32) * x_incr);
+                        dest_ptr += block_width;
+                        src_ptr += buf_line_stride;
+                    }
+                } else {
+                    OPJ_INT32* OPJ_RESTRICT dest_ptr = src_block + block_y_offset *
+                                                       (size_t)block_width + block_x_offset;
+                    const OPJ_INT32* OPJ_RESTRICT src_ptr = buf + (y - y0) *
+                                                            (size_t)buf_line_stride + (x - x0) * buf_col_stride;
+                    if (x_incr == 1) {
+                        for (j = 0; j < y_incr; j++) {
+                            *dest_ptr = *src_ptr;
+                            src_ptr += buf_line_stride;
+                            dest_ptr += block_width;
+                        }
                     } else {
-                        OPJ_UINT32 k;
-                        for (k = 0; k < x_incr; k++) {
-                            *(src_block + (block_y_offset + j) * (size_t)sa->block_width + block_x_offset +
-                              k) =
-                                  *(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0 + k) * buf_col_stride);
+                        /* General case */
+                        for (j = 0; j < y_incr; j++) {
+                            OPJ_UINT32 k;
+                            for (k = 0; k < x_incr; k++) {
+                                dest_ptr[k] = src_ptr[k * buf_col_stride];
+                            }
+                            src_ptr += buf_line_stride;
+                            dest_ptr += block_width;
                         }
                     }
                 }
@@ -201,7 +242,7 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
     return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_sparse_array_int32_read(opj_sparse_array_int32_t* sa,
+OPJ_BOOL opj_sparse_array_int32_read(const opj_sparse_array_int32_t* sa,
                                      OPJ_UINT32 x0,
                                      OPJ_UINT32 y0,
                                      OPJ_UINT32 x1,
@@ -211,12 +252,13 @@ OPJ_BOOL opj_sparse_array_int32_read(opj_sparse_array_int32_t* sa,
                                      OPJ_UINT32 dest_line_stride,
                                      OPJ_BOOL forgiving)
 {
-    return opj_sparse_array_int32_read_or_write(sa, x0, y0, x1, y1,
-            dest,
-            dest_col_stride,
-            dest_line_stride,
-            forgiving,
-            OPJ_TRUE);
+    return opj_sparse_array_int32_read_or_write(
+               (opj_sparse_array_int32_t*)sa, x0, y0, x1, y1,
+               dest,
+               dest_col_stride,
+               dest_line_stride,
+               forgiving,
+               OPJ_TRUE);
 }
 
 OPJ_BOOL opj_sparse_array_int32_write(opj_sparse_array_int32_t* sa,

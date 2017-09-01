@@ -92,6 +92,7 @@ int main()
     ret = opj_sparse_array_int32_write(sa, 4, 5, 4 + 1, 5 + 1, buffer, 1, 1,
                                        OPJ_FALSE);
     assert(ret);
+
     buffer[0] = 2;
     ret = opj_sparse_array_int32_write(sa, 4, 5, 4 + 1, 5 + 1, buffer, 1, 1,
                                        OPJ_FALSE);
@@ -105,6 +106,29 @@ int main()
     assert(buffer[0] == 2);
     assert(buffer[1] == 0xFF);
 
+    buffer[0] = 0xFF;
+    buffer[1] = 0xFF;
+    buffer[2] = 0xFF;
+    ret = opj_sparse_array_int32_read(sa, 4, 5, 4 + 1, 5 + 2, buffer, 0, 1,
+                                      OPJ_FALSE);
+    assert(ret);
+    assert(buffer[0] == 2);
+    assert(buffer[1] == 0);
+    assert(buffer[2] == 0xFF);
+
+    buffer[0] = 3;
+    ret = opj_sparse_array_int32_write(sa, 4, 5, 4 + 1, 5 + 1, buffer, 0, 1,
+                                       OPJ_FALSE);
+    assert(ret);
+
+    buffer[0] = 0;
+    buffer[1] = 0xFF;
+    ret = opj_sparse_array_int32_read(sa, 4, 5, 4 + 1, 5 + 1, buffer, 1, 1,
+                                      OPJ_FALSE);
+    assert(ret);
+    assert(buffer[0] == 3);
+    assert(buffer[1] == 0xFF);
+
     w = 15 + 1;
     h = 17 + 1;
     memset(buffer, 0xFF, sizeof(buffer));
@@ -114,7 +138,7 @@ int main()
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
             if (i == 4 - 2 && j == 5 - 1) {
-                assert(buffer[ j * w + i ] == 2);
+                assert(buffer[ j * w + i ] == 3);
             } else {
                 assert(buffer[ j * w + i ] == 0);
             }

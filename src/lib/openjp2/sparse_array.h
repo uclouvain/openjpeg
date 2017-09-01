@@ -77,7 +77,7 @@ void opj_sparse_array_int32_free(opj_sparse_array_int32_t* sa);
  * @param y1 bottom y coordinate (not included) of the region. Must be greater than y0.
  * @return OPJ_TRUE or OPJ_FALSE.
  */
-OPJ_BOOL opj_sparse_array_is_region_valid(opj_sparse_array_int32_t* sa,
+OPJ_BOOL opj_sparse_array_is_region_valid(const opj_sparse_array_int32_t* sa,
         OPJ_UINT32 x0,
         OPJ_UINT32 y0,
         OPJ_UINT32 x1,
@@ -99,7 +99,7 @@ OPJ_BOOL opj_sparse_array_is_region_valid(opj_sparse_array_int32_t* sa,
  * @param forgiving if set to TRUE and the region is invalid, OPJ_TRUE will still be returned.
  * @return OPJ_TRUE in case of success.
  */
-OPJ_BOOL opj_sparse_array_int32_read(opj_sparse_array_int32_t* sa,
+OPJ_BOOL opj_sparse_array_int32_read(const opj_sparse_array_int32_t* sa,
                                      OPJ_UINT32 x0,
                                      OPJ_UINT32 y0,
                                      OPJ_UINT32 x1,
