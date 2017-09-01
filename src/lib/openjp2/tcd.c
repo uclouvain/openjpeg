@@ -832,7 +832,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
         l_data_size = l_tilec->numresolutions * (OPJ_UINT32)sizeof(
                           opj_tcd_resolution_t);
 
-        opj_aligned_free(l_tilec->data_win);
+        opj_image_data_free(l_tilec->data_win);
         l_tilec->data_win = NULL;
         l_tilec->win_x0 = 0;
         l_tilec->win_y0 = 0;
@@ -1581,7 +1581,7 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
             size_t h = res->win_y1 - res->win_y0;
             size_t l_data_size;
 
-            opj_aligned_free(tilec->data_win);
+            opj_image_data_free(tilec->data_win);
             tilec->data_win = NULL;
 
             if (w > 0 && h > 0) {
@@ -1598,7 +1598,7 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
                 }
                 l_data_size *= sizeof(OPJ_INT32);
 
-                tilec->data_win = opj_aligned_malloc(l_data_size);
+                tilec->data_win = opj_image_data_alloc(l_data_size);
                 if (tilec->data_win == NULL) {
                     opj_event_msg(p_manager, EVT_ERROR,
                                   "Size of tile data exceeds system limits\n");
@@ -1833,7 +1833,7 @@ static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
             l_tile_comp->data_size_needed = 0;
         }
 
-        opj_aligned_free(l_tile_comp->data_win);
+        opj_image_data_free(l_tile_comp->data_win);
 
         ++l_tile_comp;
     }

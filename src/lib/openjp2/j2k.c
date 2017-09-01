@@ -8922,30 +8922,11 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
 
     l_img_comp_dest = p_output_image->comps;
 
-    for (i = 0; i < l_image_src->numcomps; i++) {
+    for (i = 0; i < l_image_src->numcomps;
+            i++, ++l_img_comp_dest, ++l_img_comp_src,  ++l_tilec) {
         OPJ_INT32 res_x0, res_x1, res_y0, res_y1;
         OPJ_UINT32 src_data_stride;
         const OPJ_INT32* p_src_data;
-        OPJ_BOOL check_if_must_memset = OPJ_FALSE;
-
-        /* Allocate output component buffer if necessary */
-        if (!l_img_comp_dest->data) {
-            OPJ_SIZE_T l_width = l_img_comp_dest->w;
-            OPJ_SIZE_T l_height = l_img_comp_dest->h;
-
-            if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height)) ||
-                    l_width * l_height > SIZE_MAX / sizeof(OPJ_INT32)) {
-                /* would overflow */
-                return OPJ_FALSE;
-            }
-            l_img_comp_dest->data = (OPJ_INT32*) opj_image_data_alloc(l_width * l_height *
-                                    sizeof(OPJ_INT32));
-            if (! l_img_comp_dest->data) {
-                return OPJ_FALSE;
-            }
-
-            check_if_must_memset = OPJ_TRUE;
-        }
 
         /* Copy info from decoded comp image to output image */
         l_img_comp_dest->resno_decoded = l_img_comp_src->resno_decoded;
@@ -9062,12 +9043,6 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
         }
         /*-----*/
 
-        if (check_if_must_memset && (l_img_comp_dest->w != l_width_dest ||
-                                     l_img_comp_dest->h != l_height_dest)) {
-            memset(l_img_comp_dest->data, 0,
-                   (OPJ_SIZE_T)l_img_comp_dest->w * l_img_comp_dest->h * sizeof(OPJ_INT32));
-        }
-
         /* Compute the input buffer offset */
         l_start_offset_src = (OPJ_SIZE_T)l_offset_x0_src + (OPJ_SIZE_T)l_offset_y0_src
                              * (OPJ_SIZE_T)src_data_stride;
@@ -9075,6 +9050,43 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
         /* Compute the output buffer offset */
         l_start_offset_dest = (OPJ_SIZE_T)l_start_x_dest + (OPJ_SIZE_T)l_start_y_dest
                               * (OPJ_SIZE_T)l_img_comp_dest->w;
+
+        /* Allocate output component buffer if necessary */
+        if (l_img_comp_dest->data == NULL &&
+                l_start_offset_src == 0 && l_start_offset_dest == 0 &&
+                l_width_dest == l_img_comp_dest->w &&
+                l_height_dest == l_img_comp_dest->h) {
+            /* If the final image matches the tile buffer, then borrow it */
+            /* directly to save a copy */
+            if (p_tcd->whole_tile_decoding) {
+                l_img_comp_dest->data = l_tilec->data;
+                l_tilec->data = NULL;
+            } else {
+                l_img_comp_dest->data = l_tilec->data_win;
+                l_tilec->data_win = NULL;
+            }
+            continue;
+        } else if (l_img_comp_dest->data == NULL) {
+            OPJ_SIZE_T l_width = l_img_comp_dest->w;
+            OPJ_SIZE_T l_height = l_img_comp_dest->h;
+
+            if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height)) ||
+                    l_width * l_height > SIZE_MAX / sizeof(OPJ_INT32)) {
+                /* would overflow */
+                return OPJ_FALSE;
+            }
+            l_img_comp_dest->data = (OPJ_INT32*) opj_image_data_alloc(l_width * l_height *
+                                    sizeof(OPJ_INT32));
+            if (! l_img_comp_dest->data) {
+                return OPJ_FALSE;
+            }
+
+            if (l_img_comp_dest->w != l_width_dest ||
+                    l_img_comp_dest->h != l_height_dest) {
+                memset(l_img_comp_dest->data, 0,
+                       (OPJ_SIZE_T)l_img_comp_dest->w * l_img_comp_dest->h * sizeof(OPJ_INT32));
+            }
+        }
 
         /* Move the output buffer to the first place where we will write*/
         l_dest_ptr = l_img_comp_dest->data + l_start_offset_dest;
@@ -9090,9 +9102,7 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
             }
         }
 
-        ++l_img_comp_dest;
-        ++l_img_comp_src;
-        ++l_tilec;
+
     }
 
     return OPJ_TRUE;
