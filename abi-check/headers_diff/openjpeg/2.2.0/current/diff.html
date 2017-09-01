@@ -22,7 +22,41 @@
   <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
   <tr bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (2.2.0)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (current)&nbsp;</th><th></th></tr> 
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr bgcolor="gray" ><td></td><th><a name="part-l1" /><small>skipping to change at</small><em> line 864</em></th><th> </th><th><a name="part-r1" /><small>skipping to change at</small><em> line 864</em></th><td></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l1" /><small>skipping to change at</small><em> line 382</em></th><th> </th><th><a name="part-r1" /><small>skipping to change at</small><em> line 382</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** csty : coding style */</td><td> </td><td class="right">    /** csty : coding style */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int csty;</td><td> </td><td class="right">    int csty;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** progression order (default OPJ_LRCP) */</td><td> </td><td class="right">    /** progression order (default OPJ_LRCP) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_PROG_ORDER prog_order;</td><td> </td><td class="right">    OPJ_PROG_ORDER prog_order;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** progression order changes */</td><td> </td><td class="right">    /** progression order changes */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    opj_poc_t POC[32];</td><td> </td><td class="right">    opj_poc_t POC[32];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** number of progression order changes (POC), default to 0 */</td><td> </td><td class="right">    /** number of progression order changes (POC), default to 0 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 numpocs;</td><td> </td><td class="right">    OPJ_UINT32 numpocs;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** number of layers */</td><td> </td><td class="right">    /** number of layers */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int tcp_numlayers;</td><td> </td><td class="right">    int tcp_numlayers;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">    /** rates of layers - might be subsequently limited by the max_cs_size </td><td> </td><td class="rblock">    /** rates of layers - might be subsequently limited by the max_cs_size </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">field</span> */</td><td> </td><td class="rblock"><span class="insert">field.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * Should be decreasing. 1 can be</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * used as last value to indicate the last layer is lossless.</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    float tcp_rates[100];</td><td> </td><td class="right">    float tcp_rates[100];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0002" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">    /** different psnr for successive <span class="delete">layers</span> */</td><td> </td><td class="rblock">    /** different psnr for successive <span class="insert">layers. Should be increasing. 0 can b</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">e</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * used as last value to indicate the last layer is lossless.</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    float tcp_distoratio[100];</td><td> </td><td class="right">    float tcp_distoratio[100];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** number of resolutions */</td><td> </td><td class="right">    /** number of resolutions */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int numresolution;</td><td> </td><td class="right">    int numresolution;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** initial code block width, default to 64 */</td><td> </td><td class="right">    /** initial code block width, default to 64 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int cblockw_init;</td><td> </td><td class="right">    int cblockw_init;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** initial code block height, default to 64 */</td><td> </td><td class="right">    /** initial code block height, default to 64 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int cblockh_init;</td><td> </td><td class="right">    int cblockh_init;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** mode switch (cblk_style) */</td><td> </td><td class="right">    /** mode switch (cblk_style) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int mode;</td><td> </td><td class="right">    int mode;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** 1 : use the irreversible DWT 9-7, 0 : use lossless compression (def
+ault) */</td><td> </td><td class="right">    /** 1 : use the irreversible DWT 9-7, 0 : use lossless compression (def
+ault) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 864</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 867</em></th><td></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"> * Tile-component coding parameters information</td><td> </td><td class="right"> * Tile-component coding parameters information</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
@@ -33,10 +67,10 @@
       <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 csty;</td><td> </td><td class="right">    OPJ_UINT32 csty;</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    /** number of resolutions */</td><td> </td><td class="right">    /** number of resolutions */</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 numresolutions;</td><td> </td><td class="right">    OPJ_UINT32 numresolutions;</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td><a name="diff0003" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">    /** code-blocks width */</td><td> </td><td class="rblock">    /** <span class="insert">log2 of </span>code-blocks width */</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 cblkw;</td><td> </td><td class="right">    OPJ_UINT32 cblkw;</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0002" /></td></tr>
+      <tr><td><a name="diff0004" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">    /** code-blocks height */</td><td> </td><td class="rblock">    /** <span class="insert">log2 of </span>code-blocks height */</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 cblkh;</td><td> </td><td class="right">    OPJ_UINT32 cblkh;</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    /** code-block coding style */</td><td> </td><td class="right">    /** code-block coding style */</td><td class="lineno" valign="top"></td></tr>
@@ -51,7 +85,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 stepsizes_mant[OPJ_J2K_MAXBANDS];</td><td> </td><td class="right">    OPJ_UINT32 stepsizes_mant[OPJ_J2K_MAXBANDS];</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">    /** stepsizes used for quantization */</td><td> </td><td class="right">    /** stepsizes used for quantization */</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 1329</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 1329</em></th><td></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l3" /><small>skipping to change at</small><em> line 1329</em></th><th> </th><th><a name="part-r3" /><small>skipping to change at</small><em> line 1332</em></th><td></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"> * @return true             if the main header of the codestream and the JP
 2 header is correctly read.</td><td> </td><td class="right"> * @return true             if the main header of the codestream and the JP
@@ -66,7 +100,7 @@
 after opj_read_header and before any tile header reading.</td><td> </td><td class="right"> * Sets the given area to be decoded. This function should be called right 
 after opj_read_header and before any tile header reading.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0003" /></td></tr>
+      <tr><td><a name="diff0005" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* The coordinates passed to this function should be expressed in the refer</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ence grid,</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * that is to say at the highest resolution level, even if requesting the i</span></td><td class="lineno" valign="top"></td></tr>
@@ -95,8 +129,8 @@ image coordinates).</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(opj_codec_t *p_codec,</td><td class="lineno" valign="top"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
-     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 3 change blocks.&nbsp;</a></th></tr>
-     <tr class="stats"><td></td><th><i>2 lines changed or deleted</i></th><th><i> </i></th><th><i>8 lines changed or added</i></th><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 5 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>5 lines changed or deleted</i></th><th><i> </i></th><th><i>15 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"></td></tr>
    </table>
    <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
