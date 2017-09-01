@@ -1551,6 +1551,7 @@ static void opj_dwt_interleave_partial_v(OPJ_INT32 *dest,
         OPJ_INT32 cas,
         opj_sparse_array_int32_t* sa,
         OPJ_UINT32 sa_col,
+        OPJ_UINT32 nb_cols,
         OPJ_UINT32 sn,
         OPJ_UINT32 win_l_y0,
         OPJ_UINT32 win_l_y1,
@@ -1560,15 +1561,15 @@ static void opj_dwt_interleave_partial_v(OPJ_INT32 *dest,
     OPJ_BOOL ret;
     ret  = opj_sparse_array_int32_read(sa,
                                        sa_col, win_l_y0,
-                                       sa_col + 1, win_l_y1,
-                                       dest + cas + 2 * win_l_y0,
-                                       0, 2, OPJ_TRUE);
+                                       sa_col + nb_cols, win_l_y1,
+                                       dest + cas * 4 + 2 * 4 * win_l_y0,
+                                       1, 2 * 4, OPJ_TRUE);
     assert(ret);
     ret = opj_sparse_array_int32_read(sa,
                                       sa_col, sn + win_h_y0,
-                                      sa_col + 1, sn + win_h_y1,
-                                      dest + 1 - cas + 2 * win_h_y0,
-                                      0, 2, OPJ_TRUE);
+                                      sa_col + nb_cols, sn + win_h_y1,
+                                      dest + (1 - cas) * 4 + 2 * 4 * win_h_y0,
+                                      1, 2 * 4, OPJ_TRUE);
     assert(ret);
     OPJ_UNUSED(ret);
 }
@@ -1643,6 +1644,109 @@ static void opj_dwt_decode_partial_1(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn,
             }
             for (i = win_h_x0; i < win_h_x1; i++) {
                 OPJ_S(i) += (OPJ_DD_(i) + OPJ_DD_(i - 1)) >> 1;
+            }
+        }
+    }
+}
+
+#define OPJ_S_off(i,off) a[(OPJ_UINT32)(i)*2*4+off]
+#define OPJ_D_off(i,off) a[(1+(OPJ_UINT32)(i)*2)*4+off]
+#define OPJ_S__off(i,off) ((i)<0?OPJ_S_off(0,off):((i)>=sn?OPJ_S_off(sn-1,off):OPJ_S_off(i,off)))
+#define OPJ_D__off(i,off) ((i)<0?OPJ_D_off(0,off):((i)>=dn?OPJ_D_off(dn-1,off):OPJ_D_off(i,off)))
+#define OPJ_SS__off(i,off) ((i)<0?OPJ_S_off(0,off):((i)>=dn?OPJ_S_off(dn-1,off):OPJ_S_off(i,off)))
+#define OPJ_DD__off(i,off) ((i)<0?OPJ_D_off(0,off):((i)>=sn?OPJ_D_off(sn-1,off):OPJ_D_off(i,off)))
+
+static void opj_dwt_decode_partial_1_parallel(OPJ_INT32 *a,
+        OPJ_UINT32 nb_cols,
+        OPJ_INT32 dn, OPJ_INT32 sn,
+        OPJ_INT32 cas,
+        OPJ_INT32 win_l_x0,
+        OPJ_INT32 win_l_x1,
+        OPJ_INT32 win_h_x0,
+        OPJ_INT32 win_h_x1)
+{
+    OPJ_INT32 i;
+    OPJ_UINT32 off;
+
+    (void)nb_cols;
+
+    if (!cas) {
+        if ((dn > 0) || (sn > 1)) { /* NEW :  CASE ONE ELEMENT */
+
+            /* Naive version is :
+            for (i = win_l_x0; i < i_max; i++) {
+                OPJ_S(i) -= (OPJ_D_(i - 1) + OPJ_D_(i) + 2) >> 2;
+            }
+            for (i = win_h_x0; i < win_h_x1; i++) {
+                OPJ_D(i) += (OPJ_S_(i) + OPJ_S_(i + 1)) >> 1;
+            }
+            but the compiler doesn't manage to unroll it to avoid bound
+            checking in OPJ_S_ and OPJ_D_ macros
+            */
+
+            i = win_l_x0;
+            if (i < win_l_x1) {
+                OPJ_INT32 i_max;
+
+                /* Left-most case */
+                for (off = 0; off < 4; off++) {
+                    OPJ_S_off(i, off) -= (OPJ_D__off(i - 1, off) + OPJ_D__off(i, off) + 2) >> 2;
+                }
+                i ++;
+
+                i_max = win_l_x1;
+                if (i_max > dn) {
+                    i_max = dn;
+                }
+                for (; i < i_max; i++) {
+                    /* No bound checking */
+                    for (off = 0; off < 4; off++) {
+                        OPJ_S_off(i, off) -= (OPJ_D_off(i - 1, off) + OPJ_D_off(i, off) + 2) >> 2;
+                    }
+                }
+                for (; i < win_l_x1; i++) {
+                    /* Right-most case */
+                    for (off = 0; off < 4; off++) {
+                        OPJ_S_off(i, off) -= (OPJ_D__off(i - 1, off) + OPJ_D__off(i, off) + 2) >> 2;
+                    }
+                }
+            }
+
+            i = win_h_x0;
+            if (i < win_h_x1) {
+                OPJ_INT32 i_max = win_h_x1;
+                if (i_max >= sn) {
+                    i_max = sn - 1;
+                }
+                for (; i < i_max; i++) {
+                    /* No bound checking */
+                    for (off = 0; off < 4; off++) {
+                        OPJ_D_off(i, off) += (OPJ_S_off(i, off) + OPJ_S_off(i + 1, off)) >> 1;
+                    }
+                }
+                for (; i < win_h_x1; i++) {
+                    /* Right-most case */
+                    for (off = 0; off < 4; off++) {
+                        OPJ_D_off(i, off) += (OPJ_S__off(i, off) + OPJ_S__off(i + 1, off)) >> 1;
+                    }
+                }
+            }
+        }
+    } else {
+        if (!sn  && dn == 1) {        /* NEW :  CASE ONE ELEMENT */
+            for (off = 0; off < 4; off++) {
+                OPJ_S_off(0, off) /= 2;
+            }
+        } else {
+            for (i = win_l_x0; i < win_l_x1; i++) {
+                for (off = 0; off < 4; off++) {
+                    OPJ_D_off(i, off) -= (OPJ_SS__off(i, off) + OPJ_SS__off(i + 1, off) + 2) >> 2;
+                }
+            }
+            for (i = win_h_x0; i < win_h_x1; i++) {
+                for (off = 0; off < 4; off++) {
+                    OPJ_S_off(i, off) += (OPJ_DD__off(i, off) + OPJ_DD__off(i - 1, off)) >> 1;
+                }
             }
         }
     }
@@ -1804,13 +1908,14 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
     }
     h_mem_size = opj_dwt_max_resolution(tr, numres);
     /* overflow check */
-    if (h_mem_size > (SIZE_MAX / sizeof(OPJ_INT32))) {
+    /* in vertical pass, we process 4 columns at a time */
+    if (h_mem_size > (SIZE_MAX / (4 * sizeof(OPJ_INT32)))) {
         /* FIXME event manager error callback */
         opj_sparse_array_int32_free(sa);
         return OPJ_FALSE;
     }
 
-    h_mem_size *= sizeof(OPJ_INT32);
+    h_mem_size *= 4 * sizeof(OPJ_INT32);
     h.mem = (OPJ_INT32*)opj_aligned_32_malloc(h_mem_size);
     if (! h.mem) {
         /* FIXME event manager error callback */
@@ -1946,31 +2051,35 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
             }
         }
 
-        for (i = win_tr_x0; i < win_tr_x1; ++i) {
+        for (i = win_tr_x0; i < win_tr_x1;) {
+            OPJ_UINT32 nb_cols = opj_uint_min(4U, win_tr_x1 - i);
             opj_dwt_interleave_partial_v(v.mem,
                                          v.cas,
                                          sa,
                                          i,
+                                         nb_cols,
                                          (OPJ_UINT32)v.sn,
                                          win_ll_y0,
                                          win_ll_y1,
                                          win_lh_y0,
                                          win_lh_y1);
-            opj_dwt_decode_partial_1(v.mem, v.dn, v.sn, v.cas,
-                                     (OPJ_INT32)win_ll_y0,
-                                     (OPJ_INT32)win_ll_y1,
-                                     (OPJ_INT32)win_lh_y0,
-                                     (OPJ_INT32)win_lh_y1);
+            opj_dwt_decode_partial_1_parallel(v.mem, nb_cols, v.dn, v.sn, v.cas,
+                                              (OPJ_INT32)win_ll_y0,
+                                              (OPJ_INT32)win_ll_y1,
+                                              (OPJ_INT32)win_lh_y0,
+                                              (OPJ_INT32)win_lh_y1);
             if (!opj_sparse_array_int32_write(sa,
                                               i, win_tr_y0,
-                                              i + 1, win_tr_y1,
-                                              v.mem + win_tr_y0,
-                                              0, 1, OPJ_TRUE)) {
+                                              i + nb_cols, win_tr_y1,
+                                              v.mem + 4 * win_tr_y0,
+                                              1, 4, OPJ_TRUE)) {
                 /* FIXME event manager error callback */
                 opj_sparse_array_int32_free(sa);
                 opj_aligned_free(h.mem);
                 return OPJ_FALSE;
             }
+
+            i += nb_cols;
         }
     }
     opj_aligned_free(h.mem);
