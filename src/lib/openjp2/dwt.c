@@ -2302,7 +2302,29 @@ static void opj_v4dwt_decode_step2_sse(opj_v4_t* l, opj_v4_t* w,
         vw += start * 2;
         tmp1 = vw[-3];
     }
-    for (i = start; i < imax; ++i) {
+
+    i = start;
+
+    /* 4x loop unrolling */
+    for (; i + 3 < imax; i += 4) {
+        __m128 tmp4, tmp5, tmp6, tmp7, tmp8, tmp9;
+        tmp2 = vw[-1];
+        tmp3 = vw[ 0];
+        tmp4 = vw[ 1];
+        tmp5 = vw[ 2];
+        tmp6 = vw[ 3];
+        tmp7 = vw[ 4];
+        tmp8 = vw[ 5];
+        tmp9 = vw[ 6];
+        vw[-1] = _mm_add_ps(tmp2, _mm_mul_ps(_mm_add_ps(tmp1, tmp3), c));
+        vw[ 1] = _mm_add_ps(tmp4, _mm_mul_ps(_mm_add_ps(tmp3, tmp5), c));
+        vw[ 3] = _mm_add_ps(tmp6, _mm_mul_ps(_mm_add_ps(tmp5, tmp7), c));
+        vw[ 5] = _mm_add_ps(tmp8, _mm_mul_ps(_mm_add_ps(tmp7, tmp9), c));
+        tmp1 = tmp9;
+        vw += 8;
+    }
+
+    for (; i < imax; ++i) {
         tmp2 = vw[-1];
         tmp3 = vw[ 0];
         vw[-1] = _mm_add_ps(tmp2, _mm_mul_ps(_mm_add_ps(tmp1, tmp3), c));
