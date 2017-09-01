@@ -8926,6 +8926,7 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
         OPJ_INT32 res_x0, res_x1, res_y0, res_y1;
         OPJ_UINT32 src_data_stride;
         const OPJ_INT32* p_src_data;
+        OPJ_BOOL check_if_must_memset = OPJ_FALSE;
 
         /* Allocate output component buffer if necessary */
         if (!l_img_comp_dest->data) {
@@ -8942,8 +8943,8 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
             if (! l_img_comp_dest->data) {
                 return OPJ_FALSE;
             }
-            /* Do we really need this memset ? */
-            memset(l_img_comp_dest->data, 0, l_width * l_height * sizeof(OPJ_INT32));
+
+            check_if_must_memset = OPJ_TRUE;
         }
 
         /* Copy info from decoded comp image to output image */
@@ -9060,6 +9061,12 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
             return OPJ_FALSE;
         }
         /*-----*/
+
+        if (check_if_must_memset && (l_img_comp_dest->w != l_width_dest ||
+                                     l_img_comp_dest->h != l_height_dest)) {
+            memset(l_img_comp_dest->data, 0,
+                   (OPJ_SIZE_T)l_img_comp_dest->w * l_img_comp_dest->h * sizeof(OPJ_INT32));
+        }
 
         /* Compute the input buffer offset */
         l_start_offset_src = (OPJ_SIZE_T)l_offset_x0_src + (OPJ_SIZE_T)l_offset_y0_src
