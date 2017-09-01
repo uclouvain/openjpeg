@@ -1218,13 +1218,14 @@ static OPJ_BOOL opj_dwt_is_whole_tile_decoding(opj_tcd_t *p_tcd,
     /* Tolerate small margin within the reduced resolution factor to consider if */
     /* the whole tile path must be taken */
     return (tcx0 >= (OPJ_UINT32)tilec->x0 &&
-            ((tcx0 - (OPJ_UINT32)tilec->x0) >> shift) == 0 &&
             tcy0 >= (OPJ_UINT32)tilec->y0 &&
-            ((tcy0 - (OPJ_UINT32)tilec->y0) >> shift) == 0 &&
             tcx1 <= (OPJ_UINT32)tilec->x1 &&
-            (((OPJ_UINT32)tilec->x1 - tcx1) >> shift) == 0 &&
             tcy1 <= (OPJ_UINT32)tilec->y1 &&
-            (((OPJ_UINT32)tilec->y1 - tcy1) >> shift) == 0);
+            (shift >= 32 ||
+             (((tcx0 - (OPJ_UINT32)tilec->x0) >> shift) == 0 &&
+              ((tcy0 - (OPJ_UINT32)tilec->y0) >> shift) == 0 &&
+              (((OPJ_UINT32)tilec->x1 - tcx1) >> shift) == 0 &&
+              (((OPJ_UINT32)tilec->y1 - tcy1) >> shift) == 0)));
 }
 
 /* <summary>                            */
