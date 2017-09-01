@@ -815,13 +815,13 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 
             /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
             if (h > 0 && w > SIZE_MAX / h) {
-                opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
+                opj_event_msg(manager, EVT_ERROR, "Size of tile data exceeds system limits\n");
                 return OPJ_FALSE;
             }
             l_tile_data_size = w * h;
 
             if (SIZE_MAX / sizeof(OPJ_UINT32) < l_tile_data_size) {
-                opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
+                opj_event_msg(manager, EVT_ERROR, "Size of tile data exceeds system limits\n");
                 return OPJ_FALSE;
             }
             l_tile_data_size = l_tile_data_size * sizeof(OPJ_UINT32);
@@ -907,14 +907,14 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
             /*fprintf(stderr, "\t\t\tres_pw=%d, res_ph=%d\n", l_res->pw, l_res->ph );*/
 
             if ((l_res->pw != 0U) && ((((OPJ_UINT32) - 1) / l_res->pw) < l_res->ph)) {
-                opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
+                opj_event_msg(manager, EVT_ERROR, "Size of tile data exceeds system limits\n");
                 return OPJ_FALSE;
             }
             l_nb_precincts = l_res->pw * l_res->ph;
 
             if ((((OPJ_UINT32) - 1) / (OPJ_UINT32)sizeof(opj_tcd_precinct_t)) <
                     l_nb_precincts) {
-                opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
+                opj_event_msg(manager, EVT_ERROR, "Size of tile data exceeds system limits\n");
                 return OPJ_FALSE;
             }
             l_nb_precinct_size = l_nb_precincts * (OPJ_UINT32)sizeof(opj_tcd_precinct_t);
@@ -1470,13 +1470,15 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
 
             /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
             if (res_h > 0 && res_w > SIZE_MAX / res_h) {
-                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Size of tile data exceeds system limits\n");
                 return OPJ_FALSE;
             }
             l_data_size = res_w * res_h;
 
             if (SIZE_MAX / sizeof(OPJ_UINT32) < l_data_size) {
-                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Size of tile data exceeds system limits\n");
                 return OPJ_FALSE;
             }
             l_data_size *= sizeof(OPJ_UINT32);
@@ -1484,7 +1486,8 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
             tilec->data_size_needed = l_data_size;
 
             if (!opj_alloc_tile_component_data(tilec)) {
-                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Size of tile data exceeds system limits\n");
                 return OPJ_FALSE;
             }
         }
@@ -1583,19 +1586,22 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
 
             if (w > 0 && h > 0) {
                 if (w > SIZE_MAX / h) {
-                    opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Size of tile data exceeds system limits\n");
                     return OPJ_FALSE;
                 }
                 l_data_size = w * h;
                 if (l_data_size > SIZE_MAX / sizeof(OPJ_INT32)) {
-                    opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Size of tile data exceeds system limits\n");
                     return OPJ_FALSE;
                 }
                 l_data_size *= sizeof(OPJ_INT32);
 
                 tilec->data_win = opj_aligned_malloc(l_data_size);
                 if (tilec->data_win == NULL) {
-                    opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Size of tile data exceeds system limits\n");
                     return OPJ_FALSE;
                 }
             }
