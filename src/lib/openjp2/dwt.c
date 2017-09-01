@@ -1584,11 +1584,54 @@ static void opj_dwt_decode_partial_1(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn,
 
     if (!cas) {
         if ((dn > 0) || (sn > 1)) { /* NEW :  CASE ONE ELEMENT */
-            for (i = win_l_x0; i < win_l_x1; i++) {
+
+            /* Naive version is :
+            for (i = win_l_x0; i < i_max; i++) {
                 OPJ_S(i) -= (OPJ_D_(i - 1) + OPJ_D_(i) + 2) >> 2;
             }
             for (i = win_h_x0; i < win_h_x1; i++) {
                 OPJ_D(i) += (OPJ_S_(i) + OPJ_S_(i + 1)) >> 1;
+            }
+            but the compiler doesn't manage to unroll it to avoid bound
+            checking in OPJ_S_ and OPJ_D_ macros
+            */
+
+            i = win_l_x0;
+            if (i < win_l_x1) {
+                OPJ_INT32 i_max;
+
+                /* Left-most case */
+                OPJ_S(i) -= (OPJ_D_(i - 1) + OPJ_D_(i) + 2) >> 2;
+                i ++;
+
+                i_max = win_l_x1;
+                if (i_max > dn) {
+                    i_max = dn;
+                }
+                for (; i < i_max; i++) {
+                    /* No bound checking */
+                    OPJ_S(i) -= (OPJ_D(i - 1) + OPJ_D(i) + 2) >> 2;
+                }
+                for (; i < win_l_x1; i++) {
+                    /* Right-most case */
+                    OPJ_S(i) -= (OPJ_D_(i - 1) + OPJ_D_(i) + 2) >> 2;
+                }
+            }
+
+            i = win_h_x0;
+            if (i < win_h_x1) {
+                OPJ_INT32 i_max = win_h_x1;
+                if (i_max >= sn) {
+                    i_max = sn - 1;
+                }
+                for (; i < i_max; i++) {
+                    /* No bound checking */
+                    OPJ_D(i) += (OPJ_S(i) + OPJ_S(i + 1)) >> 1;
+                }
+                for (; i < win_h_x1; i++) {
+                    /* Right-most case */
+                    OPJ_D(i) += (OPJ_S_(i) + OPJ_S_(i + 1)) >> 1;
+                }
             }
         }
     } else {
