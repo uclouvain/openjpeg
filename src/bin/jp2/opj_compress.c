@@ -169,9 +169,9 @@ static void encode_help_display(void)
     fprintf(stdout, "    Different compression ratios for successive layers.\n");
     fprintf(stdout,
             "    The rate specified for each quality level is the desired\n");
-    fprintf(stdout, "    compression factor.\n");
+    fprintf(stdout, "    compression factor (use 0 for lossless)\n");
     fprintf(stdout, "    Decreasing ratios required.\n");
-    fprintf(stdout, "      Example: -r 20,10,1 means \n");
+    fprintf(stdout, "      Example: -r 20,10,0 means \n");
     fprintf(stdout, "            quality layer 1: compress 20x, \n");
     fprintf(stdout, "            quality layer 2: compress 10x \n");
     fprintf(stdout, "            quality layer 3: compress lossless\n");
