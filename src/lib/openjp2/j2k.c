@@ -10474,8 +10474,7 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
             p_j2k->m_output_image->x0 == 0 &&
             p_j2k->m_output_image->y0 == 0 &&
             p_j2k->m_output_image->x1 == p_j2k->m_cp.tdx &&
-            p_j2k->m_output_image->y1 == p_j2k->m_cp.tdy &&
-            p_j2k->m_output_image->comps[0].factor == 0) {
+            p_j2k->m_output_image->y1 == p_j2k->m_cp.tdy) {
         OPJ_UINT32 i;
         if (! opj_j2k_read_tile_header(p_j2k,
                                        &l_current_tile_no,
