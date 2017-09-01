@@ -7060,6 +7060,10 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
                     tcp->rates[j] = parameters->tcp_rates[j];
                 }
             }
+            if (!cp->m_specific_param.m_enc.m_fixed_quality &&
+                    tcp->rates[j] <= 1.0) {
+                tcp->rates[j] = 0.0;    /* force lossless */
+            }
         }
 
         tcp->csty = (OPJ_UINT32)parameters->csty;

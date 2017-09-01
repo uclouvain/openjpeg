@@ -381,9 +381,12 @@ typedef struct opj_cparameters {
     OPJ_UINT32 numpocs;
     /** number of layers */
     int tcp_numlayers;
-    /** rates of layers - might be subsequently limited by the max_cs_size field */
+    /** rates of layers - might be subsequently limited by the max_cs_size field.
+     * Should be decreasing. 1 can be
+     * used as last value to indicate the last layer is lossless. */
     float tcp_rates[100];
-    /** different psnr for successive layers */
+    /** different psnr for successive layers. Should be increasing. 0 can be
+     * used as last value to indicate the last layer is lossless. */
     float tcp_distoratio[100];
     /** number of resolutions */
     int numresolution;
