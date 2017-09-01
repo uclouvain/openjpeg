@@ -1262,7 +1262,7 @@ static OPJ_BOOL opj_tcd_code_block_dec_allocate(opj_tcd_cblk_dec_t *
         OPJ_UINT32 l_numchunksalloc = p_code_block->numchunksalloc;
         OPJ_UINT32 i;
 
-        opj_free(p_code_block->decoded_data);
+        opj_aligned_free(p_code_block->decoded_data);
         p_code_block->decoded_data = 00;
 
         memset(p_code_block, 0, sizeof(opj_tcd_cblk_dec_t));
@@ -2177,7 +2177,7 @@ static void opj_tcd_code_block_dec_deallocate(opj_tcd_precinct_t * p_precinct)
                 l_code_block->chunks = 00;
             }
 
-            opj_free(l_code_block->decoded_data);
+            opj_aligned_free(l_code_block->decoded_data);
             l_code_block->decoded_data = NULL;
 
             ++l_code_block;

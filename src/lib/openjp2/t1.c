@@ -1674,30 +1674,16 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
     assert((cblk->decoded_data != NULL) || (tilec->data != NULL));
 
     if (cblk->decoded_data) {
+        OPJ_UINT32 cblk_size = cblk_w * cblk_h;
         if (tccp->qmfbid == 1) {
-            for (j = 0; j < cblk_h; ++j) {
-                i = 0;
-                for (; i < (cblk_w & ~(OPJ_UINT32)3U); i += 4U) {
-                    OPJ_INT32 tmp0 = datap[(j * cblk_w) + i + 0U];
-                    OPJ_INT32 tmp1 = datap[(j * cblk_w) + i + 1U];
-                    OPJ_INT32 tmp2 = datap[(j * cblk_w) + i + 2U];
-                    OPJ_INT32 tmp3 = datap[(j * cblk_w) + i + 3U];
-                    datap[(j * cblk_w) + i + 0U] = tmp0 / 2;
-                    datap[(j * cblk_w) + i + 1U] = tmp1 / 2;
-                    datap[(j * cblk_w) + i + 2U] = tmp2 / 2;
-                    datap[(j * cblk_w) + i + 3U] = tmp3 / 2;
-                }
-                for (; i < cblk_w; ++i) {
-                    datap[(j * cblk_w) + i] /= 2;
-                }
+            for (i = 0; i < cblk_size; ++i) {
+                datap[i] /= 2;
             }
         } else {        /* if (tccp->qmfbid == 0) */
-            for (j = 0; j < cblk_h; ++j) {
-                for (i = 0; i < cblk_w; ++i) {
-                    OPJ_FLOAT32 tmp = ((OPJ_FLOAT32)(*datap)) * band->stepsize;
-                    memcpy(datap, &tmp, sizeof(tmp));
-                    datap++;
-                }
+            for (i = 0; i < cblk_size; ++i) {
+                OPJ_FLOAT32 tmp = ((OPJ_FLOAT32)(*datap)) * band->stepsize;
+                memcpy(datap, &tmp, sizeof(tmp));
+                datap++;
             }
         }
     } else if (tccp->qmfbid == 1) {
@@ -1775,7 +1761,7 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                             printf("Discarding codeblock %d,%d at resno=%d, bandno=%d\n",
                                    cblk->x0, cblk->y0, resno, bandno);
 #endif
-                            opj_free(cblk->decoded_data);
+                            opj_aligned_free(cblk->decoded_data);
                             cblk->decoded_data = NULL;
                         }
                     }
@@ -1799,7 +1785,7 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                             printf("Discarding codeblock %d,%d at resno=%d, bandno=%d\n",
                                    cblk->x0, cblk->y0, resno, bandno);
 #endif
-                            opj_free(cblk->decoded_data);
+                            opj_aligned_free(cblk->decoded_data);
                             cblk->decoded_data = NULL;
                         }
                         continue;
@@ -1823,7 +1809,7 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                                cblk->x0, cblk->y0, resno, bandno);
 #endif
                         /* Zero-init required */
-                        cblk->decoded_data = opj_calloc(1, cblk_w * cblk_h * sizeof(OPJ_INT32));
+                        cblk->decoded_data = opj_aligned_malloc(cblk_w * cblk_h * sizeof(OPJ_INT32));
                         if (cblk->decoded_data == NULL) {
                             if (p_manager_mutex) {
                                 opj_mutex_lock(p_manager_mutex);
@@ -1836,10 +1822,11 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                             *pret = OPJ_FALSE;
                             return;
                         }
+                        memset(cblk->decoded_data, 0, cblk_w * cblk_h * sizeof(OPJ_INT32));
                     } else if (cblk->decoded_data) {
                         /* Not sure if that code path can happen, but better be */
                         /* safe than sorry */
-                        opj_free(cblk->decoded_data);
+                        opj_aligned_free(cblk->decoded_data);
                         cblk->decoded_data = NULL;
                     }
 
