@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 7aa071aa273aa0b8fafbf055e5eb99b9cb8600a8
+<pre class='wrap'>commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 20:01:39 +0200
+
+    opj_tcd_rateallocate(): make sure to use all passes for a lossless layer (#1009)
+    
+    And save a useless loop, which should be a tiny faster.
+
+commit 7aa071aa273aa0b8fafbf055e5eb99b9cb8600a8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 19:49:01 +0200
 
