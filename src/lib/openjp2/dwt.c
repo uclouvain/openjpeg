@@ -2274,14 +2274,19 @@ static void opj_v4dwt_decode_step1_sse(opj_v4_t* w,
     __m128* OPJ_RESTRICT vw = (__m128*) w;
     OPJ_UINT32 i;
     /* 4x unrolled loop */
-    for (i = start; i + 3 < end; i += 4) {
-        vw[2 * i] = _mm_mul_ps(vw[2 * i], c);
-        vw[2 * i + 2] = _mm_mul_ps(vw[2 * i + 2], c);
-        vw[2 * i + 4] = _mm_mul_ps(vw[2 * i + 4], c);
-        vw[2 * i + 6] = _mm_mul_ps(vw[2 * i + 6], c);
+    vw += 2 * start;
+    for (i = start; i + 3 < end; i += 4, vw += 8) {
+        __m128 xmm0 = _mm_mul_ps(vw[0], c);
+        __m128 xmm2 = _mm_mul_ps(vw[2], c);
+        __m128 xmm4 = _mm_mul_ps(vw[4], c);
+        __m128 xmm6 = _mm_mul_ps(vw[6], c);
+        vw[0] = xmm0;
+        vw[2] = xmm2;
+        vw[4] = xmm4;
+        vw[6] = xmm6;
     }
-    for (; i < end; ++i) {
-        vw[2 * i] = _mm_mul_ps(vw[2 * i], c);
+    for (; i < end; ++i, vw += 2) {
+        vw[0] = _mm_mul_ps(vw[0], c);
     }
 }
 
