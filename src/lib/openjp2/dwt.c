@@ -1698,6 +1698,28 @@ static void opj_dwt_decode_partial_1_parallel(OPJ_INT32 *a,
                 if (i_max > dn) {
                     i_max = dn;
                 }
+
+#ifdef __SSE2__
+                if (i + 1 < i_max) {
+                    const __m128i two = _mm_set1_epi32(2);
+                    __m128i Dm1 = _mm_load_si128((__m128i * const)(a + 4 + (i - 1) * 8));
+                    for (; i + 1 < i_max; i += 2) {
+                        /* No bound checking */
+                        __m128i S = _mm_load_si128((__m128i * const)(a + i * 8));
+                        __m128i D = _mm_load_si128((__m128i * const)(a + 4 + i * 8));
+                        __m128i S1 = _mm_load_si128((__m128i * const)(a + (i + 1) * 8));
+                        __m128i D1 = _mm_load_si128((__m128i * const)(a + 4 + (i + 1) * 8));
+                        S = _mm_sub_epi32(S,
+                                          _mm_srai_epi32(_mm_add_epi32(_mm_add_epi32(Dm1, D), two), 2));
+                        S1 = _mm_sub_epi32(S1,
+                                           _mm_srai_epi32(_mm_add_epi32(_mm_add_epi32(D, D1), two), 2));
+                        _mm_store_si128((__m128i*)(a + i * 8), S);
+                        _mm_store_si128((__m128i*)(a + (i + 1) * 8), S1);
+                        Dm1 = D1;
+                    }
+                }
+#endif
+
                 for (; i < i_max; i++) {
                     /* No bound checking */
                     for (off = 0; off < 4; off++) {
@@ -1718,6 +1740,25 @@ static void opj_dwt_decode_partial_1_parallel(OPJ_INT32 *a,
                 if (i_max >= sn) {
                     i_max = sn - 1;
                 }
+
+#ifdef __SSE2__
+                if (i + 1 < i_max) {
+                    __m128i S =  _mm_load_si128((__m128i * const)(a + i * 8));
+                    for (; i + 1 < i_max; i += 2) {
+                        /* No bound checking */
+                        __m128i D = _mm_load_si128((__m128i * const)(a + 4 + i * 8));
+                        __m128i S1 = _mm_load_si128((__m128i * const)(a + (i + 1) * 8));
+                        __m128i D1 = _mm_load_si128((__m128i * const)(a + 4 + (i + 1) * 8));
+                        __m128i S2 = _mm_load_si128((__m128i * const)(a + (i + 2) * 8));
+                        D = _mm_add_epi32(D, _mm_srai_epi32(_mm_add_epi32(S, S1), 1));
+                        D1 = _mm_add_epi32(D1, _mm_srai_epi32(_mm_add_epi32(S1, S2), 1));
+                        _mm_store_si128((__m128i*)(a + 4 + i * 8), D);
+                        _mm_store_si128((__m128i*)(a + 4 + (i + 1) * 8), D1);
+                        S = S2;
+                    }
+                }
+#endif
+
                 for (; i < i_max; i++) {
                     /* No bound checking */
                     for (off = 0; off < 4; off++) {
