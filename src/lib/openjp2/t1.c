@@ -1563,6 +1563,7 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 }
 
 typedef struct {
+    OPJ_BOOL whole_tile_decoding;
     OPJ_UINT32 resno;
     opj_tcd_cblk_dec_t* cblk;
     opj_tcd_band_t* band;
@@ -1596,8 +1597,37 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
     OPJ_UINT32 tile_w;
 
     job = (opj_t1_cblk_decode_processing_job_t*) user_data;
-    resno = job->resno;
+
     cblk = job->cblk;
+
+    if (!job->whole_tile_decoding) {
+        cblk_w = (OPJ_UINT32)(cblk->x1 - cblk->x0);
+        cblk_h = (OPJ_UINT32)(cblk->y1 - cblk->y0);
+
+        cblk->decoded_data = opj_aligned_malloc(cblk_w * cblk_h * sizeof(OPJ_INT32));
+        if (cblk->decoded_data == NULL) {
+            if (job->p_manager_mutex) {
+                opj_mutex_lock(job->p_manager_mutex);
+            }
+            opj_event_msg(job->p_manager, EVT_ERROR,
+                          "Cannot allocate cblk->decoded_data\n");
+            if (job->p_manager_mutex) {
+                opj_mutex_unlock(job->p_manager_mutex);
+            }
+            *(job->pret) = OPJ_FALSE;
+            opj_free(job);
+            return;
+        }
+        /* Zero-init required */
+        memset(cblk->decoded_data, 0, cblk_w * cblk_h * sizeof(OPJ_INT32));
+    } else if (cblk->decoded_data) {
+        /* Not sure if that code path can happen, but better be */
+        /* safe than sorry */
+        opj_aligned_free(cblk->decoded_data);
+        cblk->decoded_data = NULL;
+    }
+
+    resno = job->resno;
     band = job->band;
     tilec = job->tilec;
     tccp = job->tccp;
@@ -1737,6 +1767,11 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
     opj_thread_pool_t* tp = tcd->thread_pool;
     OPJ_UINT32 resno, bandno, precno, cblkno;
 
+#ifdef DEBUG_VERBOSE
+    OPJ_UINT32 codeblocks_decoded = 0;
+    printf("Enter opj_t1_decode_cblks()\n");
+#endif
+
     for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
         opj_tcd_resolution_t* res = &tilec->resolutions[resno];
 
@@ -1808,26 +1843,6 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                         printf("Decoding codeblock %d,%d at resno=%d, bandno=%d\n",
                                cblk->x0, cblk->y0, resno, bandno);
 #endif
-                        /* Zero-init required */
-                        cblk->decoded_data = opj_aligned_malloc(cblk_w * cblk_h * sizeof(OPJ_INT32));
-                        if (cblk->decoded_data == NULL) {
-                            if (p_manager_mutex) {
-                                opj_mutex_lock(p_manager_mutex);
-                            }
-                            opj_event_msg(p_manager, EVT_ERROR,
-                                          "Cannot allocate cblk->decoded_data\n");
-                            if (p_manager_mutex) {
-                                opj_mutex_unlock(p_manager_mutex);
-                            }
-                            *pret = OPJ_FALSE;
-                            return;
-                        }
-                        memset(cblk->decoded_data, 0, cblk_w * cblk_h * sizeof(OPJ_INT32));
-                    } else if (cblk->decoded_data) {
-                        /* Not sure if that code path can happen, but better be */
-                        /* safe than sorry */
-                        opj_aligned_free(cblk->decoded_data);
-                        cblk->decoded_data = NULL;
                     }
 
                     job = (opj_t1_cblk_decode_processing_job_t*) opj_calloc(1,
@@ -1836,6 +1851,7 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                         *pret = OPJ_FALSE;
                         return;
                     }
+                    job->whole_tile_decoding = tcd->whole_tile_decoding;
                     job->resno = resno;
                     job->cblk = cblk;
                     job->band = band;
@@ -1847,6 +1863,9 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                     job->check_pterm = check_pterm;
                     job->mustuse_cblkdatabuffer = opj_thread_pool_get_thread_count(tp) > 1;
                     opj_thread_pool_submit_job(tp, opj_t1_clbl_decode_processor, job);
+#ifdef DEBUG_VERBOSE
+                    codeblocks_decoded ++;
+#endif
                     if (!(*pret)) {
                         return;
                     }
@@ -1855,6 +1874,9 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
         } /* bandno */
     } /* resno */
 
+#ifdef DEBUG_VERBOSE
+    printf("Leave opj_t1_decode_cblks(). Number decoded: %d\n", codeblocks_decoded);
+#endif
     return;
 }
 
