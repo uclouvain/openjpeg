@@ -1541,6 +1541,7 @@ static void opj_dwt_interleave_partial_h(OPJ_INT32 *dest,
                                       dest + 1 - cas + 2 * win_h_x0,
                                       2, 0, OPJ_TRUE);
     assert(ret);
+    OPJ_UNUSED(ret);
 }
 
 
@@ -1567,6 +1568,7 @@ static void opj_dwt_interleave_partial_v(OPJ_INT32 *dest,
                                       dest + 1 - cas + 2 * win_h_y0,
                                       0, 2, OPJ_TRUE);
     assert(ret);
+    OPJ_UNUSED(ret);
 }
 
 static void opj_dwt_decode_partial_1(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn,
@@ -1751,6 +1753,7 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
                        1, tr_max->win_x1 - tr_max->win_x0,
                        OPJ_TRUE);
         assert(ret);
+        OPJ_UNUSED(ret);
         opj_sparse_array_int32_free(sa);
         return OPJ_TRUE;
     }
@@ -1937,6 +1940,7 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
                        1, tr_max->win_x1 - tr_max->win_x0,
                        OPJ_TRUE);
         assert(ret);
+        OPJ_UNUSED(ret);
     }
     opj_sparse_array_int32_free(sa);
     return OPJ_TRUE;
@@ -2018,6 +2022,7 @@ static void opj_v4dwt_interleave_partial_h(opj_v4dwt_t* dwt,
                                           (OPJ_INT32*)(dwt->wavelet + 1 - dwt->cas + 2 * dwt->win_h_x0) + i,
                                           8, 0, OPJ_TRUE);
         assert(ret);
+        OPJ_UNUSED(ret);
     }
 }
 
@@ -2061,6 +2066,7 @@ static void opj_v4dwt_interleave_partial_v(opj_v4dwt_t* OPJ_RESTRICT dwt,
                                           (OPJ_INT32*)(dwt->wavelet + 1 - dwt->cas + 2 * dwt->win_h_x0) + i,
                                           0, 8, OPJ_TRUE);
         assert(ret);
+        OPJ_UNUSED(ret);
     }
 }
 
@@ -2425,6 +2431,7 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
                        1, tr_max->win_x1 - tr_max->win_x0,
                        OPJ_TRUE);
         assert(ret);
+        OPJ_UNUSED(ret);
         opj_sparse_array_int32_free(sa);
         return OPJ_TRUE;
     }
@@ -2614,6 +2621,7 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
                        1, tr_max->win_x1 - tr_max->win_x0,
                        OPJ_TRUE);
         assert(ret);
+        OPJ_UNUSED(ret);
     }
     opj_sparse_array_int32_free(sa);
 

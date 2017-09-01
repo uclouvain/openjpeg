@@ -29,6 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#undef NDEBUG
+
 #include "opj_includes.h"
 
 int main()
