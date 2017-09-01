@@ -6812,21 +6812,25 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
     if (parameters->max_cs_size <= 0) {
         if (parameters->tcp_rates[parameters->tcp_numlayers - 1] > 0) {
             OPJ_FLOAT32 temp_size;
-            temp_size = (OPJ_FLOAT32)(image->numcomps * image->comps[0].w *
-                                      image->comps[0].h * image->comps[0].prec) /
-                        (parameters->tcp_rates[parameters->tcp_numlayers - 1] * 8 *
-                         (OPJ_FLOAT32)image->comps[0].dx * (OPJ_FLOAT32)image->comps[0].dy);
-            parameters->max_cs_size = (int) floor(temp_size);
+            temp_size = (OPJ_FLOAT32)(((double)image->numcomps * image->comps[0].w *
+                                       image->comps[0].h * image->comps[0].prec) /
+                                      ((double)parameters->tcp_rates[parameters->tcp_numlayers - 1] * 8 *
+                                       image->comps[0].dx * image->comps[0].dy));
+            if (temp_size > INT_MAX) {
+                parameters->max_cs_size = INT_MAX;
+            } else {
+                parameters->max_cs_size = (int) floor(temp_size);
+            }
         } else {
             parameters->max_cs_size = 0;
         }
     } else {
         OPJ_FLOAT32 temp_rate;
         OPJ_BOOL cap = OPJ_FALSE;
-        temp_rate = (OPJ_FLOAT32)(image->numcomps * image->comps[0].w *
-                                  image->comps[0].h * image->comps[0].prec) /
-                    (OPJ_FLOAT32)(((OPJ_UINT32)parameters->max_cs_size) * 8 * image->comps[0].dx *
-                                  image->comps[0].dy);
+        temp_rate = (OPJ_FLOAT32)(((double)image->numcomps * image->comps[0].w *
+                                   image->comps[0].h * image->comps[0].prec) /
+                                  (((double)parameters->max_cs_size) * 8 * image->comps[0].dx *
+                                   image->comps[0].dy));
         for (i = 0; i < (OPJ_UINT32) parameters->tcp_numlayers; i++) {
             if (parameters->tcp_rates[i] < temp_rate) {
                 parameters->tcp_rates[i] = temp_rate;
