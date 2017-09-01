@@ -198,10 +198,11 @@ int main(int argc, char** argv)
 
     memset(&tcd, 0, sizeof(tcd));
     tcd.thread_pool = tp;
-    tcd.decoded_x0 = (OPJ_UINT32)tilec.x0;
-    tcd.decoded_y0 = (OPJ_UINT32)tilec.y0;
-    tcd.decoded_x1 = (OPJ_UINT32)tilec.x1;
-    tcd.decoded_y1 = (OPJ_UINT32)tilec.y1;
+    tcd.whole_tile_decoding = OPJ_TRUE;
+    tcd.win_x0 = (OPJ_UINT32)tilec.x0;
+    tcd.win_y0 = (OPJ_UINT32)tilec.y0;
+    tcd.win_x1 = (OPJ_UINT32)tilec.x1;
+    tcd.win_y1 = (OPJ_UINT32)tilec.y1;
     tcd.tcd_image = &tcd_image;
     memset(&tcd_image, 0, sizeof(tcd_image));
     tcd_image.tiles = &tcd_tile;

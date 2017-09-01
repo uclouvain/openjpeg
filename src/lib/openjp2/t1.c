@@ -1601,7 +1601,9 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
     band = job->band;
     tilec = job->tilec;
     tccp = job->tccp;
-    tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+    tile_w = (OPJ_UINT32)(tilec->resolutions[tilec->minimum_num_resolutions - 1].x1
+                          -
+                          tilec->resolutions[tilec->minimum_num_resolutions - 1].x0);
 
     if (!*(job->pret)) {
         opj_free(job);
@@ -1640,7 +1642,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         y += pres->y1 - pres->y0;
     }
 
-    datap = t1->data;
+    datap = cblk->decoded_data ? cblk->decoded_data : t1->data;
     cblk_w = t1->w;
     cblk_h = t1->h;
 
@@ -1665,7 +1667,35 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
             }
         }
     }
-    if (tccp->qmfbid == 1) {
+
+    if (cblk->decoded_data) {
+        if (tccp->qmfbid == 1) {
+            for (j = 0; j < cblk_h; ++j) {
+                i = 0;
+                for (; i < (cblk_w & ~(OPJ_UINT32)3U); i += 4U) {
+                    OPJ_INT32 tmp0 = datap[(j * cblk_w) + i + 0U];
+                    OPJ_INT32 tmp1 = datap[(j * cblk_w) + i + 1U];
+                    OPJ_INT32 tmp2 = datap[(j * cblk_w) + i + 2U];
+                    OPJ_INT32 tmp3 = datap[(j * cblk_w) + i + 3U];
+                    datap[(j * cblk_w) + i + 0U] = tmp0 / 2;
+                    datap[(j * cblk_w) + i + 1U] = tmp1 / 2;
+                    datap[(j * cblk_w) + i + 2U] = tmp2 / 2;
+                    datap[(j * cblk_w) + i + 3U] = tmp3 / 2;
+                }
+                for (; i < cblk_w; ++i) {
+                    datap[(j * cblk_w) + i] /= 2;
+                }
+            }
+        } else {        /* if (tccp->qmfbid == 0) */
+            for (j = 0; j < cblk_h; ++j) {
+                for (i = 0; i < cblk_w; ++i) {
+                    OPJ_FLOAT32 tmp = ((OPJ_FLOAT32)(*datap)) * band->stepsize;
+                    memcpy(datap, &tmp, sizeof(tmp));
+                    datap++;
+                }
+            }
+        }
+    } else if (tccp->qmfbid == 1) {
         OPJ_INT32* OPJ_RESTRICT tiledp = &tilec->data[(OPJ_UINT32)y * tile_w +
                                                        (OPJ_UINT32)x];
         for (j = 0; j < cblk_h; ++j) {
@@ -1724,7 +1754,6 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
 
             for (precno = 0; precno < res->pw * res->ph; ++precno) {
                 opj_tcd_precinct_t* precinct = &band->precincts[precno];
-                OPJ_BOOL skip_precinct = OPJ_FALSE;
 
                 if (!opj_tcd_is_subband_area_of_interest(tcd,
                         tilec->compno,
@@ -1734,51 +1763,46 @@ void opj_t1_decode_cblks(opj_tcd_t* tcd,
                         (OPJ_UINT32)precinct->y0,
                         (OPJ_UINT32)precinct->x1,
                         (OPJ_UINT32)precinct->y1)) {
-                    skip_precinct = OPJ_TRUE;
-                    /* TODO: do a continue here once the below 0 initialization */
-                    /* of tiledp is removed */
+                    continue;
                 }
 
                 for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
                     opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
                     opj_t1_cblk_decode_processing_job_t* job;
 
-                    if (skip_precinct ||
-                            !opj_tcd_is_subband_area_of_interest(tcd,
-                                    tilec->compno,
-                                    resno,
-                                    band->bandno,
-                                    (OPJ_UINT32)cblk->x0,
-                                    (OPJ_UINT32)cblk->y0,
-                                    (OPJ_UINT32)cblk->x1,
-                                    (OPJ_UINT32)cblk->y1)) {
+                    assert(cblk->decoded_data == NULL);
 
-                        /* TODO: remove this once we don't iterate over */
-                        /* tile pixels that are not in the subwindow of interest */
-                        OPJ_UINT32 j;
-                        OPJ_INT32 x = cblk->x0 - band->x0;
-                        OPJ_INT32 y = cblk->y0 - band->y0;
-                        OPJ_INT32* OPJ_RESTRICT tiledp;
-                        OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+                    if (!opj_tcd_is_subband_area_of_interest(tcd,
+                            tilec->compno,
+                            resno,
+                            band->bandno,
+                            (OPJ_UINT32)cblk->x0,
+                            (OPJ_UINT32)cblk->y0,
+                            (OPJ_UINT32)cblk->x1,
+                            (OPJ_UINT32)cblk->y1)) {
+                        continue;
+                    }
+
+                    if (!tcd->whole_tile_decoding) {
                         OPJ_UINT32 cblk_w = (OPJ_UINT32)(cblk->x1 - cblk->x0);
                         OPJ_UINT32 cblk_h = (OPJ_UINT32)(cblk->y1 - cblk->y0);
-
-                        if (band->bandno & 1) {
-                            opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-                            x += pres->x1 - pres->x0;
+                        if (cblk_w == 0 || cblk_h == 0) {
+                            continue;
                         }
-                        if (band->bandno & 2) {
-                            opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-                            y += pres->y1 - pres->y0;
+                        /* Zero-init required */
+                        cblk->decoded_data = opj_calloc(1, cblk_w * cblk_h * sizeof(OPJ_INT32));
+                        if (cblk->decoded_data == NULL) {
+                            if (p_manager_mutex) {
+                                opj_mutex_lock(p_manager_mutex);
+                            }
+                            opj_event_msg(p_manager, EVT_ERROR,
+                                          "Cannot allocate cblk->decoded_data\n");
+                            if (p_manager_mutex) {
+                                opj_mutex_unlock(p_manager_mutex);
+                            }
+                            *pret = OPJ_FALSE;
+                            return;
                         }
-
-                        tiledp = &tilec->data[(OPJ_UINT32)y * tile_w +
-                                                            (OPJ_UINT32)x];
-
-                        for (j = 0; j < cblk_h; ++j) {
-                            memset(tiledp + j * tile_w, 0, cblk_w * sizeof(OPJ_INT32));
-                        }
-                        continue;
                     }
 
                     job = (opj_t1_cblk_decode_processing_job_t*) opj_calloc(1,
@@ -1827,6 +1851,7 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
     OPJ_BYTE* cblkdata = NULL;
     OPJ_UINT32 cblkdataindex = 0;
     OPJ_BYTE type = T1_TYPE_MQ; /* BYPASS mode */
+    OPJ_INT32* original_t1_data = NULL;
 
     mqc->lut_ctxno_zc_orient = lut_ctxno_zc + (orient << 9);
 
@@ -1891,6 +1916,13 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
         }
     } else if (cblk->numchunks == 1) {
         cblkdata = cblk->chunks[0].data;
+    }
+
+    /* For subtile decoding, directly decode in the decoded_data buffer of */
+    /* the code-block. Hack t1->data to point to it, and restore it later */
+    if (cblk->decoded_data) {
+        original_t1_data = t1->data;
+        t1->data = cblk->decoded_data;
     }
 
     for (segno = 0; segno < cblk->real_num_segs; ++segno) {
@@ -1970,6 +2002,11 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                 opj_mutex_unlock(p_manager_mutex);
             }
         }
+    }
+
+    /* Restore original t1->data is needed */
+    if (cblk->decoded_data) {
+        t1->data = original_t1_data;
     }
 
     return OPJ_TRUE;
