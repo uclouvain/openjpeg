@@ -141,27 +141,30 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                 if (src_block == NULL) {
                     for (j = 0; j < y_incr; j++) {
                         if (buf_col_stride == 1) {
-                            memset(buf + (y - y0 + j) * buf_line_stride + (x - x0) * buf_col_stride,
+                            memset(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0) * buf_col_stride,
                                    0,
                                    sizeof(OPJ_INT32) * x_incr);
                         } else {
                             OPJ_UINT32 k;
                             for (k = 0; k < x_incr; k++) {
-                                *(buf + (y - y0 + j) * buf_line_stride + (x - x0 + k) * buf_col_stride) = 0;
+                                *(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0 + k) * buf_col_stride)
+                                    = 0;
                             }
                         }
                     }
                 } else {
                     for (j = 0; j < y_incr; j++) {
                         if (buf_col_stride == 1) {
-                            memcpy(buf + (y - y0 + j) * buf_line_stride + (x - x0) * buf_col_stride,
-                                   src_block + (block_y_offset + j) * sa->block_width + block_x_offset,
+                            memcpy(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0) * buf_col_stride,
+                                   src_block + (block_y_offset + j) * (size_t)sa->block_width + block_x_offset,
                                    sizeof(OPJ_INT32) * x_incr);
                         } else {
                             OPJ_UINT32 k;
                             for (k = 0; k < x_incr; k++) {
-                                *(buf + (y - y0 + j) * buf_line_stride + (x - x0 + k) * buf_col_stride) =
-                                    *(src_block + (block_y_offset + j) * sa->block_width + block_x_offset + k);
+                                *(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0 + k) * buf_col_stride)
+                                    =
+                                        *(src_block + (block_y_offset + j) * (size_t)sa->block_width + block_x_offset +
+                                          k);
                             }
                         }
                     }
@@ -178,14 +181,16 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
 
                 for (j = 0; j < y_incr; j++) {
                     if (buf_col_stride == 1) {
-                        memcpy(src_block + (block_y_offset + j) * sa->block_width + block_x_offset,
-                               buf + (y - y0 + j) * buf_line_stride + (x - x0) * buf_col_stride,
+                        memcpy(src_block + (block_y_offset + j) * (size_t)sa->block_width +
+                               block_x_offset,
+                               buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0) * buf_col_stride,
                                sizeof(OPJ_INT32) * x_incr);
                     } else {
                         OPJ_UINT32 k;
                         for (k = 0; k < x_incr; k++) {
-                            *(src_block + (block_y_offset + j) * sa->block_width + block_x_offset + k) =
-                                *(buf + (y - y0 + j) * buf_line_stride + (x - x0 + k) * buf_col_stride);
+                            *(src_block + (block_y_offset + j) * (size_t)sa->block_width + block_x_offset +
+                              k) =
+                                  *(buf + (y - y0 + j) * (size_t)buf_line_stride + (x - x0 + k) * buf_col_stride);
                         }
                     }
                 }

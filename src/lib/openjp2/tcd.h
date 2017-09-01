@@ -409,7 +409,7 @@ OPJ_BOOL opj_tcd_update_tile_data(opj_tcd_t *p_tcd,
 /**
  *
  */
-OPJ_UINT32 opj_tcd_get_encoded_tile_size(opj_tcd_t *p_tcd);
+OPJ_SIZE_T opj_tcd_get_encoded_tile_size(opj_tcd_t *p_tcd);
 
 /**
  * Initialize the tile coder and may reuse some meory.
@@ -428,7 +428,7 @@ OPJ_BOOL opj_tcd_init_encode_tile(opj_tcd_t *p_tcd,
  */
 OPJ_BOOL opj_tcd_copy_tile_data(opj_tcd_t *p_tcd,
                                 OPJ_BYTE * p_src,
-                                OPJ_UINT32 p_src_length);
+                                OPJ_SIZE_T p_src_length);
 
 /**
  * Allocates tile component data

@@ -10923,7 +10923,7 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
 {
     OPJ_UINT32 i, j;
     OPJ_UINT32 l_nb_tiles;
-    OPJ_UINT32 l_max_tile_size = 0, l_current_tile_size;
+    OPJ_SIZE_T l_max_tile_size = 0, l_current_tile_size;
     OPJ_BYTE * l_current_data = 00;
     OPJ_BOOL l_reuse_data = OPJ_FALSE;
     opj_tcd_t* p_tcd = 00;
