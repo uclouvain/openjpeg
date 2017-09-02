@@ -82,7 +82,7 @@ typedef struct opj_tcd_cblk_enc {
               y1;     /* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
     OPJ_UINT32 numbps;
     OPJ_UINT32 numlenbits;
-    OPJ_UINT32 data_size;         /* Size of allocated data buffer */
+    size_t data_size;             /* Size of allocated data buffer */
     OPJ_UINT32
     numpasses;         /* number of pass already done for the code-blocks */
     OPJ_UINT32 numpassesinlayers; /* number of passes in the layer */
@@ -190,15 +190,15 @@ typedef struct opj_tcd_tilecomp {
     /* resolutions information */
     opj_tcd_resolution_t *resolutions;
     /* size of data for resolutions (in bytes) */
-    OPJ_UINT32 resolutions_size;
+    size_t resolutions_size;
     /* data of the component */
     OPJ_INT32 *data;
     /* if true, then need to free after usage, otherwise do not free */
     OPJ_BOOL  ownsData;
     /* we may either need to allocate this amount of data, or re-use image data and ignore this value */
-    OPJ_UINT32 data_size_needed;
+    size_t data_size_needed;
     /* size of the data of the component */
-    OPJ_UINT32 data_size;
+    size_t data_size;
     /* add fixed_quality */
     OPJ_INT32 numpix;
 } opj_tcd_tilecomp_t;
