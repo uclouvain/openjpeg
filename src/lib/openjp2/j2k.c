@@ -9684,9 +9684,10 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(opj_j2k_t *p_j2k,
     /* If user wants to remove more resolutions than the codestream contains, return error */
     if (l_cp->m_specific_param.m_dec.m_reduce >= l_tccp->numresolutions) {
         opj_event_msg(p_manager, EVT_ERROR,
-                      "Error decoding component %d.\nThe number of resolutions to remove is higher than the number "
-                      "of resolutions of this component\nModify the cp_reduce parameter.\n\n",
-                      compno);
+                      "Error decoding component %d.\nThe number of resolutions "
+                      "to remove (%d) is greater or equal than the number "
+                      "of resolutions of this component (%d)\nModify the cp_reduce parameter.\n\n",
+                      compno, l_cp->m_specific_param.m_dec.m_reduce, l_tccp->numresolutions);
         p_j2k->m_specific_param.m_decoder.m_state |=
             0x8000;/* FIXME J2K_DEC_STATE_ERR;*/
         return OPJ_FALSE;
