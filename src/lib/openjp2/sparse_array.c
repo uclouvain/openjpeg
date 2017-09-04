@@ -142,14 +142,14 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
             if (is_read_op) {
                 if (src_block == NULL) {
                     if (buf_col_stride == 1) {
-                        OPJ_INT32* dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                        OPJ_INT32* dest_ptr = buf + (y - y0) * (OPJ_SIZE_T)buf_line_stride +
                                               (x - x0) * buf_col_stride;
                         for (j = 0; j < y_incr; j++) {
                             memset(dest_ptr, 0, sizeof(OPJ_INT32) * x_incr);
                             dest_ptr += buf_line_stride;
                         }
                     } else {
-                        OPJ_INT32* dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                        OPJ_INT32* dest_ptr = buf + (y - y0) * (OPJ_SIZE_T)buf_line_stride +
                                               (x - x0) * buf_col_stride;
                         for (j = 0; j < y_incr; j++) {
                             OPJ_UINT32 k;
@@ -161,9 +161,10 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                     }
                 } else {
                     const OPJ_INT32* OPJ_RESTRICT src_ptr = src_block + block_y_offset *
-                                                            (size_t)block_width + block_x_offset;
+                                                            (OPJ_SIZE_T)block_width + block_x_offset;
                     if (buf_col_stride == 1) {
-                        OPJ_INT32* OPJ_RESTRICT dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                        OPJ_INT32* OPJ_RESTRICT dest_ptr = buf + (y - y0) * (OPJ_SIZE_T)buf_line_stride
+                                                           +
                                                            (x - x0) * buf_col_stride;
                         if (x_incr == 4) {
                             // Same code as general branch, but the compiler
@@ -181,7 +182,8 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                             }
                         }
                     } else {
-                        OPJ_INT32* OPJ_RESTRICT dest_ptr = buf + (y - y0) * (size_t)buf_line_stride +
+                        OPJ_INT32* OPJ_RESTRICT dest_ptr = buf + (y - y0) * (OPJ_SIZE_T)buf_line_stride
+                                                           +
                                                            (x - x0) * buf_col_stride;
                         if (x_incr == 1) {
                             for (j = 0; j < y_incr; j++) {
@@ -240,9 +242,9 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
 
                 if (buf_col_stride == 1) {
                     OPJ_INT32* OPJ_RESTRICT dest_ptr = src_block + block_y_offset *
-                                                       (size_t)block_width + block_x_offset;
+                                                       (OPJ_SIZE_T)block_width + block_x_offset;
                     const OPJ_INT32* OPJ_RESTRICT src_ptr = buf + (y - y0) *
-                                                            (size_t)buf_line_stride + (x - x0) * buf_col_stride;
+                                                            (OPJ_SIZE_T)buf_line_stride + (x - x0) * buf_col_stride;
                     if (x_incr == 4) {
                         // Same code as general branch, but the compiler
                         // can have an efficient memcpy()
@@ -260,9 +262,9 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                     }
                 } else {
                     OPJ_INT32* OPJ_RESTRICT dest_ptr = src_block + block_y_offset *
-                                                       (size_t)block_width + block_x_offset;
+                                                       (OPJ_SIZE_T)block_width + block_x_offset;
                     const OPJ_INT32* OPJ_RESTRICT src_ptr = buf + (y - y0) *
-                                                            (size_t)buf_line_stride + (x - x0) * buf_col_stride;
+                                                            (OPJ_SIZE_T)buf_line_stride + (x - x0) * buf_col_stride;
                     if (x_incr == 1) {
                         for (j = 0; j < y_incr; j++) {
                             *dest_ptr = *src_ptr;

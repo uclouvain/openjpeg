@@ -807,11 +807,11 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
         }
 
         if (isEncoder) {
-            size_t l_tile_data_size;
+            OPJ_SIZE_T l_tile_data_size;
 
             /* compute l_data_size with overflow check */
-            size_t w = (size_t)(l_tilec->x1 - l_tilec->x0);
-            size_t h = (size_t)(l_tilec->y1 - l_tilec->y0);
+            OPJ_SIZE_T w = (OPJ_SIZE_T)(l_tilec->x1 - l_tilec->x0);
+            OPJ_SIZE_T h = (OPJ_SIZE_T)(l_tilec->y1 - l_tilec->y0);
 
             /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
             if (h > 0 && w > SIZE_MAX / h) {
@@ -1366,7 +1366,8 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
                 p_cstr_info->tile[p_tile_no].pdy[i] = (int)l_tccp->prch[i];
             }
             p_cstr_info->tile[p_tile_no].packet = (opj_packet_info_t*) opj_calloc((
-                    size_t)p_cstr_info->numcomps * (size_t)p_cstr_info->numlayers * l_num_packs,
+                    OPJ_SIZE_T)p_cstr_info->numcomps * (OPJ_SIZE_T)p_cstr_info->numlayers *
+                                                  l_num_packs,
                                                   sizeof(opj_packet_info_t));
             if (!p_cstr_info->tile[p_tile_no].packet) {
                 /* FIXME event manager error callback */
@@ -1462,11 +1463,11 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
             opj_tcd_tilecomp_t* tilec = &(p_tcd->tcd_image->tiles->comps[compno]);
             opj_tcd_resolution_t *l_res = &
                                           (tilec->resolutions[tilec->minimum_num_resolutions - 1]);
-            size_t l_data_size;
+            OPJ_SIZE_T l_data_size;
 
             /* compute l_data_size with overflow check */
-            size_t res_w = (size_t)(l_res->x1 - l_res->x0);
-            size_t res_h = (size_t)(l_res->y1 - l_res->y0);
+            OPJ_SIZE_T res_w = (OPJ_SIZE_T)(l_res->x1 - l_res->x0);
+            OPJ_SIZE_T res_h = (OPJ_SIZE_T)(l_res->y1 - l_res->y0);
 
             /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
             if (res_h > 0 && res_w > SIZE_MAX / res_h) {
@@ -1577,9 +1578,9 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
             opj_tcd_tilecomp_t* tilec = &(p_tcd->tcd_image->tiles->comps[compno]);
             opj_image_comp_t* image_comp = &(p_tcd->image->comps[compno]);
             opj_tcd_resolution_t *res = tilec->resolutions + image_comp->resno_decoded;
-            size_t w = res->win_x1 - res->win_x0;
-            size_t h = res->win_y1 - res->win_y0;
-            size_t l_data_size;
+            OPJ_SIZE_T w = res->win_x1 - res->win_x0;
+            OPJ_SIZE_T h = res->win_y1 - res->win_y0;
+            OPJ_SIZE_T l_data_size;
 
             opj_image_data_free(tilec->data_win);
             tilec->data_win = NULL;
@@ -1980,17 +1981,17 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
                                           p_tcd->image->comps[1].resno_decoded;
         opj_tcd_resolution_t* res_comp2 = l_tile->comps[2].resolutions +
                                           p_tcd->image->comps[2].resno_decoded;
-        size_t l_res_samples = (size_t)(res_comp0->x1 - res_comp0->x0) *
-                               (size_t)(res_comp0->y1 - res_comp0->y0);
+        OPJ_SIZE_T l_res_samples = (OPJ_SIZE_T)(res_comp0->x1 - res_comp0->x0) *
+                                   (OPJ_SIZE_T)(res_comp0->y1 - res_comp0->y0);
         /* testcase 1336.pdf.asan.47.376 */
         if (p_tcd->image->comps[0].resno_decoded !=
                 p_tcd->image->comps[1].resno_decoded ||
                 p_tcd->image->comps[0].resno_decoded !=
                 p_tcd->image->comps[2].resno_decoded ||
-                (size_t)(res_comp1->x1 - res_comp1->x0) *
-                (size_t)(res_comp1->y1 - res_comp1->y0) != l_res_samples ||
-                (size_t)(res_comp2->x1 - res_comp2->x0) *
-                (size_t)(res_comp2->y1 - res_comp2->y0) != l_res_samples) {
+                (OPJ_SIZE_T)(res_comp1->x1 - res_comp1->x0) *
+                (OPJ_SIZE_T)(res_comp1->y1 - res_comp1->y0) != l_res_samples ||
+                (OPJ_SIZE_T)(res_comp2->x1 - res_comp2->x0) *
+                (OPJ_SIZE_T)(res_comp2->y1 - res_comp2->y0) != l_res_samples) {
             opj_event_msg(p_manager, EVT_ERROR,
                           "Tiles don't all have the same dimension. Skip the MCT step.\n");
             return OPJ_FALSE;
@@ -2271,7 +2272,7 @@ static OPJ_BOOL opj_tcd_dc_level_shift_encode(opj_tcd_t *p_tcd)
     opj_tccp_t * l_tccp = 00;
     opj_image_comp_t * l_img_comp = 00;
     opj_tcd_tile_t * l_tile;
-    size_t l_nb_elem, i;
+    OPJ_SIZE_T l_nb_elem, i;
     OPJ_INT32 * l_current_ptr;
 
     l_tile = p_tcd->tcd_image->tiles;
@@ -2281,8 +2282,8 @@ static OPJ_BOOL opj_tcd_dc_level_shift_encode(opj_tcd_t *p_tcd)
 
     for (compno = 0; compno < l_tile->numcomps; compno++) {
         l_current_ptr = l_tile_comp->data;
-        l_nb_elem = (size_t)(l_tile_comp->x1 - l_tile_comp->x0) *
-                    (size_t)(l_tile_comp->y1 - l_tile_comp->y0);
+        l_nb_elem = (OPJ_SIZE_T)(l_tile_comp->x1 - l_tile_comp->x0) *
+                    (OPJ_SIZE_T)(l_tile_comp->y1 - l_tile_comp->y0);
 
         if (l_tccp->qmfbid == 1) {
             for (i = 0; i < l_nb_elem; ++i) {
@@ -2308,8 +2309,8 @@ static OPJ_BOOL opj_tcd_mct_encode(opj_tcd_t *p_tcd)
 {
     opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
     opj_tcd_tilecomp_t * l_tile_comp = p_tcd->tcd_image->tiles->comps;
-    size_t samples = (size_t)(l_tile_comp->x1 - l_tile_comp->x0) *
-                     (size_t)(l_tile_comp->y1 - l_tile_comp->y0);
+    OPJ_SIZE_T samples = (OPJ_SIZE_T)(l_tile_comp->x1 - l_tile_comp->x0) *
+                         (OPJ_SIZE_T)(l_tile_comp->y1 - l_tile_comp->y0);
     OPJ_UINT32 i;
     OPJ_BYTE ** l_data = 00;
     opj_tcp_t * l_tcp = p_tcd->tcp;
@@ -2511,8 +2512,8 @@ OPJ_BOOL opj_tcd_copy_tile_data(opj_tcd_t *p_tcd,
     for (i = 0; i < p_tcd->image->numcomps; ++i) {
         l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
         l_remaining = l_img_comp->prec & 7;  /* (%8) */
-        l_nb_elem = (size_t)(l_tilec->x1 - l_tilec->x0) *
-                    (size_t)(l_tilec->y1 - l_tilec->y0);
+        l_nb_elem = (OPJ_SIZE_T)(l_tilec->x1 - l_tilec->x0) *
+                    (OPJ_SIZE_T)(l_tilec->y1 - l_tilec->y0);
 
         if (l_remaining) {
             ++l_size_comp;
