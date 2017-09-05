@@ -1343,6 +1343,12 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,
  * that is to say at the highest resolution level, even if requesting the image at lower
  * resolution levels.
  *
+ * Generally opj_set_decode_area() should be followed by opj_decode(), and the
+ * codec cannot be re-used.
+ * In the particular case of an image made of a single tile, several sequences of
+ * calls to opoj_set_decode_area() and opj_decode() are allowed, and will bring
+ * performance improvements when reading an image by chunks.
+ *
  * @param   p_codec         the jpeg2000 codec.
  * @param   p_image         the decoded image previously setted by opj_read_header
  * @param   p_start_x       the left position of the rectangle to decode (in image coordinates).

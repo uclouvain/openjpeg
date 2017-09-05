@@ -54,6 +54,8 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.c
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_stdint.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sparse_array.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/sparse_array.h
 )
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)
@@ -192,12 +194,20 @@ if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
    TARGET_LINK_LIBRARIES(${OPENJPEG_LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
 
-if(BUILD_BENCH_DWT)
-    add_executable(bench_dwt bench_dwt.c dwt.c opj_malloc.c thread.c)
+if(BUILD_UNIT_TESTS)
+    add_executable(bench_dwt bench_dwt.c)
     if(UNIX)
-        target_link_libraries(bench_dwt m)
+        target_link_libraries(bench_dwt m ${OPENJPEG_LIBRARY_NAME})
     endif()
     if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
         target_link_libraries(bench_dwt ${CMAKE_THREAD_LIBS_INIT})
     endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
-endif(BUILD_BENCH_DWT)
+
+    add_executable(test_sparse_array test_sparse_array.c)
+    if(UNIX)
+        target_link_libraries(test_sparse_array m ${OPENJPEG_LIBRARY_NAME})
+    endif()
+    if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+        target_link_libraries(test_sparse_array ${CMAKE_THREAD_LIBS_INIT})
+    endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+endif(BUILD_UNIT_TESTS)

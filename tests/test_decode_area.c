@@ -99,30 +99,12 @@ static void info_callback(const char *msg, void *client_data)
     /*fprintf(stdout, "[INFO] %s", msg);*/
 }
 
-opj_image_t* decode(
-    OPJ_BOOL quiet,
-    const char* input_file,
-    OPJ_INT32 x0,
-    OPJ_INT32 y0,
-    OPJ_INT32 x1,
-    OPJ_INT32 y1,
-    OPJ_UINT32* ptilew,
-    OPJ_UINT32* ptileh,
-    OPJ_UINT32* pcblkw,
-    OPJ_UINT32* pcblkh)
+static opj_codec_t* create_codec_and_stream(const char* input_file,
+        opj_stream_t** pOutStream)
 {
     opj_dparameters_t l_param;
     opj_codec_t * l_codec = NULL;
-    opj_image_t * l_image = NULL;
     opj_stream_t * l_stream = NULL;
-
-    if (!quiet) {
-        if (x0 != 0 || x1 != 0 || y0 != 0 || y1 != 0) {
-            printf("Decoding %d,%d,%d,%d\n", x0, y0, x1, y1);
-        } else {
-            printf("Decoding full image\n");
-        }
-    }
 
     l_stream = opj_stream_create_default_file_stream(input_file, OPJ_TRUE);
     if (!l_stream) {
@@ -165,6 +147,40 @@ opj_image_t* decode(
         fprintf(stderr, "ERROR ->failed to setup the decoder\n");
         opj_stream_destroy(l_stream);
         opj_destroy_codec(l_codec);
+        return NULL;
+    }
+
+    *pOutStream = l_stream;
+    return l_codec;
+}
+
+
+opj_image_t* decode(
+    OPJ_BOOL quiet,
+    const char* input_file,
+    OPJ_INT32 x0,
+    OPJ_INT32 y0,
+    OPJ_INT32 x1,
+    OPJ_INT32 y1,
+    OPJ_UINT32* ptilew,
+    OPJ_UINT32* ptileh,
+    OPJ_UINT32* pcblkw,
+    OPJ_UINT32* pcblkh)
+{
+    opj_codec_t * l_codec = NULL;
+    opj_image_t * l_image = NULL;
+    opj_stream_t * l_stream = NULL;
+
+    if (!quiet) {
+        if (x0 != 0 || x1 != 0 || y0 != 0 || y1 != 0) {
+            printf("Decoding %d,%d,%d,%d\n", x0, y0, x1, y1);
+        } else {
+            printf("Decoding full image\n");
+        }
+    }
+
+    l_codec = create_codec_and_stream(input_file, &l_stream);
+    if (l_codec == NULL) {
         return NULL;
     }
 
@@ -226,6 +242,140 @@ opj_image_t* decode(
     return l_image;
 }
 
+int decode_by_strip(OPJ_BOOL quiet,
+                    const char* input_file,
+                    OPJ_UINT32 strip_height,
+                    OPJ_INT32 da_x0,
+                    OPJ_INT32 da_y0,
+                    OPJ_INT32 da_x1,
+                    OPJ_INT32 da_y1,
+                    opj_image_t* full_image)
+{
+    /* OPJ_UINT32 tilew, tileh; */
+    opj_codec_t * l_codec = NULL;
+    opj_image_t * l_image = NULL;
+    opj_stream_t * l_stream = NULL;
+    OPJ_UINT32 x0, y0, x1, y1, y;
+    OPJ_UINT32 full_x0, full_y0, full_x1, full_y1;
+
+    l_codec = create_codec_and_stream(input_file, &l_stream);
+    if (l_codec == NULL) {
+        return 1;
+    }
+
+    /* Read the main header of the codestream and if necessary the JP2 boxes*/
+    if (! opj_read_header(l_stream, l_codec, &l_image)) {
+        fprintf(stderr, "ERROR -> failed to read the header\n");
+        opj_stream_destroy(l_stream);
+        opj_destroy_codec(l_codec);
+        return 1;
+    }
+
+    full_x0 = l_image->x0;
+    full_y0 = l_image->y0;
+    full_x1 = l_image->x1;
+    full_y1 = l_image->y1;
+
+    if (da_x0 != 0 || da_y0 != 0 || da_x1 != 0 || da_y1 != 0) {
+        x0 = (OPJ_UINT32)da_x0;
+        y0 = (OPJ_UINT32)da_y0;
+        x1 = (OPJ_UINT32)da_x1;
+        y1 = (OPJ_UINT32)da_y1;
+    } else {
+        x0 = l_image->x0;
+        y0 = l_image->y0;
+        x1 = l_image->x1;
+        y1 = l_image->y1;
+    }
+    for (y = y0; y < y1; y += strip_height) {
+        OPJ_UINT32 h_req = strip_height;
+        if (y + h_req > y1) {
+            h_req = y1 - y;
+        }
+        if (!quiet) {
+            printf("Decoding %u...%u\n", y, y + h_req);
+        }
+        if (!opj_set_decode_area(l_codec, l_image, (OPJ_INT32)x0, (OPJ_INT32)y,
+                                 (OPJ_INT32)x1, (OPJ_INT32)(y + h_req))) {
+            fprintf(stderr, "ERROR -> failed to set the decoded area\n");
+            opj_stream_destroy(l_stream);
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(l_image);
+            return 1;
+        }
+
+        /* Get the decoded image */
+        if (!(opj_decode(l_codec, l_stream, l_image))) {
+            fprintf(stderr, "ERROR -> failed to decode image!\n");
+            opj_stream_destroy(l_stream);
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(l_image);
+            return 1;
+        }
+
+        if (full_image) {
+            OPJ_UINT32 y_check, x;
+            OPJ_UINT32 compno;
+            for (compno = 0; compno < l_image->numcomps; compno ++) {
+                for (y_check = 0; y_check < h_req; y_check++) {
+                    for (x = x0; x < x1; x++) {
+                        OPJ_INT32 sub_image_val =
+                            l_image->comps[compno].data[y_check * (x1 - x0) + (x - x0)];
+                        OPJ_INT32 image_val =
+                            full_image->comps[compno].data[(y + y_check) * (x1 - x0) + (x - x0)];
+                        if (sub_image_val != image_val) {
+                            fprintf(stderr,
+                                    "Difference found at subimage pixel (%u,%u) "
+                                    "of compno=%u: got %d, expected %d\n",
+                                    x, y_check + y, compno, sub_image_val, image_val);
+                            return 1;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    /* If image is small enough, try a final whole image read */
+    if (full_x1 - full_x0 < 10000 && full_y1 - full_y0 < 10000) {
+        if (!quiet) {
+            printf("Decoding full image\n");
+        }
+        if (!opj_set_decode_area(l_codec, l_image,
+                                 (OPJ_INT32)full_x0, (OPJ_INT32)full_y0,
+                                 (OPJ_INT32)full_x1, (OPJ_INT32)full_y1)) {
+            fprintf(stderr, "ERROR -> failed to set the decoded area\n");
+            opj_stream_destroy(l_stream);
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(l_image);
+            return 1;
+        }
+
+        /* Get the decoded image */
+        if (!(opj_decode(l_codec, l_stream, l_image))) {
+            fprintf(stderr, "ERROR -> failed to decode image!\n");
+            opj_stream_destroy(l_stream);
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(l_image);
+            return 1;
+        }
+    }
+
+    if (! opj_end_decompress(l_codec, l_stream)) {
+        opj_stream_destroy(l_stream);
+        opj_destroy_codec(l_codec);
+        opj_image_destroy(l_image);
+        return 1;
+    }
+
+
+    opj_stream_destroy(l_stream);
+    opj_destroy_codec(l_codec);
+    opj_image_destroy(l_image);
+    return 0;
+}
+
 OPJ_BOOL check_consistency(opj_image_t* p_image, opj_image_t* p_sub_image)
 {
     OPJ_UINT32 compno;
@@ -273,10 +423,13 @@ int main(int argc, char** argv)
     OPJ_UINT32 step_x, step_y;
     OPJ_BOOL quiet = OPJ_FALSE;
     OPJ_UINT32 nsteps = 100;
+    OPJ_UINT32 strip_height = 0;
+    OPJ_BOOL strip_check = OPJ_FALSE;
 
     if (argc < 2) {
         fprintf(stderr,
-                "Usage: test_decode_area [-q] [-steps n] input_file_jp2_or_jk2 [x0 y0 x1 y1]\n");
+                "Usage: test_decode_area [-q] [-steps n] input_file_jp2_or_jk2 [x0 y0 x1 y1]\n"
+                "or   : test_decode_area [-q] [-strip_height h] [-strip_check] input_file_jp2_or_jk2 [x0 y0 x1 y1]\n");
         return 1;
     }
 
@@ -288,6 +441,11 @@ int main(int argc, char** argv)
             } else if (strcmp(argv[iarg], "-steps") == 0 && iarg + 1 < argc) {
                 nsteps = (OPJ_UINT32)atoi(argv[iarg + 1]);
                 iarg ++;
+            } else if (strcmp(argv[iarg], "-strip_height") == 0 && iarg + 1 < argc) {
+                strip_height = (OPJ_UINT32)atoi(argv[iarg + 1]);
+                iarg ++;
+            } else if (strcmp(argv[iarg], "-strip_check") == 0) {
+                strip_check = OPJ_TRUE;
             } else if (input_file == NULL) {
                 input_file = argv[iarg];
             } else if (iarg + 3 < argc) {
@@ -295,15 +453,30 @@ int main(int argc, char** argv)
                 da_y0 = atoi(argv[iarg + 1]);
                 da_x1 = atoi(argv[iarg + 2]);
                 da_y1 = atoi(argv[iarg + 3]);
+                if (da_x0 < 0 || da_y0 < 0 || da_x1 < 0 || da_y1 < 0) {
+                    fprintf(stderr, "Wrong bounds\n");
+                    return 1;
+                }
                 iarg += 3;
             }
         }
     }
 
-    l_image = decode(quiet, input_file, 0, 0, 0, 0,
-                     &tilew, &tileh, &cblkw, &cblkh);
-    if (!l_image) {
-        return 1;
+    if (!strip_height || strip_check) {
+        l_image = decode(quiet, input_file, 0, 0, 0, 0,
+                         &tilew, &tileh, &cblkw, &cblkh);
+        if (!l_image) {
+            return 1;
+        }
+    }
+
+    if (strip_height) {
+        int ret = decode_by_strip(quiet, input_file, strip_height, da_x0, da_y0, da_x1,
+                                  da_y1, l_image);
+        if (l_image) {
+            opj_image_destroy(l_image);
+        }
+        return ret;
     }
 
     if (da_x0 != 0 || da_x1 != 0 || da_y0 != 0 || da_y1 != 0) {
