@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 3a382d312306f45853b3ad78b770754d4bc7e440
+<pre class='wrap'>commit 968e36bbd989fdf789c6a02c80c747346bb851c5
+Merge: 3a382d3 579b893
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-09-05 22:18:58 +0200
+
+    Merge pull request #1010 from rouault/subtile_decoding_stage3
+    
+    Subtile decoding: memory use reduction and perf improvements
+
+commit 579b8937eae7e6b6868b8b5c6286a742c10a5130
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-04 17:35:52 +0200
+
+    Replace uses of size_t by OPJ_SIZE_T
+
+commit 3a382d312306f45853b3ad78b770754d4bc7e440
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-03 00:30:36 +0200
 
@@ -31,6 +46,42 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-02 09:10:53 +0200
 
     Improve error message when specifying a too big cp_reduce parameter (#474)
+
+commit c1e0fba0c46cb528a08b89b986e86ff0f4792558
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 22:09:58 +0200
+
+    opj_v4dwt_decode_step1_sse(): rework a bit to improve code generation
+
+commit 676d4c807f0162877f9f32e4cdda2e242788d410
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 21:36:35 +0200
+
+    opj_j2k_update_image_data(): avoid allocating image buffer if we can just reuse the tile buffer one
+
+commit 4c7effa6bc37beb2a8e2f29ecf5845cde93f6b88
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 21:17:26 +0200
+
+    opj_t1_clbl_decode_processor(): use SSE2 in subtile decoding code path, for irreversible
+
+commit 2c365fe0ecc8c6597db491a953a91308b1d0d4b1
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 20:43:39 +0200
+
+    Replace error message 'Not enough memory for tile data' by 'Size of tile data exceeds system limits' (refs https://github.com/uclouvain/openjpeg/pull/730#issuecomment-326654188)
+
+commit 559d16e8f43a0cd090d217d7d111820989299b85
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:13 +0200
+
+    opj_t1_decode_cblk(): move some code to codeblock processor for (theoretical) better multi-threading in subtile decoding
+
+commit 7017e67a01c378a7a1ee5e34dd544c793b5c23e4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:10 +0200
+
+    sparse_array: optimizations for lossy case
 
 commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -63,6 +114,162 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 17:32:54 +0200
 
     opj_compress help: indicate 0 value, instead of 1, for -r parameter to get lossless encoding (#1009)
+
+commit 8a17be8945f6f8fcae3f9e5c7c4988e971d245ee
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:08 +0200
+
+    opj_v4dwt_decode_step2_sse(): loop unroll
+
+commit 83b5a168ec0e89210671d60670c9a1143ce8776b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:06 +0200
+
+    opj_dwt_decode_partial_97(): simplify/more efficient use of sparse arrays in vertical pass
+
+commit ae19001ba425a9b396a29fba3417dccc746bd2ef
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:04 +0200
+
+    opj_tcd_dc_level_shift_decode(): optimize lossy case
+
+commit 470f3ed416a8cc3618b2c04000ea7b4694043f34
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:02 +0200
+
+    opj_dwt_decode_partial_1_parallel(): add SSE2 optimization
+
+commit 873004c615b1bed3ce780e869288602af86fdee5
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:00 +0200
+
+    Sub-tile decoding: speed up vertical pass in IDWT5x3 by processing 4 cols at a time
+
+commit ccac773556070ede24ea3dfbdec47c2b3c5be5c4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:58 +0200
+
+    Tiny perf improvement in T1 stage for subtile decoding
+
+commit 18635df518602265b71da3c70c4d3b774bc3dfc2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:56 +0200
+
+    test_decode_area: accept user bounds in -strip_height mode
+
+commit 82a43d8035ca5f43e198e15faef6c9ac44b39541
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:54 +0200
+
+    Optimize opj_dwt_decode_partial_1() when cas == 0
+
+commit 1644665a9105e2d761e8b29f43af602560e6bcf9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:52 +0200
+
+    opj_j2k_update_image_data(): avoid zero-ing the buffer if not needed
+
+commit b2cc8f7f81242f967b65e76de043e5e31663d793
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:50 +0200
+
+    Optimize reading/write into sparse array
+
+commit 0ae3cba3404674bbe2028ea9a801301a4c951b33
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:48 +0200
+
+    Allow several repeated calls to opj_set_decode_area() and opj_decode() for single-tiled images
+    
+    * Only works for single-tiled images --&gt; will error out cleanly, as currently
+      in other cases
+    * Save re-reading the codestream for the tile, and re-use code-blocks of the
+      previous decoding pass.
+    * Future improvements might involve improving opj_decompress, and the image writing logic,
+      to use this strategy.
+
+commit 5d07d463fdb0a5eeffa90eba1566cc21697011b8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:45 +0200
+
+    opj_j2k_decode_tiles(): apply whole single tile image decoding optimization to reading at reduced resolution as well
+
+commit 98b93103613c90753fb6c57696f9403f8ea0b1d6
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:44 +0200
+
+    Various changes to allow tile buffers of more than 4giga pixels
+    
+    Untested though, since that means a tile buffer of at least 16 GB. So
+    there might be places where uint32 overflow on multiplication still occur...
+
+commit 008a12d4fce0a7b1eabc51e04ed339be759646e2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:41 +0200
+
+    TCD: allow tile buffer to be greater than 4GB on 64 bit hosts (but number of pixels must remain under 4 billion)
+
+commit d1299d9670d766006a7a162a770d3b70eaeef9bd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:39 +0200
+
+    Fix compiler warning in release mode
+
+commit d5153ba404fa13b9c6e7b2c20d4d128aac718fba
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:37 +0200
+
+    Remove limitation that prevents from opening images bigger than 4 billion pixels
+    
+    However the intermediate buffer for decoding must still be smaller than 4
+    billion pixels, so this is useful for decoding at a lower resolution level,
+    or subtile decoding.
+
+commit c37e360a5112b5471168e429159f61b74c0c2f58
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:35 +0200
+
+    opj_tcd_init_tile(): fix typo on overflow detection condition (introduced in previous commit)
+
+commit eee5104a8885227167a349b6dabdb1f72a04d9d0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:32 +0200
+
+    opj_dwt_decode_partial_tile(): avoid undefined behaviour in lifting operation by properly initializing working buffer
+
+commit f9e9942330f476b66ac4a35d0ae521200878f343
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:29 +0200
+
+    Sub-tile decoding: only allocate tile component buffer of the needed dimension
+    
+    Instead of being the full tile size.
+    
+    * Use a sparse array mechanism to store code-blocks and intermediate stages of
+      IDWT.
+    * IDWT, DC level shift and MCT stages are done just on that smaller array.
+    * Improve copy of tile component array to final image, by saving an intermediate
+      buffer.
+    * For full-tile decoding at reduced resolution, only allocate the tile buffer to
+      the reduced size, instead of the full-resolution size.
+
+commit aa7198146b995fe2993ce24f5715057b7da0386d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:21:39 +0200
+
+    opj_compress: reorder checks related to code block dimensions, to avoid potential int overflow
+
+commit 0a25dceca7761ee3f16cbb2ced87b915a948b25e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:20:51 +0200
+
+    opj_j2k_setup_encoder(): validate code block width/height
+
+commit 84bbb4a8743a93d567f40d7233d5196105c8d84e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:12:45 +0200
+
+    opj_t1_allocate_buffers(): remove useless overflow checks
 
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -413,12 +620,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-10 12:30:31 +0200
 
     Reformat tests/test_tile_encoder.c
-
-commit 26fe8f60433aa677fd29590e7da23437c41e99c8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-10 11:45:49 +0200
-
-    Improve doc of opj_tccp_info_t::cblkw and cblkh
 
 ...</pre></div>
 
