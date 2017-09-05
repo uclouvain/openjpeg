@@ -20,7 +20,20 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 968e36bbd989fdf789c6a02c80c747346bb851c5
+<pre class='wrap'>commit e656822f927c869f31f2685c67644eacb75fc5d2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-05 23:32:03 +0200
+
+    Add knownfailures-Ubuntu12.04-gcc4.6.3-x86_64-Release-3rdP.txt
+    
+    For some reason, the OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_NUM_THREADS=2
+    configuration fails once PR1010 has been merged in master
+    ( https://travis-ci.org/uclouvain/openjpeg/jobs/272219011 ) whereas (almost) the same
+    code in my branch didn't fail per https://travis-ci.org/rouault/openjpeg/jobs/271738113
+    
+    The errors we get are the same as with the other x86_64 compilers, so nothing alarming here.
+
+commit 968e36bbd989fdf789c6a02c80c747346bb851c5
 Merge: 3a382d3 579b893
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-09-05 22:18:58 +0200
@@ -614,12 +627,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-10 14:43:16 +0200
 
     Fix crash on encoding if using opj_set_default_encoder_parameters() without defining tcp_numlayers
-
-commit a4c938181deb2cb48e408ac6e358062927060125
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-10 12:30:31 +0200
-
-    Reformat tests/test_tile_encoder.c
 
 ...</pre></div>
 
