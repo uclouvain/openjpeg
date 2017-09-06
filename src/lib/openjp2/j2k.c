@@ -4304,6 +4304,10 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
         opj_event_msg(p_manager, EVT_ERROR, "Error reading SOT marker\n");
         return OPJ_FALSE;
     }
+#ifdef DEBUG_VERBOSE
+    fprintf(stderr, "SOT %d %d %d %d\n",
+            p_j2k->m_current_tile_number, l_tot_len, l_current_part, l_num_parts);
+#endif
 
     l_cp = &(p_j2k->m_cp);
 
@@ -4318,23 +4322,31 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
     l_tile_x = p_j2k->m_current_tile_number % l_cp->tw;
     l_tile_y = p_j2k->m_current_tile_number / l_cp->tw;
 
-    /* Fixes issue with id_000020,sig_06,src_001958,op_flip4,pos_149 */
-    /* of https://github.com/uclouvain/openjpeg/issues/939 */
-    /* We must avoid reading twice the same tile part number for a given tile */
-    /* so as to avoid various issues, like opj_j2k_merge_ppt being called */
-    /* several times. */
-    /* ISO 15444-1 A.4.2 Start of tile-part (SOT) mandates that tile parts */
-    /* should appear in increasing order. */
-    if (l_tcp->m_current_tile_part_number + 1 != (OPJ_INT32)l_current_part) {
-        opj_event_msg(p_manager, EVT_ERROR,
-                      "Invalid tile part index for tile number %d. "
-                      "Got %d, expected %d\n",
-                      p_j2k->m_current_tile_number,
-                      l_current_part,
-                      l_tcp->m_current_tile_part_number + 1);
-        return OPJ_FALSE;
+    if (p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec < 0 ||
+            p_j2k->m_current_tile_number == (OPJ_UINT32)
+            p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec) {
+        /* Do only this check if we decode all tile part headers, or if */
+        /* we decode one precise tile. Otherwise the m_current_tile_part_number */
+        /* might not be valid */
+        /* Fixes issue with id_000020,sig_06,src_001958,op_flip4,pos_149 */
+        /* of https://github.com/uclouvain/openjpeg/issues/939 */
+        /* We must avoid reading twice the same tile part number for a given tile */
+        /* so as to avoid various issues, like opj_j2k_merge_ppt being called */
+        /* several times. */
+        /* ISO 15444-1 A.4.2 Start of tile-part (SOT) mandates that tile parts */
+        /* should appear in increasing order. */
+        if (l_tcp->m_current_tile_part_number + 1 != (OPJ_INT32)l_current_part) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Invalid tile part index for tile number %d. "
+                          "Got %d, expected %d\n",
+                          p_j2k->m_current_tile_number,
+                          l_current_part,
+                          l_tcp->m_current_tile_part_number + 1);
+            return OPJ_FALSE;
+        }
     }
-    ++ l_tcp->m_current_tile_part_number;
+
+    l_tcp->m_current_tile_part_number = (OPJ_INT32) l_current_part;
 
 #ifdef USE_JPWL
     if (l_cp->correct) {
