@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e656822f927c869f31f2685c67644eacb75fc5d2
+<pre class='wrap'>commit 003759a4829f3f1baa5a2292956618fecf314818
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-06 15:59:19 +0200
+
+    Fix null pointer dereference on partial tile decoding when they are empty. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3297 (master only)
+
+commit e656822f927c869f31f2685c67644eacb75fc5d2
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-05 23:32:03 +0200
 
@@ -621,12 +627,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-10 16:49:47 +0200
 
     Propagate event manager down to opj_t2_encode_packet() and use it to emit an error message when the output buffer is too small
-
-commit a316f36dfc7cc4217bfce0ac6d23b47f90cf8fd9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-10 14:43:16 +0200
-
-    Fix crash on encoding if using opj_set_default_encoder_parameters() without defining tcp_numlayers
 
 ...</pre></div>
 
