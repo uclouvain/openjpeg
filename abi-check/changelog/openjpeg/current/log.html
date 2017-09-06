@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 297f202104fc0ff6b0627e15e7e6883c915f80bf
+<pre class='wrap'>commit c67e1cd73f6c1fca081f5445af4f65b240c40edc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-06 17:33:38 +0200
+
+    Fix invalid access out of bounds, and bad behaviour, when calling repeatdly opj_get_decoded_tile() on an image with a color palette
+
+commit 297f202104fc0ff6b0627e15e7e6883c915f80bf
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-06 16:49:28 +0200
 
@@ -611,25 +617,12 @@ Date:   2017-08-13 22:57:31 +0200
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 0b4c3ce75d11600ebc6675bd871f78ca3c95bc60
-Merge: a35b489 9f75088
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-08-11 15:13:35 +0200
 
     Merge pull request #980 from szukw000/changes-for-ppc64-converttif
     
     Changes in converttif.c for PPC64
-
-commit 9f750884f91a4f1b9ca3e6a401057c21a7e2bd99
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2017-08-11 00:06:23 +0200
-
-    Changes in converttif.c for PPC64
-
-commit a35b4891340dcecf2b248c7e57a90bf7d7aa9b2f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-10 16:58:36 +0200
-
-    Fix argument order in error message of previous commit
 
 ...</pre></div>
 
