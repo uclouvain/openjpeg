@@ -1141,8 +1141,6 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
     image->comps = new_comps;
     image->numcomps = nr_channels;
 
-    opj_jp2_free_pclr(color);
-
     return OPJ_TRUE;
 }/* apply_pclr() */
 

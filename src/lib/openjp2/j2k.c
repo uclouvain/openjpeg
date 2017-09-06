@@ -10907,6 +10907,12 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
         return OPJ_FALSE;
     }
 
+    if (p_image->numcomps < p_j2k->m_private_image->numcomps) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Image has less components than codestream.\n");
+        return OPJ_FALSE;
+    }
+
     if (/*(tile_index < 0) &&*/ (tile_index >= p_j2k->m_cp.tw * p_j2k->m_cp.th)) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Tile index provided by the user is incorrect %d (max = %d) \n", tile_index,
@@ -10937,7 +10943,7 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
     }
 
     l_img_comp = p_image->comps;
-    for (compno = 0; compno < p_image->numcomps; ++compno) {
+    for (compno = 0; compno < p_j2k->m_private_image->numcomps; ++compno) {
         OPJ_INT32 l_comp_x1, l_comp_y1;
 
         l_img_comp->factor = p_j2k->m_private_image->comps[compno].factor;
@@ -10957,6 +10963,18 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
                                              (OPJ_INT32)l_img_comp->factor));
 
         l_img_comp++;
+    }
+
+    if (p_image->numcomps > p_j2k->m_private_image->numcomps) {
+        /* Can happen when calling repeatdly opj_get_decoded_tile() on an
+         * image with a color palette, where color palette expansion is done
+         * later in jp2.c */
+        for (compno = p_j2k->m_private_image->numcomps; compno < p_image->numcomps;
+                ++compno) {
+            opj_image_data_free(p_image->comps[compno].data);
+            p_image->comps[compno].data = NULL;
+        }
+        p_image->numcomps = p_j2k->m_private_image->numcomps;
     }
 
     /* Destroy the previous output image*/
