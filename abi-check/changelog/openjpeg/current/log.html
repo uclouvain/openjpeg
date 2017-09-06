@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 003759a4829f3f1baa5a2292956618fecf314818
+<pre class='wrap'>commit 297f202104fc0ff6b0627e15e7e6883c915f80bf
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-06 16:49:28 +0200
+
+    Fix 2.2.0 regression when reading codestream with reperated calls to opj_get_decoded_tile() where tile parts of a same tile are not consecutive
+    
+    This check was introduced per #939, but relied on the incorrect assumption
+    we decode all the tile parts of all tiles.
+
+commit 003759a4829f3f1baa5a2292956618fecf314818
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-06 15:59:19 +0200
 
@@ -621,12 +630,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-10 16:58:36 +0200
 
     Fix argument order in error message of previous commit
-
-commit 0b4fef6d1901254e41ab74ed681daba477d724c3
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-10 16:49:47 +0200
-
-    Propagate event manager down to opj_t2_encode_packet() and use it to emit an error message when the output buffer is too small
 
 ...</pre></div>
 
