@@ -1931,7 +1931,14 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
     OPJ_UINT32 win_tcx1 = tilec->win_x1;
     OPJ_UINT32 win_tcy1 = tilec->win_y1;
 
+    if (tr_max->x0 == tr_max->x1 || tr_max->y0 == tr_max->y1) {
+        return OPJ_TRUE;
+    }
+
     sa = opj_dwt_init_sparse_array(tilec, numres);
+    if (sa == NULL) {
+        return OPJ_FALSE;
+    }
 
     if (numres == 1U) {
         OPJ_BOOL ret = opj_sparse_array_int32_read(sa,
@@ -2641,7 +2648,14 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
     OPJ_UINT32 win_tcx1 = tilec->win_x1;
     OPJ_UINT32 win_tcy1 = tilec->win_y1;
 
+    if (tr_max->x0 == tr_max->x1 || tr_max->y0 == tr_max->y1) {
+        return OPJ_TRUE;
+    }
+
     sa = opj_dwt_init_sparse_array(tilec, numres);
+    if (sa == NULL) {
+        return OPJ_FALSE;
+    }
 
     if (numres == 1U) {
         OPJ_BOOL ret = opj_sparse_array_int32_read(sa,
