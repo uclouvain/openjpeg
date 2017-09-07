@@ -1967,10 +1967,6 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
     if (p_tcd->whole_tile_decoding) {
         opj_tcd_resolution_t* res_comp0 = l_tile->comps[0].resolutions +
                                           l_tile_comp->minimum_num_resolutions - 1;
-        opj_tcd_resolution_t* res_comp1 = l_tile->comps[1].resolutions +
-                                          l_tile_comp->minimum_num_resolutions - 1;
-        opj_tcd_resolution_t* res_comp2 = l_tile->comps[2].resolutions +
-                                          l_tile_comp->minimum_num_resolutions - 1;
 
         /* A bit inefficient: we process more data than needed if */
         /* resno_decoded < l_tile_comp->minimum_num_resolutions-1, */
@@ -1978,6 +1974,10 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
         l_samples = (OPJ_UINT32)((res_comp0->x1 - res_comp0->x0) *
                                  (res_comp0->y1 - res_comp0->y0));
         if (l_tile->numcomps >= 3) {
+            opj_tcd_resolution_t* res_comp1 = l_tile->comps[1].resolutions +
+                                              l_tile_comp->minimum_num_resolutions - 1;
+            opj_tcd_resolution_t* res_comp2 = l_tile->comps[2].resolutions +
+                                              l_tile_comp->minimum_num_resolutions - 1;
             /* testcase 1336.pdf.asan.47.376 */
             if (p_tcd->image->comps[0].resno_decoded !=
                     p_tcd->image->comps[1].resno_decoded ||
@@ -1995,14 +1995,14 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
     } else {
         opj_tcd_resolution_t* res_comp0 = l_tile->comps[0].resolutions +
                                           p_tcd->image->comps[0].resno_decoded;
-        opj_tcd_resolution_t* res_comp1 = l_tile->comps[1].resolutions +
-                                          p_tcd->image->comps[1].resno_decoded;
-        opj_tcd_resolution_t* res_comp2 = l_tile->comps[2].resolutions +
-                                          p_tcd->image->comps[2].resno_decoded;
 
         l_samples = (res_comp0->win_x1 - res_comp0->win_x0) *
                     (res_comp0->win_y1 - res_comp0->win_y0);
         if (l_tile->numcomps >= 3) {
+            opj_tcd_resolution_t* res_comp1 = l_tile->comps[1].resolutions +
+                                              p_tcd->image->comps[1].resno_decoded;
+            opj_tcd_resolution_t* res_comp2 = l_tile->comps[2].resolutions +
+                                              p_tcd->image->comps[2].resno_decoded;
             /* testcase 1336.pdf.asan.47.376 */
             if (p_tcd->image->comps[0].resno_decoded !=
                     p_tcd->image->comps[1].resno_decoded ||
