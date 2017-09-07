@@ -1965,43 +1965,62 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
     }
 
     if (p_tcd->whole_tile_decoding) {
+        opj_tcd_resolution_t* res_comp0 = l_tile->comps[0].resolutions +
+                                          l_tile_comp->minimum_num_resolutions - 1;
+        opj_tcd_resolution_t* res_comp1 = l_tile->comps[1].resolutions +
+                                          l_tile_comp->minimum_num_resolutions - 1;
+        opj_tcd_resolution_t* res_comp2 = l_tile->comps[2].resolutions +
+                                          l_tile_comp->minimum_num_resolutions - 1;
+
         /* A bit inefficient: we process more data than needed if */
         /* resno_decoded < l_tile_comp->minimum_num_resolutions-1, */
         /* but we would need to take into account a stride then */
-        l_samples = (OPJ_UINT32)((
-                                     l_tile_comp->resolutions[l_tile_comp->minimum_num_resolutions - 1].x1 -
-                                     l_tile_comp->resolutions[l_tile_comp->minimum_num_resolutions - 1].x0) *
-                                 (l_tile_comp->resolutions[l_tile_comp->minimum_num_resolutions - 1].y1 -
-                                  l_tile_comp->resolutions[l_tile_comp->minimum_num_resolutions - 1].y0));
+        l_samples = (OPJ_UINT32)((res_comp0->x1 - res_comp0->x0) *
+                                 (res_comp0->y1 - res_comp0->y0));
+        if (l_tile->numcomps >= 3) {
+            /* testcase 1336.pdf.asan.47.376 */
+            if (p_tcd->image->comps[0].resno_decoded !=
+                    p_tcd->image->comps[1].resno_decoded ||
+                    p_tcd->image->comps[0].resno_decoded !=
+                    p_tcd->image->comps[2].resno_decoded ||
+                    (OPJ_SIZE_T)(res_comp1->x1 - res_comp1->x0) *
+                    (OPJ_SIZE_T)(res_comp1->y1 - res_comp1->y0) != l_samples ||
+                    (OPJ_SIZE_T)(res_comp2->x1 - res_comp2->x0) *
+                    (OPJ_SIZE_T)(res_comp2->y1 - res_comp2->y0) != l_samples) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Tiles don't all have the same dimension. Skip the MCT step.\n");
+                return OPJ_FALSE;
+            }
+        }
     } else {
-        opj_tcd_resolution_t* l_res;
-        l_res = l_tile_comp->resolutions + p_tcd->image->comps[0].resno_decoded;
-        l_samples = (l_res->win_x1 - l_res->win_x0) *
-                    (l_res->win_y1 - l_res->win_y0);
-    }
-
-    if (l_tile->numcomps >= 3) {
         opj_tcd_resolution_t* res_comp0 = l_tile->comps[0].resolutions +
                                           p_tcd->image->comps[0].resno_decoded;
         opj_tcd_resolution_t* res_comp1 = l_tile->comps[1].resolutions +
                                           p_tcd->image->comps[1].resno_decoded;
         opj_tcd_resolution_t* res_comp2 = l_tile->comps[2].resolutions +
                                           p_tcd->image->comps[2].resno_decoded;
-        OPJ_SIZE_T l_res_samples = (OPJ_SIZE_T)(res_comp0->x1 - res_comp0->x0) *
-                                   (OPJ_SIZE_T)(res_comp0->y1 - res_comp0->y0);
-        /* testcase 1336.pdf.asan.47.376 */
-        if (p_tcd->image->comps[0].resno_decoded !=
-                p_tcd->image->comps[1].resno_decoded ||
-                p_tcd->image->comps[0].resno_decoded !=
-                p_tcd->image->comps[2].resno_decoded ||
-                (OPJ_SIZE_T)(res_comp1->x1 - res_comp1->x0) *
-                (OPJ_SIZE_T)(res_comp1->y1 - res_comp1->y0) != l_res_samples ||
-                (OPJ_SIZE_T)(res_comp2->x1 - res_comp2->x0) *
-                (OPJ_SIZE_T)(res_comp2->y1 - res_comp2->y0) != l_res_samples) {
-            opj_event_msg(p_manager, EVT_ERROR,
-                          "Tiles don't all have the same dimension. Skip the MCT step.\n");
-            return OPJ_FALSE;
-        } else if (l_tcp->mct == 2) {
+
+        l_samples = (res_comp0->win_x1 - res_comp0->win_x0) *
+                    (res_comp0->win_y1 - res_comp0->win_y0);
+        if (l_tile->numcomps >= 3) {
+            /* testcase 1336.pdf.asan.47.376 */
+            if (p_tcd->image->comps[0].resno_decoded !=
+                    p_tcd->image->comps[1].resno_decoded ||
+                    p_tcd->image->comps[0].resno_decoded !=
+                    p_tcd->image->comps[2].resno_decoded ||
+                    (OPJ_SIZE_T)(res_comp1->win_x1 - res_comp1->win_x0) *
+                    (OPJ_SIZE_T)(res_comp1->win_y1 - res_comp1->win_y0) != l_samples ||
+                    (OPJ_SIZE_T)(res_comp2->win_x1 - res_comp2->win_x0) *
+                    (OPJ_SIZE_T)(res_comp2->win_y1 - res_comp2->win_y0) != l_samples) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Tiles don't all have the same dimension. Skip the MCT step.\n");
+                return OPJ_FALSE;
+            }
+        }
+    }
+
+    if (l_tile->numcomps >= 3) {
+        if (l_tcp->mct == 2) {
             OPJ_BYTE ** l_data;
 
             if (! l_tcp->m_mct_decoding_matrix) {
