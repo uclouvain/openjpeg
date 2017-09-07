@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit c67e1cd73f6c1fca081f5445af4f65b240c40edc
+<pre class='wrap'>commit cc893a4ebfaf8c42cf1221ac82c83df91e77340b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-07 15:32:54 +0200
+
+    opj_tcd_mct_decode(): fix checks to verify MCT can be done safely. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3305 (master only)
+
+commit c67e1cd73f6c1fca081f5445af4f65b240c40edc
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-06 17:33:38 +0200
 
@@ -615,14 +621,6 @@ Date:   2017-08-13 22:57:31 +0200
     This allows more compiler optimizations.
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 0b4c3ce75d11600ebc6675bd871f78ca3c95bc60
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-08-11 15:13:35 +0200
-
-    Merge pull request #980 from szukw000/changes-for-ppc64-converttif
-    
-    Changes in converttif.c for PPC64
 
 ...</pre></div>
 
