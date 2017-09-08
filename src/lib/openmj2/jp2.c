@@ -426,7 +426,7 @@ static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image,
     max = image->numcomps;
     for (i = 0; i < max; ++i) {
         if (old_comps[i].data) {
-            opj_free(old_comps[i].data);
+            opj_image_data_free(old_comps[i].data);
         }
     }
     opj_free(old_comps);
