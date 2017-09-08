@@ -9129,6 +9129,7 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
         /* Allocate output component buffer if necessary */
         if (l_img_comp_dest->data == NULL &&
                 l_start_offset_src == 0 && l_start_offset_dest == 0 &&
+                src_data_stride == l_img_comp_dest->w &&
                 l_width_dest == l_img_comp_dest->w &&
                 l_height_dest == l_img_comp_dest->h) {
             /* If the final image matches the tile buffer, then borrow it */
