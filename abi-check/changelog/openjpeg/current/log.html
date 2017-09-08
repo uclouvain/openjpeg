@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 33167ddc13fd20313ccfcdc64141000407b68b8f
+<pre class='wrap'>commit 28094e1ebfa420f9a0bdc7a11b8d4ee5f154db35
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-08 10:56:49 +0200
+
+    opj_tcd_mct_decode(): avoid heap buffer overflow when components have not the same number of resolutions. Also fixes an issue with subtile decoding. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3331. Credit to OSS Fuzz
+
+commit 33167ddc13fd20313ccfcdc64141000407b68b8f
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-08 09:53:52 +0200
 
@@ -592,12 +598,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 13:11:36 +0200
 
     imagetotga(): fix read heap buffer overflow if numcomps &lt; 3 (#987)
-
-commit 9624b2fa4722edf77fbac631e7dacaae12c91672
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-16 12:52:33 +0200
-
-    opj_t2_encode_packet(): only emit an error about insufficiently large output buffer in FINAL_PASS mode. Fixes (master-only) regression added in 0b4fef6d1901254e41ab74ed681daba477d724c3
 
 ...</pre></div>
 
