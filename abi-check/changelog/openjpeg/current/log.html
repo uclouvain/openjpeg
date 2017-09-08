@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b73ce715d2a484d7355639d863d0418a0e5b8858
+<pre class='wrap'>commit 33167ddc13fd20313ccfcdc64141000407b68b8f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-08 09:53:52 +0200
+
+    opj_j2k_update_image_data(): restrict optimized path
+
+commit b73ce715d2a484d7355639d863d0418a0e5b8858
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-08 09:16:51 +0200
 
@@ -592,12 +598,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 12:52:33 +0200
 
     opj_t2_encode_packet(): only emit an error about insufficiently large output buffer in FINAL_PASS mode. Fixes (master-only) regression added in 0b4fef6d1901254e41ab74ed681daba477d724c3
-
-commit 4241ae6fbbf1de9658764a80944dc8108f2b4154
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-15 11:55:58 +0200
-
-    Fix assertion in debug mode / heap-based buffer overflow in opj_write_bytes_LE for Cinema profiles with numresolutions = 1 (#985)
 
 ...</pre></div>
 
