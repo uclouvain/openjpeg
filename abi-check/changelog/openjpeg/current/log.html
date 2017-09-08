@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5abd86b14bb26d1882ee1c07b03f809f85162a5d
+<pre class='wrap'>commit b73ce715d2a484d7355639d863d0418a0e5b8858
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-08 09:16:51 +0200
+
+    Use opj_image_data_free() where appropriate (adapted from https://github.com/uclouvain/openjpeg/pull/1015/commits/dab9db0723a5bb9f3d745f9dd7a0b8b3b18b8054, #1014)
+
+commit 5abd86b14bb26d1882ee1c07b03f809f85162a5d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-07 18:01:33 +0200
 
@@ -592,14 +598,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-15 11:55:58 +0200
 
     Fix assertion in debug mode / heap-based buffer overflow in opj_write_bytes_LE for Cinema profiles with numresolutions = 1 (#985)
-
-commit 52d5690a6fcba86b5f117eeac8aca1971cac3688
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-08-14 17:28:26 +0200
-
-    Merge pull request #984 from stweil/const
-    
-    Use more const qualifiers
 
 ...</pre></div>
 
