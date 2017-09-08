@@ -9,7 +9,7 @@ To build the library, type from source tree directory:
 ```
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 ```
 Binaries are then located in the 'bin' directory.
@@ -31,6 +31,7 @@ Main available cmake flags:
   * To build the shared libraries and links the executables against it: '-DBUILD\_SHARED\_LIBS:bool=on' (default: 'ON')
 > Note: when using this option, static libraries are not built and executables are dynamically linked.
   * To build the CODEC executables: '-DBUILD\_CODEC:bool=on' (default: 'ON')
+  * To build opjstyle (internal version of astyle) for OpenJPEG development: '-DWITH_ASTYLE=ON'
   * [OBSOLETE] To build the MJ2 executables: '-DBUILD\_MJ2:bool=on' (default: 'OFF')
   * [OBSOLETE] To build the JPWL executables and JPWL library: '-DBUILD\_JPWL:bool=on' (default: 'OFF')
   * [OBSOLETE] To build the JPIP client (java compiler recommended) library and executables: '-DBUILD\_JPIP:bool=on' (default: 'OFF')
@@ -61,6 +62,33 @@ Note 4 : On MacOS, if it does not work, try adding the following flag to the cma
 
 You can use cmake to generate the project files for the IDE you are using (VC2010, XCode, etc).
 Type 'cmake --help' for available generators on your platform.
+
+# Enabling CPU specific optimizations
+
+For Intel/AMD processors, OpenJPEG implements optimizations using the SSE4.1
+instruction set (for example, for the 9x7 inverse MCT transform) and the AVX2
+instruction set (for example, for the 5x3 inverse discrete wavelet transform).
+Currently, those optimizations are only available if OpenJPEG is built to
+use those instruction sets (and the resulting binary will only run on compatible
+CPUs)
+
+With gcc/clang, it is possible to enable those instruction sets with the following :
+
+cmake -DCMAKE_C_FLAGS="-O3 -msse4.1 -DNDEBUG" ..
+
+cmake -DCMAKE_C_FLAGS="-O3 -mavx2 -DNDEBUG" ..
+
+(AVX2 implies SSE4.1)
+
+Or if the binary is dedicated to run on the machine where it has
+been compiled :
+
+cmake -DCMAKE_C_FLAGS="-O3 -march=native -DNDEBUG" ..
+
+# Modifying OpenJPEG
+
+Before committing changes, run:
+scripts/prepare-commit.sh
 
 # Using OpenJPEG
 

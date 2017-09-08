@@ -146,6 +146,30 @@ opj_compress -i @INPUT_NR_PATH@/flower-minisblack-11.tif -o @TEMP_PATH@/flower-m
 opj_compress -i @INPUT_NR_PATH@/flower-minisblack-13.tif -o @TEMP_PATH@/flower-minisblack-13.tif.jp2
 opj_compress -i @INPUT_NR_PATH@/flower-minisblack-15.tif -o @TEMP_PATH@/flower-minisblack-15.tif.jp2
 
+# issue 843 Crash with invalid ppm file
+!opj_compress -i @INPUT_NR_PATH@/issue843.ppm -o @TEMP_PATH@/issue843.ppm.jp2
+
+# Test all 6 coding options individually
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_vsc.j2k -M 8
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass.j2k -M 1
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_reset.j2k -M 2
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_termall.j2k -M 4
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_pterm.j2k -M 16
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_segsym.j2k -M 32
+
+# Test a few combinations of coding options
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_termall.j2k -M 5
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_pterm.j2k -M 17
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_termall_pterm.j2k -M 20
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_termall_pterm.j2k -M 21
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_bypass_vsc_reset_termall_pterm_segsym.j2k -M 63
+
+# Test fix for #891/#892 (tiles smaller than decomposition levels)
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_empty_band.j2k -t 2591,1943 -n 2
+# Same rate as Bretagne2_4.j2k
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_empty_band_r800.j2k -t 2591,1943 -n 2 -r 800
+
+opj_compress -i @INPUT_NR_PATH@/issue982.bmp -o @TEMP_PATH@/issue982.j2k -n 1
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
@@ -246,8 +270,8 @@ opj_decompress -i @INPUT_NR_PATH@/issue211.jp2                  -o @TEMP_PATH@/i
 opj_decompress -i @INPUT_NR_PATH@/issue171.jp2                  -o @TEMP_PATH@/issue171.jp2.pgx
 # issue 171
 !opj_decompress -i @INPUT_NR_PATH@/issue165.jp2                  -o @TEMP_PATH@/issue165.jp2.pgx
-#
-!opj_decompress -i @INPUT_NR_PATH@/broken.jpc                    -o @TEMP_PATH@/broken.jpc.pgx
+# limit the decode area to avoid timeouts
+opj_decompress -i @INPUT_NR_PATH@/broken.jpc                    -o @TEMP_PATH@/broken.jpc.pgx -d 0,0,203,254
 # issue 226
 opj_decompress -i @INPUT_NR_PATH@/issue226.j2k                   -o @TEMP_PATH@/issue226.j2k.pgx
 # issue 297
@@ -379,7 +403,8 @@ opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_4.j2k.png -
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_5.j2k.png -d 4,4,7,7 -r 1
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_6.j2k.png -d 4,4,5,5 -r 1
 
-opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_8_6.j2k.png -d 9,9,12,12 -r 2
+# result is empty at this resolution
+!opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_8_6.j2k.png -d 9,9,12,12 -r 2
 
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9.j2k.png -t 0
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9_1.j2k.png -t 5
@@ -389,7 +414,9 @@ opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9_3.j2k.png -
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10.j2k.png -t 0 -r 2
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_1.j2k.png -t 5 -r 2
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_2.j2k.png -t 9 -r 2
-opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_3.j2k.png -t 15 -r 2
+
+# this tile is empty at this resolution
+!opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_3.j2k.png -t 15 -r 2
 
 opj_decompress -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_11.j2k.png -r 4
 
@@ -572,3 +599,9 @@ opj_decompress -i @INPUT_NR_PATH@/issue818.jp2 -o @TEMP_PATH@/issue818.png
 !opj_decompress -i @INPUT_NR_PATH@/issue826.jp2 -o @TEMP_PATH@/issue826.png
 # issue 820
 !opj_decompress -i @INPUT_NR_PATH@/issue820.jp2 -o @TEMP_PATH@/issue820.png
+
+# issue 979 (.j2k with different bit depth per component)
+opj_decompress -i @INPUT_NR_PATH@/issue979.j2k -o @TEMP_PATH@/issue979.j2k.pgx
+
+# https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3115
+opj_decompress -i @INPUT_NR_PATH@/dwt_interleave_h.gsr105.jp2 -o @TEMP_PATH@/dwt_interleave_h.gsr105.jp2_d_1_1_33_33.pgx -d 1,1,33,33

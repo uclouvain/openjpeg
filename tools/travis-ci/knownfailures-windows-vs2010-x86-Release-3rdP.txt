@@ -9,7 +9,6 @@ NR-RIC-subsampling_1.jp2-compare2base
 NR-RIC-subsampling_2.jp2-compare2base
 NR-RIC-zoo1.jp2-compare2base
 NR-RIC-zoo2.jp2-compare2base
-NR-ENC-Bretagne2.ppm-7-compare_dec-ref-out2base
 NR-DEC-_00042.j2k-2-decode-md5
 NR-DEC-buxI.j2k-9-decode-md5
 NR-DEC-CT_Phillips_JPEG2K_Decompr_Problem.j2k-13-decode-md5
@@ -40,8 +39,6 @@ NR-DEC-issue205.jp2-253-decode-md5
 NR-DEC-issue236-ESYCC-CDEF.jp2-254-decode-md5
 NR-DEC-issue559-eci-090-CIELab.jp2-255-decode-md5
 NR-DEC-issue559-eci-091-CIELab.jp2-256-decode-md5
-ETS-C1P0-p0_12.j2k-compare2ref
-NR-C1P0-p0_12.j2k-compare2base
 NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
 NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
 NR-DEC-issue135.j2k-68-decode-md5

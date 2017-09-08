@@ -13,9 +13,19 @@ if [ "${OPJ_CI_ABI_CHECK:-}" != "1" ]; then
 	exit 0
 fi
 
+if [ "${OPJ_CI_CC:-}" != "" ]; then
+    export CC=${OPJ_CI_CC}
+    echo "Using ${CC}"
+fi
+
+if [ "${OPJ_CI_CXX:-}" != "" ]; then
+    export CXX=${OPJ_CI_CXX}
+    echo "Using ${CXX}"
+fi
+
 OPJ_UPLOAD_ABI_REPORT=0
-#OPJ_PREVIOUS_VERSION="2.1"
-OPJ_LATEST_VERSION="2.1.1"
+#OPJ_PREVIOUS_VERSION="2.1.2"
+OPJ_LATEST_VERSION="2.2.0"
 if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
 	OPJ_LIMIT_ABI_BUILDS="-limit 3"
 else
@@ -26,7 +36,7 @@ OPJ_SSH_REPO=${OPJ_REPO/https:\/\/github.com\//git@github.com:}
 OPJ_UPLOAD_BRANCH="gh-pages"
 OPJ_UPLOAD_DIR="abi-check"
 if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
-	if [ "$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')" == "uclouvain" ] && [ "${TRAVIS_PULL_REQUEST:-}" == "false" ]; then
+	if [ "$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')" == "uclouvain" ] && [ "${TRAVIS_PULL_REQUEST:-}" == "false" ] && [ "${TRAVIS_BRANCH:-}" == "master" ]; then
 		# Upload updated report to gh-pages
 		OPJ_UPLOAD_ABI_REPORT=1
 		# Build full report
@@ -59,6 +69,10 @@ mkdir ${PWD}/tools/abi-tracker
 make -C installer-0.10 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
 export PATH=${PWD}/tools/abi-tracker/bin:$PATH
 
+# This will print configuration
+# travis-ci doesn't dump cmake version in system info, let's print it 
+cmake --version
+
 # RUN THE ABI-CHECK SCRIPTS
 
 mkdir work
@@ -71,7 +85,7 @@ rm -rf installed/openjpeg/current/*
 
 # Let's create all we need
 grep -v Git ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
-#abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
+abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
 if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
 	cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./openjpeg.json
 else
@@ -79,7 +93,11 @@ else
 	grep -v Configure ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 fi
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
-abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -rebuild openjpeg.json
+abi-monitor -v current -build openjpeg.json
+abi-monitor -v ${OPJ_LATEST_VERSION} -build openjpeg.json
+if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
+	abi-monitor -v ${OPJ_PREVIOUS_VERSION} -build openjpeg.json
+fi
 abi-tracker -build openjpeg.json
 
 EXIT_CODE=0
@@ -102,12 +120,12 @@ fi
 
 rm -rf src/openjpeg/current
 rm -rf build_logs
-
+	
 if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
 	git config user.name "OpenJPEG Travis CI"
 	git config user.email "info@openjpeg.org"
 
-	git add .
+	git add --all .
 	git commit -m "Update ABI/API compatibility reports after commit ${TRAVIS_COMMIT:-}"
 
 	# Get the deploy key by using Travis's stored variables to decrypt travis_rsa.enc

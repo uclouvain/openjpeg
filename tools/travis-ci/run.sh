@@ -30,6 +30,16 @@ if [ "${OPJ_CI_ABI_CHECK:-}" == "1" ]; then
 	exit 0
 fi
 
+if [ "${OPJ_CI_CC:-}" != "" ]; then
+    export CC=${OPJ_CI_CC}
+    echo "Using ${CC}"
+fi
+
+if [ "${OPJ_CI_CXX:-}" != "" ]; then
+    export CXX=${OPJ_CI_CXX}
+    echo "Using ${CXX}"
+fi
+
 # Set-up some variables
 if [ "${OPJ_CI_BUILD_CONFIGURATION:-}" == "" ]; then
 	export OPJ_CI_BUILD_CONFIGURATION=Release #default
@@ -101,6 +111,17 @@ elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
 	else
 		echo "Compiler not supported: ${CC}"; exit 1
 	fi
+	if [ "${OPJ_CI_INSTRUCTION_SETS-:}" == "-mavx2" ]; then
+		AVX2_AVAIL=1
+		cat /proc/cpuinfo | grep avx2 >/dev/null || AVX2_AVAIL=0
+		if [[ "${AVX2_AVAIL}" == "1" ]]; then
+			echo "AVX2 available on CPU"
+		else
+			echo "AVX2 not available on CPU. Disabling tests"
+			cat /proc/cpuinfo  | grep flags | head -n 1
+			export OPJ_CI_SKIP_TESTS=1
+		fi
+        fi
 elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
 	OPJ_OS_NAME=windows
 	if which cl > /dev/null; then
@@ -119,6 +140,15 @@ elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
 			OPJ_CC_VERSION=vs2005
 		else
 			OPJ_CC_VERSION=vs????
+		fi
+	fi
+	if [ "${OPJ_CI_INSTRUCTION_SETS-:}" == "/arch:AVX2" ]; then
+		cl $PWD/tools/travis-ci/detect-avx2.c
+		if ./detect-avx2.exe; then
+			echo "AVX2 available on CPU"
+		else
+			echo "AVX2 not available on CPU. Disabling tests"
+			export OPJ_CI_SKIP_TESTS=1
 		fi
 	fi
 else
@@ -184,10 +214,21 @@ export OPJ_BINARY_DIR=$(opjpath -m ${PWD}/build)
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
+if [ "${OPJ_SKIP_REBUILD:-}" != "1" ]; then
+    ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
+fi
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
 set +x
+
+
+
+if [ "${OPJ_CI_CHECK_STYLE:-}" == "1" ]; then
+    export OPJSTYLE=${PWD}/scripts/opjstyle
+    export PATH=${HOME}/.local/bin:${PATH}
+    scripts/verify-indentation.sh
+fi
+
 
 # Deployment if needed
 #---------------------
@@ -301,6 +342,72 @@ New/unknown test failure found!!!
 			OPJ_CI_RESULT=1
 		fi
 	fi
+fi
+
+if [ "${OPJ_CI_BUILD_FUZZERS:-}" == "1" ]; then
+    cd tests/fuzzers
+    make
+    cd ../..
+fi
+
+if [ "${OPJ_CI_PERF_TESTS:-}" == "1" ]; then
+    cd tests/performance
+    echo "Running performance tests on current version (dry-run)"
+    PATH=../../build/bin:$PATH python ./perf_test.py
+    echo "Running performance tests on current version"
+    PATH=../../build/bin:$PATH python ./perf_test.py -o /tmp/new.csv
+    if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ -d ../../kdu ]; then
+        echo "Running performances tests with Kakadu"
+        LD_LIBRARY_PATH=../../kdu PATH=../../kdu::$PATH python ./perf_test.py -kakadu -o /tmp/kakadu.csv
+        echo "Comparing current version with Kakadu"
+        python compare_perfs.py /tmp/kakadu.csv /tmp/new.csv || true
+    fi
+    cd ../..
+
+    REF_VERSION=master
+    if [ "${TRAVIS_PULL_REQUEST:-false}" == "false" ]; then
+        REF_VERSION=v2.1.2
+    fi
+    if [ ! -d ref_opj ]; then
+        git clone https://github.com/uclouvain/openjpeg ref_opj
+    fi
+    echo "Building reference version (${REF_VERSION})"
+    cd ref_opj
+    git checkout ${REF_VERSION}
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_BUILD_TYPE=${OPJ_BUILD_CONFIGURATION}
+    make -j3
+    cd ../..
+    cd tests/performance
+    echo "Running performance tests on ${REF_VERSION} version (dry-run)"
+    PATH=../../ref_opj/build/bin:$PATH python ./perf_test.py
+    echo "Running performance tests on ${REF_VERSION} version"
+    PATH=../../ref_opj/build/bin:$PATH python ./perf_test.py -o /tmp/ref.csv
+    echo "Comparing current version with ${REF_VERSION} version"
+    # we should normally set OPJ_CI_RESULT=1 in case of failure, but
+    # this is too unreliable
+    python compare_perfs.py /tmp/ref.csv /tmp/new.csv || true
+    cd ../..
+fi
+
+if [ "${OPJ_CI_PROFILE:-}" == "1" ]; then
+    rm -rf build_gprof
+    mkdir build_gprof
+    cd build_gprof
+    # We need static linking for gprof
+    cmake "-DCMAKE_C_FLAGS=-pg -O3" -DCMAKE_EXE_LINKER_FLAGS=-pg -DCMAKE_SHARED_LINKER_FLAGS=-pg -DBUILD_SHARED_LIBS=OFF ..
+    make -j3
+    cd ..
+    build_gprof/bin/opj_decompress -i data/input/nonregression/kodak_2layers_lrcp.j2c -o out.tif > /dev/null
+    echo "Most CPU consuming functions:"
+    gprof build_gprof/bin/opj_decompress gmon.out | head || true
+
+    rm -f massif.out.*
+    valgrind --tool=massif build/bin/opj_decompress -i data/input/nonregression/kodak_2layers_lrcp.j2c -o out.tif >/dev/null 2>/dev/null
+    echo ""
+    echo "Memory consumption profile:"
+    python tests/profiling/filter_massif_output.py massif.out.*
 fi
 
 exit ${OPJ_CI_RESULT}

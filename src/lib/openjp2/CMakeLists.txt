@@ -5,7 +5,7 @@ install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
  DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
 
 include_directories(
-  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h and opj_config_private.h
+  ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/src/lib/openjp2 # opj_config.h and opj_config_private.h
 )
 # Defines the source code for the library
 set(OPENJPEG_SRCS
@@ -38,8 +38,6 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_clock.h
   ${CMAKE_CURRENT_SOURCE_DIR}/pi.c
   ${CMAKE_CURRENT_SOURCE_DIR}/pi.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/raw.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/raw.h
   ${CMAKE_CURRENT_SOURCE_DIR}/t1.c
   ${CMAKE_CURRENT_SOURCE_DIR}/t1.h
   ${CMAKE_CURRENT_SOURCE_DIR}/t2.c
@@ -56,6 +54,8 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.c
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_stdint.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sparse_array.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/sparse_array.h
 )
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)
@@ -88,18 +88,26 @@ if(WIN32)
   else()
     add_definitions(-DOPJ_STATIC)
   endif()
+  add_library(${OPENJPEG_LIBRARY_NAME} ${OPENJPEG_SRCS})
+  set(INSTALL_LIBS ${OPENJPEG_LIBRARY_NAME})
+else()
+  # Builds both static and dynamic libs
+  add_library(${OPENJPEG_LIBRARY_NAME} SHARED ${OPENJPEG_SRCS})
+  add_library(openjp2_static STATIC ${OPENJPEG_SRCS})
+  set_target_properties(openjp2_static PROPERTIES OUTPUT_NAME ${OPENJPEG_LIBRARY_NAME})
+  set(INSTALL_LIBS ${OPENJPEG_LIBRARY_NAME} openjp2_static)
 endif()
-add_library(${OPENJPEG_LIBRARY_NAME} ${OPENJPEG_SRCS})
+
 if(UNIX)
   target_link_libraries(${OPENJPEG_LIBRARY_NAME} m)
 endif()
 set_target_properties(${OPENJPEG_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 if(${CMAKE_VERSION} VERSION_GREATER "2.8.11")
-  target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJPEG_LIBRARY_COMPILE_OPTIONS})
+  target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJP2_COMPILE_OPTIONS})
 endif()
 
 # Install library
-install(TARGETS ${OPENJPEG_LIBRARY_NAME}
+install(TARGETS ${INSTALL_LIBS}
   EXPORT OpenJPEGTargets
   RUNTIME DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   LIBRARY DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
@@ -185,3 +193,21 @@ endif(OPJ_USE_THREAD AND NOT Threads_FOUND)
 if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
    TARGET_LINK_LIBRARIES(${OPENJPEG_LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+
+if(BUILD_UNIT_TESTS)
+    add_executable(bench_dwt bench_dwt.c)
+    if(UNIX)
+        target_link_libraries(bench_dwt m ${OPENJPEG_LIBRARY_NAME})
+    endif()
+    if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+        target_link_libraries(bench_dwt ${CMAKE_THREAD_LIBS_INIT})
+    endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+
+    add_executable(test_sparse_array test_sparse_array.c)
+    if(UNIX)
+        target_link_libraries(test_sparse_array m ${OPENJPEG_LIBRARY_NAME})
+    endif()
+    if(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+        target_link_libraries(test_sparse_array ${CMAKE_THREAD_LIBS_INIT})
+    endif(OPJ_USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+endif(BUILD_UNIT_TESTS)
