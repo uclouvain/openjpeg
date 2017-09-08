@@ -1083,7 +1083,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
         if (!new_comps[i].data) {
             while (i > 0) {
                 -- i;
-                opj_free(new_comps[i].data);
+                opj_image_data_free(new_comps[i].data);
             }
             opj_free(new_comps);
             opj_event_msg(p_manager, EVT_ERROR,
