@@ -1520,6 +1520,15 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
             tilec->win_y1 = opj_uint_min(
                                 (OPJ_UINT32)tilec->y1,
                                 opj_uint_ceildiv(p_tcd->win_y1, image_comp->dy));
+            if (tilec->win_x1 < tilec->win_x0 ||
+                    tilec->win_y1 < tilec->win_y0) {
+                /* We should not normally go there. The circumstance is when */
+                /* the tile coordinates do not intersect the area of interest */
+                /* Upper level logic should not even try to decode that tile */
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Invalid tilec->win_xxx values\n");
+                return OPJ_FALSE;
+            }
 
             for (resno = 0; resno < tilec->numresolutions; ++resno) {
                 opj_tcd_resolution_t *res = tilec->resolutions + resno;
@@ -1973,6 +1982,16 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
         /* but we would need to take into account a stride then */
         l_samples = (OPJ_UINT32)((res_comp0->x1 - res_comp0->x0) *
                                  (res_comp0->y1 - res_comp0->y0));
+        if (l_tile->numcomps >= 3) {
+            if (l_tile_comp->minimum_num_resolutions !=
+                    l_tile->comps[1].minimum_num_resolutions ||
+                    l_tile_comp->minimum_num_resolutions !=
+                    l_tile->comps[2].minimum_num_resolutions) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Tiles don't all have the same dimension. Skip the MCT step.\n");
+                return OPJ_FALSE;
+            }
+        }
         if (l_tile->numcomps >= 3) {
             opj_tcd_resolution_t* res_comp1 = l_tile->comps[1].resolutions +
                                               l_tile_comp->minimum_num_resolutions - 1;
