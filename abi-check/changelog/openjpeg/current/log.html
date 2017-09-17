@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 28094e1ebfa420f9a0bdc7a11b8d4ee5f154db35
+<pre class='wrap'>commit 3dfc6ca2bcf06fd1adb6b6b4cecc6c092f08ba0b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-17 12:17:49 +0200
+
+    Build: make sure that -DBUILD_SHARED_LIBS:bool=off is honoured to build only the static lib (#1019)
+
+commit 28094e1ebfa420f9a0bdc7a11b8d4ee5f154db35
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-08 10:56:49 +0200
 
@@ -592,12 +598,6 @@ Date:   2017-08-16 13:36:52 +0200
     Querying TIFFTAG_EXTRASAMPLES only give information about which channel is
     the alpha channel, but we mostly ignore it for now, so remove that part of the
     code.
-
-commit ab4de904e7dc1deee83122cd2bf6e0e7f4eb2eb0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-16 13:11:36 +0200
-
-    imagetotga(): fix read heap buffer overflow if numcomps &lt; 3 (#987)
 
 ...</pre></div>
 
