@@ -9241,7 +9241,7 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
     OPJ_UINT32 it_comp;
 
     if (p_j2k->m_cp.tw == 1 && p_j2k->m_cp.th == 1 &&
-            &p_j2k->m_cp.tcps[0].m_data != NULL) {
+            p_j2k->m_cp.tcps[0].m_data != NULL) {
         /* In the case of a single-tiled image whose codestream we have already */
         /* ingested, go on */
     }
