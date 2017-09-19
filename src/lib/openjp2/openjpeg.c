@@ -441,12 +441,21 @@ OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,
 
 OPJ_BOOL OPJ_CALLCONV opj_set_decoded_components(opj_codec_t *p_codec,
         OPJ_UINT32 numcomps,
-        const OPJ_UINT32* comps_indices)
+        const OPJ_UINT32* comps_indices,
+        OPJ_BOOL apply_color_transforms)
 {
     if (p_codec) {
         opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
 
         if (! l_codec->is_decompressor) {
+            opj_event_msg(&(l_codec->m_event_mgr), EVT_ERROR,
+                          "Codec provided to the opj_set_decoded_components function is not a decompressor handler.\n");
+            return OPJ_FALSE;
+        }
+
+        if (apply_color_transforms) {
+            opj_event_msg(&(l_codec->m_event_mgr), EVT_ERROR,
+                          "apply_color_transforms = OPJ_TRUE is not supported.\n");
             return OPJ_FALSE;
         }
 

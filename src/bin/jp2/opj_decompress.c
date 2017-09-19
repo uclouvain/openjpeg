@@ -1488,7 +1488,8 @@ int main(int argc, char **argv)
         if (parameters.numcomps) {
             if (! opj_set_decoded_components(l_codec,
                                              parameters.numcomps,
-                                             parameters.comps_indices)) {
+                                             parameters.comps_indices,
+                                             OPJ_FALSE)) {
                 fprintf(stderr,
                         "ERROR -> opj_decompress: failed to set the component indices!\n");
                 opj_destroy_codec(l_codec);

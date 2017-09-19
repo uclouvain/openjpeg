@@ -1341,9 +1341,12 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,
  *
  * This function should be called after opj_read_header().
  *
- * Normally all the components are decoded. This call enables to restrict
- * the set of decoded components to the specified indices.
- * Note that neither the MCT transform nor JP2 channel transformatios will be applied.
+ * This function enables to restrict the set of decoded components to the
+ * specified indices.
+ * Note that the current implementation (apply_color_transforms == OPJ_FALSE)
+ * is such that neither the multi-component transform at codestream level,
+ * nor JP2 channel transformations will be applied.
+ * Consequently the indices are relative to the codestream.
  *
  * Note: opj_decode_tile_data() should not be used together with opj_set_decoded_components().
  *
@@ -1352,12 +1355,17 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,
  * @param   comps_indices   Array of numcomps values representing the indices
  *                          of the components to decode (relative to the
  *                          codestream, starting at 0)
+ * @param   apply_color_transforms Whether multi-component transform at codestream level
+ *                                 or JP2 channel transformations should be applied.
+ *                                 Currently this parameter should be set to OPJ_FALSE.
+ *                                 Setting it to OPJ_TRUE will result in an error.
  *
  * @return OPJ_TRUE         in case of success.
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_components(opj_codec_t *p_codec,
         OPJ_UINT32 numcomps,
-        const OPJ_UINT32* comps_indices);
+        const OPJ_UINT32* comps_indices,
+        OPJ_BOOL apply_color_transforms);
 
 /**
  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
