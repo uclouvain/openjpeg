@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 18f6696372f4c32334385f8dcc8d39ad8ac24601
+<pre class='wrap'>commit fdef69b43ce5222ac0f2a87f2fad1442ece340e8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-19 12:46:20 +0200
+
+    Fix warnings and errors when compiling with a c++ compiler (#1021)
+
+commit 18f6696372f4c32334385f8dcc8d39ad8ac24601
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-19 12:13:34 +0200
 
@@ -581,18 +587,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 17:38:47 +0200
 
     Fix build issue of JPWL by adding opj_image_data_alloc() and opj_image_data_free() to src/lib/openmj2 (#994)
-
-commit c535531f03369623b9b833ef41952c62257b507e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-16 17:20:29 +0200
-
-    opj_t2_encode_packet(): fix potential write heap buffer overflow (#992)
-
-commit dcac91b8c72f743bda7dbfa9032356bc8110098a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-16 17:09:10 +0200
-
-    opj_j2k_write_sot(): fix potential write heap buffer overflow (#991)
 
 ...</pre></div>
 
