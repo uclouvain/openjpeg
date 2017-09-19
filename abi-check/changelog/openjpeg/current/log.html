@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit ce199f42e77f972d6ee782b63492f6d861891053
+<pre class='wrap'>commit d415723fd9f2ee415e506e94ee8be8127680fdcd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-19 18:22:07 +0200
+
+    Replace  C++ style comments by C ones
+
+commit ce199f42e77f972d6ee782b63492f6d861891053
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-19 12:48:12 +0200
 
@@ -534,12 +540,6 @@ Date:   2017-08-17 16:07:19 +0200
 
     Zero-initialize tile buffer regions of skipped code-blocks, so as to make Valgrind happy
 
-commit fe338a057c39797bf61939471ebaef09e44464c7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-14 13:23:57 +0200
-
-    Sub-tile decoding: only decode precincts and codeblocks that intersect the window specified in opj_set_decode_area()
-
 commit 17ea17f487a777d14bd322ac06c4e6cb9124a226
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-17 19:05:29 +0200
@@ -557,42 +557,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-17 17:02:40 +0200
 
     convert.c: fix recently introduced -Wsign-conversion warnings
-
-commit 9f7d79fd30df3712e6bfc6d475bfa143c069c4df
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 14:52:10 +0200
-
-    opj_getopt_long(): avoid infinite loop on invalid or missing value for an option (#736)
-
-commit 1ab6e0e07a67193564811c5720a69cb28f09a809
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 12:01:16 +0200
-
-    opj_decompress_fuzzer.cpp: reject images with too big tiles. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2918. Credit to OSS Fuzz
-
-commit 2cd30c2b06ce332dede81cccad8b334cde997281
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 11:47:40 +0200
-
-    tgatoimage(): avoid excessive memory allocation attempt, and fixes unaligned load (#995)
-
-commit 09e83407fa2b53c606d3179031b8d8b31272e20c
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 11:05:53 +0200
-
-    Avoid asserting on assert(i == pcol) in opj_jp2_apply_pclr() by adding new check in opj_jp2_check_color(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3068. Credit to OSS Fuzz
-
-commit 8e6c371e66d9c579048fd336cc3365869486080a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-16 18:29:59 +0200
-
-    opj_t1_encode_cblk(): avoid uint32 overflow when numbps = 0 (which is well defined behaviour, and is properly handled here, but better avoid it to detect real issues)
-
-commit 1e387de74273c4dac618df94475556541c1caf3e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-16 17:38:47 +0200
-
-    Fix build issue of JPWL by adding opj_image_data_alloc() and opj_image_data_free() to src/lib/openmj2 (#994)
 
 ...</pre></div>
 
