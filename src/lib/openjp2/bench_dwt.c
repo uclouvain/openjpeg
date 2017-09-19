@@ -62,13 +62,14 @@ void init_tilec(opj_tcd_tilecomp_t * l_tilec,
     l_tilec->y1 = y1;
     nValues = (size_t)(l_tilec->x1 - l_tilec->x0) *
               (size_t)(l_tilec->y1 - l_tilec->y0);
-    l_tilec->data = opj_malloc(sizeof(OPJ_INT32) * nValues);
+    l_tilec->data = (OPJ_INT32*) opj_malloc(sizeof(OPJ_INT32) * nValues);
     for (i = 0; i < nValues; i++) {
         l_tilec->data[i] = getValue((OPJ_UINT32)i);
     }
     l_tilec->numresolutions = numresolutions;
-    l_tilec->resolutions = opj_calloc(l_tilec->numresolutions,
-                                      sizeof(opj_tcd_resolution_t));
+    l_tilec->resolutions = (opj_tcd_resolution_t*) opj_calloc(
+                               l_tilec->numresolutions,
+                               sizeof(opj_tcd_resolution_t));
 
     l_level_no = l_tilec->numresolutions;
     l_res = l_tilec->resolutions;

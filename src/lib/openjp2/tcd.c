@@ -1614,7 +1614,7 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
                 }
                 l_data_size *= sizeof(OPJ_INT32);
 
-                tilec->data_win = opj_image_data_alloc(l_data_size);
+                tilec->data_win = (OPJ_INT32*) opj_image_data_alloc(l_data_size);
                 if (tilec->data_win == NULL) {
                     opj_event_msg(p_manager, EVT_ERROR,
                                   "Size of tile data exceeds system limits\n");
@@ -1812,14 +1812,16 @@ static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
         l_res = l_tile_comp->resolutions;
         if (l_res) {
 
-            l_nb_resolutions = l_tile_comp->resolutions_size / sizeof(opj_tcd_resolution_t);
+            l_nb_resolutions = l_tile_comp->resolutions_size / (OPJ_UINT32)sizeof(
+                                   opj_tcd_resolution_t);
             for (resno = 0; resno < l_nb_resolutions; ++resno) {
                 l_band = l_res->bands;
                 for (bandno = 0; bandno < 3; ++bandno) {
                     l_precinct = l_band->precincts;
                     if (l_precinct) {
 
-                        l_nb_precincts = l_band->precincts_data_size / sizeof(opj_tcd_precinct_t);
+                        l_nb_precincts = l_band->precincts_data_size / (OPJ_UINT32)sizeof(
+                                             opj_tcd_precinct_t);
                         for (precno = 0; precno < l_nb_precincts; ++precno) {
                             opj_tgt_destroy(l_precinct->incltree);
                             l_precinct->incltree = 00;
@@ -2215,7 +2217,8 @@ static void opj_tcd_code_block_dec_deallocate(opj_tcd_precinct_t * p_precinct)
                         l_code_block->numbps, l_code_block->numlenbits, l_code_block->len, l_code_block->numnewpasses, l_code_block->real_num_segs, l_code_block->m_current_max_segs );*/
 
 
-        l_nb_code_blocks = p_precinct->block_size / sizeof(opj_tcd_cblk_dec_t);
+        l_nb_code_blocks = p_precinct->block_size / (OPJ_UINT32)sizeof(
+                               opj_tcd_cblk_dec_t);
         /*fprintf(stderr,"nb_code_blocks =%d\t}\n", l_nb_code_blocks);*/
 
         for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
@@ -2250,7 +2253,8 @@ static void opj_tcd_code_block_enc_deallocate(opj_tcd_precinct_t * p_precinct)
 
     opj_tcd_cblk_enc_t * l_code_block = p_precinct->cblks.enc;
     if (l_code_block) {
-        l_nb_code_blocks = p_precinct->block_size / sizeof(opj_tcd_cblk_enc_t);
+        l_nb_code_blocks = p_precinct->block_size / (OPJ_UINT32)sizeof(
+                               opj_tcd_cblk_enc_t);
 
         for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno)  {
             if (l_code_block->data) {

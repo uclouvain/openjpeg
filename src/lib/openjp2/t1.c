@@ -1065,6 +1065,7 @@ static void opj_t1_enc_clnpass_step(
     for (ci = runlen; ci < lim; ++ci) {
         OPJ_UINT32 vsc;
         opj_flag_t flags;
+        OPJ_UINT32 ctxt1;
 
         flags = *flagsp;
 
@@ -1073,7 +1074,7 @@ static void opj_t1_enc_clnpass_step(
         }
 
         if (!(flags & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U)))) {
-            OPJ_UINT32 ctxt1 = opj_t1_getctxno_zc(mqc, flags >> (ci * 3U));
+            ctxt1 = opj_t1_getctxno_zc(mqc, flags >> (ci * 3U));
 #ifdef DEBUG_ENC_CLN
             printf("   ctxt1=%d\n", ctxt1);
 #endif
@@ -1617,7 +1618,8 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         cblk_w = (OPJ_UINT32)(cblk->x1 - cblk->x0);
         cblk_h = (OPJ_UINT32)(cblk->y1 - cblk->y0);
 
-        cblk->decoded_data = opj_aligned_malloc(cblk_w * cblk_h * sizeof(OPJ_INT32));
+        cblk->decoded_data = (OPJ_INT32*)opj_aligned_malloc(cblk_w * cblk_h * sizeof(
+                                 OPJ_INT32));
         if (cblk->decoded_data == NULL) {
             if (job->p_manager_mutex) {
                 opj_mutex_lock(job->p_manager_mutex);
