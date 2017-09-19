@@ -348,7 +348,7 @@ static INLINE void opj_t1_enc_sigpass_step(opj_t1_t *t1,
     if ((flags & ((T1_SIGMA_THIS | T1_PI_THIS) << (ci * 3U))) == 0U &&
             (flags & (T1_SIGMA_NEIGHBOURS << (ci * 3U))) != 0U) {
         OPJ_UINT32 ctxt1 = opj_t1_getctxno_zc(mqc, flags >> (ci * 3U));
-        v = opj_int_abs(*datap) & one ? 1 : 0;
+        v = (opj_int_abs(*datap) & one) ? 1 : 0;
 #ifdef DEBUG_ENC_SIG
         fprintf(stderr, "   ctxt1=%d\n", ctxt1);
 #endif
@@ -735,7 +735,7 @@ static INLINE void opj_t1_enc_refpass_step(opj_t1_t *t1,
         OPJ_UINT32 ctxt = opj_t1_getctxno_mag(shift_flags);
         *nmsedec += opj_t1_getnmsedec_ref((OPJ_UINT32)opj_int_abs(*datap),
                                           (OPJ_UINT32)bpno);
-        v = opj_int_abs(*datap) & one ? 1 : 0;
+        v = (opj_int_abs(*datap) & one) ? 1 : 0;
 #ifdef DEBUG_ENC_REF
         fprintf(stderr, "  ctxt=%d\n", ctxt);
 #endif
@@ -1079,7 +1079,7 @@ static void opj_t1_enc_clnpass_step(
             printf("   ctxt1=%d\n", ctxt1);
 #endif
             opj_mqc_setcurctx(mqc, ctxt1);
-            v = opj_int_abs(*datap) & one ? 1 : 0;
+            v = (opj_int_abs(*datap) & one) ? 1 : 0;
             opj_mqc_encode(mqc, v);
             if (v) {
                 OPJ_UINT32 ctxt2, spb;
