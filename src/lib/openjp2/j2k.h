@@ -107,6 +107,8 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #endif /* USE_JPSEC */
 /* <<UniPG */
 
+#define J2K_MAX_POCS    32      /**< Maximum number of POCs */
+
 /* ----------------------------------------------------------------------- */
 
 /**
@@ -251,7 +253,7 @@ typedef struct opj_tcp {
     /** number of progression order changes */
     OPJ_UINT32 numpocs;
     /** progression order changes */
-    opj_poc_t pocs[32];
+    opj_poc_t pocs[J2K_MAX_POCS];
 
     /** number of ppt markers (reserved size) */
     OPJ_UINT32 ppt_markers_count;
