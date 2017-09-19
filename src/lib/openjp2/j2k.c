@@ -8551,7 +8551,7 @@ static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t
             break;
         }
 
-        if ((l_tot_len == 0U) || (l_tot_len < 14U)) {
+        if (l_tot_len < 14U) {
             /* last SOT until EOC or invalid Psot value */
             /* assume all is OK */
             if (! opj_stream_seek(p_stream, l_stream_pos_backup, p_manager)) {
