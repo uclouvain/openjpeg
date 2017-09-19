@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 3dfc6ca2bcf06fd1adb6b6b4cecc6c092f08ba0b
+<pre class='wrap'>commit 18f6696372f4c32334385f8dcc8d39ad8ac24601
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-19 12:13:34 +0200
+
+    Fix compilation with AppleClang 8.1.0.8020042 (#1020)
+
+commit 3dfc6ca2bcf06fd1adb6b6b4cecc6c092f08ba0b
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-17 12:17:49 +0200
 
@@ -587,17 +593,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-16 17:09:10 +0200
 
     opj_j2k_write_sot(): fix potential write heap buffer overflow (#991)
-
-commit af760007711bf93041d3eba3a41b9a48d365f303
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-16 13:36:52 +0200
-
-    tiftoimage(): fix read heap buffer overflow (#988)
-    
-    The number of components is given only by TIFFTAG_SAMPLESPERPIXEL / tiSpp.
-    Querying TIFFTAG_EXTRASAMPLES only give information about which channel is
-    the alpha channel, but we mostly ignore it for now, so remove that part of the
-    code.
 
 ...</pre></div>
 
