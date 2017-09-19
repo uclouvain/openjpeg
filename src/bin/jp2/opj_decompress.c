@@ -1503,6 +1503,14 @@ int main(int argc, char **argv)
                 goto fin;
             }
         } else {
+            if (!(parameters.DA_x0 == 0 &&
+                    parameters.DA_y0 == 0 &&
+                    parameters.DA_x1 == 0 &&
+                    parameters.DA_y1 == 0)) {
+                if (!(parameters.quiet)) {
+                    fprintf(stderr, "WARNING: -d option ignored when used together with -t\n");
+                }
+            }
 
             if (!opj_get_decoded_tile(l_codec, l_stream, image, parameters.tile_index)) {
                 fprintf(stderr, "ERROR -> opj_decompress: failed to decode tile!\n");
