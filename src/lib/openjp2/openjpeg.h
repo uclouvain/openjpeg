@@ -1336,6 +1336,29 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,
         opj_codec_t *p_codec,
         opj_image_t **p_image);
 
+
+/** Restrict the number of components to decode.
+ *
+ * This function should be called after opj_read_header().
+ *
+ * Normally all the components are decoded. This call enables to restrict
+ * the set of decoded components to the specified indices.
+ * Note that neither the MCT transform nor JP2 channel transformatios will be applied.
+ *
+ * Note: opj_decode_tile_data() should not be used together with opj_set_decoded_components().
+ *
+ * @param   p_codec         the jpeg2000 codec to read.
+ * @param   numcomps        Size of the comps_indices array.
+ * @param   comps_indices   Array of numcomps values representing the indices
+ *                          of the components to decode (relative to the
+ *                          codestream, starting at 0)
+ *
+ * @return OPJ_TRUE         in case of success.
+ */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_components(opj_codec_t *p_codec,
+        OPJ_UINT32 numcomps,
+        const OPJ_UINT32* comps_indices);
+
 /**
  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
  *
@@ -1451,6 +1474,8 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_tile_header(opj_codec_t *p_codec,
 /**
  * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
  * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
+ *
+ * Note: opj_decode_tile_data() should not be used together with opj_set_decoded_components().
  *
  * @param   p_codec         the jpeg2000 codec.
  * @param   p_tile_index    the index of the tile being decoded, this should be the value set by opj_read_tile_header.

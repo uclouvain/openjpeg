@@ -152,6 +152,10 @@ typedef struct opj_decompress_params {
     int num_threads;
     /* Quiet */
     int quiet;
+    /** number of components to decode */
+    OPJ_UINT32 numcomps;
+    /** indices of components to decode */
+    OPJ_UINT32* comps_indices;
 } opj_decompress_parameters;
 
 /* -------------------------------------------------------------------------- */
@@ -227,6 +231,10 @@ static void decode_help_display(void)
             "    If 'C' is specified (default), values are clipped.\n"
             "    If 'S' is specified, values are scaled.\n"
             "    A 0 value can be specified (meaning original bit depth).\n");
+    fprintf(stdout, "  -c first_comp_index[,second_comp_index][,...]\n"
+            "    OPTIONAL\n"
+            "    To limit the number of components to decoded.\n"
+            "    Component indices are numbered starting at 0.\n");
     fprintf(stdout, "  -force-rgb\n"
             "    Force output image colorspace to RGB\n"
             "  -upsample\n"
@@ -560,7 +568,7 @@ int parse_cmdline_decoder(int argc, char **argv,
         {"quiet", NO_ARG,  NULL, 1},
     };
 
-    const char optlist[] = "i:o:r:l:x:d:t:p:"
+    const char optlist[] = "i:o:r:l:x:d:t:p:c:"
 
                            /* UniPG>> */
 #ifdef USE_JPWL
@@ -768,6 +776,25 @@ int parse_cmdline_decoder(int argc, char **argv,
         case 'p': { /* Force precision */
             if (!parse_precision(opj_optarg, parameters)) {
                 return 1;
+            }
+        }
+        break;
+
+        /* ----------------------------------------------------- */
+        case 'c': { /* Componenets */
+            const char* iter = opj_optarg;
+            while (1) {
+                parameters->numcomps ++;
+                parameters->comps_indices = (OPJ_UINT32*) realloc(
+                                                parameters->comps_indices,
+                                                parameters->numcomps * sizeof(OPJ_UINT32));
+                parameters->comps_indices[parameters->numcomps - 1] =
+                    (OPJ_UINT32) atoi(iter);
+                iter = strchr(iter, ',');
+                if (iter == NULL) {
+                    break;
+                }
+                iter ++;
             }
         }
         break;
@@ -1015,6 +1042,9 @@ static void destroy_parameters(opj_decompress_parameters* parameters)
             free(parameters->precision);
             parameters->precision = NULL;
         }
+
+        free(parameters->comps_indices);
+        parameters->comps_indices = NULL;
     }
 }
 
@@ -1453,6 +1483,20 @@ int main(int argc, char **argv)
             opj_image_destroy(image);
             failed = 1;
             goto fin;
+        }
+
+        if (parameters.numcomps) {
+            if (! opj_set_decoded_components(l_codec,
+                                             parameters.numcomps,
+                                             parameters.comps_indices)) {
+                fprintf(stderr,
+                        "ERROR -> opj_decompress: failed to set the component indices!\n");
+                opj_destroy_codec(l_codec);
+                opj_stream_destroy(l_stream);
+                opj_image_destroy(image);
+                failed = 1;
+                goto fin;
+            }
         }
 
         if (getenv("USE_OPJ_SET_DECODED_RESOLUTION_FACTOR") != NULL) {

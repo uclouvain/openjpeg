@@ -679,6 +679,9 @@ void opj_tcd_destroy(opj_tcd_t *tcd)
             opj_free(tcd->tcd_image);
             tcd->tcd_image = 00;
         }
+
+        opj_free(tcd->used_component);
+
         opj_free(tcd);
     }
 }
@@ -1439,6 +1442,8 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
                              OPJ_UINT32 win_y0,
                              OPJ_UINT32 win_x1,
                              OPJ_UINT32 win_y1,
+                             OPJ_UINT32 numcomps_to_decode,
+                             const OPJ_UINT32 *comps_indices,
                              OPJ_BYTE *p_src,
                              OPJ_UINT32 p_max_length,
                              OPJ_UINT32 p_tile_no,
@@ -1457,7 +1462,27 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
     p_tcd->win_y1 = win_y1;
     p_tcd->whole_tile_decoding = OPJ_TRUE;
 
+    opj_free(p_tcd->used_component);
+    p_tcd->used_component = NULL;
+
+    if (numcomps_to_decode) {
+        OPJ_BOOL* used_component = (OPJ_BOOL*) opj_calloc(sizeof(OPJ_BOOL),
+                                   p_tcd->image->numcomps);
+        if (used_component == NULL) {
+            return OPJ_FALSE;
+        }
+        for (compno = 0; compno < numcomps_to_decode; compno++) {
+            used_component[ comps_indices[compno] ] = OPJ_TRUE;
+        }
+
+        p_tcd->used_component = used_component;
+    }
+
     for (compno = 0; compno < p_tcd->image->numcomps; compno++) {
+        if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+            continue;
+        }
+
         if (!opj_tcd_is_whole_tilecomp_decoding(p_tcd, compno)) {
             p_tcd->whole_tile_decoding = OPJ_FALSE;
             break;
@@ -1474,6 +1499,10 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
             /* compute l_data_size with overflow check */
             OPJ_SIZE_T res_w = (OPJ_SIZE_T)(l_res->x1 - l_res->x0);
             OPJ_SIZE_T res_h = (OPJ_SIZE_T)(l_res->y1 - l_res->y0);
+
+            if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+                continue;
+            }
 
             /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
             if (res_h > 0 && res_w > SIZE_MAX / res_h) {
@@ -1506,6 +1535,11 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
             OPJ_UINT32 resno;
             opj_tcd_tilecomp_t* tilec = &(p_tcd->tcd_image->tiles->comps[compno]);
             opj_image_comp_t* image_comp = &(p_tcd->image->comps[compno]);
+
+            if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+                continue;
+            }
+
             /* Compute the intersection of the area of interest, expressed in tile coordinates */
             /* with the tile coordinates */
             tilec->win_x0 = opj_uint_max(
@@ -1599,6 +1633,10 @@ OPJ_BOOL opj_tcd_decode_tile(opj_tcd_t *p_tcd,
 
             opj_image_data_free(tilec->data_win);
             tilec->data_win = NULL;
+
+            if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+                continue;
+            }
 
             if (w > 0 && h > 0) {
                 if (w > SIZE_MAX / h) {
@@ -1916,14 +1954,17 @@ static OPJ_BOOL opj_tcd_t1_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
         check_pterm = OPJ_TRUE;
     }
 
-    for (compno = 0; compno < l_tile->numcomps; ++compno) {
+    for (compno = 0; compno < l_tile->numcomps;
+            ++compno, ++l_tile_comp, ++l_tccp) {
+        if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+            continue;
+        }
+
         opj_t1_decode_cblks(p_tcd, &ret, l_tile_comp, l_tccp,
                             p_manager, p_manager_mutex, check_pterm);
         if (!ret) {
             break;
         }
-        ++l_tile_comp;
-        ++l_tccp;
     }
 
     opj_thread_pool_wait_completion(p_tcd->thread_pool, 0);
@@ -1942,7 +1983,11 @@ static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd)
     opj_tccp_t * l_tccp = p_tcd->tcp->tccps;
     opj_image_comp_t * l_img_comp = p_tcd->image->comps;
 
-    for (compno = 0; compno < l_tile->numcomps; compno++) {
+    for (compno = 0; compno < l_tile->numcomps;
+            compno++, ++l_tile_comp, ++l_img_comp, ++l_tccp) {
+        if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+            continue;
+        }
 
         if (l_tccp->qmfbid == 1) {
             if (! opj_dwt_decode(p_tcd, l_tile_comp,
@@ -1956,9 +2001,6 @@ static OPJ_BOOL opj_tcd_dwt_decode(opj_tcd_t *p_tcd)
             }
         }
 
-        ++l_tile_comp;
-        ++l_img_comp;
-        ++l_tccp;
     }
 
     return OPJ_TRUE;
@@ -1971,7 +2013,7 @@ static OPJ_BOOL opj_tcd_mct_decode(opj_tcd_t *p_tcd, opj_event_mgr_t *p_manager)
     opj_tcd_tilecomp_t * l_tile_comp = l_tile->comps;
     OPJ_UINT32 l_samples, i;
 
-    if (! l_tcp->mct) {
+    if (l_tcp->mct == 0 || p_tcd->used_component != NULL) {
         return OPJ_TRUE;
     }
 
@@ -2132,7 +2174,13 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
     l_tccp = p_tcd->tcp->tccps;
     l_img_comp = p_tcd->image->comps;
 
-    for (compno = 0; compno < l_tile->numcomps; compno++) {
+    for (compno = 0; compno < l_tile->numcomps;
+            compno++, ++l_img_comp, ++l_tccp, ++l_tile_comp) {
+
+        if (p_tcd->used_component != NULL && !p_tcd->used_component[compno]) {
+            continue;
+        }
+
         l_res = l_tile_comp->resolutions + l_img_comp->resno_decoded;
 
         if (!p_tcd->whole_tile_decoding) {
@@ -2191,10 +2239,6 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
                 l_current_ptr += l_stride;
             }
         }
-
-        ++l_img_comp;
-        ++l_tccp;
-        ++l_tile_comp;
     }
 
     return OPJ_TRUE;

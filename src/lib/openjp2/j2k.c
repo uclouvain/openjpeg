@@ -8266,6 +8266,11 @@ void opj_j2k_destroy(opj_j2k_t *p_j2k)
             p_j2k->m_specific_param.m_decoder.m_header_data = 00;
             p_j2k->m_specific_param.m_decoder.m_header_data_size = 0;
         }
+
+        opj_free(p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode);
+        p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode = 00;
+        p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode = 0;
+
     } else {
 
         if (p_j2k->m_specific_param.m_encoder.m_encoded_tile_data) {
@@ -8914,6 +8919,8 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
                               l_image_for_bounds->y0,
                               l_image_for_bounds->x1,
                               l_image_for_bounds->y1,
+                              p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode,
+                              p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode,
                               l_tcp->m_data,
                               l_tcp->m_data_size,
                               p_tile_index,
@@ -9026,6 +9033,11 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
             res_y1 = (OPJ_INT32)l_res->win_y1;
             src_data_stride = l_res->win_x1 - l_res->win_x0;
             p_src_data = l_tilec->data_win;
+        }
+
+        if (p_src_data == NULL) {
+            /* Happens for partial component decoding */
+            continue;
         }
 
         l_width_src = (OPJ_UINT32)(res_x1 - res_x0);
@@ -9224,6 +9236,65 @@ static OPJ_BOOL opj_j2k_update_image_dimensions(opj_image_t* p_image,
 
         l_img_comp++;
     }
+
+    return OPJ_TRUE;
+}
+
+OPJ_BOOL opj_j2k_set_decoded_components(opj_j2k_t *p_j2k,
+                                        OPJ_UINT32 numcomps,
+                                        const OPJ_UINT32* comps_indices,
+                                        opj_event_mgr_t * p_manager)
+{
+    OPJ_UINT32 i;
+    OPJ_BOOL* already_mapped;
+
+    if (p_j2k->m_private_image == NULL) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "opj_read_header() should be called before "
+                      "opj_set_decoded_components().\n");
+        return OPJ_FALSE;
+    }
+
+    already_mapped = (OPJ_BOOL*) opj_calloc(sizeof(OPJ_BOOL),
+                                            p_j2k->m_private_image->numcomps);
+    if (already_mapped == NULL) {
+        return OPJ_FALSE;
+    }
+
+    for (i = 0; i < numcomps; i++) {
+        if (comps_indices[i] >= p_j2k->m_private_image->numcomps) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Invalid component index: %u\n",
+                          comps_indices[i]);
+            opj_free(already_mapped);
+            return OPJ_FALSE;
+        }
+        if (already_mapped[comps_indices[i]]) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Component index %u used several times\n",
+                          comps_indices[i]);
+            opj_free(already_mapped);
+            return OPJ_FALSE;
+        }
+        already_mapped[comps_indices[i]] = OPJ_TRUE;
+    }
+    opj_free(already_mapped);
+
+    opj_free(p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode);
+    if (numcomps) {
+        p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode =
+            (OPJ_UINT32*) opj_malloc(numcomps * sizeof(OPJ_UINT32));
+        if (p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode == NULL) {
+            p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode = 0;
+            return OPJ_FALSE;
+        }
+        memcpy(p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode,
+               comps_indices,
+               numcomps * sizeof(OPJ_UINT32));
+    } else {
+        p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode = NULL;
+    }
+    p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode = numcomps;
 
     return OPJ_TRUE;
 }
@@ -10817,13 +10888,71 @@ static OPJ_BOOL opj_j2k_setup_decoding_tile(opj_j2k_t *p_j2k,
     return OPJ_TRUE;
 }
 
+static OPJ_BOOL opj_j2k_move_data_from_codec_to_output_image(opj_j2k_t * p_j2k,
+        opj_image_t * p_image)
+{
+    OPJ_UINT32 compno;
+
+    /* Move data and copy one information from codec to output image*/
+    if (p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode > 0) {
+        opj_image_comp_t* newcomps =
+            (opj_image_comp_t*) opj_malloc(
+                p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode *
+                sizeof(opj_image_comp_t));
+        if (newcomps == NULL) {
+            opj_image_destroy(p_j2k->m_private_image);
+            p_j2k->m_private_image = NULL;
+            return OPJ_FALSE;
+        }
+        for (compno = 0; compno < p_image->numcomps; compno++) {
+            opj_image_data_free(p_image->comps[compno].data);
+            p_image->comps[compno].data = NULL;
+        }
+        for (compno = 0;
+                compno < p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode; compno++) {
+            OPJ_UINT32 src_compno =
+                p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode[compno];
+            memcpy(&(newcomps[compno]),
+                   &(p_j2k->m_output_image->comps[src_compno]),
+                   sizeof(opj_image_comp_t));
+            newcomps[compno].resno_decoded =
+                p_j2k->m_output_image->comps[src_compno].resno_decoded;
+            newcomps[compno].data = p_j2k->m_output_image->comps[src_compno].data;
+            p_j2k->m_output_image->comps[src_compno].data = NULL;
+        }
+        for (compno = 0; compno < p_image->numcomps; compno++) {
+            assert(p_j2k->m_output_image->comps[compno].data == NULL);
+            opj_image_data_free(p_j2k->m_output_image->comps[compno].data);
+            p_j2k->m_output_image->comps[compno].data = NULL;
+        }
+        p_image->numcomps = p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode;
+        opj_free(p_image->comps);
+        p_image->comps = newcomps;
+    } else {
+        for (compno = 0; compno < p_image->numcomps; compno++) {
+            p_image->comps[compno].resno_decoded =
+                p_j2k->m_output_image->comps[compno].resno_decoded;
+            opj_image_data_free(p_image->comps[compno].data);
+            p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+#if 0
+            char fn[256];
+            sprintf(fn, "/tmp/%d.raw", compno);
+            FILE *debug = fopen(fn, "wb");
+            fwrite(p_image->comps[compno].data, sizeof(OPJ_INT32),
+                   p_image->comps[compno].w * p_image->comps[compno].h, debug);
+            fclose(debug);
+#endif
+            p_j2k->m_output_image->comps[compno].data = NULL;
+        }
+    }
+    return OPJ_TRUE;
+}
+
 OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
                         opj_stream_private_t * p_stream,
                         opj_image_t * p_image,
                         opj_event_mgr_t * p_manager)
 {
-    OPJ_UINT32 compno;
-
     if (!p_image) {
         return OPJ_FALSE;
     }
@@ -10874,23 +11003,7 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
     }
 
     /* Move data and copy one information from codec to output image*/
-    for (compno = 0; compno < p_image->numcomps; compno++) {
-        p_image->comps[compno].resno_decoded =
-            p_j2k->m_output_image->comps[compno].resno_decoded;
-        opj_image_data_free(p_image->comps[compno].data);
-        p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
-#if 0
-        char fn[256];
-        sprintf(fn, "/tmp/%d.raw", compno);
-        FILE *debug = fopen(fn, "wb");
-        fwrite(p_image->comps[compno].data, sizeof(OPJ_INT32),
-               p_image->comps[compno].w * p_image->comps[compno].h, debug);
-        fclose(debug);
-#endif
-        p_j2k->m_output_image->comps[compno].data = NULL;
-    }
-
-    return OPJ_TRUE;
+    return opj_j2k_move_data_from_codec_to_output_image(p_j2k, p_image);
 }
 
 OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
@@ -11005,20 +11118,7 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
     }
 
     /* Move data and copy one information from codec to output image*/
-    for (compno = 0; compno < p_image->numcomps; compno++) {
-        p_image->comps[compno].resno_decoded =
-            p_j2k->m_output_image->comps[compno].resno_decoded;
-
-        if (p_image->comps[compno].data) {
-            opj_image_data_free(p_image->comps[compno].data);
-        }
-
-        p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
-
-        p_j2k->m_output_image->comps[compno].data = NULL;
-    }
-
-    return OPJ_TRUE;
+    return opj_j2k_move_data_from_codec_to_output_image(p_j2k, p_image);
 }
 
 OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k,
