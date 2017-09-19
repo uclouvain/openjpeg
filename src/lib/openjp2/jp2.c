@@ -162,7 +162,7 @@ static OPJ_BOOL opj_jp2_read_ftyp(opj_jp2_t *jp2,
                                   opj_event_mgr_t * p_manager);
 
 static OPJ_BOOL opj_jp2_skip_jp2c(opj_jp2_t *jp2,
-                                  opj_stream_private_t *cio,
+                                  opj_stream_private_t *stream,
                                   opj_event_mgr_t * p_manager);
 
 /**
