@@ -170,6 +170,7 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                         if (x_incr == 4) {
                             /* Same code as general branch, but the compiler */
                             /* can have an efficient memcpy() */
+                            (void)(x_incr); /* trick to silent cppcheck duplicateBranch warning */
                             for (j = 0; j < y_incr; j++) {
                                 memcpy(dest_ptr, src_ptr, sizeof(OPJ_INT32) * x_incr);
                                 dest_ptr += buf_line_stride;
@@ -249,6 +250,7 @@ static OPJ_BOOL opj_sparse_array_int32_read_or_write(
                     if (x_incr == 4) {
                         /* Same code as general branch, but the compiler */
                         /* can have an efficient memcpy() */
+                        (void)(x_incr); /* trick to silent cppcheck duplicateBranch warning */
                         for (j = 0; j < y_incr; j++) {
                             memcpy(dest_ptr, src_ptr, sizeof(OPJ_INT32) * x_incr);
                             dest_ptr += block_width;
