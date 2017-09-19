@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8df07d5866c9e3517bf04a7abee4a07a04735df4
+<pre class='wrap'>commit 9cba05762ded66b803df94b00adbd5a97727da95
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-20 00:43:54 +0200
+
+    Avoid index-out-of-bounds access when invoking opj_compress with -n 11 or higher. But not a proper fix itself (refs #493)
+
+commit 8df07d5866c9e3517bf04a7abee4a07a04735df4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-19 18:35:52 +0200
 
@@ -383,24 +389,6 @@ Date:   2017-09-01 16:30:29 +0200
     * For full-tile decoding at reduced resolution, only allocate the tile buffer to
       the reduced size, instead of the full-resolution size.
 
-commit aa7198146b995fe2993ce24f5715057b7da0386d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:21:39 +0200
-
-    opj_compress: reorder checks related to code block dimensions, to avoid potential int overflow
-
-commit 0a25dceca7761ee3f16cbb2ced87b915a948b25e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:20:51 +0200
-
-    opj_j2k_setup_encoder(): validate code block width/height
-
-commit 84bbb4a8743a93d567f40d7233d5196105c8d84e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:12:45 +0200
-
-    opj_t1_allocate_buffers(): remove useless overflow checks
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -546,47 +534,11 @@ Date:   2017-08-18 13:39:20 +0200
 
     pgxtoimage(): fix write stack buffer overflow (#997)
 
-commit 028c504a43e962a725c4fd73d6642ee73c653e1b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 12:30:11 +0200
-
-    test_decode_area: fix to make it work with odd image dimensions
-
 commit 5597522cac96b1bc6d48a447751b1c6049248eef
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-18 10:16:38 +0200
 
     bmp_read_rle8_data(): avoid potential infinite loop (#996)
-
-commit 5d12806091eab0659431fefcefdb797b09f8e884
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 19:18:48 +0200
-
-    opj_j2k_update_rates(): grow tile size buffer for some situations
-
-commit 4b0bfbfabc3ce1cc4c6d18dc7113b9f6335372d4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 16:07:19 +0200
-
-    Zero-initialize tile buffer regions of skipped code-blocks, so as to make Valgrind happy
-
-commit 17ea17f487a777d14bd322ac06c4e6cb9124a226
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 19:05:29 +0200
-
-    Fix -Wconversion warning
-
-commit fd8448ed446a935da3210821a783e794ede3c599
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 17:04:48 +0200
-
-    bench_dwt.c: fix signedness related warnings
-
-commit da046b73a89806eae2f7f461c2a46bda7e07aaa8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-17 17:02:40 +0200
-
-    convert.c: fix recently introduced -Wsign-conversion warnings
 
 ...</pre></div>
 
