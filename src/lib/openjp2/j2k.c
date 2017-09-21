@@ -9301,7 +9301,7 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
     }
 
     /* Up */
-    if (p_start_x < 0) {
+    if (p_start_y < 0) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Up position of the decoded area (region_y0=%d) should be >= 0.\n",
                       p_start_y);
