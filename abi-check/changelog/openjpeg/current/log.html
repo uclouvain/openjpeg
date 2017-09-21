@@ -20,7 +20,29 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 4c8aba2add074c4a8101156037e9ca7051bc4baf
+<pre class='wrap'>commit e5a561b5d86e6292832a7baefdcdf24e25821ae3
+Merge: 4c8aba2 f92d30f
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-09-21 17:39:24 +0200
+
+    Merge pull request #1024 from stweil/warnings
+    
+    Add missing newline at end of file
+
+commit f92d30f9e7340f50294cca438c1fb62fb4fb03dd
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2017-09-14 22:02:41 +0200
+
+    Add missing newline at end of file
+    
+    This fixes warnings from the clang compiler:
+    
+    /openjpeg/src/lib/openjp2/sparse_array.h:141:32: warning:
+     no newline at end of file [-Wnewline-eof]
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 4c8aba2add074c4a8101156037e9ca7051bc4baf
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-21 14:37:01 +0200
 
@@ -378,15 +400,6 @@ Date:   2017-09-01 16:30:45 +0200
 
     opj_j2k_decode_tiles(): apply whole single tile image decoding optimization to reading at reduced resolution as well
 
-commit 98b93103613c90753fb6c57696f9403f8ea0b1d6
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:44 +0200
-
-    Various changes to allow tile buffers of more than 4giga pixels
-    
-    Untested though, since that means a tile buffer of at least 16 GB. So
-    there might be places where uint32 overflow on multiplication still occur...
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -471,12 +484,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-23 18:58:32 +0200
 
     opj_dwt_decode_partial_97(): perf improvement: limit copy of coefficients at end of horizontal pass to actual range of interest
-
-commit 8180eeace13ffceef5dd7c3f80be156e36181846
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:06:53 +0200
-
-    test_tile_encoder: fix checks on argc
 
 ...</pre></div>
 
