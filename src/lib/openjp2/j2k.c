@@ -11139,8 +11139,9 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                 l_max_tile_size = l_current_tile_size;
             }
             if (l_current_data == NULL) {
-                /* Shoul not happen in practice, but will avoid Coverity to */
+                /* Should not happen in practice, but will avoid Coverity to */
                 /* complain about a null pointer dereference */
+                assert(0);
                 return OPJ_FALSE;
             }
 
