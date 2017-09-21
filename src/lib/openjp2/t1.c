@@ -1999,6 +1999,10 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
         }
     } else if (cblk->numchunks == 1) {
         cblkdata = cblk->chunks[0].data;
+    } else {
+        /* Not sure if that can happen in practice, but avoid Coverity to */
+        /* think we will dereference a null cblkdta pointer */
+        return OPJ_TRUE;
     }
 
     /* For subtile decoding, directly decode in the decoded_data buffer of */
