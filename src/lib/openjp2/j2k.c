@@ -4668,9 +4668,11 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
 
     if (p_j2k->m_specific_param.m_encoder.m_current_tile_part_number == 0) {
         p_tile_coder->tcd_image->tiles->packno = 0;
+#ifdef deadcode
         if (l_cstr_info) {
             l_cstr_info->packno = 0;
         }
+#endif
     }
 
     *p_data_written = 0;
