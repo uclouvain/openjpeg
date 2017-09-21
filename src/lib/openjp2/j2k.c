@@ -11136,6 +11136,11 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                 l_current_data = l_new_current_data;
                 l_max_tile_size = l_current_tile_size;
             }
+            if (l_current_data == NULL) {
+                /* Shoul not happen in practice, but will avoid Coverity to */
+                /* complain about a null pointer dereference */
+                return OPJ_FALSE;
+            }
 
             /* copy image data (32 bit) to l_current_data as contiguous, all-component, zero offset buffer */
             /* 32 bit components @ 8 bit precision get converted to 8 bit */
