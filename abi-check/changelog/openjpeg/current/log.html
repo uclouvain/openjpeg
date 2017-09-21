@@ -20,7 +20,37 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 16b701659d7d9f72aade1d695818a645e2f603a6
+<pre class='wrap'>commit 113e0976e232ac2110d50405f8629787f3f53cfc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-21 14:14:32 +0200
+
+    Comment dead code (Coverity CID 94681)
+
+commit 39082fc6654553f43f6f3a73e0eeaedebc4bdf9f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-21 14:13:16 +0200
+
+    Workaround Coverity CID 113061
+
+commit 7711307d865d46ca1bb8bb152071178b10066d05
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-21 14:10:49 +0200
+
+    Workaround Coverity CID 169392
+
+commit 19e157871ff28bb5e8296f9e9f9aee6a17a37ace
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-21 14:06:03 +0200
+
+    opj_j2k_get_default_thread_count(): validate value of OPJ_NUM_THREADS to fix Coverity 179465 and 179463
+
+commit 68e596dada2ee38a66b01494e5a425e623688300
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-21 13:54:14 +0200
+
+    Fix copy&amp;paste error (Coverity CID 169394)
+
+commit 16b701659d7d9f72aade1d695818a645e2f603a6
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-20 01:06:02 +0200
 
@@ -357,50 +387,6 @@ Date:   2017-09-01 16:30:41 +0200
 
     TCD: allow tile buffer to be greater than 4GB on 64 bit hosts (but number of pixels must remain under 4 billion)
 
-commit d1299d9670d766006a7a162a770d3b70eaeef9bd
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:39 +0200
-
-    Fix compiler warning in release mode
-
-commit d5153ba404fa13b9c6e7b2c20d4d128aac718fba
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:37 +0200
-
-    Remove limitation that prevents from opening images bigger than 4 billion pixels
-    
-    However the intermediate buffer for decoding must still be smaller than 4
-    billion pixels, so this is useful for decoding at a lower resolution level,
-    or subtile decoding.
-
-commit c37e360a5112b5471168e429159f61b74c0c2f58
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:35 +0200
-
-    opj_tcd_init_tile(): fix typo on overflow detection condition (introduced in previous commit)
-
-commit eee5104a8885227167a349b6dabdb1f72a04d9d0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:32 +0200
-
-    opj_dwt_decode_partial_tile(): avoid undefined behaviour in lifting operation by properly initializing working buffer
-
-commit f9e9942330f476b66ac4a35d0ae521200878f343
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:29 +0200
-
-    Sub-tile decoding: only allocate tile component buffer of the needed dimension
-    
-    Instead of being the full tile size.
-    
-    * Use a sparse array mechanism to store code-blocks and intermediate stages of
-      IDWT.
-    * IDWT, DC level shift and MCT stages are done just on that smaller array.
-    * Improve copy of tile component array to final image, by saving an intermediate
-      buffer.
-    * For full-tile decoding at reduced resolution, only allocate the tile buffer to
-      the reduced size, instead of the full-resolution size.
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -497,60 +483,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-21 19:02:04 +0200
 
     j2k.c: fix comment, and remove FIXME
-
-commit 24d069e3ffa2286930a2e7e2638431ea1de6846a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 17:19:13 +0200
-
-    Add comment
-
-commit e9bbc6d3dde946bdb5195f053f24b91335d5d84c
-Merge: 3eed024 17a7ac4
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-08-21 13:02:07 +0200
-
-    Merge pull request #1001 from rouault/subtile_decoding_stage2
-    
-    Subtile decoding: only apply IDWT on areas that participate to the window of interest
-
-commit 17a7ac42d581c537cfc1da4324e53047ad82b13e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 12:25:38 +0200
-
-    Add comments for filter_width values
-
-commit f87c5ef7ebef3d7a908e98f2de1b6a0336ae57ae
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-20 22:02:41 +0200
-
-    Subtile decoding: only do 9x7 IDWT computations on relevant areas of tile-component buffer.
-
-commit 3eed024eb45534f86537404e08d08fa572a40782
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-19 15:45:54 +0200
-
-    pgxtoimage(): avoid excessive memory allocation attempt (#999)
-
-commit 5d403250561398f7ba3041d9eb8c893bd680dd72
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 15:08:51 +0200
-
-    Subtile decoding: only do 5x3 IDWT computations on relevant areas of tile-component buffer.
-    
-    This lowers 'bin/opj_decompress -i ../MAPA.jp2 -o out.tif -d 0,0,256,256'
-    down to 0.860s
-
-commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 13:39:20 +0200
-
-    pgxtoimage(): fix write stack buffer overflow (#997)
-
-commit 5597522cac96b1bc6d48a447751b1c6049248eef
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 10:16:38 +0200
-
-    bmp_read_rle8_data(): avoid potential infinite loop (#996)
 
 ...</pre></div>
 
