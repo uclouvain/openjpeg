@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 113e0976e232ac2110d50405f8629787f3f53cfc
+<pre class='wrap'>commit 4c8aba2add074c4a8101156037e9ca7051bc4baf
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-21 14:37:01 +0200
+
+    Add assertion
+
+commit 113e0976e232ac2110d50405f8629787f3f53cfc
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-21 14:14:32 +0200
 
@@ -381,12 +387,6 @@ Date:   2017-09-01 16:30:44 +0200
     Untested though, since that means a tile buffer of at least 16 GB. So
     there might be places where uint32 overflow on multiplication still occur...
 
-commit 008a12d4fce0a7b1eabc51e04ed339be759646e2
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:41 +0200
-
-    TCD: allow tile buffer to be greater than 4GB on 64 bit hosts (but number of pixels must remain under 4 billion)
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -477,12 +477,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-21 23:06:53 +0200
 
     test_tile_encoder: fix checks on argc
-
-commit c97666f72ba26a7ceb64931963b988a6f8f377f9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 19:02:04 +0200
-
-    j2k.c: fix comment, and remove FIXME
 
 ...</pre></div>
 
