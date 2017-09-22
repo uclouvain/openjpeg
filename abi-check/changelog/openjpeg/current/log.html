@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e5a561b5d86e6292832a7baefdcdf24e25821ae3
+<pre class='wrap'>commit 3dfb01228b4f06a538c2a19352e34fd172e20fe3
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-22 12:03:29 +0200
+
+    INSTALL.md: add instructions to build with Visual Studio (#1023, from Winfried instructions)
+
+commit e5a561b5d86e6292832a7baefdcdf24e25821ae3
 Merge: 4c8aba2 f92d30f
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-09-21 17:39:24 +0200
@@ -394,12 +400,6 @@ Date:   2017-09-01 16:30:48 +0200
     * Future improvements might involve improving opj_decompress, and the image writing logic,
       to use this strategy.
 
-commit 5d07d463fdb0a5eeffa90eba1566cc21697011b8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:45 +0200
-
-    opj_j2k_decode_tiles(): apply whole single tile image decoding optimization to reading at reduced resolution as well
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -478,12 +478,6 @@ Date:   2017-08-24 13:23:25 +0200
     Remove -NR-DEC-p1_06.j2k-156-decode and NR-DEC-p1_06.j2k-164-decode from knownfailures
     
     and make them explicit failures. The result images are empty at the requested resolution
-
-commit bc71bd1219269057ea18e6acbc77a96ec37aba82
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-23 18:58:32 +0200
-
-    opj_dwt_decode_partial_97(): perf improvement: limit copy of coefficients at end of horizontal pass to actual range of interest
 
 ...</pre></div>
 
