@@ -63,6 +63,20 @@ Note 4 : On MacOS, if it does not work, try adding the following flag to the cma
 You can use cmake to generate the project files for the IDE you are using (VC2010, XCode, etc).
 Type 'cmake --help' for available generators on your platform.
 
+Examples for Windows with Visual Studio C++ compiler:
+
+If using directly the cl compiler:
+
+```
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE:string="Release" -DBUILD_SHARED_LIBS:bool=on -DCMAKE_INSTALL_PREFIX:path="C:/Users/Public" -DCMAKE_LIBRARY_PATH:path="C:/Users/Public" -DCMAKE_INCLUDE_PATH:path="C:/Users/Public/include" ..
+```
+
+If you do not want directly use the cl compiler, you could use:
+
+```
+cmake  -DCMAKE_BUILD_TYPE:string="Release" -DBUILD_SHARED_LIBS:bool=on -DCMAKE_INSTALL_PREFIX:path="C:/Users/Public" -DCMAKE_LIBRARY_PATH:path="C:/Users/Public" -DCMAKE_INCLUDE_PATH:path="C:/Users/Public/include" ..
+```
+
 # Enabling CPU specific optimizations
 
 For Intel/AMD processors, OpenJPEG implements optimizations using the SSE4.1
