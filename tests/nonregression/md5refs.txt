@@ -310,3 +310,9 @@ d1bb7f93f4c0eb984b2e9c54e544b7e9  broken.jpc_1.pgx
 b704ad4c0cfefffd78c20a54f5541265  dwt_interleave_h.gsr105.jp2_d_1_1_33_33_0.pgx
 9d7fe43cd7a50b7bbaf712926ee11980  dwt_interleave_h.gsr105.jp2_d_1_1_33_33_1.pgx
 0960b580f991ff10f693b24aa41ad58b  dwt_interleave_h.gsr105.jp2_d_1_1_33_33_2.pgx
+fa7382fd8b2e788b28b807e200dd95b9  file1.jp2-c0.tif
+ed79b7fe443955cdefba2b039ddc846a  file1.jp2-c0_1_2.tif
+ac8f6ab3acc9c692ed7c41bd62a0e1e8  file1.jp2-c0-r1.tif
+fbfcf662b6f7549574b2885490fbcf12  file1.jp2-c0-d10_20_30_40.tif
+fa7382fd8b2e788b28b807e200dd95b9  file1.jp2-c0-t0.tif
+ac8f6ab3acc9c692ed7c41bd62a0e1e8  file1.jp2-c0-t0-r1.tif

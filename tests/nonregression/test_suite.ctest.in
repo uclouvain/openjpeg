@@ -605,3 +605,21 @@ opj_decompress -i @INPUT_NR_PATH@/issue979.j2k -o @TEMP_PATH@/issue979.j2k.pgx
 
 # https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3115
 opj_decompress -i @INPUT_NR_PATH@/dwt_interleave_h.gsr105.jp2 -o @TEMP_PATH@/dwt_interleave_h.gsr105.jp2_d_1_1_33_33.pgx -d 1,1,33,33
+
+# partial component decoding with opj_decode(): one component
+opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0.tif -c 0
+# partial component decoding with opj_decode(): 3 components without MCT
+opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0_1_2.tif -c 0,1,2
+# partial component decoding with opj_decode() and opj_set_decode_area()
+opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0-d10_20_30_40.tif -c 0 -d 10,20,30,40
+# partial component decoding with opj_decode() and reduced resolution
+opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0-r1.tif -c 0 -r 1
+# partial component decoding with opj_get_decoded_tile()
+opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0-t0.tif -c 0 -t 0
+# partial component decoding with opj_get_decoded_tile() and reduced resolution
+opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0-t0-r1.tif -c 0 -t 0 -r 1
+
+# try to map the same component several times
+!opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0_0.tif -c 0,0
+# try to map an invalid component
+!opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c10.tif -c 10
