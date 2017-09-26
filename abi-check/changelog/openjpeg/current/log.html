@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 3f0de88c7bf4e56826987aa7d3edb5acdd4399f2
+<pre class='wrap'>commit d45ccb048bb2166c5d975f4e1b8acaf8ba3d198d
+Merge: 3f0de88 e17bbde
+Author: Antonin Descampe &lt;antonin@descampe.net&gt;
+Date:   2017-09-26 18:30:20 -0300
+
+    Merge pull request #1022 from rouault/partial_component_decoding
+    
+    Add capability to decode only a subset of all components of an image.
+
+commit 3f0de88c7bf4e56826987aa7d3edb5acdd4399f2
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-22 21:43:09 +0200
 
@@ -143,6 +152,28 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-19 18:22:07 +0200
 
     Replace  C++ style comments by C ones
+
+commit e17bbde9066600528ab523adee69d9c9c33ba157
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-19 17:48:07 +0200
+
+    opj_set_decoded_components(): add a provision for a apply_color_transforms parameter in case we support it in the future
+
+commit 7e2b6bebff12eab8bdc17fc9af017e8c11652f4f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-19 16:52:07 +0200
+
+    Add capability to decode only a subset of all components of an image.
+    
+    This adds a opj_set_decoded_components(opj_codec_t *p_codec,
+    OPJ_UINT32 numcomps, const OPJ_UINT32* comps_indices) function,
+    and equivalent "opj_decompress -c compno[,compno]*" option.
+    
+    When specified, neither the MCT transform nor JP2 channel transformations
+    will be applied.
+    
+    Tests added for various combinations of whole image vs tiled-based decoding,
+    full or reduced resolution, use of decode area or not.
 
 commit ce199f42e77f972d6ee782b63492f6d861891053
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -393,6 +424,102 @@ Date:   2017-09-01 16:30:50 +0200
 
     Optimize reading/write into sparse array
 
+commit 0ae3cba3404674bbe2028ea9a801301a4c951b33
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:48 +0200
+
+    Allow several repeated calls to opj_set_decode_area() and opj_decode() for single-tiled images
+    
+    * Only works for single-tiled images --&gt; will error out cleanly, as currently
+      in other cases
+    * Save re-reading the codestream for the tile, and re-use code-blocks of the
+      previous decoding pass.
+    * Future improvements might involve improving opj_decompress, and the image writing logic,
+      to use this strategy.
+
+commit 5d07d463fdb0a5eeffa90eba1566cc21697011b8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:45 +0200
+
+    opj_j2k_decode_tiles(): apply whole single tile image decoding optimization to reading at reduced resolution as well
+
+commit 98b93103613c90753fb6c57696f9403f8ea0b1d6
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:44 +0200
+
+    Various changes to allow tile buffers of more than 4giga pixels
+    
+    Untested though, since that means a tile buffer of at least 16 GB. So
+    there might be places where uint32 overflow on multiplication still occur...
+
+commit 008a12d4fce0a7b1eabc51e04ed339be759646e2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:41 +0200
+
+    TCD: allow tile buffer to be greater than 4GB on 64 bit hosts (but number of pixels must remain under 4 billion)
+
+commit d1299d9670d766006a7a162a770d3b70eaeef9bd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:39 +0200
+
+    Fix compiler warning in release mode
+
+commit d5153ba404fa13b9c6e7b2c20d4d128aac718fba
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:37 +0200
+
+    Remove limitation that prevents from opening images bigger than 4 billion pixels
+    
+    However the intermediate buffer for decoding must still be smaller than 4
+    billion pixels, so this is useful for decoding at a lower resolution level,
+    or subtile decoding.
+
+commit c37e360a5112b5471168e429159f61b74c0c2f58
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:35 +0200
+
+    opj_tcd_init_tile(): fix typo on overflow detection condition (introduced in previous commit)
+
+commit eee5104a8885227167a349b6dabdb1f72a04d9d0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:32 +0200
+
+    opj_dwt_decode_partial_tile(): avoid undefined behaviour in lifting operation by properly initializing working buffer
+
+commit f9e9942330f476b66ac4a35d0ae521200878f343
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:30:29 +0200
+
+    Sub-tile decoding: only allocate tile component buffer of the needed dimension
+    
+    Instead of being the full tile size.
+    
+    * Use a sparse array mechanism to store code-blocks and intermediate stages of
+      IDWT.
+    * IDWT, DC level shift and MCT stages are done just on that smaller array.
+    * Improve copy of tile component array to final image, by saving an intermediate
+      buffer.
+    * For full-tile decoding at reduced resolution, only allocate the tile buffer to
+      the reduced size, instead of the full-resolution size.
+
+commit aa7198146b995fe2993ce24f5715057b7da0386d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:21:39 +0200
+
+    opj_compress: reorder checks related to code block dimensions, to avoid potential int overflow
+
+commit 0a25dceca7761ee3f16cbb2ced87b915a948b25e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:20:51 +0200
+
+    opj_j2k_setup_encoder(): validate code block width/height
+
+commit 84bbb4a8743a93d567f40d7233d5196105c8d84e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:12:45 +0200
+
+    opj_t1_allocate_buffers(): remove useless overflow checks
+
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -463,6 +590,116 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-24 14:09:31 +0200
 
     imagetopgx(): improve performance in 8 bit case (relates to broken.jpc test case)
+
+commit fdcd4e6365731cc1015213e424068131bcd1f31f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-24 13:23:25 +0200
+
+    Remove -NR-DEC-p1_06.j2k-156-decode and NR-DEC-p1_06.j2k-164-decode from knownfailures
+    
+    and make them explicit failures. The result images are empty at the requested resolution
+
+commit bc71bd1219269057ea18e6acbc77a96ec37aba82
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-23 18:58:32 +0200
+
+    opj_dwt_decode_partial_97(): perf improvement: limit copy of coefficients at end of horizontal pass to actual range of interest
+
+commit 8180eeace13ffceef5dd7c3f80be156e36181846
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 23:06:53 +0200
+
+    test_tile_encoder: fix checks on argc
+
+commit c97666f72ba26a7ceb64931963b988a6f8f377f9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 19:02:04 +0200
+
+    j2k.c: fix comment, and remove FIXME
+
+commit 24d069e3ffa2286930a2e7e2638431ea1de6846a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 17:19:13 +0200
+
+    Add comment
+
+commit e9bbc6d3dde946bdb5195f053f24b91335d5d84c
+Merge: 3eed024 17a7ac4
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-08-21 13:02:07 +0200
+
+    Merge pull request #1001 from rouault/subtile_decoding_stage2
+    
+    Subtile decoding: only apply IDWT on areas that participate to the window of interest
+
+commit 17a7ac42d581c537cfc1da4324e53047ad82b13e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-21 12:25:38 +0200
+
+    Add comments for filter_width values
+
+commit f87c5ef7ebef3d7a908e98f2de1b6a0336ae57ae
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-20 22:02:41 +0200
+
+    Subtile decoding: only do 9x7 IDWT computations on relevant areas of tile-component buffer.
+
+commit 3eed024eb45534f86537404e08d08fa572a40782
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-19 15:45:54 +0200
+
+    pgxtoimage(): avoid excessive memory allocation attempt (#999)
+
+commit 5d403250561398f7ba3041d9eb8c893bd680dd72
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 15:08:51 +0200
+
+    Subtile decoding: only do 5x3 IDWT computations on relevant areas of tile-component buffer.
+    
+    This lowers 'bin/opj_decompress -i ../MAPA.jp2 -o out.tif -d 0,0,256,256'
+    down to 0.860s
+
+commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 13:39:20 +0200
+
+    pgxtoimage(): fix write stack buffer overflow (#997)
+
+commit 028c504a43e962a725c4fd73d6642ee73c653e1b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 12:30:11 +0200
+
+    test_decode_area: fix to make it work with odd image dimensions
+
+commit 5597522cac96b1bc6d48a447751b1c6049248eef
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-18 10:16:38 +0200
+
+    bmp_read_rle8_data(): avoid potential infinite loop (#996)
+
+commit 5d12806091eab0659431fefcefdb797b09f8e884
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 19:18:48 +0200
+
+    opj_j2k_update_rates(): grow tile size buffer for some situations
+
+commit 4b0bfbfabc3ce1cc4c6d18dc7113b9f6335372d4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 16:07:19 +0200
+
+    Zero-initialize tile buffer regions of skipped code-blocks, so as to make Valgrind happy
+
+commit fe338a057c39797bf61939471ebaef09e44464c7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-14 13:23:57 +0200
+
+    Sub-tile decoding: only decode precincts and codeblocks that intersect the window specified in opj_set_decode_area()
+
+commit 17ea17f487a777d14bd322ac06c4e6cb9124a226
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-08-17 19:05:29 +0200
+
+    Fix -Wconversion warning
 
 ...</pre></div>
 
