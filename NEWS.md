@@ -6,8 +6,11 @@ More details in the [Changelog](https://github.com/uclouvain/openjpeg/blob/maste
 
 No API/ABI break compared to v2.2.0 but additional symbols for subset of components decoding (hence the MINOR version bump).
 
-* Subtile decoding: when setting a window of interest through the API function opj_set_decode_area(), only codeblocks that intersect this window are now decoded (i.e. MCT, IDWT, and entropy decoding are only done on the window of interest). Moreover, memory allocation now depends on the size of the window of interest (instead of the full tile size). [\#990](https://github.com/uclouvain/openjpeg/pull/990) [\#1001](https://github.com/uclouvain/openjpeg/pull/1001) [\#1010](https://github.com/uclouvain/openjpeg/pull/1010)
-* Ability to decode only a subset of components. This adds a opj_set_decoded_components(opj_codec_t p_codec, OPJ_UINT32 numcomps, const OPJ_UINT32 comps_indices, OPJ_BOOL apply_color_transforms) function, and equivalent "opj_decompress -c compno[,compno]*" option. [\#1022](https://github.com/uclouvain/openjpeg/pull/1022)
+* Subtile decoding: when setting a window of interest through the API function opj_set_decode_area(), only codeblocks that intersect this window are now decoded (i.e. MCT, IDWT, and entropy decoding are only done on the window of interest). Moreover, memory allocation now depends on the size of the window of interest (instead of the full tile size). 
+[\#990](https://github.com/uclouvain/openjpeg/pull/990) [\#1001](https://github.com/uclouvain/openjpeg/pull/1001) [\#1010](https://github.com/uclouvain/openjpeg/pull/1010)
+* Ability to decode only a subset of components. This adds the following function `opj_set_decoded_components(opj_codec_t p_codec, OPJ_UINT32 numcomps, const OPJ_UINT32 comps_indices, OPJ_BOOL apply_color_transforms)` and equivalent `opj_decompress -c compno[,compno]*` 
+option. 
+[\#1022](https://github.com/uclouvain/openjpeg/pull/1022)
 * Many bug fixes (including security fixes)
 
 ## OpenJPEG 2.2.0 (August 2017)
