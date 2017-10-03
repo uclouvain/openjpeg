@@ -7,14 +7,14 @@
 
 # The OPENJPEG version number.
 set(OPENJPEG_MAJOR_VERSION "2")
-set(OPENJPEG_MINOR_VERSION "2")
+set(OPENJPEG_MINOR_VERSION "3")
 set(OPENJPEG_BUILD_VERSION "0")
 
 # The libraries.
 set(OPENJPEG_LIBRARIES "openjp2")
 
 # The CMake macros dir.
-set(OPENJPEG_CMAKE_DIR "lib/openjpeg-2.2")
+set(OPENJPEG_CMAKE_DIR "lib/openjpeg-2.3")
 
 # The configuration options.
 set(OPENJPEG_BUILD_SHARED_LIBS "ON")
@@ -26,7 +26,7 @@ get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   # This is an install tree
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
-  get_filename_component(OPENJPEG_INCLUDE_ROOT "${SELF_DIR}/../../include/openjpeg-2.2" ABSOLUTE)
+  get_filename_component(OPENJPEG_INCLUDE_ROOT "${SELF_DIR}/../../include/openjpeg-2.3" ABSOLUTE)
   set(OPENJPEG_INCLUDE_DIRS ${OPENJPEG_INCLUDE_ROOT})
 
 else()

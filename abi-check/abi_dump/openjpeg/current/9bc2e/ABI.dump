@@ -7,7 +7,7 @@ $VAR1 = {
                          'openjpeg.h' => 1
                        },
           'Language' => 'C',
-          'LibraryName' => 'libopenjp2.so.2.2.0',
+          'LibraryName' => 'libopenjp2.so.2.3.0',
           'LibraryVersion' => 'current',
           'NameSpaces' => {},
           'Needed' => {
@@ -1132,7 +1132,7 @@ $VAR1 = {
                                '__gmon_start__' => 'sysconf@@GLIBC_2.2.5'
                              },
           'Symbols' => {
-                         'libopenjp2.so.2.2.0' => {
+                         'libopenjp2.so.2.3.0' => {
                                                     '_fini' => 1,
                                                     '_init' => 1,
                                                     'opj_codec_set_threads' => 1,
@@ -3416,7 +3416,7 @@ $VAR1 = {
                                   }
                         },
           'UndefinedSymbols' => {
-                                  'libopenjp2.so.2.2.0' => {
+                                  'libopenjp2.so.2.3.0' => {
                                                              '_ITM_deregisterTMCloneTable' => 0,
                                                              '_ITM_registerTMCloneTable' => 0,
                                                              '_Jv_RegisterClasses' => 0,
