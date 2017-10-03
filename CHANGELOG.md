@@ -5,9 +5,9 @@
 
 **Implemented enhancements:**
 
-- Subtile decoding: only decode precincts and codeblocks that intersect the window specified in opj_set_decode_area() [\#990](https://github.com/uclouvain/openjpeg/pull/990) ([rouault](https://github.com/rouault))
-- Subtile decoding: only apply IDWT on areas that participate to the window of interest [\#1001](https://github.com/uclouvain/openjpeg/pull/1001) ([rouault](https://github.com/rouault))
-- Subtile decoding: memory use reduction and perf improvements [\#1010](https://github.com/uclouvain/openjpeg/pull/1010) ([rouault](https://github.com/rouault))
+- Sub-tile decoding: only decode precincts and codeblocks that intersect the window specified in opj_set_decode_area() [\#990](https://github.com/uclouvain/openjpeg/pull/990) ([rouault](https://github.com/rouault))
+- Sub-tile decoding: only apply IDWT on areas that participate to the window of interest [\#1001](https://github.com/uclouvain/openjpeg/pull/1001) ([rouault](https://github.com/rouault))
+- Sub-tile decoding: memory use reduction and perf improvements [\#1010](https://github.com/uclouvain/openjpeg/pull/1010) ([rouault](https://github.com/rouault))
 - Add capability to decode only a subset of all components of an image. [\#1022](https://github.com/uclouvain/openjpeg/pull/1022) ([rouault](https://github.com/rouault))
 
 **Fixed bugs:**
