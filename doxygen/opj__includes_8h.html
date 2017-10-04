@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.3.0</span>
    </div>
   </td>
  </tr>
@@ -91,6 +91,7 @@
 <code>#include &quot;<a class="el" href="t2_8h_source.html">t2.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="mct_8h_source.html">mct.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="opj__intmath_8h_source.html">opj_intmath.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="sparse__array_8h_source.html">sparse_array.h</a>&quot;</code><br />
 <code>#include &quot;openjpwl/jpwl.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="opj__codec_8h_source.html">opj_codec.h</a>&quot;</code><br />
 </div>
@@ -112,6 +113,8 @@ Macros</h2></td></tr>
 <tr class="separator:a47acbf7ae97e1ef7371a1c92a42505b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cd74f16e8d8d462ad6f4c7a6103ba40"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="opj__includes_8h.html#a8cd74f16e8d8d462ad6f4c7a6103ba40">OPJ_NOSANITIZE</a>(kind)</td></tr>
 <tr class="separator:a8cd74f16e8d8d462ad6f4c7a6103ba40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2af533efd81cc83803126d5b03fe4470"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="opj__includes_8h.html#a2af533efd81cc83803126d5b03fe4470">OPJ_UNUSED</a>(x)&#160;&#160;&#160;(void)x</td></tr>
+<tr class="separator:a2af533efd81cc83803126d5b03fe4470"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -228,7 +231,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">opj_dwt_decode_real()</a>, <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#ga20cf3c3ce3f470e6311e96bf6e365cb0">opj_t1_decode_cblks()</a>, <a class="el" href="group___t1.html#gada55dfa54a9324f948a3383ed95aedc5">opj_t1_encode_cblks()</a>, <a class="el" href="group___d_w_t.html#ga8894826af3ccbb0ca37f78750eb4e891">opj_v4dwt_decode_step1()</a>, <a class="el" href="group___d_w_t.html#ga094fd3d3e5a1a1f8b00c5340872f037e">opj_v4dwt_interleave_h()</a>, and <a class="el" href="group___d_w_t.html#gafd9564a93feba5c3a554ee00b2332ef8">opj_v4dwt_interleave_v()</a>.</p>
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>, <a class="el" href="dwt_8c.html#a7e47f416bc6f3987a9b2139c302f4104">opj_dwt_decode_tile_97()</a>, <a class="el" href="sparse__array_8c.html#a175c52e28cac6cad5ccdc24200e67a60">opj_sparse_array_int32_read_or_write()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, <a class="el" href="group___t1.html#gada55dfa54a9324f948a3383ed95aedc5">opj_t1_encode_cblks()</a>, <a class="el" href="group___d_w_t.html#ga1b8fe916391895a354a2e6b212e67642">opj_v4dwt_decode_step1()</a>, <a class="el" href="group___d_w_t.html#gaeb2244c199cc00c61ab77923ed990fef">opj_v4dwt_interleave_h()</a>, and <a class="el" href="group___d_w_t.html#gad2c0e70f3693666723d335f33c474263">opj_v4dwt_interleave_v()</a>.</p>
 
 </div>
 </div>
@@ -264,6 +267,22 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define OPJ_STAT_STRUCT_T&#160;&#160;&#160;struct stat</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a2af533efd81cc83803126d5b03fe4470"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPJ_UNUSED</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;(void)x</td>
         </tr>
       </table>
 </div><div class="memdoc">

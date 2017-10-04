@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.3.0</span>
    </div>
   </td>
  </tr>
@@ -100,6 +100,18 @@ Macros</h2></td></tr>
 <tr class="separator:a3e7f7c2b83a6d6b6b89173813f66b4c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dfda884d0091fcbed7c98012b2e02f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a9dfda884d0091fcbed7c98012b2e02f0">OPJ_DD_</a>(i)&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#a04bb4ccf4b75deb37b6c6ba2157e0c63">OPJ_D</a>(0):((i)&gt;=sn?<a class="el" href="dwt_8c.html#a04bb4ccf4b75deb37b6c6ba2157e0c63">OPJ_D</a>(sn-1):<a class="el" href="dwt_8c.html#a04bb4ccf4b75deb37b6c6ba2157e0c63">OPJ_D</a>(i)))</td></tr>
 <tr class="separator:a9dfda884d0091fcbed7c98012b2e02f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa562d980e9d094b810afd2c547e0272e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(i,  off)&#160;&#160;&#160;a[(<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>)(i)*2*4+off]</td></tr>
+<tr class="separator:aa562d980e9d094b810afd2c547e0272e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f463d83f7b65c98846ac6f8715639b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(i,  off)&#160;&#160;&#160;a[(1+(<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>)(i)*2)*4+off]</td></tr>
+<tr class="separator:a4f463d83f7b65c98846ac6f8715639b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac59aa174b08f4ccf0abe3c42f080e0d2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#ac59aa174b08f4ccf0abe3c42f080e0d2">OPJ_S__off</a>(i,  off)&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(0,off):((i)&gt;=sn?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(sn-1,off):<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(i,off)))</td></tr>
+<tr class="separator:ac59aa174b08f4ccf0abe3c42f080e0d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3862e5469ad6763d33036cbbff91218"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#aa3862e5469ad6763d33036cbbff91218">OPJ_D__off</a>(i,  off)&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(0,off):((i)&gt;=dn?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(dn-1,off):<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(i,off)))</td></tr>
+<tr class="separator:aa3862e5469ad6763d33036cbbff91218"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab11d5e5ba51eb51baa6d38cf83e93799"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#ab11d5e5ba51eb51baa6d38cf83e93799">OPJ_SS__off</a>(i,  off)&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(0,off):((i)&gt;=dn?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(dn-1,off):<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(i,off)))</td></tr>
+<tr class="separator:ab11d5e5ba51eb51baa6d38cf83e93799"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af350a6832f8d0c3f07a5860db0fc77f4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#af350a6832f8d0c3f07a5860db0fc77f4">OPJ_DD__off</a>(i,  off)&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(0,off):((i)&gt;=sn?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(sn-1,off):<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(i,off)))</td></tr>
+<tr class="separator:af350a6832f8d0c3f07a5860db0fc77f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -115,20 +127,20 @@ Functions</h2></td></tr>
 <tr class="separator:aa1a47075793852c4d73935ab6c4305d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8fc877331f6639b1d2f166451177f7f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#af8fc877331f6639b1d2f166451177f7f">opj_idwt53_h</a> (const <a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *dwt, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tiledp)</td></tr>
 <tr class="separator:af8fc877331f6639b1d2f166451177f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa741e88e981684828174e88c8bb5c473"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#aa741e88e981684828174e88c8bb5c473">opj_idwt3_v_cas0</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tmp, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> len, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tiledp_col, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> stride)</td></tr>
-<tr class="memdesc:aa741e88e981684828174e88c8bb5c473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vertical inverse 5x3 wavelet transform for one column, when top-most pixel is on even coordinate.  <a href="#aa741e88e981684828174e88c8bb5c473">More...</a><br /></td></tr>
-<tr class="separator:aa741e88e981684828174e88c8bb5c473"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c7dea3463dc30fd40ff44d3e37d6402"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a1c7dea3463dc30fd40ff44d3e37d6402">opj_idwt3_v_cas1</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tmp, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> len, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tiledp_col, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> stride)</td></tr>
-<tr class="memdesc:a1c7dea3463dc30fd40ff44d3e37d6402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vertical inverse 5x3 wavelet transform for one column, when top-most pixel is on odd coordinate.  <a href="#a1c7dea3463dc30fd40ff44d3e37d6402">More...</a><br /></td></tr>
-<tr class="separator:a1c7dea3463dc30fd40ff44d3e37d6402"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6b25268462aa5ebb4875b540c3b18ec"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#ae6b25268462aa5ebb4875b540c3b18ec">opj_idwt53_v</a> (const <a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *dwt, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tiledp_col, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> stride, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> nb_cols)</td></tr>
-<tr class="separator:ae6b25268462aa5ebb4875b540c3b18ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9334a52e412121d2c84f8a70425bd79"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#af9334a52e412121d2c84f8a70425bd79">opj_idwt3_v_cas0</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tmp, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> len, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tiledp_col, const <a class="el" href="openjpeg_8h.html#aba7397be054e36dc0284a6589736135e">OPJ_SIZE_T</a> stride)</td></tr>
+<tr class="memdesc:af9334a52e412121d2c84f8a70425bd79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vertical inverse 5x3 wavelet transform for one column, when top-most pixel is on even coordinate.  <a href="#af9334a52e412121d2c84f8a70425bd79">More...</a><br /></td></tr>
+<tr class="separator:af9334a52e412121d2c84f8a70425bd79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24cbf39b6edcfc800c87e8553d14953a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a24cbf39b6edcfc800c87e8553d14953a">opj_idwt3_v_cas1</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tmp, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> len, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tiledp_col, const <a class="el" href="openjpeg_8h.html#aba7397be054e36dc0284a6589736135e">OPJ_SIZE_T</a> stride)</td></tr>
+<tr class="memdesc:a24cbf39b6edcfc800c87e8553d14953a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vertical inverse 5x3 wavelet transform for one column, when top-most pixel is on odd coordinate.  <a href="#a24cbf39b6edcfc800c87e8553d14953a">More...</a><br /></td></tr>
+<tr class="separator:a24cbf39b6edcfc800c87e8553d14953a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d0100f401523ca7327c578e038bdda0"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a9d0100f401523ca7327c578e038bdda0">opj_idwt53_v</a> (const <a class="el" href="group___d_w_t.html#gab2b2c4ee2776b99c8ecb88b296a620a8">opj_dwt_t</a> *dwt, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *tiledp_col, <a class="el" href="openjpeg_8h.html#aba7397be054e36dc0284a6589736135e">OPJ_SIZE_T</a> stride, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> nb_cols)</td></tr>
+<tr class="separator:a9d0100f401523ca7327c578e038bdda0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga791590b5a5c6637fc4809fe4dd793ce0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga791590b5a5c6637fc4809fe4dd793ce0">opj_dwt_encode</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec)</td></tr>
 <tr class="memdesc:ga791590b5a5c6637fc4809fe4dd793ce0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward 5-3 wavelet transform in 2-D.  <a href="group___d_w_t.html#ga791590b5a5c6637fc4809fe4dd793ce0">More...</a><br /></td></tr>
 <tr class="separator:ga791590b5a5c6637fc4809fe4dd793ce0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga851ac455d3e28b8f39a9e3b0818a8196"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga851ac455d3e28b8f39a9e3b0818a8196">opj_dwt_decode</a> (<a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *tp, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
-<tr class="memdesc:ga851ac455d3e28b8f39a9e3b0818a8196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse 5-3 wavelet transform in 2-D.  <a href="group___d_w_t.html#ga851ac455d3e28b8f39a9e3b0818a8196">More...</a><br /></td></tr>
-<tr class="separator:ga851ac455d3e28b8f39a9e3b0818a8196"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga67d22fad344dd6d7b1b3b3a237bea8d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga67d22fad344dd6d7b1b3b3a237bea8d6">opj_dwt_decode</a> (<a class="el" href="group___t_c_d.html#ga27d4f057f1b892c5a38296d044803e3d">opj_tcd_t</a> *p_tcd, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
+<tr class="memdesc:ga67d22fad344dd6d7b1b3b3a237bea8d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse 5-3 wavelet transform in 2-D.  <a href="group___d_w_t.html#ga67d22fad344dd6d7b1b3b3a237bea8d6">More...</a><br /></td></tr>
+<tr class="separator:ga67d22fad344dd6d7b1b3b3a237bea8d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga42f534b2676d3b3f221f7a4c7a56506c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga42f534b2676d3b3f221f7a4c7a56506c">opj_dwt_getgain</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> orient)</td></tr>
 <tr class="memdesc:ga42f534b2676d3b3f221f7a4c7a56506c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the gain of a subband for the reversible 5-3 DWT.  <a href="group___d_w_t.html#ga42f534b2676d3b3f221f7a4c7a56506c">More...</a><br /></td></tr>
 <tr class="separator:ga42f534b2676d3b3f221f7a4c7a56506c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -151,9 +163,31 @@ Functions</h2></td></tr>
 <tr class="separator:ab6701233c67d89f96c5328f2627a6233"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b001cbb0e2278c374cead2046ea4023"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a2b001cbb0e2278c374cead2046ea4023">opj_dwt_decode_v_func</a> (void *user_data, <a class="el" href="structopj__tls__t.html">opj_tls_t</a> *tls)</td></tr>
 <tr class="separator:a2b001cbb0e2278c374cead2046ea4023"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga403bd8bf5833ad7b859499006bc94bfc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">opj_dwt_decode_real</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
-<tr class="memdesc:ga403bd8bf5833ad7b859499006bc94bfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse 9-7 wavelet transform in 2-D.  <a href="group___d_w_t.html#ga403bd8bf5833ad7b859499006bc94bfc">More...</a><br /></td></tr>
-<tr class="separator:ga403bd8bf5833ad7b859499006bc94bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9f1030974db43df751380437e5167af"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#aa9f1030974db43df751380437e5167af">opj_dwt_interleave_partial_h</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *dest, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *sa, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> sa_line, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> sn, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_l_x0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_l_x1, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_h_x0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_h_x1)</td></tr>
+<tr class="separator:aa9f1030974db43df751380437e5167af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7a304bcf13f2427c0a6835e6c527d3e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#ad7a304bcf13f2427c0a6835e6c527d3e">opj_dwt_interleave_partial_v</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *dest, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *sa, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> sa_col, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> nb_cols, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> sn, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_l_y0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_l_y1, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_h_y0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> win_h_y1)</td></tr>
+<tr class="separator:ad7a304bcf13f2427c0a6835e6c527d3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a4d5e05c76cd5c053c352a279efe3fe"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a6a4d5e05c76cd5c053c352a279efe3fe">opj_dwt_decode_partial_1</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> dn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_l_x0, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_l_x1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_h_x0, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_h_x1)</td></tr>
+<tr class="separator:a6a4d5e05c76cd5c053c352a279efe3fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b5d49615ec89ef1726ca79aa44fecec"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a8b5d49615ec89ef1726ca79aa44fecec">opj_dwt_decode_partial_1_parallel</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> nb_cols, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> dn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_l_x0, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_l_x1, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_h_x0, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> win_h_x1)</td></tr>
+<tr class="separator:a8b5d49615ec89ef1726ca79aa44fecec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80d6e09d9efb0ed5832601fe356ad0f6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a80d6e09d9efb0ed5832601fe356ad0f6">opj_dwt_get_band_coordinates</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> resno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> bandno, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> tcx0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> tcy0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> tcx1, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> tcy1, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *tbx0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *tby0, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *tbx1, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *tby1)</td></tr>
+<tr class="separator:a80d6e09d9efb0ed5832601fe356ad0f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53029ae915e8e9763da64cb55b31b437"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a53029ae915e8e9763da64cb55b31b437">opj_dwt_segment_grow</a> (<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> filter_width, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> max_size, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *start, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *end)</td></tr>
+<tr class="separator:a53029ae915e8e9763da64cb55b31b437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57c042791753ac46c7bb073abcc245ba"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a57c042791753ac46c7bb073abcc245ba">opj_dwt_init_sparse_array</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
+<tr class="separator:a57c042791753ac46c7bb073abcc245ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5137e0c3c1dcf46d22aa2915499322a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#ae5137e0c3c1dcf46d22aa2915499322a">opj_v4dwt_interleave_partial_h</a> (<a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *dwt, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *sa, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> sa_line, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> remaining_height)</td></tr>
+<tr class="separator:ae5137e0c3c1dcf46d22aa2915499322a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2dc1074fbe4206e06f9e2ceb70f8d0a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#aa2dc1074fbe4206e06f9e2ceb70f8d0a">opj_v4dwt_interleave_partial_v</a> (<a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> dwt, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *sa, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> sa_col, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> nb_elts_read)</td></tr>
+<tr class="separator:aa2dc1074fbe4206e06f9e2ceb70f8d0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e47f416bc6f3987a9b2139c302f4104"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a7e47f416bc6f3987a9b2139c302f4104">opj_dwt_decode_tile_97</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
+<tr class="separator:a7e47f416bc6f3987a9b2139c302f4104"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75cd080404aadce6662457dec7cc9d21"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dwt_8c.html#a75cd080404aadce6662457dec7cc9d21">opj_dwt_decode_partial_97</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
+<tr class="separator:a75cd080404aadce6662457dec7cc9d21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadfd8b0e16f120a93b65b922bb2476c87"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gadfd8b0e16f120a93b65b922bb2476c87">opj_dwt_decode_real</a> (<a class="el" href="group___t_c_d.html#ga27d4f057f1b892c5a38296d044803e3d">opj_tcd_t</a> *p_tcd, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
+<tr class="memdesc:gadfd8b0e16f120a93b65b922bb2476c87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse 9-7 wavelet transform in 2-D.  <a href="group___d_w_t.html#gadfd8b0e16f120a93b65b922bb2476c87">More...</a><br /></td></tr>
+<tr class="separator:gadfd8b0e16f120a93b65b922bb2476c87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Local static functions</div></td></tr>
 <tr class="memitem:ga0b6cd2e3590b6c11297128ef42b00fe2"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga0b6cd2e3590b6c11297128ef42b00fe2">opj_dwt_deinterleave_h</a> (<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *b, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> dn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> sn, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> cas)</td></tr>
 <tr class="memdesc:ga0b6cd2e3590b6c11297128ef42b00fe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward lazy transform (horizontal)  <a href="group___d_w_t.html#ga0b6cd2e3590b6c11297128ef42b00fe2">More...</a><br /></td></tr>
@@ -173,20 +207,22 @@ Functions</h2></td></tr>
 <tr class="memitem:ga473550255363b8acb0c9b10a6dbac434"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile</a> (<a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *tp, <a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> i)</td></tr>
 <tr class="memdesc:ga473550255363b8acb0c9b10a6dbac434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse wavelet transform in 2-D.  <a href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">More...</a><br /></td></tr>
 <tr class="separator:ga473550255363b8acb0c9b10a6dbac434"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga74b827f7914de05bf5bfc52894894803"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numres)</td></tr>
+<tr class="separator:ga74b827f7914de05bf5bfc52894894803"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf5d11346c5468f428d60d40e7dfced26"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gaf5d11346c5468f428d60d40e7dfced26">opj_dwt_encode_procedure</a> (<a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *tilec, void(*p_function)(<a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>))</td></tr>
 <tr class="separator:gaf5d11346c5468f428d60d40e7dfced26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac2fffad328e477aa744b59f2872e5603"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gac2fffad328e477aa744b59f2872e5603">opj_dwt_max_resolution</a> (<a class="el" href="group___t_c_d.html#gad1d24a03a43040a0a219f65711215ce8">opj_tcd_resolution_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> r, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> i)</td></tr>
 <tr class="separator:gac2fffad328e477aa744b59f2872e5603"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3863bfa7b97c708892b1b607eb6380d8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga3863bfa7b97c708892b1b607eb6380d8">opj_v4dwt_decode</a> (<a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> dwt)</td></tr>
 <tr class="separator:ga3863bfa7b97c708892b1b607eb6380d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga094fd3d3e5a1a1f8b00c5340872f037e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga094fd3d3e5a1a1f8b00c5340872f037e">opj_v4dwt_interleave_h</a> (<a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> w, <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> x, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> size)</td></tr>
-<tr class="separator:ga094fd3d3e5a1a1f8b00c5340872f037e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafd9564a93feba5c3a554ee00b2332ef8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gafd9564a93feba5c3a554ee00b2332ef8">opj_v4dwt_interleave_v</a> (<a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> v, <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> a, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> x, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> nb_elts_read)</td></tr>
-<tr class="separator:gafd9564a93feba5c3a554ee00b2332ef8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8894826af3ccbb0ca37f78750eb4e891"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga8894826af3ccbb0ca37f78750eb4e891">opj_v4dwt_decode_step1</a> (<a class="el" href="unionopj__v4__t.html">opj_v4_t</a> *w, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> count, const <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> c)</td></tr>
-<tr class="separator:ga8894826af3ccbb0ca37f78750eb4e891"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7747f9ab1af32a7f60377d99ef53900"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gad7747f9ab1af32a7f60377d99ef53900">opj_v4dwt_decode_step2</a> (<a class="el" href="unionopj__v4__t.html">opj_v4_t</a> *l, <a class="el" href="unionopj__v4__t.html">opj_v4_t</a> *w, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> k, <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> m, <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> c)</td></tr>
-<tr class="separator:gad7747f9ab1af32a7f60377d99ef53900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaeb2244c199cc00c61ab77923ed990fef"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gaeb2244c199cc00c61ab77923ed990fef">opj_v4dwt_interleave_h</a> (<a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> dwt, <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> a, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> width, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> remaining_height)</td></tr>
+<tr class="separator:gaeb2244c199cc00c61ab77923ed990fef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad2c0e70f3693666723d335f33c474263"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#gad2c0e70f3693666723d335f33c474263">opj_v4dwt_interleave_v</a> (<a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> dwt, <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a> a, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> width, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> nb_elts_read)</td></tr>
+<tr class="separator:gad2c0e70f3693666723d335f33c474263"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1b8fe916391895a354a2e6b212e67642"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga1b8fe916391895a354a2e6b212e67642">opj_v4dwt_decode_step1</a> (<a class="el" href="unionopj__v4__t.html">opj_v4_t</a> *w, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> start, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> end, const <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> c)</td></tr>
+<tr class="separator:ga1b8fe916391895a354a2e6b212e67642"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga59badba9f44c47c0ad31010961abffd8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___d_w_t.html#ga59badba9f44c47c0ad31010961abffd8">opj_v4dwt_decode_step2</a> (<a class="el" href="unionopj__v4__t.html">opj_v4_t</a> *l, <a class="el" href="unionopj__v4__t.html">opj_v4_t</a> *w, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> start, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> end, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> m, <a class="el" href="openjpeg_8h.html#a62c71ae712322de0bef73cebae23fa04">OPJ_FLOAT32</a> c)</td></tr>
+<tr class="separator:ga59badba9f44c47c0ad31010961abffd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -229,7 +265,7 @@ Local data structures</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a6a4d5e05c76cd5c053c352a279efe3fe">opj_dwt_decode_partial_1()</a>, <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
 
 </div>
 </div>
@@ -247,7 +283,63 @@ Local data structures</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a6a4d5e05c76cd5c053c352a279efe3fe">opj_dwt_decode_partial_1()</a>, <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa3862e5469ad6763d33036cbbff91218"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPJ_D__off</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">i, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">off&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(0,off):((i)&gt;=dn?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(dn-1,off):<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(i,off)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a8b5d49615ec89ef1726ca79aa44fecec">opj_dwt_decode_partial_1_parallel()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a4f463d83f7b65c98846ac6f8715639b9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPJ_D_off</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">i, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">off&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;a[(1+(<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>)(i)*2)*4+off]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a8b5d49615ec89ef1726ca79aa44fecec">opj_dwt_decode_partial_1_parallel()</a>.</p>
 
 </div>
 </div>
@@ -265,7 +357,35 @@ Local data structures</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a6a4d5e05c76cd5c053c352a279efe3fe">opj_dwt_decode_partial_1()</a>, <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af350a6832f8d0c3f07a5860db0fc77f4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPJ_DD__off</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">i, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">off&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(0,off):((i)&gt;=sn?<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(sn-1,off):<a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>(i,off)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a8b5d49615ec89ef1726ca79aa44fecec">opj_dwt_decode_partial_1_parallel()</a>.</p>
 
 </div>
 </div>
@@ -283,7 +403,7 @@ Local data structures</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a6a4d5e05c76cd5c053c352a279efe3fe">opj_dwt_decode_partial_1()</a>, <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
 
 </div>
 </div>
@@ -301,7 +421,63 @@ Local data structures</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a6a4d5e05c76cd5c053c352a279efe3fe">opj_dwt_decode_partial_1()</a>, <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac59aa174b08f4ccf0abe3c42f080e0d2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPJ_S__off</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">i, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">off&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(0,off):((i)&gt;=sn?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(sn-1,off):<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(i,off)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a8b5d49615ec89ef1726ca79aa44fecec">opj_dwt_decode_partial_1_parallel()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa562d980e9d094b810afd2c547e0272e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPJ_S_off</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">i, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">off&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;a[(<a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>)(i)*2*4+off]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a8b5d49615ec89ef1726ca79aa44fecec">opj_dwt_decode_partial_1_parallel()</a>.</p>
 
 </div>
 </div>
@@ -331,7 +507,35 @@ Local data structures</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a6a4d5e05c76cd5c053c352a279efe3fe">opj_dwt_decode_partial_1()</a>, <a class="el" href="group___d_w_t.html#ga98ee55372f7bad698b27e61ae58f3955">opj_dwt_encode_1()</a>, and <a class="el" href="group___d_w_t.html#ga2951099dd464175bcf192755f843fe56">opj_dwt_encode_1_real()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab11d5e5ba51eb51baa6d38cf83e93799"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OPJ_SS__off</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">i, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">off&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;((i)&lt;0?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(0,off):((i)&gt;=dn?<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(dn-1,off):<a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>(i,off)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a8b5d49615ec89ef1726ca79aa44fecec">opj_dwt_decode_partial_1_parallel()</a>.</p>
 
 </div>
 </div>
@@ -374,6 +578,236 @@ Local data structures</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a6a4d5e05c76cd5c053c352a279efe3fe"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_dwt_decode_partial_1 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>dn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>sn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>cas</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_x0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_x1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_x0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_x1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="dwt_8c.html#a04bb4ccf4b75deb37b6c6ba2157e0c63">OPJ_D</a>, <a class="el" href="dwt_8c.html#a78d3fbca149e143d6a82303cab0198da">OPJ_D_</a>, <a class="el" href="dwt_8c.html#a9dfda884d0091fcbed7c98012b2e02f0">OPJ_DD_</a>, <a class="el" href="dwt_8c.html#a665395cdbae6aed5f795011b9f2fb9d9">OPJ_S</a>, <a class="el" href="dwt_8c.html#ab69a5e12479c52ceed3d59a9729a7f42">OPJ_S_</a>, and <a class="el" href="dwt_8c.html#a3e7f7c2b83a6d6b6b89173813f66b4c6">OPJ_SS_</a>.</p>
+
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a8b5d49615ec89ef1726ca79aa44fecec"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_dwt_decode_partial_1_parallel </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>nb_cols</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>dn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>sn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>cas</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_x0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_x1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_x0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_x1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="dwt_8c.html#aa3862e5469ad6763d33036cbbff91218">OPJ_D__off</a>, <a class="el" href="dwt_8c.html#a4f463d83f7b65c98846ac6f8715639b9">OPJ_D_off</a>, <a class="el" href="dwt_8c.html#af350a6832f8d0c3f07a5860db0fc77f4">OPJ_DD__off</a>, <a class="el" href="dwt_8c.html#ac59aa174b08f4ccf0abe3c42f080e0d2">OPJ_S__off</a>, <a class="el" href="dwt_8c.html#aa562d980e9d094b810afd2c547e0272e">OPJ_S_off</a>, and <a class="el" href="dwt_8c.html#ab11d5e5ba51eb51baa6d38cf83e93799">OPJ_SS__off</a>.</p>
+
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a75cd080404aadce6662457dec7cc9d21"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> opj_dwt_decode_partial_97 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a>&#160;</td>
+          <td class="paramname"><em>tilec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>numres</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__tcd__resolution.html#a11ecca43c1f72e70c44e0b9746817a05">opj_tcd_resolution::bands</a>, <a class="el" href="structv4dwt__local.html#a6c2edc41b7471498ebf6b310a6dca352">v4dwt_local::cas</a>, <a class="el" href="structv4dwt__local.html#aef3c0d2914e61000ba025032280982b5">v4dwt_local::dn</a>, <a class="el" href="unionopj__v4__t.html#af24a6e4a8c012388e7efc7f91cb5d8b0">opj_v4_t::f</a>, <a class="el" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free()</a>, <a class="el" href="group___m_i_s_c.html#ga4418db34754a5b9ac5a79fece518c601">opj_aligned_malloc()</a>, <a class="el" href="dwt_8c.html#a80d6e09d9efb0ed5832601fe356ad0f6">opj_dwt_get_band_coordinates()</a>, <a class="el" href="dwt_8c.html#a57c042791753ac46c7bb073abcc245ba">opj_dwt_init_sparse_array()</a>, <a class="el" href="group___d_w_t.html#gac2fffad328e477aa744b59f2872e5603">opj_dwt_max_resolution()</a>, <a class="el" href="dwt_8c.html#a53029ae915e8e9763da64cb55b31b437">opj_dwt_segment_grow()</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gad70f920d05b4915853b474d010a9a336">opj_sparse_array_int32_free()</a>, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga092675bfa99d062ce36fa45aff4766da">opj_sparse_array_int32_read()</a>, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga174b3ef4cb89af58cdd7c2b9f0a20559">opj_sparse_array_int32_write()</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#ga2c3eb35fddab83fef25256485b926fc0">opj_uint_max()</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#ga06c1c4470f9765a3ed04963b0daa111a">opj_uint_min()</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gaef70413f6c794150eec1fc019b4de2d4">opj_uint_subs()</a>, <a class="el" href="group___j_p2.html#ga2af533efd81cc83803126d5b03fe4470">OPJ_UNUSED</a>, <a class="el" href="group___d_w_t.html#ga3863bfa7b97c708892b1b607eb6380d8">opj_v4dwt_decode()</a>, <a class="el" href="dwt_8c.html#ae5137e0c3c1dcf46d22aa2915499322a">opj_v4dwt_interleave_partial_h()</a>, <a class="el" href="dwt_8c.html#aa2dc1074fbe4206e06f9e2ceb70f8d0a">opj_v4dwt_interleave_partial_v()</a>, <a class="el" href="opj__malloc_8c.html#a3c75bb398badb69c7577b21486f9963f">SIZE_MAX</a>, <a class="el" href="structv4dwt__local.html#ab67174f32781b9e175e4aa57b7b4de91">v4dwt_local::sn</a>, <a class="el" href="structv4dwt__local.html#a6afd12b2039d60cd30f5b4146cc3258d">v4dwt_local::wavelet</a>, <a class="el" href="structv4dwt__local.html#a5267e44c950fe8226bd01810f76928e8">v4dwt_local::win_h_x0</a>, <a class="el" href="structv4dwt__local.html#a340664aadb1852ebfb6989f82cdd7b8a">v4dwt_local::win_h_x1</a>, <a class="el" href="structv4dwt__local.html#a8db6f9536096466b1b7f59b69f65343c">v4dwt_local::win_l_x0</a>, <a class="el" href="structv4dwt__local.html#a186d4d343e667ddd975fc05383a35296">v4dwt_local::win_l_x1</a>, <a class="el" href="structopj__tcd__resolution.html#a3d3c77e1b3a08004f279e9fc860a7c4f">opj_tcd_resolution::win_x0</a>, <a class="el" href="structopj__tcd__resolution.html#a58d3b87e4c655d75bffbaa3ad77f631a">opj_tcd_resolution::win_x1</a>, <a class="el" href="structopj__tcd__resolution.html#af216ccf9de3aef39ebb7cf4daf6dd13a">opj_tcd_resolution::win_y0</a>, <a class="el" href="structopj__tcd__resolution.html#a9e37a90718ec8b1e631cb9cdd5eac365">opj_tcd_resolution::win_y1</a>, <a class="el" href="structopj__tcd__band.html#a81baded80392eb94c8414decc5ad597f">opj_tcd_band::x0</a>, <a class="el" href="structopj__tcd__resolution.html#ac65adbcc5c51d8aaf0e5e9315243d6a1">opj_tcd_resolution::x0</a>, <a class="el" href="structopj__tcd__resolution.html#a4544bfa885feb38635dd2770a9114ecf">opj_tcd_resolution::x1</a>, <a class="el" href="structopj__tcd__band.html#a9dcfb05333ffca193a1577c0670a4b2e">opj_tcd_band::y0</a>, <a class="el" href="structopj__tcd__resolution.html#ae4fb93aaa054fc66cc93021badc18cec">opj_tcd_resolution::y0</a>, and <a class="el" href="structopj__tcd__resolution.html#a4b68d3bd5fbaccd293e6a773be9d1a7f">opj_tcd_resolution::y1</a>.</p>
+
+<p>Referenced by <a class="el" href="group___d_w_t.html#gadfd8b0e16f120a93b65b922bb2476c87">opj_dwt_decode_real()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7e47f416bc6f3987a9b2139c302f4104"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> opj_dwt_decode_tile_97 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a>&#160;</td>
+          <td class="paramname"><em>tilec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>numres</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structv4dwt__local.html#a6c2edc41b7471498ebf6b310a6dca352">v4dwt_local::cas</a>, <a class="el" href="structv4dwt__local.html#aef3c0d2914e61000ba025032280982b5">v4dwt_local::dn</a>, <a class="el" href="unionopj__v4__t.html#af24a6e4a8c012388e7efc7f91cb5d8b0">opj_v4_t::f</a>, <a class="el" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free()</a>, <a class="el" href="group___m_i_s_c.html#ga4418db34754a5b9ac5a79fece518c601">opj_aligned_malloc()</a>, <a class="el" href="group___d_w_t.html#gac2fffad328e477aa744b59f2872e5603">opj_dwt_max_resolution()</a>, <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>, <a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, <a class="el" href="group___d_w_t.html#ga3863bfa7b97c708892b1b607eb6380d8">opj_v4dwt_decode()</a>, <a class="el" href="group___d_w_t.html#gaeb2244c199cc00c61ab77923ed990fef">opj_v4dwt_interleave_h()</a>, <a class="el" href="group___d_w_t.html#gad2c0e70f3693666723d335f33c474263">opj_v4dwt_interleave_v()</a>, <a class="el" href="opj__malloc_8c.html#a3c75bb398badb69c7577b21486f9963f">SIZE_MAX</a>, <a class="el" href="structv4dwt__local.html#ab67174f32781b9e175e4aa57b7b4de91">v4dwt_local::sn</a>, <a class="el" href="structv4dwt__local.html#a6afd12b2039d60cd30f5b4146cc3258d">v4dwt_local::wavelet</a>, <a class="el" href="structv4dwt__local.html#a5267e44c950fe8226bd01810f76928e8">v4dwt_local::win_h_x0</a>, <a class="el" href="structv4dwt__local.html#a340664aadb1852ebfb6989f82cdd7b8a">v4dwt_local::win_h_x1</a>, <a class="el" href="structv4dwt__local.html#a8db6f9536096466b1b7f59b69f65343c">v4dwt_local::win_l_x0</a>, <a class="el" href="structv4dwt__local.html#a186d4d343e667ddd975fc05383a35296">v4dwt_local::win_l_x1</a>, <a class="el" href="structopj__tcd__resolution.html#ac65adbcc5c51d8aaf0e5e9315243d6a1">opj_tcd_resolution::x0</a>, <a class="el" href="structopj__tcd__resolution.html#a4544bfa885feb38635dd2770a9114ecf">opj_tcd_resolution::x1</a>, <a class="el" href="structopj__tcd__resolution.html#ae4fb93aaa054fc66cc93021badc18cec">opj_tcd_resolution::y0</a>, and <a class="el" href="structopj__tcd__resolution.html#a4b68d3bd5fbaccd293e6a773be9d1a7f">opj_tcd_resolution::y1</a>.</p>
+
+<p>Referenced by <a class="el" href="group___d_w_t.html#gadfd8b0e16f120a93b65b922bb2476c87">opj_dwt_decode_real()</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a2b001cbb0e2278c374cead2046ea4023"></a>
 <div class="memitem">
 <div class="memproto">
@@ -406,13 +840,359 @@ Local data structures</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>References <a class="el" href="structopj__dwd__decode__v__job__t.html#ada432ee2ce3778a9b34b8ba4f4a97abd">opj_dwd_decode_v_job_t::max_j</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a56a0817df9209c5b6cf8903855374c6f">opj_dwd_decode_v_job_t::min_j</a>, <a class="el" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free()</a>, <a class="el" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free()</a>, <a class="el" href="dwt_8c.html#ae6b25268462aa5ebb4875b540c3b18ec">opj_idwt53_v()</a>, <a class="el" href="group___d_w_t.html#gaf921eb88f7e110d3c16c0ca4d33e6ece">PARALLEL_COLS_53</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a797aff8158e5598deef78b1090de2d1e">opj_dwd_decode_v_job_t::tiledp</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#abc625ce46d77d1592678cc7cfc7ea5c9">opj_dwd_decode_v_job_t::v</a>, and <a class="el" href="structopj__dwd__decode__v__job__t.html#a0c0901c76829899d23973ee50b510411">opj_dwd_decode_v_job_t::w</a>.</p>
+<p>References <a class="el" href="structopj__dwd__decode__v__job__t.html#ada432ee2ce3778a9b34b8ba4f4a97abd">opj_dwd_decode_v_job_t::max_j</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a56a0817df9209c5b6cf8903855374c6f">opj_dwd_decode_v_job_t::min_j</a>, <a class="el" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free()</a>, <a class="el" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free()</a>, <a class="el" href="dwt_8c.html#a9d0100f401523ca7327c578e038bdda0">opj_idwt53_v()</a>, <a class="el" href="group___d_w_t.html#gaf921eb88f7e110d3c16c0ca4d33e6ece">PARALLEL_COLS_53</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#a797aff8158e5598deef78b1090de2d1e">opj_dwd_decode_v_job_t::tiledp</a>, <a class="el" href="structopj__dwd__decode__v__job__t.html#abc625ce46d77d1592678cc7cfc7ea5c9">opj_dwd_decode_v_job_t::v</a>, and <a class="el" href="structopj__dwd__decode__v__job__t.html#a0c0901c76829899d23973ee50b510411">opj_dwd_decode_v_job_t::w</a>.</p>
 
 <p>Referenced by <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="aa741e88e981684828174e88c8bb5c473"></a>
+<a class="anchor" id="a80d6e09d9efb0ed5832601fe356ad0f6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_dwt_get_band_coordinates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *&#160;</td>
+          <td class="paramname"><em>tilec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>resno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>bandno</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>tcx0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>tcy0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>tcx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>tcy1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td>
+          <td class="paramname"><em>tbx0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td>
+          <td class="paramname"><em>tby0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td>
+          <td class="paramname"><em>tbx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td>
+          <td class="paramname"><em>tby1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__tcd__tilecomp.html#a87fdaafd21fd5909fac88e866ba66ac6">opj_tcd_tilecomp::numresolutions</a>, and <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gae592eb75f221decddec51834b6c4177d">opj_uint_ceildivpow2()</a>.</p>
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a75cd080404aadce6662457dec7cc9d21">opj_dwt_decode_partial_97()</a>, and <a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a57c042791753ac46c7bb073abcc245ba"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a>* opj_dwt_init_sparse_array </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___t_c_d.html#ga93b81f0bd84473329d4591adbfc94b29">opj_tcd_tilecomp_t</a> *&#160;</td>
+          <td class="paramname"><em>tilec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>numres</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structopj__tcd__band.html#a42509ecd35f2a30e80e9c957cc5deb9c">opj_tcd_band::bandno</a>, <a class="el" href="structopj__tcd__resolution.html#a11ecca43c1f72e70c44e0b9746817a05">opj_tcd_resolution::bands</a>, <a class="el" href="structopj__tcd__precinct.html#af7415dc4af637afd8f0b6c4c306a8cbd">opj_tcd_precinct::cblks</a>, <a class="el" href="structopj__tcd__precinct.html#a03678b6a4ee6ade3d5cb30eee661a236">opj_tcd_precinct::ch</a>, <a class="el" href="structopj__tcd__precinct.html#ad89267dc061dd398fefad52194a4041f">opj_tcd_precinct::cw</a>, <a class="el" href="structopj__tcd__precinct.html#acadbfdaf5c99584a19d6ff762c4ac64e">opj_tcd_precinct::dec</a>, <a class="el" href="structopj__tcd__cblk__dec.html#a01bc4278821c6b5d76ee053e341b7fbb">opj_tcd_cblk_dec::decoded_data</a>, <a class="el" href="structopj__tcd__resolution.html#afc311b6c76795f76f3dfc9a453b21c39">opj_tcd_resolution::numbands</a>, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga41953de4fab74677337c2597a67c9843">opj_sparse_array_int32_create()</a>, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gad70f920d05b4915853b474d010a9a336">opj_sparse_array_int32_free()</a>, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga174b3ef4cb89af58cdd7c2b9f0a20559">opj_sparse_array_int32_write()</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#ga06c1c4470f9765a3ed04963b0daa111a">opj_uint_min()</a>, <a class="el" href="structopj__tcd__resolution.html#ab8ccf37cf9fc2b9c1db6aaa3cac164eb">opj_tcd_resolution::ph</a>, <a class="el" href="structopj__tcd__band.html#a09f58aba8a9216e75fde1c107d68660f">opj_tcd_band::precincts</a>, <a class="el" href="structopj__tcd__resolution.html#ad1ad906bae4c049fc047aed7344f502b">opj_tcd_resolution::pw</a>, <a class="el" href="structopj__tcd__tilecomp.html#a98466597d37dad1b049ffae6b9722885">opj_tcd_tilecomp::resolutions</a>, <a class="el" href="structopj__tcd__cblk__dec.html#aeb0a80dd174713abc3744560abf10dbe">opj_tcd_cblk_dec::x0</a>, <a class="el" href="structopj__tcd__band.html#a81baded80392eb94c8414decc5ad597f">opj_tcd_band::x0</a>, <a class="el" href="structopj__tcd__resolution.html#ac65adbcc5c51d8aaf0e5e9315243d6a1">opj_tcd_resolution::x0</a>, <a class="el" href="structopj__tcd__cblk__dec.html#a1a1324079114684b8f9343748f4f0bd0">opj_tcd_cblk_dec::x1</a>, <a class="el" href="structopj__tcd__resolution.html#a4544bfa885feb38635dd2770a9114ecf">opj_tcd_resolution::x1</a>, <a class="el" href="structopj__tcd__cblk__dec.html#a3f2e8149bda51a5e6bf06377411adffb">opj_tcd_cblk_dec::y0</a>, <a class="el" href="structopj__tcd__band.html#a9dcfb05333ffca193a1577c0670a4b2e">opj_tcd_band::y0</a>, <a class="el" href="structopj__tcd__resolution.html#ae4fb93aaa054fc66cc93021badc18cec">opj_tcd_resolution::y0</a>, <a class="el" href="structopj__tcd__cblk__dec.html#abb854a054640a376a9e9445abddb7c4a">opj_tcd_cblk_dec::y1</a>, and <a class="el" href="structopj__tcd__resolution.html#a4b68d3bd5fbaccd293e6a773be9d1a7f">opj_tcd_resolution::y1</a>.</p>
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a75cd080404aadce6662457dec7cc9d21">opj_dwt_decode_partial_97()</a>, and <a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa9f1030974db43df751380437e5167af"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_dwt_interleave_partial_h </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>dest</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>cas</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *&#160;</td>
+          <td class="paramname"><em>sa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>sa_line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>sn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_x0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_x1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_x0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_x1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga092675bfa99d062ce36fa45aff4766da">opj_sparse_array_int32_read()</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, and <a class="el" href="group___j_p2.html#ga2af533efd81cc83803126d5b03fe4470">OPJ_UNUSED</a>.</p>
+
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad7a304bcf13f2427c0a6835e6c527d3e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_dwt_interleave_partial_v </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td>
+          <td class="paramname"><em>dest</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramname"><em>cas</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *&#160;</td>
+          <td class="paramname"><em>sa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>sa_col</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>nb_cols</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>sn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_y0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_l_y1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_y0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>win_h_y1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga092675bfa99d062ce36fa45aff4766da">opj_sparse_array_int32_read()</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, and <a class="el" href="group___j_p2.html#ga2af533efd81cc83803126d5b03fe4470">OPJ_UNUSED</a>.</p>
+
+<p>Referenced by <a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a53029ae915e8e9763da64cb55b31b437"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_dwt_segment_grow </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>filter_width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>max_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td>
+          <td class="paramname"><em>start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td>
+          <td class="paramname"><em>end</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gab9aad885f5c9bc9e39420003b2b32fe5">opj_uint_adds()</a>, <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#ga06c1c4470f9765a3ed04963b0daa111a">opj_uint_min()</a>, and <a class="el" href="group___o_p_j___i_n_t_m_a_t_h.html#gaef70413f6c794150eec1fc019b4de2d4">opj_uint_subs()</a>.</p>
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a75cd080404aadce6662457dec7cc9d21">opj_dwt_decode_partial_97()</a>, and <a class="el" href="group___d_w_t.html#ga74b827f7914de05bf5bfc52894894803">opj_dwt_decode_partial_tile()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af9334a52e412121d2c84f8a70425bd79"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -446,7 +1226,7 @@ Local data structures</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="openjpeg_8h.html#aba7397be054e36dc0284a6589736135e">OPJ_SIZE_T</a>&#160;</td>
           <td class="paramname"><em>stride</em>&#160;</td>
         </tr>
         <tr>
@@ -464,11 +1244,11 @@ Local data structures</h2></td></tr>
 
 <p>Vertical inverse 5x3 wavelet transform for one column, when top-most pixel is on even coordinate. </p>
 
-<p>Referenced by <a class="el" href="dwt_8c.html#ae6b25268462aa5ebb4875b540c3b18ec">opj_idwt53_v()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a9d0100f401523ca7327c578e038bdda0">opj_idwt53_v()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a1c7dea3463dc30fd40ff44d3e37d6402"></a>
+<a class="anchor" id="a24cbf39b6edcfc800c87e8553d14953a"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -502,7 +1282,7 @@ Local data structures</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="openjpeg_8h.html#aba7397be054e36dc0284a6589736135e">OPJ_SIZE_T</a>&#160;</td>
           <td class="paramname"><em>stride</em>&#160;</td>
         </tr>
         <tr>
@@ -520,7 +1300,7 @@ Local data structures</h2></td></tr>
 
 <p>Vertical inverse 5x3 wavelet transform for one column, when top-most pixel is on odd coordinate. </p>
 
-<p>Referenced by <a class="el" href="dwt_8c.html#ae6b25268462aa5ebb4875b540c3b18ec">opj_idwt53_v()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a9d0100f401523ca7327c578e038bdda0">opj_idwt53_v()</a>.</p>
 
 </div>
 </div>
@@ -658,7 +1438,7 @@ Local data structures</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae6b25268462aa5ebb4875b540c3b18ec"></a>
+<a class="anchor" id="a9d0100f401523ca7327c578e038bdda0"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -680,7 +1460,7 @@ Local data structures</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#aba7397be054e36dc0284a6589736135e">OPJ_SIZE_T</a>&#160;</td>
           <td class="paramname"><em>stride</em>, </td>
         </tr>
         <tr>
@@ -702,9 +1482,109 @@ Local data structures</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>References <a class="el" href="structdwt__local.html#a6edde1cc0a7ac25c1116affd9fcd3991">dwt_local::cas</a>, <a class="el" href="structdwt__local.html#a55352e9122d04587f04e1fcd55904d53">dwt_local::dn</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, <a class="el" href="dwt_8c.html#aa741e88e981684828174e88c8bb5c473">opj_idwt3_v_cas0()</a>, <a class="el" href="dwt_8c.html#a1c7dea3463dc30fd40ff44d3e37d6402">opj_idwt3_v_cas1()</a>, <a class="el" href="group___d_w_t.html#gaf921eb88f7e110d3c16c0ca4d33e6ece">PARALLEL_COLS_53</a>, and <a class="el" href="structdwt__local.html#af52e06d1d510c7c4b20544183c33ed1d">dwt_local::sn</a>.</p>
+<p>References <a class="el" href="structdwt__local.html#a6edde1cc0a7ac25c1116affd9fcd3991">dwt_local::cas</a>, <a class="el" href="structdwt__local.html#a55352e9122d04587f04e1fcd55904d53">dwt_local::dn</a>, <a class="el" href="structdwt__local.html#a0ff176be306d28f60ac07fe7999f0351">dwt_local::mem</a>, <a class="el" href="dwt_8c.html#af9334a52e412121d2c84f8a70425bd79">opj_idwt3_v_cas0()</a>, <a class="el" href="dwt_8c.html#a24cbf39b6edcfc800c87e8553d14953a">opj_idwt3_v_cas1()</a>, <a class="el" href="group___d_w_t.html#gaf921eb88f7e110d3c16c0ca4d33e6ece">PARALLEL_COLS_53</a>, and <a class="el" href="structdwt__local.html#af52e06d1d510c7c4b20544183c33ed1d">dwt_local::sn</a>.</p>
 
 <p>Referenced by <a class="el" href="group___d_w_t.html#ga473550255363b8acb0c9b10a6dbac434">opj_dwt_decode_tile()</a>, and <a class="el" href="dwt_8c.html#a2b001cbb0e2278c374cead2046ea4023">opj_dwt_decode_v_func()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae5137e0c3c1dcf46d22aa2915499322a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_v4dwt_interleave_partial_h </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *&#160;</td>
+          <td class="paramname"><em>dwt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *&#160;</td>
+          <td class="paramname"><em>sa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>sa_line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>remaining_height</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="structv4dwt__local.html#a6c2edc41b7471498ebf6b310a6dca352">v4dwt_local::cas</a>, <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga092675bfa99d062ce36fa45aff4766da">opj_sparse_array_int32_read()</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, <a class="el" href="group___j_p2.html#ga2af533efd81cc83803126d5b03fe4470">OPJ_UNUSED</a>, <a class="el" href="structv4dwt__local.html#ab67174f32781b9e175e4aa57b7b4de91">v4dwt_local::sn</a>, <a class="el" href="structv4dwt__local.html#a6afd12b2039d60cd30f5b4146cc3258d">v4dwt_local::wavelet</a>, <a class="el" href="structv4dwt__local.html#a5267e44c950fe8226bd01810f76928e8">v4dwt_local::win_h_x0</a>, <a class="el" href="structv4dwt__local.html#a340664aadb1852ebfb6989f82cdd7b8a">v4dwt_local::win_h_x1</a>, <a class="el" href="structv4dwt__local.html#a8db6f9536096466b1b7f59b69f65343c">v4dwt_local::win_l_x0</a>, and <a class="el" href="structv4dwt__local.html#a186d4d343e667ddd975fc05383a35296">v4dwt_local::win_l_x1</a>.</p>
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a75cd080404aadce6662457dec7cc9d21">opj_dwt_decode_partial_97()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa2dc1074fbe4206e06f9e2ceb70f8d0a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void opj_v4dwt_interleave_partial_v </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___d_w_t.html#ga8424a7f1c3f2511093be097796df514f">opj_v4dwt_t</a> *<a class="el" href="opj__includes_8h.html#a47acbf7ae97e1ef7371a1c92a42505b2">OPJ_RESTRICT</a>&#160;</td>
+          <td class="paramname"><em>dwt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#gab63770624f4ec03e6e022c6a0b80e6ff">opj_sparse_array_int32_t</a> *&#160;</td>
+          <td class="paramname"><em>sa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>sa_col</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>nb_elts_read</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>References <a class="el" href="group___s_p_a_r_s_e___a_r_r_a_y.html#ga092675bfa99d062ce36fa45aff4766da">opj_sparse_array_int32_read()</a>, <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>, and <a class="el" href="group___j_p2.html#ga2af533efd81cc83803126d5b03fe4470">OPJ_UNUSED</a>.</p>
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a75cd080404aadce6662457dec7cc9d21">opj_dwt_decode_partial_97()</a>.</p>
 
 </div>
 </div>

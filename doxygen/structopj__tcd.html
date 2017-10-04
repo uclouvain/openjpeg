@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.3.0</span>
    </div>
   </td>
  </tr>
@@ -94,6 +94,20 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ad59ef39d08151a05bc6b0bb693607370"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopj__thread__pool__t.html">opj_thread_pool_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd.html#ad59ef39d08151a05bc6b0bb693607370">thread_pool</a></td></tr>
 <tr class="memdesc:ad59ef39d08151a05bc6b0bb693607370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread pool.  <a href="#ad59ef39d08151a05bc6b0bb693607370">More...</a><br /></td></tr>
 <tr class="separator:ad59ef39d08151a05bc6b0bb693607370"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ae43e0bcaae1095138b6ab8752e7ed2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd.html#a0ae43e0bcaae1095138b6ab8752e7ed2">win_x0</a></td></tr>
+<tr class="memdesc:a0ae43e0bcaae1095138b6ab8752e7ed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coordinates of the window of interest, in grid reference space.  <a href="#a0ae43e0bcaae1095138b6ab8752e7ed2">More...</a><br /></td></tr>
+<tr class="separator:a0ae43e0bcaae1095138b6ab8752e7ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47e83dea84697eb8b8b143c088d0dacd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd.html#a47e83dea84697eb8b8b143c088d0dacd">win_y0</a></td></tr>
+<tr class="separator:a47e83dea84697eb8b8b143c088d0dacd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9c072849da0bb04ea0ee6f3080535ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd.html#ab9c072849da0bb04ea0ee6f3080535ac">win_x1</a></td></tr>
+<tr class="separator:ab9c072849da0bb04ea0ee6f3080535ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a411ee1807ee430fc8db3e3c041ccf9cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd.html#a411ee1807ee430fc8db3e3c041ccf9cc">win_y1</a></td></tr>
+<tr class="separator:a411ee1807ee430fc8db3e3c041ccf9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48dce2050b28e97e44fbe918e4f93f9c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd.html#a48dce2050b28e97e44fbe918e4f93f9c">whole_tile_decoding</a></td></tr>
+<tr class="memdesc:a48dce2050b28e97e44fbe918e4f93f9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only valid for decoding.  <a href="#a48dce2050b28e97e44fbe918e4f93f9c">More...</a><br /></td></tr>
+<tr class="separator:a48dce2050b28e97e44fbe918e4f93f9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3de0527cf639f4bf88baf7c0571786af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd.html#a3de0527cf639f4bf88baf7c0571786af">used_component</a></td></tr>
+<tr class="separator:a3de0527cf639f4bf88baf7c0571786af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Tile coder/decoder. </p>
@@ -110,7 +124,7 @@ Data Fields</h2></td></tr>
 
 <p>coding parameters </p>
 
-<p>Referenced by <a class="el" href="group___t_c_d.html#gaaeb620e2e50c06fedec6c88c97a2815a">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#ga58d2d4d050d187138886215e3ce6ba28">opj_tcd_encode_tile()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#a93cdca6a641338fd45c29b2cc7b33867">opj_tcd_rate_allocate_encode()</a>, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, and <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>.</p>
+<p>Referenced by <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#gae64d7b9b2fbac46dc71f3f2cff5c63f3">opj_tcd_encode_tile()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#aa237637abb5431aa9db59ba0776a8a75">opj_tcd_rate_allocate_encode()</a>, <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, and <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>.</p>
 
 </div>
 </div>
@@ -126,7 +140,7 @@ Data Fields</h2></td></tr>
 
 <p>Current Packet iterator number. </p>
 
-<p>Referenced by <a class="el" href="group___j2_k.html#ga1dee630d23059260b89ddb626fd2e6ae">opj_j2k_write_all_tile_parts()</a>, <a class="el" href="group___j2_k.html#ga514fbc572a615ab79237daeb374a0cab">opj_j2k_write_first_tile_part()</a>, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>, and <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>.</p>
+<p>Referenced by <a class="el" href="group___j2_k.html#ga1dee630d23059260b89ddb626fd2e6ae">opj_j2k_write_all_tile_parts()</a>, <a class="el" href="group___j2_k.html#ga514fbc572a615ab79237daeb374a0cab">opj_j2k_write_first_tile_part()</a>, <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>, and <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>.</p>
 
 </div>
 </div>
@@ -158,7 +172,7 @@ Data Fields</h2></td></tr>
 
 <p>Current tile part number. </p>
 
-<p>Referenced by <a class="el" href="group___j2_k.html#ga25486201cd29ff3d7b34d881acb8e38a">opj_j2k_write_sod()</a>, <a class="el" href="group___t_c_d.html#ga58d2d4d050d187138886215e3ce6ba28">opj_tcd_encode_tile()</a>, and <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>.</p>
+<p>Referenced by <a class="el" href="group___j2_k.html#ga25486201cd29ff3d7b34d881acb8e38a">opj_j2k_write_sod()</a>, <a class="el" href="group___t_c_d.html#gae64d7b9b2fbac46dc71f3f2cff5c63f3">opj_tcd_encode_tile()</a>, and <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>.</p>
 
 </div>
 </div>
@@ -174,7 +188,7 @@ Data Fields</h2></td></tr>
 
 <p>image header </p>
 
-<p>Referenced by <a class="el" href="group___j2_k.html#ga7b5ed63aa196941746a348042a55dda3">opj_j2k_decode_tiles()</a>, <a class="el" href="j2k_8h.html#af05dd7eedf751beb0033ac42de564fcc">opj_j2k_encode()</a>, <a class="el" href="group___j2_k.html#ga4391d6e439099467ce716cd94eddf696">opj_j2k_get_tile_data()</a>, <a class="el" href="group___j2_k.html#ga7d62e2e69643f4b8a5968a2d99c5a369">opj_j2k_update_image_data()</a>, <a class="el" href="j2k_8h.html#a74a0d7e52fefc21e50f5d644b69f4c44">opj_j2k_write_tile()</a>, <a class="el" href="group___t_c_d.html#ga878d50b5d131d76a234794300579495d">opj_tcd_copy_tile_data()</a>, <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="tcd_8c.html#a325bdcfaa1c6665e18f9d19bf96a14a3">opj_tcd_dc_level_shift_encode()</a>, <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="group___t_c_d.html#ga81c0eef4bffd1f09d1bd578112aa4bd4">opj_tcd_get_decoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#ga1effc29873237c5b9668461852906609">opj_tcd_get_encoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, <a class="el" href="tcd_8c.html#a39c7e4cc2e8b84619388cb807caa03cf">opj_tcd_mct_encode()</a>, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#ad72fe72839a232fcd2ba4dd82588be2e">opj_tcd_t1_encode()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>, and <a class="el" href="group___t_c_d.html#gaee317346b70f250cbe327c3dc2536715">opj_tcd_update_tile_data()</a>.</p>
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___j2_k.html#ga7b5ed63aa196941746a348042a55dda3">opj_j2k_decode_tiles()</a>, <a class="el" href="j2k_8h.html#af05dd7eedf751beb0033ac42de564fcc">opj_j2k_encode()</a>, <a class="el" href="group___j2_k.html#ga4391d6e439099467ce716cd94eddf696">opj_j2k_get_tile_data()</a>, <a class="el" href="group___j2_k.html#ga8e1a7d063d261020d4d8984cb2320971">opj_j2k_update_image_data()</a>, <a class="el" href="j2k_8h.html#a74a0d7e52fefc21e50f5d644b69f4c44">opj_j2k_write_tile()</a>, <a class="el" href="group___t_c_d.html#ga1ade88b5bde6f169d5962e8cc496c80f">opj_tcd_copy_tile_data()</a>, <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="tcd_8c.html#a325bdcfaa1c6665e18f9d19bf96a14a3">opj_tcd_dc_level_shift_encode()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="group___t_c_d.html#ga52e4296555a20244677550e29b9435cd">opj_tcd_get_decoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#gaeb07660c88db3acc0ccb3e46ad14089d">opj_tcd_get_encoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>, <a class="el" href="group___t_c_d.html#gad98baebcb0d551980ef28b692803c1a0">opj_tcd_is_subband_area_of_interest()</a>, <a class="el" href="tcd_8c.html#a751412dec0df96c8595e1276f19e7aa2">opj_tcd_is_whole_tilecomp_decoding()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, <a class="el" href="tcd_8c.html#a39c7e4cc2e8b84619388cb807caa03cf">opj_tcd_mct_encode()</a>, <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#ad72fe72839a232fcd2ba4dd82588be2e">opj_tcd_t1_encode()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>, and <a class="el" href="group___t_c_d.html#gaee317346b70f250cbe327c3dc2536715">opj_tcd_update_tile_data()</a>.</p>
 
 </div>
 </div>
@@ -190,7 +204,7 @@ Data Fields</h2></td></tr>
 
 <p>tell if the tcd is a decoder. </p>
 
-<p>Referenced by <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">opj_tcd_create()</a>, <a class="el" href="tcd_8c.html#a0df6e3c59cbb93696bab54a688e2ead8">opj_tcd_free_tile()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
+<p>Referenced by <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">opj_tcd_create()</a>, and <a class="el" href="tcd_8c.html#a0df6e3c59cbb93696bab54a688e2ead8">opj_tcd_free_tile()</a>.</p>
 
 </div>
 </div>
@@ -206,7 +220,7 @@ Data Fields</h2></td></tr>
 
 <p>info on each image tile </p>
 
-<p>Referenced by <a class="el" href="group___j2_k.html#ga7b5ed63aa196941746a348042a55dda3">opj_j2k_decode_tiles()</a>, <a class="el" href="j2k_8h.html#af05dd7eedf751beb0033ac42de564fcc">opj_j2k_encode()</a>, <a class="el" href="group___j2_k.html#ga4391d6e439099467ce716cd94eddf696">opj_j2k_get_tile_data()</a>, <a class="el" href="j2k_8h.html#a25b7b51949ceea33515984f1db2f594d">opj_j2k_read_tile_header()</a>, <a class="el" href="group___j2_k.html#ga7d62e2e69643f4b8a5968a2d99c5a369">opj_j2k_update_image_data()</a>, <a class="el" href="group___j2_k.html#ga25486201cd29ff3d7b34d881acb8e38a">opj_j2k_write_sod()</a>, <a class="el" href="j2k_8h.html#a74a0d7e52fefc21e50f5d644b69f4c44">opj_j2k_write_tile()</a>, <a class="el" href="group___t_c_d.html#ga878d50b5d131d76a234794300579495d">opj_tcd_copy_tile_data()</a>, <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">opj_tcd_create()</a>, <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="tcd_8c.html#a325bdcfaa1c6665e18f9d19bf96a14a3">opj_tcd_dc_level_shift_encode()</a>, <a class="el" href="group___t_c_d.html#gaaeb620e2e50c06fedec6c88c97a2815a">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#ga35c1b4cb094ae87d6bba87f6be7aa183">opj_tcd_destroy()</a>, <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="tcd_8c.html#a044d8c47b267665af6abd3b3c6cc2d3e">opj_tcd_dwt_encode()</a>, <a class="el" href="group___t_c_d.html#ga58d2d4d050d187138886215e3ce6ba28">opj_tcd_encode_tile()</a>, <a class="el" href="tcd_8c.html#a0df6e3c59cbb93696bab54a688e2ead8">opj_tcd_free_tile()</a>, <a class="el" href="group___t_c_d.html#ga81c0eef4bffd1f09d1bd578112aa4bd4">opj_tcd_get_decoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#ga1effc29873237c5b9668461852906609">opj_tcd_get_encoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>, <a class="el" href="group___t_c_d.html#ga350b4deff33a47f09e609d1f7d7cb43d">opj_tcd_makelayer()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, <a class="el" href="tcd_8c.html#a39c7e4cc2e8b84619388cb807caa03cf">opj_tcd_mct_encode()</a>, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">opj_tcd_t1_decode()</a>, <a class="el" href="tcd_8c.html#ad72fe72839a232fcd2ba4dd82588be2e">opj_tcd_t1_encode()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>, and <a class="el" href="group___t_c_d.html#gaee317346b70f250cbe327c3dc2536715">opj_tcd_update_tile_data()</a>.</p>
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___j2_k.html#ga7b5ed63aa196941746a348042a55dda3">opj_j2k_decode_tiles()</a>, <a class="el" href="j2k_8h.html#af05dd7eedf751beb0033ac42de564fcc">opj_j2k_encode()</a>, <a class="el" href="group___j2_k.html#ga4391d6e439099467ce716cd94eddf696">opj_j2k_get_tile_data()</a>, <a class="el" href="j2k_8h.html#a25b7b51949ceea33515984f1db2f594d">opj_j2k_read_tile_header()</a>, <a class="el" href="group___j2_k.html#ga8e1a7d063d261020d4d8984cb2320971">opj_j2k_update_image_data()</a>, <a class="el" href="group___j2_k.html#ga25486201cd29ff3d7b34d881acb8e38a">opj_j2k_write_sod()</a>, <a class="el" href="j2k_8h.html#a74a0d7e52fefc21e50f5d644b69f4c44">opj_j2k_write_tile()</a>, <a class="el" href="group___t_c_d.html#ga1ade88b5bde6f169d5962e8cc496c80f">opj_tcd_copy_tile_data()</a>, <a class="el" href="group___t_c_d.html#ga843e261ac54c7f4064bbfc678176a3ce">opj_tcd_create()</a>, <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="tcd_8c.html#a325bdcfaa1c6665e18f9d19bf96a14a3">opj_tcd_dc_level_shift_encode()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#ga35c1b4cb094ae87d6bba87f6be7aa183">opj_tcd_destroy()</a>, <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="tcd_8c.html#a044d8c47b267665af6abd3b3c6cc2d3e">opj_tcd_dwt_encode()</a>, <a class="el" href="group___t_c_d.html#gae64d7b9b2fbac46dc71f3f2cff5c63f3">opj_tcd_encode_tile()</a>, <a class="el" href="tcd_8c.html#a0df6e3c59cbb93696bab54a688e2ead8">opj_tcd_free_tile()</a>, <a class="el" href="group___t_c_d.html#ga52e4296555a20244677550e29b9435cd">opj_tcd_get_decoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#gaeb07660c88db3acc0ccb3e46ad14089d">opj_tcd_get_encoded_tile_size()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>, <a class="el" href="group___t_c_d.html#gad98baebcb0d551980ef28b692803c1a0">opj_tcd_is_subband_area_of_interest()</a>, <a class="el" href="tcd_8c.html#a751412dec0df96c8595e1276f19e7aa2">opj_tcd_is_whole_tilecomp_decoding()</a>, <a class="el" href="group___t_c_d.html#ga350b4deff33a47f09e609d1f7d7cb43d">opj_tcd_makelayer()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, <a class="el" href="tcd_8c.html#a39c7e4cc2e8b84619388cb807caa03cf">opj_tcd_mct_encode()</a>, <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">opj_tcd_t1_decode()</a>, <a class="el" href="tcd_8c.html#ad72fe72839a232fcd2ba4dd82588be2e">opj_tcd_t1_encode()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>, and <a class="el" href="group___t_c_d.html#gaee317346b70f250cbe327c3dc2536715">opj_tcd_update_tile_data()</a>.</p>
 
 </div>
 </div>
@@ -222,7 +236,7 @@ Data Fields</h2></td></tr>
 
 <p>current encoded/decoded tile </p>
 
-<p>Referenced by <a class="el" href="group___t_c_d.html#gaaeb620e2e50c06fedec6c88c97a2815a">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#ga58d2d4d050d187138886215e3ce6ba28">opj_tcd_encode_tile()</a>, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, and <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>.</p>
+<p>Referenced by <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#gae64d7b9b2fbac46dc71f3f2cff5c63f3">opj_tcd_encode_tile()</a>, <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>, <a class="el" href="tcd_8c.html#a40253d6f2bec671466a2ec8cc049a42e">opj_tcd_t2_decode()</a>, and <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>.</p>
 
 </div>
 </div>
@@ -238,7 +252,7 @@ Data Fields</h2></td></tr>
 
 <p>coding/decoding parameters common to all tiles </p>
 
-<p>Referenced by <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="tcd_8c.html#a325bdcfaa1c6665e18f9d19bf96a14a3">opj_tcd_dc_level_shift_encode()</a>, <a class="el" href="group___t_c_d.html#gaaeb620e2e50c06fedec6c88c97a2815a">opj_tcd_decode_tile()</a>, <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="tcd_8c.html#a044d8c47b267665af6abd3b3c6cc2d3e">opj_tcd_dwt_encode()</a>, <a class="el" href="group___t_c_d.html#ga58d2d4d050d187138886215e3ce6ba28">opj_tcd_encode_tile()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, <a class="el" href="tcd_8c.html#a39c7e4cc2e8b84619388cb807caa03cf">opj_tcd_mct_encode()</a>, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>, <a class="el" href="group___t_c_d.html#ga686fc1b04304a07219a03108b6f808a9">opj_tcd_rateallocate_fixed()</a>, <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">opj_tcd_t1_decode()</a>, <a class="el" href="tcd_8c.html#ad72fe72839a232fcd2ba4dd82588be2e">opj_tcd_t1_encode()</a>, and <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>.</p>
+<p>Referenced by <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="tcd_8c.html#a325bdcfaa1c6665e18f9d19bf96a14a3">opj_tcd_dc_level_shift_encode()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="tcd_8c.html#a044d8c47b267665af6abd3b3c6cc2d3e">opj_tcd_dwt_encode()</a>, <a class="el" href="group___t_c_d.html#gae64d7b9b2fbac46dc71f3f2cff5c63f3">opj_tcd_encode_tile()</a>, <a class="el" href="group___t_c_d.html#gad98baebcb0d551980ef28b692803c1a0">opj_tcd_is_subband_area_of_interest()</a>, <a class="el" href="group___t_c_d.html#ga31ece0bd1f42ea10d6f5fc342db86936">opj_tcd_makelayer_fixed()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, <a class="el" href="tcd_8c.html#a39c7e4cc2e8b84619388cb807caa03cf">opj_tcd_mct_encode()</a>, <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>, <a class="el" href="group___t_c_d.html#ga686fc1b04304a07219a03108b6f808a9">opj_tcd_rateallocate_fixed()</a>, <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">opj_tcd_t1_decode()</a>, <a class="el" href="tcd_8c.html#ad72fe72839a232fcd2ba4dd82588be2e">opj_tcd_t1_encode()</a>, and <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>.</p>
 
 </div>
 </div>
@@ -254,7 +268,7 @@ Data Fields</h2></td></tr>
 
 <p>Thread pool. </p>
 
-<p>Referenced by <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, and <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">opj_tcd_t1_decode()</a>.</p>
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___d_w_t.html#ga67d22fad344dd6d7b1b3b3a237bea8d6">opj_dwt_decode()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, and <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">opj_tcd_t1_decode()</a>.</p>
 
 </div>
 </div>
@@ -270,7 +284,7 @@ Data Fields</h2></td></tr>
 
 <p>Tile part number. </p>
 
-<p>Referenced by <a class="el" href="group___j2_k.html#ga25486201cd29ff3d7b34d881acb8e38a">opj_j2k_write_sod()</a>, and <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>.</p>
+<p>Referenced by <a class="el" href="group___j2_k.html#ga25486201cd29ff3d7b34d881acb8e38a">opj_j2k_write_sod()</a>, and <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>.</p>
 
 </div>
 </div>
@@ -286,7 +300,96 @@ Data Fields</h2></td></tr>
 
 <p>Position of the tilepart flag in Progression order. </p>
 
-<p>Referenced by <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="group___t_c_d.html#ga18bfaa053e392a5b0ad36264b7977cd4">opj_tcd_rateallocate()</a>, and <a class="el" href="tcd_8c.html#ae9534197a5c49746246a7c38f5162b61">opj_tcd_t2_encode()</a>.</p>
+<p>Referenced by <a class="el" href="group___t_c_d.html#ga8f9a0eceb5f11b164555a302db07cb5c">opj_tcd_init()</a>, <a class="el" href="group___t_c_d.html#ga15fc40d9b891d32df8ec516473d9f15e">opj_tcd_rateallocate()</a>, and <a class="el" href="tcd_8c.html#a339bf3f6010e2e9503cc8c32dc99a802">opj_tcd_t2_encode()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3de0527cf639f4bf88baf7c0571786af"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>* opj_tcd::used_component</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#ga35c1b4cb094ae87d6bba87f6be7aa183">opj_tcd_destroy()</a>, <a class="el" href="tcd_8c.html#ae09ea737a5830d3981972f0749918376">opj_tcd_dwt_decode()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, and <a class="el" href="tcd_8c.html#a61608d1a920574e556d417a4b0e23a3a">opj_tcd_t1_decode()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a48dce2050b28e97e44fbe918e4f93f9c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> opj_tcd::whole_tile_decoding</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Only valid for decoding. </p>
+<p>Whether the whole tile is decoded, or just the region in win_x0/win_y0/win_x1/win_y1 </p>
+
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___d_w_t.html#ga67d22fad344dd6d7b1b3b3a237bea8d6">opj_dwt_decode()</a>, <a class="el" href="group___d_w_t.html#gadfd8b0e16f120a93b65b922bb2476c87">opj_dwt_decode_real()</a>, <a class="el" href="group___j2_k.html#ga8e1a7d063d261020d4d8984cb2320971">opj_j2k_update_image_data()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, <a class="el" href="tcd_8c.html#a9dc572b0982c7d7db4f3c53d8ccfdce6">opj_tcd_dc_level_shift_decode()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#ga52e4296555a20244677550e29b9435cd">opj_tcd_get_decoded_tile_size()</a>, <a class="el" href="tcd_8c.html#a5732e7b54aa86da12858cb5b42e32f81">opj_tcd_mct_decode()</a>, and <a class="el" href="group___t_c_d.html#gaee317346b70f250cbe327c3dc2536715">opj_tcd_update_tile_data()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a0ae43e0bcaae1095138b6ab8752e7ed2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> opj_tcd::win_x0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Coordinates of the window of interest, in grid reference space. </p>
+
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#gad98baebcb0d551980ef28b692803c1a0">opj_tcd_is_subband_area_of_interest()</a>, and <a class="el" href="tcd_8c.html#a751412dec0df96c8595e1276f19e7aa2">opj_tcd_is_whole_tilecomp_decoding()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab9c072849da0bb04ea0ee6f3080535ac"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> opj_tcd::win_x1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#gad98baebcb0d551980ef28b692803c1a0">opj_tcd_is_subband_area_of_interest()</a>, and <a class="el" href="tcd_8c.html#a751412dec0df96c8595e1276f19e7aa2">opj_tcd_is_whole_tilecomp_decoding()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a47e83dea84697eb8b8b143c088d0dacd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> opj_tcd::win_y0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#gad98baebcb0d551980ef28b692803c1a0">opj_tcd_is_subband_area_of_interest()</a>, and <a class="el" href="tcd_8c.html#a751412dec0df96c8595e1276f19e7aa2">opj_tcd_is_whole_tilecomp_decoding()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a411ee1807ee430fc8db3e3c041ccf9cc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> opj_tcd::win_y1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="bench__dwt_8c.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="group___t_c_d.html#gad98baebcb0d551980ef28b692803c1a0">opj_tcd_is_subband_area_of_interest()</a>, and <a class="el" href="tcd_8c.html#a751412dec0df96c8595e1276f19e7aa2">opj_tcd_is_whole_tilecomp_decoding()</a>.</p>
 
 </div>
 </div>

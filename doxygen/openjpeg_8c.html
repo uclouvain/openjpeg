@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.3.0</span>
    </div>
   </td>
  </tr>
@@ -94,6 +94,9 @@ Functions</h2></td></tr>
 <tr class="memitem:aad24422789c9a57e5a62cae7892db4be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> <a class="el" href="openjpeg_8h.html#aedc1e23ea6654d0cc416bc390687458b">OPJ_CALLCONV</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openjpeg_8c.html#aad24422789c9a57e5a62cae7892db4be">opj_read_header</a> (<a class="el" href="openjpeg_8h.html#adf594a74c6b6b194caadf7b49ba9a2cf">opj_stream_t</a> *p_stream, <a class="el" href="openjpeg_8h.html#a7c8b18f9785e36e317bdb10c4fd0bd29">opj_codec_t</a> *p_codec, <a class="el" href="openjpeg_8h.html#a5c557180c59d54a2f1d29e8639687aa4">opj_image_t</a> **p_image)</td></tr>
 <tr class="memdesc:aad24422789c9a57e5a62cae7892db4be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes an image header.  <a href="#aad24422789c9a57e5a62cae7892db4be">More...</a><br /></td></tr>
 <tr class="separator:aad24422789c9a57e5a62cae7892db4be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30abe729d3c4e26acb1571b62860a796"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> <a class="el" href="openjpeg_8h.html#aedc1e23ea6654d0cc416bc390687458b">OPJ_CALLCONV</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openjpeg_8c.html#a30abe729d3c4e26acb1571b62860a796">opj_set_decoded_components</a> (<a class="el" href="openjpeg_8h.html#a7c8b18f9785e36e317bdb10c4fd0bd29">opj_codec_t</a> *p_codec, <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> numcomps, const <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *comps_indices, <a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> apply_color_transforms)</td></tr>
+<tr class="memdesc:a30abe729d3c4e26acb1571b62860a796"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restrict the number of components to decode.  <a href="#a30abe729d3c4e26acb1571b62860a796">More...</a><br /></td></tr>
+<tr class="separator:a30abe729d3c4e26acb1571b62860a796"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5b94be0890f895a5527eb3ca9abe2f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> <a class="el" href="openjpeg_8h.html#aedc1e23ea6654d0cc416bc390687458b">OPJ_CALLCONV</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="openjpeg_8c.html#af5b94be0890f895a5527eb3ca9abe2f1">opj_decode</a> (<a class="el" href="openjpeg_8h.html#a7c8b18f9785e36e317bdb10c4fd0bd29">opj_codec_t</a> *p_codec, <a class="el" href="openjpeg_8h.html#adf594a74c6b6b194caadf7b49ba9a2cf">opj_stream_t</a> *p_stream, <a class="el" href="openjpeg_8h.html#a5c557180c59d54a2f1d29e8639687aa4">opj_image_t</a> *p_image)</td></tr>
 <tr class="memdesc:af5b94be0890f895a5527eb3ca9abe2f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode an image from a JPEG-2000 codestream.  <a href="#af5b94be0890f895a5527eb3ca9abe2f1">More...</a><br /></td></tr>
 <tr class="separator:af5b94be0890f895a5527eb3ca9abe2f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -260,7 +263,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a handle to a decompressor if successful, returns NULL otherwise </dd></dl>
 
-<p>References <a class="el" href="structopj__codec__private.html#a2b260d149ef24ac3bef21d80a804e34e">opj_codec_private::is_decompressor</a>, <a class="el" href="j2k_8c.html#a064d4a5d20465438abe3ce707fd8ddf4">j2k_dump()</a>, <a class="el" href="j2k_8c.html#aab1aefcf177ba3726b29afec69993f6b">j2k_get_cstr_index()</a>, <a class="el" href="j2k_8c.html#a4e0a9f42c8240828e7293a064c143a24">j2k_get_cstr_info()</a>, <a class="el" href="group___j_p2.html#ga218687e233b685fbb1986b81849aeb61">jp2_dump()</a>, <a class="el" href="group___j_p2.html#ga195430af9298b6633ff7a2aa754e2d31">jp2_get_cstr_index()</a>, <a class="el" href="group___j_p2.html#ga5ed9ca90035485efa93e1e7dce474780">jp2_get_cstr_info()</a>, <a class="el" href="structopj__codec__private.html#a59b2256a734fada5d6775b0e49ae8209">opj_codec_private::m_codec</a>, <a class="el" href="structopj__codec__private.html#acad1e886fe9dd93863fe69edfd9bc17b">opj_codec_private::m_codec_data</a>, <a class="el" href="structopj__codec__private.html#a49ec8119cd2b16a366f706ad415dfbdd">opj_codec_private::m_decompression</a>, <a class="el" href="structopj__codec__private.html#a80c19f6fb64d1bd40b8593042730ea16">opj_codec_private::m_event_mgr</a>, <a class="el" href="group___m_i_s_c.html#ga7fe6dfcb0a623dbec30daf0f48624bf7">opj_calloc()</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfa8600e6e00112f983e5bb7d4daad836ab">OPJ_CODEC_J2K</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfa183df004ed4c4d055ccf2754721695b1">OPJ_CODEC_JP2</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfaed40a953dccdc1c753f594666b7a5e2b">OPJ_CODEC_JPT</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfa23ff243426ab0e3ffbd7a3b150d37720">OPJ_CODEC_UNKNOWN</a>, <a class="el" href="structopj__codec__private.html#aab9f27707ff821e374dde5beac90ca9f">opj_codec_private::opj_dump_codec</a>, <a class="el" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free()</a>, <a class="el" href="structopj__codec__private.html#a5c41b629596dcc3a8d02fa0255c3d02b">opj_codec_private::opj_get_codec_index</a>, <a class="el" href="structopj__codec__private.html#a13ebe213da45238c20de1bc2004c76bd">opj_codec_private::opj_get_codec_info</a>, <a class="el" href="j2k_8c.html#ad76bb79d4d63030222ebf3dbe3fe86cf">opj_j2k_create_decompress()</a>, <a class="el" href="j2k_8c.html#ad1113b1ae4202669379d2c6b680f371b">opj_j2k_decode()</a>, <a class="el" href="j2k_8c.html#a589edf58bf96de0a09b6104b6f5c13e8">opj_j2k_decode_tile()</a>, <a class="el" href="j2k_8c.html#a5c4508543b134e726107308b6463528e">opj_j2k_destroy()</a>, <a class="el" href="j2k_8c.html#a08f5f1ad9ec6ccb4fcf4d3af868bdc6b">opj_j2k_end_decompress()</a>, <a class="el" href="j2k_8c.html#a60371d3609364bf033e8c244599abf6f">opj_j2k_get_tile()</a>, <a class="el" href="j2k_8c.html#a34c49b256edcdbf036492dfa635284d7">opj_j2k_read_header()</a>, <a class="el" href="j2k_8c.html#a25b7b51949ceea33515984f1db2f594d">opj_j2k_read_tile_header()</a>, <a class="el" href="j2k_8c.html#ab4cb6916a495309faab2dd7cb587ccb8">opj_j2k_set_decode_area()</a>, <a class="el" href="j2k_8c.html#ad2c05f29bca659d072a13133993312f9">opj_j2k_set_decoded_resolution_factor()</a>, <a class="el" href="group___j2_k.html#gabecf91393e6703f8be5006b19df1be22">opj_j2k_set_threads()</a>, <a class="el" href="group___j2_k.html#gad278fa72d1461084c57c87a4276850cf">opj_j2k_setup_decoder()</a>, <a class="el" href="group___j_p2.html#ga7d5389b7ba1706b96ec2adeb431a4735">opj_jp2_create()</a>, <a class="el" href="group___j_p2.html#gaab973979e00628ffd8b3d99a402d85aa">opj_jp2_decode()</a>, <a class="el" href="group___j_p2.html#gaebe5923df2f64f3107658fefb4cb03e0">opj_jp2_decode_tile()</a>, <a class="el" href="group___j_p2.html#ga1f7f8e8462c3bf6fdf6c3d4d75b8b3b7">opj_jp2_destroy()</a>, <a class="el" href="group___j_p2.html#ga305f0351317cfc1ff0e0372fe0c64cdc">opj_jp2_end_decompress()</a>, <a class="el" href="group___j_p2.html#ga69b73f68c750cf70dc3b9836ed6ccfdc">opj_jp2_get_tile()</a>, <a class="el" href="group___j_p2.html#ga6bfb434e0d150ae769c7e8eb81117723">opj_jp2_read_header()</a>, <a class="el" href="group___j_p2.html#ga39499b02d05699c0bbd69412b24c6bd6">opj_jp2_read_tile_header()</a>, <a class="el" href="group___j_p2.html#ga3f8042c954d1cb5a29080555fa241e10">opj_jp2_set_decode_area()</a>, <a class="el" href="group___j_p2.html#ga271ca4cacb9ec1d01623e1dc0762af22">opj_jp2_set_decoded_resolution_factor()</a>, <a class="el" href="group___j_p2.html#gabe8ec92a2ec7c342926f81a166b6b59c">opj_jp2_set_threads()</a>, <a class="el" href="group___j_p2.html#ga24d94a6f5cf51200b3366a77e25e547d">opj_jp2_setup_decoder()</a>, <a class="el" href="group___e_v_e_n_t.html#ga8584de0db0bbc62b70d5cf5089165ef2">opj_set_default_event_handler()</a>, <a class="el" href="structopj__codec__private.html#a29f011df297704faaded798ed269ef75">opj_codec_private::opj_set_threads</a>, and <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>.</p>
+<p>References <a class="el" href="structopj__codec__private.html#a2b260d149ef24ac3bef21d80a804e34e">opj_codec_private::is_decompressor</a>, <a class="el" href="j2k_8c.html#a064d4a5d20465438abe3ce707fd8ddf4">j2k_dump()</a>, <a class="el" href="j2k_8c.html#aab1aefcf177ba3726b29afec69993f6b">j2k_get_cstr_index()</a>, <a class="el" href="j2k_8c.html#a4e0a9f42c8240828e7293a064c143a24">j2k_get_cstr_info()</a>, <a class="el" href="group___j_p2.html#ga218687e233b685fbb1986b81849aeb61">jp2_dump()</a>, <a class="el" href="group___j_p2.html#ga195430af9298b6633ff7a2aa754e2d31">jp2_get_cstr_index()</a>, <a class="el" href="group___j_p2.html#ga5ed9ca90035485efa93e1e7dce474780">jp2_get_cstr_info()</a>, <a class="el" href="structopj__codec__private.html#a59b2256a734fada5d6775b0e49ae8209">opj_codec_private::m_codec</a>, <a class="el" href="structopj__codec__private.html#acad1e886fe9dd93863fe69edfd9bc17b">opj_codec_private::m_codec_data</a>, <a class="el" href="structopj__codec__private.html#a49ec8119cd2b16a366f706ad415dfbdd">opj_codec_private::m_decompression</a>, <a class="el" href="structopj__codec__private.html#a80c19f6fb64d1bd40b8593042730ea16">opj_codec_private::m_event_mgr</a>, <a class="el" href="group___m_i_s_c.html#ga7fe6dfcb0a623dbec30daf0f48624bf7">opj_calloc()</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfa8600e6e00112f983e5bb7d4daad836ab">OPJ_CODEC_J2K</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfa183df004ed4c4d055ccf2754721695b1">OPJ_CODEC_JP2</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfaed40a953dccdc1c753f594666b7a5e2b">OPJ_CODEC_JPT</a>, <a class="el" href="openjpeg_8h.html#a1d857738cef754699ffb79ddff48efbfa23ff243426ab0e3ffbd7a3b150d37720">OPJ_CODEC_UNKNOWN</a>, <a class="el" href="structopj__codec__private.html#aab9f27707ff821e374dde5beac90ca9f">opj_codec_private::opj_dump_codec</a>, <a class="el" href="group___m_i_s_c.html#ga2bd00e2482ae36197631bde0665cfdfe">opj_free()</a>, <a class="el" href="structopj__codec__private.html#a5c41b629596dcc3a8d02fa0255c3d02b">opj_codec_private::opj_get_codec_index</a>, <a class="el" href="structopj__codec__private.html#a13ebe213da45238c20de1bc2004c76bd">opj_codec_private::opj_get_codec_info</a>, <a class="el" href="j2k_8c.html#ad76bb79d4d63030222ebf3dbe3fe86cf">opj_j2k_create_decompress()</a>, <a class="el" href="j2k_8c.html#ad1113b1ae4202669379d2c6b680f371b">opj_j2k_decode()</a>, <a class="el" href="j2k_8c.html#a589edf58bf96de0a09b6104b6f5c13e8">opj_j2k_decode_tile()</a>, <a class="el" href="j2k_8c.html#a5c4508543b134e726107308b6463528e">opj_j2k_destroy()</a>, <a class="el" href="j2k_8c.html#a08f5f1ad9ec6ccb4fcf4d3af868bdc6b">opj_j2k_end_decompress()</a>, <a class="el" href="j2k_8c.html#a60371d3609364bf033e8c244599abf6f">opj_j2k_get_tile()</a>, <a class="el" href="j2k_8c.html#a34c49b256edcdbf036492dfa635284d7">opj_j2k_read_header()</a>, <a class="el" href="j2k_8c.html#a25b7b51949ceea33515984f1db2f594d">opj_j2k_read_tile_header()</a>, <a class="el" href="j2k_8c.html#ab4cb6916a495309faab2dd7cb587ccb8">opj_j2k_set_decode_area()</a>, <a class="el" href="j2k_8c.html#a8ad1ef335703dec30943a7dad14b8c3d">opj_j2k_set_decoded_components()</a>, <a class="el" href="j2k_8c.html#ad2c05f29bca659d072a13133993312f9">opj_j2k_set_decoded_resolution_factor()</a>, <a class="el" href="group___j2_k.html#gabecf91393e6703f8be5006b19df1be22">opj_j2k_set_threads()</a>, <a class="el" href="group___j2_k.html#gad278fa72d1461084c57c87a4276850cf">opj_j2k_setup_decoder()</a>, <a class="el" href="group___j_p2.html#ga7d5389b7ba1706b96ec2adeb431a4735">opj_jp2_create()</a>, <a class="el" href="group___j_p2.html#gaab973979e00628ffd8b3d99a402d85aa">opj_jp2_decode()</a>, <a class="el" href="group___j_p2.html#gaebe5923df2f64f3107658fefb4cb03e0">opj_jp2_decode_tile()</a>, <a class="el" href="group___j_p2.html#ga1f7f8e8462c3bf6fdf6c3d4d75b8b3b7">opj_jp2_destroy()</a>, <a class="el" href="group___j_p2.html#ga305f0351317cfc1ff0e0372fe0c64cdc">opj_jp2_end_decompress()</a>, <a class="el" href="group___j_p2.html#ga69b73f68c750cf70dc3b9836ed6ccfdc">opj_jp2_get_tile()</a>, <a class="el" href="group___j_p2.html#ga6bfb434e0d150ae769c7e8eb81117723">opj_jp2_read_header()</a>, <a class="el" href="group___j_p2.html#ga39499b02d05699c0bbd69412b24c6bd6">opj_jp2_read_tile_header()</a>, <a class="el" href="group___j_p2.html#ga3f8042c954d1cb5a29080555fa241e10">opj_jp2_set_decode_area()</a>, <a class="el" href="group___j_p2.html#ga1749007cebe7a0a2e547154446340f38">opj_jp2_set_decoded_components()</a>, <a class="el" href="group___j_p2.html#ga271ca4cacb9ec1d01623e1dc0762af22">opj_jp2_set_decoded_resolution_factor()</a>, <a class="el" href="group___j_p2.html#gabe8ec92a2ec7c342926f81a166b6b59c">opj_jp2_set_threads()</a>, <a class="el" href="group___j_p2.html#ga24d94a6f5cf51200b3366a77e25e547d">opj_jp2_setup_decoder()</a>, <a class="el" href="group___e_v_e_n_t.html#ga8584de0db0bbc62b70d5cf5089165ef2">opj_set_default_event_handler()</a>, <a class="el" href="structopj__codec__private.html#a29f011df297704faaded798ed269ef75">opj_codec_private::opj_set_threads</a>, and <a class="el" href="openjpeg_8h.html#a04830036d767cba56cbf5ae5bdc481d3">OPJ_TRUE</a>.</p>
 
 <p>Referenced by <a class="el" href="jp2k__decoder_8h.html#a261799e8487d1b77fc04948abe701e5f">j2k_to_pnm()</a>.</p>
 
@@ -357,6 +360,7 @@ Functions</h2></td></tr>
 
 <p>Reads a tile data. </p>
 <p>This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before. The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.</p>
+<p>Note: <a class="el" href="openjpeg_8h.html#a8373b5a0732390d0400545e57674eceb" title="Reads a tile data. ">opj_decode_tile_data()</a> should not be used together with <a class="el" href="openjpeg_8h.html#af7aa8f8295d792db318dc214f692e679" title="Restrict the number of components to decode. ">opj_set_decoded_components()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">p_codec</td><td>the jpeg2000 codec. </td></tr>
@@ -765,7 +769,7 @@ Functions</h2></td></tr>
 
 <p>References <a class="el" href="group___m_i_s_c.html#ga4418db34754a5b9ac5a79fece518c601">opj_aligned_malloc()</a>.</p>
 
-<p>Referenced by <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">opj_alloc_tile_component_data()</a>, <a class="el" href="openjpeg_8h.html#af168cf4a4295433c8c33610bac614553">opj_image_create()</a>, <a class="el" href="group___j2_k.html#ga7d62e2e69643f4b8a5968a2d99c5a369">opj_j2k_update_image_data()</a>, and <a class="el" href="group___j_p2.html#ga8c6a6b30b72a7814f8caf2a95aed9e14">opj_jp2_apply_pclr()</a>.</p>
+<p>Referenced by <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">opj_alloc_tile_component_data()</a>, <a class="el" href="openjpeg_8h.html#af168cf4a4295433c8c33610bac614553">opj_image_create()</a>, <a class="el" href="group___j2_k.html#ga8e1a7d063d261020d4d8984cb2320971">opj_j2k_update_image_data()</a>, <a class="el" href="group___j_p2.html#ga8c6a6b30b72a7814f8caf2a95aed9e14">opj_jp2_apply_pclr()</a>, and <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>.</p>
 
 </div>
 </div>
@@ -794,7 +798,7 @@ Functions</h2></td></tr>
 
 <p>References <a class="el" href="group___m_i_s_c.html#gaefeccfbb22ba64c00f94f7f66fc97126">opj_aligned_free()</a>.</p>
 
-<p>Referenced by <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">opj_alloc_tile_component_data()</a>, <a class="el" href="openjpeg_8h.html#adcef66fb58906cc2e6739ad8fe58ba28">opj_image_destroy()</a>, <a class="el" href="group___j2_k.html#ga7b5ed63aa196941746a348042a55dda3">opj_j2k_decode_tiles()</a>, <a class="el" href="j2k_8h.html#a60371d3609364bf033e8c244599abf6f">opj_j2k_get_tile()</a>, <a class="el" href="group___j_p2.html#ga8c6a6b30b72a7814f8caf2a95aed9e14">opj_jp2_apply_pclr()</a>, and <a class="el" href="tcd_8c.html#a0df6e3c59cbb93696bab54a688e2ead8">opj_tcd_free_tile()</a>.</p>
+<p>Referenced by <a class="el" href="group___t_c_d.html#gaec7d7a69871d1a8a26b3b8ac8265edf4">opj_alloc_tile_component_data()</a>, <a class="el" href="group___i_m_a_g_e.html#ga3802de36855e5331f4d6c04bc1b732a3">opj_copy_image_header()</a>, <a class="el" href="openjpeg_8h.html#adcef66fb58906cc2e6739ad8fe58ba28">opj_image_destroy()</a>, <a class="el" href="group___j2_k.html#ga7b5ed63aa196941746a348042a55dda3">opj_j2k_decode_tiles()</a>, <a class="el" href="j2k_8h.html#a60371d3609364bf033e8c244599abf6f">opj_j2k_get_tile()</a>, <a class="el" href="j2k_8c.html#a358ce63afe87a1bfad2787689a4021f4">opj_j2k_move_data_from_codec_to_output_image()</a>, <a class="el" href="group___j_p2.html#ga8c6a6b30b72a7814f8caf2a95aed9e14">opj_jp2_apply_pclr()</a>, <a class="el" href="group___t_c_d.html#gad5a64bbb748b2c76bd41ea66715fa897">opj_tcd_decode_tile()</a>, <a class="el" href="tcd_8c.html#a0df6e3c59cbb93696bab54a688e2ead8">opj_tcd_free_tile()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
 
 </div>
 </div>
@@ -1070,6 +1074,8 @@ Functions</h2></td></tr>
 
 <p>Sets the given area to be decoded. </p>
 <p>This function should be called right after opj_read_header and before any tile header reading.</p>
+<p>The coordinates passed to this function should be expressed in the reference grid, that is to say at the highest resolution level, even if requesting the image at lower resolution levels.</p>
+<p>Generally <a class="el" href="openjpeg_8h.html#a29648f3323808658b11710fc5a7cfa89" title="Sets the given area to be decoded. ">opj_set_decode_area()</a> should be followed by <a class="el" href="openjpeg_8h.html#a5d8f796e2757145918bb630ac37fb349" title="Decode an image from a JPEG-2000 codestream. ">opj_decode()</a>, and the codec cannot be re-used. In the particular case of an image made of a single tile, several sequences of calls to opoj_set_decode_area() and <a class="el" href="openjpeg_8h.html#a5d8f796e2757145918bb630ac37fb349" title="Decode an image from a JPEG-2000 codestream. ">opj_decode()</a> are allowed, and will bring performance improvements when reading an image by chunks.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">p_codec</td><td>the jpeg2000 codec. </td></tr>
@@ -1086,6 +1092,61 @@ Functions</h2></td></tr>
 <p>References <a class="el" href="structopj__codec__private.html#a2b260d149ef24ac3bef21d80a804e34e">opj_codec_private::is_decompressor</a>, <a class="el" href="structopj__codec__private.html#a59b2256a734fada5d6775b0e49ae8209">opj_codec_private::m_codec</a>, <a class="el" href="structopj__codec__private.html#acad1e886fe9dd93863fe69edfd9bc17b">opj_codec_private::m_codec_data</a>, <a class="el" href="structopj__codec__private.html#a49ec8119cd2b16a366f706ad415dfbdd">opj_codec_private::m_decompression</a>, <a class="el" href="structopj__codec__private.html#a80c19f6fb64d1bd40b8593042730ea16">opj_codec_private::m_event_mgr</a>, and <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>.</p>
 
 <p>Referenced by <a class="el" href="jp2k__decoder_8h.html#a261799e8487d1b77fc04948abe701e5f">j2k_to_pnm()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a30abe729d3c4e26acb1571b62860a796"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a> <a class="el" href="openjpeg_8h.html#aedc1e23ea6654d0cc416bc390687458b">OPJ_CALLCONV</a> opj_set_decoded_components </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a7c8b18f9785e36e317bdb10c4fd0bd29">opj_codec_t</a> *&#160;</td>
+          <td class="paramname"><em>p_codec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td>
+          <td class="paramname"><em>numcomps</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td>
+          <td class="paramname"><em>comps_indices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td>
+          <td class="paramname"><em>apply_color_transforms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Restrict the number of components to decode. </p>
+<p>This function should be called after <a class="el" href="openjpeg_8h.html#ab7ccce9a2fb0cf5caa18d814e7f2947f" title="Decodes an image header. ">opj_read_header()</a>.</p>
+<p>This function enables to restrict the set of decoded components to the specified indices. Note that the current implementation (apply_color_transforms == OPJ_FALSE) is such that neither the multi-component transform at codestream level, nor JP2 channel transformations will be applied. Consequently the indices are relative to the codestream.</p>
+<p>Note: <a class="el" href="openjpeg_8h.html#a8373b5a0732390d0400545e57674eceb" title="Reads a tile data. ">opj_decode_tile_data()</a> should not be used together with <a class="el" href="openjpeg_8h.html#af7aa8f8295d792db318dc214f692e679" title="Restrict the number of components to decode. ">opj_set_decoded_components()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p_codec</td><td>the jpeg2000 codec to read. </td></tr>
+    <tr><td class="paramname">numcomps</td><td>Size of the comps_indices array. </td></tr>
+    <tr><td class="paramname">comps_indices</td><td>Array of numcomps values representing the indices of the components to decode (relative to the codestream, starting at 0) </td></tr>
+    <tr><td class="paramname">apply_color_transforms</td><td>Whether multi-component transform at codestream level or JP2 channel transformations should be applied. Currently this parameter should be set to OPJ_FALSE. Setting it to OPJ_TRUE will result in an error.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>OPJ_TRUE in case of success. </dd></dl>
+
+<p>References <a class="el" href="event_8h.html#a7323671f4df0a721ae02d610b1269ab9">EVT_ERROR</a>, <a class="el" href="structopj__codec__private.html#a2b260d149ef24ac3bef21d80a804e34e">opj_codec_private::is_decompressor</a>, <a class="el" href="structopj__codec__private.html#a59b2256a734fada5d6775b0e49ae8209">opj_codec_private::m_codec</a>, <a class="el" href="structopj__codec__private.html#acad1e886fe9dd93863fe69edfd9bc17b">opj_codec_private::m_codec_data</a>, <a class="el" href="structopj__codec__private.html#a49ec8119cd2b16a366f706ad415dfbdd">opj_codec_private::m_decompression</a>, <a class="el" href="structopj__codec__private.html#a80c19f6fb64d1bd40b8593042730ea16">opj_codec_private::m_event_mgr</a>, <a class="el" href="group___e_v_e_n_t.html#ga87d9d4bdfd203ccd8a7522d6f197a3b7">opj_event_msg()</a>, and <a class="el" href="openjpeg_8h.html#ac672bfd7db39c609e828acb07a321964">OPJ_FALSE</a>.</p>
 
 </div>
 </div>

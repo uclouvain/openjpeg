@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.3.0</span>
    </div>
   </td>
  </tr>
@@ -86,6 +86,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:a0a2b4d09212139763fc78d1ad345a9a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ab003a5c2dc44a01ca3cd32336c9849"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd__cblk__dec.html#a7ab003a5c2dc44a01ca3cd32336c9849">numchunksalloc</a></td></tr>
 <tr class="separator:a7ab003a5c2dc44a01ca3cd32336c9849"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01bc4278821c6b5d76ee053e341b7fbb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__tcd__cblk__dec.html#a01bc4278821c6b5d76ee053e341b7fbb">decoded_data</a></td></tr>
+<tr class="separator:a01bc4278821c6b5d76ee053e341b7fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Code-block for decoding. </p>
@@ -101,6 +103,20 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Referenced by <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, <a class="el" href="group___t2.html#ga1ad0998fa29444d7f3a4ad4f5685a045">opj_t2_read_packet_data()</a>, <a class="el" href="tcd_8c.html#ab17f65018878156d39af68939de6148b">opj_tcd_code_block_dec_allocate()</a>, and <a class="el" href="tcd_8c.html#a530613069d41672edf61a224b032c8cf">opj_tcd_code_block_dec_deallocate()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a01bc4278821c6b5d76ee053e341b7fbb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a3cec91ef9e73677f0dbd60d4e42401b9">OPJ_INT32</a>* opj_tcd_cblk_dec::decoded_data</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="dwt_8c.html#a57c042791753ac46c7bb073abcc245ba">opj_dwt_init_sparse_array()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, <a class="el" href="tcd_8c.html#ab17f65018878156d39af68939de6148b">opj_tcd_code_block_dec_allocate()</a>, and <a class="el" href="tcd_8c.html#a530613069d41672edf61a224b032c8cf">opj_tcd_code_block_dec_deallocate()</a>.</p>
 
 </div>
 </div>
@@ -240,7 +256,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a57c042791753ac46c7bb073abcc245ba">opj_dwt_init_sparse_array()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
 
 </div>
 </div>
@@ -254,7 +270,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a57c042791753ac46c7bb073abcc245ba">opj_dwt_init_sparse_array()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
 
 </div>
 </div>
@@ -268,7 +284,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a57c042791753ac46c7bb073abcc245ba">opj_dwt_init_sparse_array()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
 
 </div>
 </div>
@@ -282,7 +298,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Referenced by <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
+<p>Referenced by <a class="el" href="dwt_8c.html#a57c042791753ac46c7bb073abcc245ba">opj_dwt_init_sparse_array()</a>, <a class="el" href="t1_8c.html#a4f37cf7aca8eb1313fe5bc320c85ad55">opj_t1_clbl_decode_processor()</a>, <a class="el" href="group___t1.html#gab90391839b2f56ca40aaae1b8748ca3c">opj_t1_decode_cblk()</a>, <a class="el" href="group___t1.html#ga5df121baefa4293a2c0d0122694e0902">opj_t1_decode_cblks()</a>, and <a class="el" href="tcd_8c.html#a54bd587a88cc401980302d13635b2703">opj_tcd_init_tile()</a>.</p>
 
 </div>
 </div>

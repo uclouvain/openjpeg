@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.3.0</span>
    </div>
   </td>
  </tr>
@@ -104,10 +104,10 @@ Data Fields</h2></td></tr>
 <tr class="memdesc:aa2aa7dfc3a1adcc4b01b3efbea8afeb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of layers  <a href="#aa2aa7dfc3a1adcc4b01b3efbea8afeb1">More...</a><br /></td></tr>
 <tr class="separator:aa2aa7dfc3a1adcc4b01b3efbea8afeb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac77442ca958da1beb292db9357a6f5cd"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__cparameters.html#ac77442ca958da1beb292db9357a6f5cd">tcp_rates</a> [100]</td></tr>
-<tr class="memdesc:ac77442ca958da1beb292db9357a6f5cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">rates of layers - might be subsequently limited by the max_cs_size field  <a href="#ac77442ca958da1beb292db9357a6f5cd">More...</a><br /></td></tr>
+<tr class="memdesc:ac77442ca958da1beb292db9357a6f5cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">rates of layers - might be subsequently limited by the max_cs_size field.  <a href="#ac77442ca958da1beb292db9357a6f5cd">More...</a><br /></td></tr>
 <tr class="separator:ac77442ca958da1beb292db9357a6f5cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af521f83ac3c79823d965711934146bea"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__cparameters.html#af521f83ac3c79823d965711934146bea">tcp_distoratio</a> [100]</td></tr>
-<tr class="memdesc:af521f83ac3c79823d965711934146bea"><td class="mdescLeft">&#160;</td><td class="mdescRight">different psnr for successive layers  <a href="#af521f83ac3c79823d965711934146bea">More...</a><br /></td></tr>
+<tr class="memdesc:af521f83ac3c79823d965711934146bea"><td class="mdescLeft">&#160;</td><td class="mdescRight">different psnr for successive layers.  <a href="#af521f83ac3c79823d965711934146bea">More...</a><br /></td></tr>
 <tr class="separator:af521f83ac3c79823d965711934146bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fde076ac50639f6640334ee119f00ce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__cparameters.html#a4fde076ac50639f6640334ee119f00ce">numresolution</a></td></tr>
 <tr class="memdesc:a4fde076ac50639f6640334ee119f00ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of resolutions  <a href="#a4fde076ac50639f6640334ee119f00ce">More...</a><br /></td></tr>
@@ -1095,7 +1095,8 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>different psnr for successive layers </p>
+<p>different psnr for successive layers. </p>
+<p>Should be increasing. 0 can be used as last value to indicate the last layer is lossless. </p>
 
 <p>Referenced by <a class="el" href="group___j2_k.html#ga4a6561d0899d91b38099da38814cbe86">opj_j2k_setup_encoder()</a>.</p>
 
@@ -1143,7 +1144,8 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>rates of layers - might be subsequently limited by the max_cs_size field </p>
+<p>rates of layers - might be subsequently limited by the max_cs_size field. </p>
+<p>Should be decreasing. 1 can be used as last value to indicate the last layer is lossless. </p>
 
 <p>Referenced by <a class="el" href="group___j2_k.html#gaba3677bad5a25925a5944670e27f125b">opj_j2k_set_cinema_parameters()</a>, <a class="el" href="group___j2_k.html#ga4a6561d0899d91b38099da38814cbe86">opj_j2k_setup_encoder()</a>, and <a class="el" href="openjpeg_8h.html#adf975bbcd105f85d8773b4ee925bc73f">opj_set_default_encoder_parameters()</a>.</p>
 

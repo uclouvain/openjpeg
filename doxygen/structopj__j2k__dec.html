@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OpenJPEG
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.3.0</span>
    </div>
   </td>
  </tr>
@@ -86,6 +86,10 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a8fc81bd32a851db5f36ed9836872b9dc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#abb5dad6294f4611f1925388e919b16f4">OPJ_BOOL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__j2k__dec.html#a8fc81bd32a851db5f36ed9836872b9dc">m_last_tile_part</a></td></tr>
 <tr class="memdesc:a8fc81bd32a851db5f36ed9836872b9dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate that the current tile-part is assume as the last tile part of the codestream.  <a href="#a8fc81bd32a851db5f36ed9836872b9dc">More...</a><br /></td></tr>
 <tr class="separator:a8fc81bd32a851db5f36ed9836872b9dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0676d7e5e38560d317db6b47be7d2918"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__j2k__dec.html#a0676d7e5e38560d317db6b47be7d2918">m_numcomps_to_decode</a></td></tr>
+<tr class="separator:a0676d7e5e38560d317db6b47be7d2918"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2db3b4ed02e0843d59f9db42855c81b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__j2k__dec.html#a2db3b4ed02e0843d59f9db42855c81b5">m_comps_indices_to_decode</a></td></tr>
+<tr class="separator:a2db3b4ed02e0843d59f9db42855c81b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5641f21bf71dd0f8dec11ae2fc0b0f88"><td class="memItemLeft" align="right" valign="top"><a class="el" href="opj__includes_8h.html#ae64d2795e8dbcd9ff6d8e1ebd904ce80">OPJ_BITFIELD</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopj__j2k__dec.html#a5641f21bf71dd0f8dec11ae2fc0b0f88">m_can_decode</a>: 1</td></tr>
 <tr class="memdesc:a5641f21bf71dd0f8dec11ae2fc0b0f88"><td class="mdescLeft">&#160;</td><td class="mdescRight">to tell that a tile can be decoded.  <a href="#a5641f21bf71dd0f8dec11ae2fc0b0f88">More...</a><br /></td></tr>
 <tr class="separator:a5641f21bf71dd0f8dec11ae2fc0b0f88"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -113,6 +117,20 @@ Data Fields</h2></td></tr>
 <p>to tell that a tile can be decoded. </p>
 
 <p>Referenced by <a class="el" href="j2k_8h.html#a589edf58bf96de0a09b6104b6f5c13e8">opj_j2k_decode_tile()</a>, <a class="el" href="group___j2_k.html#ga935e4014c63e07bf19ad99584f6de430">opj_j2k_read_sot()</a>, and <a class="el" href="j2k_8h.html#a25b7b51949ceea33515984f1db2f594d">opj_j2k_read_tile_header()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a2db3b4ed02e0843d59f9db42855c81b5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a>* opj_j2k_dec::m_comps_indices_to_decode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="j2k_8h.html#a589edf58bf96de0a09b6104b6f5c13e8">opj_j2k_decode_tile()</a>, <a class="el" href="j2k_8h.html#a5c4508543b134e726107308b6463528e">opj_j2k_destroy()</a>, <a class="el" href="j2k_8c.html#a358ce63afe87a1bfad2787689a4021f4">opj_j2k_move_data_from_codec_to_output_image()</a>, and <a class="el" href="j2k_8h.html#a8ad1ef335703dec30943a7dad14b8c3d">opj_j2k_set_decoded_components()</a>.</p>
 
 </div>
 </div>
@@ -262,6 +280,20 @@ Data Fields</h2></td></tr>
 <p>TNsot correction : see issue 254. </p>
 
 <p>Referenced by <a class="el" href="j2k_8h.html#ad76bb79d4d63030222ebf3dbe3fe86cf">opj_j2k_create_decompress()</a>, and <a class="el" href="j2k_8h.html#a25b7b51949ceea33515984f1db2f594d">opj_j2k_read_tile_header()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a0676d7e5e38560d317db6b47be7d2918"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openjpeg_8h.html#a4cb1e6e6b6ef2df499d5c02f7df54cbb">OPJ_UINT32</a> opj_j2k_dec::m_numcomps_to_decode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="j2k_8h.html#a589edf58bf96de0a09b6104b6f5c13e8">opj_j2k_decode_tile()</a>, <a class="el" href="j2k_8h.html#a5c4508543b134e726107308b6463528e">opj_j2k_destroy()</a>, <a class="el" href="j2k_8c.html#a358ce63afe87a1bfad2787689a4021f4">opj_j2k_move_data_from_codec_to_output_image()</a>, <a class="el" href="j2k_8h.html#a8ad1ef335703dec30943a7dad14b8c3d">opj_j2k_set_decoded_components()</a>, <a class="el" href="group___j_p2.html#gaab973979e00628ffd8b3d99a402d85aa">opj_jp2_decode()</a>, and <a class="el" href="group___j_p2.html#ga69b73f68c750cf70dc3b9836ed6ccfdc">opj_jp2_get_tile()</a>.</p>
 
 </div>
 </div>
