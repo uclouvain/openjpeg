@@ -64,7 +64,7 @@
 - Use more const qualifiers [\#984](https://github.com/uclouvain/openjpeg/pull/984) ([stweil](https://github.com/stweil))
 - Changes in converttif.c for PPC64 [\#980](https://github.com/uclouvain/openjpeg/pull/980) ([szukw000](https://github.com/szukw000))
 
-## [v2.2.0]("https://github.com/uclouvain/openjpeg/releases/v2.2.0" ) (2017-08-10)
+## [v2.2.0](https://github.com/uclouvain/openjpeg/releases/v2.2.0) (2017-08-10)
 [Full Changelog](https://github.com/uclouvain/openjpeg/compare/v2.1.2...v2.2.0)
 
 **Implemented enhancements:**
