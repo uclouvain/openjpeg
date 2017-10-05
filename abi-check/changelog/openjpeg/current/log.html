@@ -20,7 +20,31 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5a67128a251af3f9557d6a9b3b23a7925aec1a5f
+<pre class='wrap'>commit d322cc876f976a88328c00c148e5a5536f5c1b56
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2017-10-04 22:59:08 -0300
+
+    Update ABI check for v2.3.0
+
+commit 081de4b15f54cb4482035b7bf5e3fb443e4bc84b
+Author: Antonin Descampe &lt;antonin@descampe.net&gt;
+Date:   2017-10-04 19:23:14 -0300
+
+    Update CHANGELOG.md
+
+commit 3916fa2e2a286ea795cdb6df7cebed6ac05be983
+Author: Antonin Descampe &lt;antonin@descampe.net&gt;
+Date:   2017-10-03 17:48:44 -0300
+
+    Update NEWS.md
+
+commit ab84ad39d71481555efdd2dd7c56b344b7b75f0f
+Author: Antonin Descampe &lt;antonin@descampe.net&gt;
+Date:   2017-10-03 17:48:09 -0300
+
+    Update CHANGELOG.md
+
+commit 5a67128a251af3f9557d6a9b3b23a7925aec1a5f
 Author: Antonin Descampe &lt;antonin@descampe.net&gt;
 Date:   2017-10-03 17:15:44 -0300
 
@@ -513,40 +537,6 @@ Date:   2017-09-01 16:30:32 +0200
 
     opj_dwt_decode_partial_tile(): avoid undefined behaviour in lifting operation by properly initializing working buffer
 
-commit f9e9942330f476b66ac4a35d0ae521200878f343
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:29 +0200
-
-    Sub-tile decoding: only allocate tile component buffer of the needed dimension
-    
-    Instead of being the full tile size.
-    
-    * Use a sparse array mechanism to store code-blocks and intermediate stages of
-      IDWT.
-    * IDWT, DC level shift and MCT stages are done just on that smaller array.
-    * Improve copy of tile component array to final image, by saving an intermediate
-      buffer.
-    * For full-tile decoding at reduced resolution, only allocate the tile buffer to
-      the reduced size, instead of the full-resolution size.
-
-commit aa7198146b995fe2993ce24f5715057b7da0386d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:21:39 +0200
-
-    opj_compress: reorder checks related to code block dimensions, to avoid potential int overflow
-
-commit 0a25dceca7761ee3f16cbb2ced87b915a948b25e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:20:51 +0200
-
-    opj_j2k_setup_encoder(): validate code block width/height
-
-commit 84bbb4a8743a93d567f40d7233d5196105c8d84e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:12:45 +0200
-
-    opj_t1_allocate_buffers(): remove useless overflow checks
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -677,32 +667,11 @@ Date:   2017-08-19 15:45:54 +0200
 
     pgxtoimage(): avoid excessive memory allocation attempt (#999)
 
-commit 5d403250561398f7ba3041d9eb8c893bd680dd72
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 15:08:51 +0200
-
-    Subtile decoding: only do 5x3 IDWT computations on relevant areas of tile-component buffer.
-    
-    This lowers 'bin/opj_decompress -i ../MAPA.jp2 -o out.tif -d 0,0,256,256'
-    down to 0.860s
-
 commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-18 13:39:20 +0200
 
     pgxtoimage(): fix write stack buffer overflow (#997)
-
-commit 028c504a43e962a725c4fd73d6642ee73c653e1b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 12:30:11 +0200
-
-    test_decode_area: fix to make it work with odd image dimensions
-
-commit 5597522cac96b1bc6d48a447751b1c6049248eef
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 10:16:38 +0200
-
-    bmp_read_rle8_data(): avoid potential infinite loop (#996)
 
 ...</pre></div>
 

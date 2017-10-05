@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="OpenJPEG, header, diff" />
+    <meta name="description" content="Diff for header files between 2.2.0 and 2.3.0 versions of openjpeg" />
+    <link rel="stylesheet" type="text/css" href="../../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../css/headers_diff.css" />
+    
+    
+    <title>
+        OpenJPEG: headers diff between 2.2.0 and 2.3.0 versions
+    </title>
+    
+    </head>
+
+<body>
+<table width='100%' cellpadding='0' cellspacing='0'><tr><td><table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
+<br/>
+<br/>
+<h1>Headers diff: <span class='version'>2.2.0</span> vs <span class='version'>2.3.0</span></h1><br/><br/> 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (2.2.0)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (2.3.0)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l1" /><small>skipping to change at</small><em> line 382</em></th><th> </th><th><a name="part-r1" /><small>skipping to change at</small><em> line 382</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** csty : coding style */</td><td> </td><td class="right">    /** csty : coding style */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int csty;</td><td> </td><td class="right">    int csty;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** progression order (default OPJ_LRCP) */</td><td> </td><td class="right">    /** progression order (default OPJ_LRCP) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_PROG_ORDER prog_order;</td><td> </td><td class="right">    OPJ_PROG_ORDER prog_order;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** progression order changes */</td><td> </td><td class="right">    /** progression order changes */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    opj_poc_t POC[32];</td><td> </td><td class="right">    opj_poc_t POC[32];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** number of progression order changes (POC), default to 0 */</td><td> </td><td class="right">    /** number of progression order changes (POC), default to 0 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 numpocs;</td><td> </td><td class="right">    OPJ_UINT32 numpocs;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** number of layers */</td><td> </td><td class="right">    /** number of layers */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int tcp_numlayers;</td><td> </td><td class="right">    int tcp_numlayers;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">    /** rates of layers - might be subsequently limited by the max_cs_size </td><td> </td><td class="rblock">    /** rates of layers - might be subsequently limited by the max_cs_size </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">field</span> */</td><td> </td><td class="rblock"><span class="insert">field.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * Should be decreasing. 1 can be</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * used as last value to indicate the last layer is lossless.</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    float tcp_rates[100];</td><td> </td><td class="right">    float tcp_rates[100];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0002" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">    /** different psnr for successive <span class="delete">layers</span> */</td><td> </td><td class="rblock">    /** different psnr for successive <span class="insert">layers. Should be increasing. 0 can b</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">e</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">     * used as last value to indicate the last layer is lossless.</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    float tcp_distoratio[100];</td><td> </td><td class="right">    float tcp_distoratio[100];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** number of resolutions */</td><td> </td><td class="right">    /** number of resolutions */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int numresolution;</td><td> </td><td class="right">    int numresolution;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** initial code block width, default to 64 */</td><td> </td><td class="right">    /** initial code block width, default to 64 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int cblockw_init;</td><td> </td><td class="right">    int cblockw_init;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** initial code block height, default to 64 */</td><td> </td><td class="right">    /** initial code block height, default to 64 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int cblockh_init;</td><td> </td><td class="right">    int cblockh_init;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** mode switch (cblk_style) */</td><td> </td><td class="right">    /** mode switch (cblk_style) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    int mode;</td><td> </td><td class="right">    int mode;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** 1 : use the irreversible DWT 9-7, 0 : use lossless compression (def
+ault) */</td><td> </td><td class="right">    /** 1 : use the irreversible DWT 9-7, 0 : use lossless compression (def
+ault) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 864</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 867</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Tile-component coding parameters information</td><td> </td><td class="right"> * Tile-component coding parameters information</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_tccp_info {</td><td> </td><td class="right">typedef struct opj_tccp_info {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** component index */</td><td> </td><td class="right">    /** component index */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 compno;</td><td> </td><td class="right">    OPJ_UINT32 compno;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** coding style */</td><td> </td><td class="right">    /** coding style */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 csty;</td><td> </td><td class="right">    OPJ_UINT32 csty;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** number of resolutions */</td><td> </td><td class="right">    /** number of resolutions */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 numresolutions;</td><td> </td><td class="right">    OPJ_UINT32 numresolutions;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0003" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">    /** code-blocks width */</td><td> </td><td class="rblock">    /** <span class="insert">log2 of </span>code-blocks width */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 cblkw;</td><td> </td><td class="right">    OPJ_UINT32 cblkw;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0004" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">    /** code-blocks height */</td><td> </td><td class="rblock">    /** <span class="insert">log2 of </span>code-blocks height */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 cblkh;</td><td> </td><td class="right">    OPJ_UINT32 cblkh;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** code-block coding style */</td><td> </td><td class="right">    /** code-block coding style */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 cblksty;</td><td> </td><td class="right">    OPJ_UINT32 cblksty;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** discrete wavelet transform identifier: 0 = 9-7 irreversible, 1 = 5-
+3 reversible */</td><td> </td><td class="right">    /** discrete wavelet transform identifier: 0 = 9-7 irreversible, 1 = 5-
+3 reversible */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 qmfbid;</td><td> </td><td class="right">    OPJ_UINT32 qmfbid;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** quantisation style */</td><td> </td><td class="right">    /** quantisation style */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 qntsty;</td><td> </td><td class="right">    OPJ_UINT32 qntsty;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** stepsizes used for quantization */</td><td> </td><td class="right">    /** stepsizes used for quantization */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    OPJ_UINT32 stepsizes_mant[OPJ_J2K_MAXBANDS];</td><td> </td><td class="right">    OPJ_UINT32 stepsizes_mant[OPJ_J2K_MAXBANDS];</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">    /** stepsizes used for quantization */</td><td> </td><td class="right">    /** stepsizes used for quantization */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l3" /><small>skipping to change at</small><em> line 1326</em></th><th> </th><th><a name="part-r3" /><small>skipping to change at</small><em> line 1329</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_stream        the jpeg2000 stream.</td><td> </td><td class="right"> * @param   p_stream        the jpeg2000 stream.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_codec         the jpeg2000 codec to read.</td><td> </td><td class="right"> * @param   p_codec         the jpeg2000 codec to read.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_image         the image structure initialized with the charac
+teristics of encoded image.</td><td> </td><td class="right"> * @param   p_image         the image structure initialized with the charac
+teristics of encoded image.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @return true             if the main header of the codestream and the JP
+2 header is correctly read.</td><td> </td><td class="right"> * @return true             if the main header of the codestream and the JP
+2 header is correctly read.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        opj_codec_t *p_codec,</td><td> </td><td class="right">        opj_codec_t *p_codec,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        opj_image_t **p_image);</td><td> </td><td class="right">        opj_image_t **p_image);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0005" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/** Restrict the number of components to decode.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * This function should be called after opj_read_header().</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * This function enables to restrict the set of decoded components to the</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * specified indices.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * Note that the current implementation (apply_color_transforms == OPJ_FALS</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">E)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * is such that neither the multi-component transform at codestream level,</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * nor JP2 channel transformations will be applied.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * Consequently the indices are relative to the codestream.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * Note: opj_decode_tile_data() should not be used together with opj_set_de</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">coded_components().</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @param   p_codec         the jpeg2000 codec to read.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @param   numcomps        Size of the comps_indices array.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @param   comps_indices   Array of numcomps values representing the indic</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">es</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *                          of the components to decode (relative to the</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *                          codestream, starting at 0)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @param   apply_color_transforms Whether multi-component transform at cod</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">estream level</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *                                 or JP2 channel transformations should be</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> applied.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *                                 Currently this parameter should be set t</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">o OPJ_FALSE.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *                                 Setting it to OPJ_TRUE will result in an</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> error.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @return OPJ_TRUE         in case of success.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_components(opj_codec_t *p_cod</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ec,</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">        OPJ_UINT32 numcomps,</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">        const OPJ_UINT32* comps_indices,</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">        OPJ_BOOL apply_color_transforms);</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Sets the given area to be decoded. This function should be called right 
+after opj_read_header and before any tile header reading.</td><td> </td><td class="right"> * Sets the given area to be decoded. This function should be called right 
+after opj_read_header and before any tile header reading.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0006" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* The coordinates passed to this function should be expressed in the refer</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ence grid,</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * that is to say at the highest resolution level, even if requesting the i</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">mage at lower</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * resolution levels.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * Generally opj_set_decode_area() should be followed by opj_decode(), and </span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">the</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * codec cannot be re-used.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * In the particular case of an image made of a single tile, several sequen</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ces of</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * calls to opoj_set_decode_area() and opj_decode() are allowed, and will b</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ring</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * performance improvements when reading an image by chunks.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_codec         the jpeg2000 codec.</td><td> </td><td class="right"> * @param   p_codec         the jpeg2000 codec.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_image         the decoded image previously setted by opj_read
+_header</td><td> </td><td class="right"> * @param   p_image         the decoded image previously setted by opj_read
+_header</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_start_x       the left position of the rectangle to decode (i
+n image coordinates).</td><td> </td><td class="right"> * @param   p_start_x       the left position of the rectangle to decode (i
+n image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_end_x         the right position of the rectangle to decode (
+in image coordinates).</td><td> </td><td class="right"> * @param   p_end_x         the right position of the rectangle to decode (
+in image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_start_y       the up position of the rectangle to decode (in 
+image coordinates).</td><td> </td><td class="right"> * @param   p_start_y       the up position of the rectangle to decode (in 
+image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_end_y         the bottom position of the rectangle to decode 
+(in image coordinates).</td><td> </td><td class="right"> * @param   p_end_y         the bottom position of the rectangle to decode 
+(in image coordinates).</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @return  true            if the area could be set.</td><td> </td><td class="right"> * @return  true            if the area could be set.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(opj_codec_t *p_codec,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l4" /><small>skipping to change at</small><em> line 1432</em></th><th> </th><th><a name="part-r4" /><small>skipping to change at</small><em> line 1475</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        OPJ_UINT32 * p_data_size,</td><td> </td><td class="right">        OPJ_UINT32 * p_data_size,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,</td><td> </td><td class="right">        OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,</td><td> </td><td class="right">        OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        OPJ_UINT32 * p_nb_comps,</td><td> </td><td class="right">        OPJ_UINT32 * p_nb_comps,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        OPJ_BOOL * p_should_go_on);</td><td> </td><td class="right">        OPJ_BOOL * p_should_go_on);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Reads a tile data. This function is compulsory and allows one to decode 
+tile data. opj_read_tile_header should be called before.</td><td> </td><td class="right"> * Reads a tile data. This function is compulsory and allows one to decode 
+tile data. opj_read_tile_header should be called before.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * The user may need to refer to the image got by opj_read_header to unders
+tand the size being taken by the tile.</td><td> </td><td class="right"> * The user may need to refer to the image got by opj_read_header to unders
+tand the size being taken by the tile.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0007" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* Note: opj_decode_tile_data() should not be used together with opj_set_de</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">coded_components().</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_codec         the jpeg2000 codec.</td><td> </td><td class="right"> * @param   p_codec         the jpeg2000 codec.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_tile_index    the index of the tile being decoded, this shoul
+d be the value set by opj_read_tile_header.</td><td> </td><td class="right"> * @param   p_tile_index    the index of the tile being decoded, this shoul
+d be the value set by opj_read_tile_header.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_data          pointer to a memory block that will hold the de
+coded data.</td><td> </td><td class="right"> * @param   p_data          pointer to a memory block that will hold the de
+coded data.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_data_size     size of p_data. p_data_size should be bigger or
+ equal to the value set by opj_read_tile_header.</td><td> </td><td class="right"> * @param   p_data_size     size of p_data. p_data_size should be bigger or
+ equal to the value set by opj_read_tile_header.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param   p_stream        the stream to decode.</td><td> </td><td class="right"> * @param   p_stream        the stream to decode.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @return  true            if the data could be decoded.</td><td> </td><td class="right"> * @return  true            if the data could be decoded.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode_tile_data(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode_tile_data(opj_codec_t *p_codec,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">        OPJ_UINT32 p_tile_index,</td><td> </td><td class="right">        OPJ_UINT32 p_tile_index,</td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 7 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>5 lines changed or deleted</i></th><th><i> </i></th><th><i>65 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><br/>
+ 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;opj_config.h (2.2.0)&nbsp;</th><th> </th><th>&nbsp;opj_config.h (2.3.0)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno" valign="top"></td><td class="left">/* create opj_config.h for CMake */</td><td> </td><td class="right">/* create opj_config.h for CMake */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_HAVE_STDINT_H              1</td><td> </td><td class="right">#define OPJ_HAVE_STDINT_H              1</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*-------------------------------------------------------------------------
+-*/</td><td> </td><td class="right">/*-------------------------------------------------------------------------
+-*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* OpenJPEG Versioning                                                     
+ */</td><td> </td><td class="right">/* OpenJPEG Versioning                                                     
+ */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* Version number. */</td><td> </td><td class="right">/* Version number. */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_VERSION_MAJOR 2</td><td> </td><td class="right">#define OPJ_VERSION_MAJOR 2</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">#define OPJ_VERSION_MINOR <span class="delete">2</span></td><td> </td><td class="rblock">#define OPJ_VERSION_MINOR <span class="insert">3</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_VERSION_BUILD 0</td><td> </td><td class="right">#define OPJ_VERSION_BUILD 0</td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 1 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>1 lines changed or deleted</i></th><th><i> </i></th><th><i>1 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
+</td></tr></table>
+</body>
+</html>
