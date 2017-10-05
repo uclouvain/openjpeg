@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d322cc876f976a88328c00c148e5a5536f5c1b56
+<pre class='wrap'>commit acd915080e7a63d1892171533ec245e629c88116
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2017-10-04 23:17:04 -0300
+
+    Finalise ABI check update for v2.3.0
+
+commit d322cc876f976a88328c00c148e5a5536f5c1b56
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2017-10-04 22:59:08 -0300
 
@@ -531,12 +537,6 @@ Date:   2017-09-01 16:30:35 +0200
 
     opj_tcd_init_tile(): fix typo on overflow detection condition (introduced in previous commit)
 
-commit eee5104a8885227167a349b6dabdb1f72a04d9d0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:32 +0200
-
-    opj_dwt_decode_partial_tile(): avoid undefined behaviour in lifting operation by properly initializing working buffer
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -655,23 +655,11 @@ Date:   2017-08-21 12:25:38 +0200
 
     Add comments for filter_width values
 
-commit f87c5ef7ebef3d7a908e98f2de1b6a0336ae57ae
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-20 22:02:41 +0200
-
-    Subtile decoding: only do 9x7 IDWT computations on relevant areas of tile-component buffer.
-
 commit 3eed024eb45534f86537404e08d08fa572a40782
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-19 15:45:54 +0200
 
     pgxtoimage(): avoid excessive memory allocation attempt (#999)
-
-commit e5285319229a5d77bf316bb0d3a6cbd3cb8666d9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-18 13:39:20 +0200
-
-    pgxtoimage(): fix write stack buffer overflow (#997)
 
 ...</pre></div>
 
