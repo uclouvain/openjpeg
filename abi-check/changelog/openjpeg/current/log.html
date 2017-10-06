@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit acd915080e7a63d1892171533ec245e629c88116
+<pre class='wrap'>commit e8b6b54d1f7a2c3d501b9afebe9019ad14f4053a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-10-06 19:25:07 +0200
+
+    opj_decompress -h: document -threads ALL_CPUS
+
+commit acd915080e7a63d1892171533ec245e629c88116
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2017-10-04 23:17:04 -0300
 
@@ -531,12 +537,6 @@ Date:   2017-09-01 16:30:37 +0200
     billion pixels, so this is useful for decoding at a lower resolution level,
     or subtile decoding.
 
-commit c37e360a5112b5471168e429159f61b74c0c2f58
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:35 +0200
-
-    opj_tcd_init_tile(): fix typo on overflow detection condition (introduced in previous commit)
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -641,25 +641,12 @@ Date:   2017-08-21 17:19:13 +0200
     Add comment
 
 commit e9bbc6d3dde946bdb5195f053f24b91335d5d84c
-Merge: 3eed024 17a7ac4
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-08-21 13:02:07 +0200
 
     Merge pull request #1001 from rouault/subtile_decoding_stage2
     
     Subtile decoding: only apply IDWT on areas that participate to the window of interest
-
-commit 17a7ac42d581c537cfc1da4324e53047ad82b13e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 12:25:38 +0200
-
-    Add comments for filter_width values
-
-commit 3eed024eb45534f86537404e08d08fa572a40782
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-19 15:45:54 +0200
-
-    pgxtoimage(): avoid excessive memory allocation attempt (#999)
 
 ...</pre></div>
 
