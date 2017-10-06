@@ -242,8 +242,8 @@ static void decode_help_display(void)
             "  -split-pnm\n"
             "    Split output components to different files when writing to PNM\n");
     if (opj_has_thread_support()) {
-        fprintf(stdout, "  -threads <num_threads>\n"
-                "    Number of threads to use for decoding.\n");
+        fprintf(stdout, "  -threads <num_threads|ALL_CPUS>\n"
+                "    Number of threads to use for decoding or ALL_CPUS for all available cores.\n");
     }
     fprintf(stdout, "  -quiet\n"
             "    Disable output from the library and other output.\n");
