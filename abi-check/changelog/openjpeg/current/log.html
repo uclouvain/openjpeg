@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e8b6b54d1f7a2c3d501b9afebe9019ad14f4053a
+<pre class='wrap'>commit 66297f07a43d2770a97c8456d20202f3d051d980
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-10-09 11:40:43 +0200
+
+    Unix build: fix regression of 2.3.0 where a shared-only or static-only build lacks the installation target for the library (#1019, fixes regression introduced by 3dfc6ca2bcf06fd1adb6b6b4cecc6c092f08ba0b)
+
+commit e8b6b54d1f7a2c3d501b9afebe9019ad14f4053a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-10-06 19:25:07 +0200
 
@@ -527,16 +533,6 @@ Date:   2017-09-01 16:30:39 +0200
 
     Fix compiler warning in release mode
 
-commit d5153ba404fa13b9c6e7b2c20d4d128aac718fba
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:37 +0200
-
-    Remove limitation that prevents from opening images bigger than 4 billion pixels
-    
-    However the intermediate buffer for decoding must still be smaller than 4
-    billion pixels, so this is useful for decoding at a lower resolution level,
-    or subtile decoding.
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -639,14 +635,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-21 17:19:13 +0200
 
     Add comment
-
-commit e9bbc6d3dde946bdb5195f053f24b91335d5d84c
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-08-21 13:02:07 +0200
-
-    Merge pull request #1001 from rouault/subtile_decoding_stage2
-    
-    Subtile decoding: only apply IDWT on areas that participate to the window of interest
 
 ...</pre></div>
 
