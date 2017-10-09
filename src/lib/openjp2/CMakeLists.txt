@@ -99,6 +99,7 @@ else()
     set(INSTALL_LIBS ${OPENJPEG_LIBRARY_NAME} openjp2_static)
   else()
     add_library(${OPENJPEG_LIBRARY_NAME} ${OPENJPEG_SRCS})
+    set(INSTALL_LIBS ${OPENJPEG_LIBRARY_NAME})
   endif()
 endif()
 
