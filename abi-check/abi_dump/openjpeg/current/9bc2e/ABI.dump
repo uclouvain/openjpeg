@@ -217,7 +217,7 @@ $VAR1 = {
                                         },
                             '169577' => {
                                           'Header' => 'openjpeg.h',
-                                          'Line' => '1583',
+                                          'Line' => '1586',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'cstr_info',
