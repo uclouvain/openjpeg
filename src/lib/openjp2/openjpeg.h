@@ -1313,6 +1313,9 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
  * number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is called,
  * this function will override the behaviour of the environment variable.
  *
+ * Currently this function must be called after opj_setup_decoder() and
+ * before opj_read_header().
+ *
  * Note: currently only has effect on the decompressor.
  *
  * @param p_codec       decompressor handler
