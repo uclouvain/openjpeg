@@ -6419,7 +6419,9 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
 
 OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads)
 {
-    if (opj_has_thread_support()) {
+    /* Currently we pass the thread-pool to the tcd, so we cannot re-set it */
+    /* afterwards */
+    if (opj_has_thread_support() && j2k->m_tcd == NULL) {
         opj_thread_pool_destroy(j2k->m_tp);
         j2k->m_tp = NULL;
         if (num_threads <= (OPJ_UINT32)INT_MAX) {
