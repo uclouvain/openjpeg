@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit be6ea90e13fe81a922d831b589c54554282e5545
+<pre class='wrap'>commit 53d265576ae0cea480f22f3b08f1c05c8af40d4d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-10-14 22:42:12 +0200
+
+    CMakeLists.txt: turn BUILD_PKGCONFIG_FILES ON by default on Windows if compiler is GCC
+
+commit be6ea90e13fe81a922d831b589c54554282e5545
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-10-12 01:16:23 +0200
 
@@ -524,15 +530,6 @@ Date:   2017-09-01 16:30:45 +0200
 
     opj_j2k_decode_tiles(): apply whole single tile image decoding optimization to reading at reduced resolution as well
 
-commit 98b93103613c90753fb6c57696f9403f8ea0b1d6
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:44 +0200
-
-    Various changes to allow tile buffers of more than 4giga pixels
-    
-    Untested though, since that means a tile buffer of at least 16 GB. So
-    there might be places where uint32 overflow on multiplication still occur...
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -617,12 +614,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-23 18:58:32 +0200
 
     opj_dwt_decode_partial_97(): perf improvement: limit copy of coefficients at end of horizontal pass to actual range of interest
-
-commit 8180eeace13ffceef5dd7c3f80be156e36181846
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-21 23:06:53 +0200
-
-    test_tile_encoder: fix checks on argc
 
 ...</pre></div>
 
