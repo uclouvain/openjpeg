@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d9f8f7ba9a51732eda9017cea6493cc86a62c7ef
+<pre class='wrap'>commit 370d024d108ffe2d5ce9b52f6b7fae5261c4871d
+Merge: d9f8f7b 157a3d8
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2017-11-14 12:28:44 +0100
+
+    Merge pull request #1042 from radarhere/cmake
+    
+    Changed cmake version test to allow for cmake 2.8.11.x
+
+commit 157a3d840884abe5020b1a8b94576a7447063385
+Author: Andrew Murray &lt;radarhere@users.noreply.github.com&gt;
+Date:   2017-11-14 21:45:09 +1100
+
+    Changed cmake version test to allow for cmake 2.8.11.x
+
+commit d9f8f7ba9a51732eda9017cea6493cc86a62c7ef
 Merge: 53d2655 10d22ec
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2017-10-20 21:59:14 +0200
@@ -526,19 +541,6 @@ Date:   2017-09-01 16:30:50 +0200
 
     Optimize reading/write into sparse array
 
-commit 0ae3cba3404674bbe2028ea9a801301a4c951b33
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:48 +0200
-
-    Allow several repeated calls to opj_set_decode_area() and opj_decode() for single-tiled images
-    
-    * Only works for single-tiled images --&gt; will error out cleanly, as currently
-      in other cases
-    * Save re-reading the codestream for the tile, and re-use code-blocks of the
-      previous decoding pass.
-    * Future improvements might involve improving opj_decompress, and the image writing logic,
-      to use this strategy.
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -609,14 +611,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-24 14:09:31 +0200
 
     imagetopgx(): improve performance in 8 bit case (relates to broken.jpc test case)
-
-commit fdcd4e6365731cc1015213e424068131bcd1f31f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-24 13:23:25 +0200
-
-    Remove -NR-DEC-p1_06.j2k-156-decode and NR-DEC-p1_06.j2k-164-decode from knownfailures
-    
-    and make them explicit failures. The result images are empty at the requested resolution
 
 ...</pre></div>
 
