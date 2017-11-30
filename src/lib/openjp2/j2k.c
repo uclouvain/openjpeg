@@ -2657,12 +2657,17 @@ static OPJ_BOOL opj_j2k_read_cod(opj_j2k_t *p_j2k,
             &l_cp->tcps[p_j2k->m_current_tile_number] :
             p_j2k->m_specific_param.m_decoder.m_default_tcp;
 
+#if 0
+    /* This check was added per https://github.com/uclouvain/openjpeg/commit/daed8cc9195555e101ab708a501af2dfe6d5e001 */
+    /* but this is no longer necessary to handle issue476.jp2 */
+    /* and this actually cause issues on legit files. See https://github.com/uclouvain/openjpeg/issues/1043 */
     /* Only one COD per tile */
     if (l_tcp->cod) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "COD marker already read. No more than one COD marker per tile.\n");
         return OPJ_FALSE;
     }
+#endif
     l_tcp->cod = 1;
 
     /* Make sure room is sufficient */

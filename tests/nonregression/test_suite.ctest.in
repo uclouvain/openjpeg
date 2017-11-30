@@ -623,3 +623,5 @@ opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0-t0-r1.
 !opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0_0.tif -c 0,0
 # try to map an invalid component
 !opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c10.tif -c 10
+
+opj_decompress -i @INPUT_NR_PATH@/db11217111510058.jp2 -o @TEMP_PATH@/issue1043.png
