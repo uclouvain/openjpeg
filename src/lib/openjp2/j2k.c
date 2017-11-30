@@ -508,7 +508,7 @@ static OPJ_BOOL opj_j2k_write_cod(opj_j2k_t *p_j2k,
                                   opj_event_mgr_t * p_manager);
 
 /**
- * Reads a COD marker (Coding Styke defaults)
+ * Reads a COD marker (Coding style defaults)
  * @param       p_header_data   the data contained in the COD box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the COD marker.
@@ -2625,7 +2625,7 @@ static OPJ_BOOL opj_j2k_write_cod(opj_j2k_t *p_j2k,
 }
 
 /**
- * Reads a COD marker (Coding Styke defaults)
+ * Reads a COD marker (Coding style defaults)
  * @param       p_header_data   the data contained in the COD box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the COD marker.
