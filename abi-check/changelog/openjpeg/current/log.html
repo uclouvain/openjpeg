@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 98cfdd31340509895f3e2a36f667f66bb3cf1ff2
+<pre class='wrap'>commit 9d0d1a0128c7a9324c9a935b2ded01deb4d660d4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-11-30 15:39:45 +0100
+
+    Add known failure for i386 target (refs #1043)
+
+commit 98cfdd31340509895f3e2a36f667f66bb3cf1ff2
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-11-30 14:48:34 +0100
 
@@ -540,12 +546,6 @@ Date:   2017-09-01 16:30:56 +0200
 
     test_decode_area: accept user bounds in -strip_height mode
 
-commit 82a43d8035ca5f43e198e15faef6c9ac44b39541
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:54 +0200
-
-    Optimize opj_dwt_decode_partial_1() when cas == 0
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -598,12 +598,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-24 14:32:36 +0200
 
     Remove test steps from specialized knownfailures- that are already in knownfailures-all.txt
-
-commit 79aa0b54ddd3e4e3ca09374cb82bd3302a65783a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-24 14:31:13 +0200
-
-    issue104_jpxstream.jp2 decompresses just fine (and like Kakadu). Update md5refs.txt and remove from knownfailures
 
 ...</pre></div>
 
