@@ -20,7 +20,18 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 936910cf7a4d85e341582746126d105a8a044f30
+<pre class='wrap'>commit 98cfdd31340509895f3e2a36f667f66bb3cf1ff2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-11-30 14:48:34 +0100
+
+    opj_j2k_read_cod: remove check for 'No more than one COD marker per tile' (fixes #1043)
+    
+    This check was added per https://github.com/uclouvain/openjpeg/commit/daed8cc9195555e101ab708a501af2dfe6d5e001
+    to fix https://github.com/uclouvain/openjpeg/issues/476 , but it does not seem
+    to be necessary with latest master (issue476.jp2 doesn't cause memory issues),
+    and breaks reading legit files.
+
+commit 936910cf7a4d85e341582746126d105a8a044f30
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-11-30 14:26:17 +0100
 
@@ -535,12 +546,6 @@ Date:   2017-09-01 16:30:54 +0200
 
     Optimize opj_dwt_decode_partial_1() when cas == 0
 
-commit 1644665a9105e2d761e8b29f43af602560e6bcf9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:52 +0200
-
-    opj_j2k_update_image_data(): avoid zero-ing the buffer if not needed
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -599,12 +604,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-24 14:31:13 +0200
 
     issue104_jpxstream.jp2 decompresses just fine (and like Kakadu). Update md5refs.txt and remove from knownfailures
-
-commit c059f431e6262fe5ce296e8137dd478dfe4d1af1
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-24 14:09:34 +0200
-
-    Remove broken.jpc test from known failures, by avoiding too long processing time
 
 ...</pre></div>
 
