@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9d0d1a0128c7a9324c9a935b2ded01deb4d660d4
+<pre class='wrap'>commit d241298fdcd95932346da993d5fbe20210dadd2d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-01-07 17:45:53 +0100
+
+    Add known failure for Windows VC10 i386 target (refs #1043)
+
+commit 9d0d1a0128c7a9324c9a935b2ded01deb4d660d4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-11-30 15:39:45 +0100
 
@@ -534,18 +540,6 @@ Date:   2017-09-01 16:31:00 +0200
 
     Sub-tile decoding: speed up vertical pass in IDWT5x3 by processing 4 cols at a time
 
-commit ccac773556070ede24ea3dfbdec47c2b3c5be5c4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:58 +0200
-
-    Tiny perf improvement in T1 stage for subtile decoding
-
-commit 18635df518602265b71da3c70c4d3b774bc3dfc2
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:30:56 +0200
-
-    test_decode_area: accept user bounds in -strip_height mode
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -586,18 +580,6 @@ Date:   2017-08-28 14:57:49 +0200
       opj_set_decoded_resolution_factor() instead of parameters.cp_reduce, and
       SKIP_OPJ_SET_DECODE_AREA=YES to not call opj_set_decode_area() if -d is
       not specified.
-
-commit 5a4a10120a648848de7522245f8671c3ce285dbc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-24 14:38:24 +0200
-
-    Another cleanup in knownfailures-* files
-
-commit e0a5d148f7e84d18a52c97bd08b21b1dffa9570a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-24 14:32:36 +0200
-
-    Remove test steps from specialized knownfailures- that are already in knownfailures-all.txt
 
 ...</pre></div>
 
