@@ -20,11 +20,48 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d241298fdcd95932346da993d5fbe20210dadd2d
+<pre class='wrap'>commit bdcead70d5900cf5b90774b218183334ca898723
+Merge: e4c3595 4841292
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-01-07 17:49:37 +0100
+
+    Merge pull request #1047 from stweil/coverity
+    
+    Fix resource leak (CID 179466)
+
+commit e4c3595077b2a38579c32f2c63bb01d5213b64d2
+Merge: d241298 6e6f835
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-01-07 17:49:08 +0100
+
+    Merge pull request #1050 from szukw000/changes-for-obsolete-doxygen-tags
+    
+    Some Doxygen tags are removed
+
+commit d241298fdcd95932346da993d5fbe20210dadd2d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-01-07 17:45:53 +0100
 
     Add known failure for Windows VC10 i386 target (refs #1043)
+
+commit 6e6f8354a0614a6af61568a73aea573b8e76f894
+Author: szukw000 &lt;szukw000@arcor.de&gt;
+Date:   2018-01-07 17:11:09 +0100
+
+    Some Doxygen tags are removed
+
+commit 4841292b5df8f5ed3c92f1760769428ad7500b7a
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2017-12-15 16:49:33 +0100
+
+    Fix resource leak (CID 179466)
+    
+    Coverity report:
+    
+    CID 179466 (#1 of 1): Resource leak (RESOURCE_LEAK)
+    93. leaked_storage: Variable name going out of scope leaks the storage it points to.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 9d0d1a0128c7a9324c9a935b2ded01deb4d660d4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
