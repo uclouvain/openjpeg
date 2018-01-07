@@ -75,10 +75,10 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
     png_uint_32  width, height = 0U;
     int color_type;
     FILE *reader = NULL;
-    OPJ_BYTE** rows = NULL;
-    OPJ_INT32* row32s = NULL;
+    OPJ_BYTE** rows;
+    OPJ_INT32* row32s;
     /* j2k: */
-    opj_image_t *image = NULL;
+    opj_image_t *image;
     opj_image_cmptparm_t cmptparm[4];
     OPJ_UINT32 nr_comp;
     OPJ_BYTE sigbuf[8];
@@ -94,20 +94,28 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
     if (fread(sigbuf, 1, MAGIC_SIZE, reader) != MAGIC_SIZE
             || memcmp(sigbuf, PNG_MAGIC, MAGIC_SIZE) != 0) {
         fprintf(stderr, "pngtoimage: %s is no valid PNG file\n", read_idf);
-        goto fin;
+        return NULL;
     }
 
     if ((png = png_create_read_struct(PNG_LIBPNG_VER_STRING,
                                       NULL, NULL, NULL)) == NULL) {
-        goto fin;
+        fclose(reader);
+        return NULL;
     }
     if ((info = png_create_info_struct(png)) == NULL) {
-        goto fin;
+        fclose(reader);
+        png_destroy_read_struct(&png, NULL, NULL);
+        return NULL;
     }
 
     if (setjmp(png_jmpbuf(png))) {
-        goto fin;
+        png_destroy_read_struct(&png, &info, NULL);
+        fclose(reader);
+        return NULL;
     }
+    rows = NULL;
+    row32s = NULL;
+    image = NULL;
 
     png_init_io(png, reader);
     png_set_sig_bytes(png, MAGIC_SIZE);
