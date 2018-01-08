@@ -20,7 +20,18 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit bdcead70d5900cf5b90774b218183334ca898723
+<pre class='wrap'>commit 07d526e4cb93b6d2e1a52cf49e3d011d3d4caa11
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-01-08 09:38:44 +0100
+
+    opj_t2_encode_packet(): disable setting empty packet header bit to 1 when there is an empty packet
+    
+    This effectively reverts commit 2609fb8077125b5b31f1bcc2f98c12ff1e6572d7
+    since it has been reported that
+    such packets cause decoding issues with cinema J2K hardware
+    decoders: https://groups.google.com/forum/#!topic/openjpeg/M7M_fLX_Bco
+
+commit bdcead70d5900cf5b90774b218183334ca898723
 Merge: e4c3595 4841292
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-01-07 17:49:37 +0100
@@ -571,12 +582,6 @@ Date:   2017-09-01 16:31:02 +0200
 
     opj_dwt_decode_partial_1_parallel(): add SSE2 optimization
 
-commit 873004c615b1bed3ce780e869288602af86fdee5
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:31:00 +0200
-
-    Sub-tile decoding: speed up vertical pass in IDWT5x3 by processing 4 cols at a time
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -600,23 +605,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-28 17:18:33 +0200
 
     Subtile decoding: fix overflows in subband coordinate computation that cause later buffer overflow. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3115. Credit to OSS Fuzz. master only
-
-commit 8f92fc97913bec7ffa2dc10d062c0cdd19da20e4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-28 14:57:49 +0200
-
-    Make opj_set_decode_area() and opj_decode() take into account opj_set_decoded_resolution_factor() (#1006, affect API use)
-    
-    * Better document usage of opj_set_decode_area(), ie expecting coordinates
-      in full resolution/reference grid even if requesting at a lower resolution
-      factor
-    * Make sure that image-&gt;comps[].factor is set by opj_set_decode_area() and
-      opj_decode() from the value specified in opj_set_decoded_resolution_factor()
-    * opj_decompress: add 2 environmenet variables to test alternate ways of
-      using the API, namely USE_OPJ_SET_DECODED_RESOLUTION_FACTOR=YES to use
-      opj_set_decoded_resolution_factor() instead of parameters.cp_reduce, and
-      SKIP_OPJ_SET_DECODE_AREA=YES to not call opj_set_decode_area() if -d is
-      not specified.
 
 ...</pre></div>
 
