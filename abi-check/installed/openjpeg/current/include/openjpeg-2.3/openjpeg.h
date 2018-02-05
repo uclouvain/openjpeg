@@ -1178,7 +1178,8 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream,
         opj_stream_skip_fn p_function);
 
 /**
- * Sets the given function to be used as a seek function, the stream is then seekable.
+ * Sets the given function to be used as a seek function, the stream is then seekable,
+ * using SEEK_SET behavior.
  * @param       p_stream    the stream to modify
  * @param       p_function  the function to use a skip function.
 */

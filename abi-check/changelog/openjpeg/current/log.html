@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 07d526e4cb93b6d2e1a52cf49e3d011d3d4caa11
+<pre class='wrap'>commit d96d2b9a2524f41a8e024462f94417c09747ba99
+Merge: 07d526e 6941bc6
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-02-05 17:31:49 +0100
+
+    Merge pull request #1055 from ideasman42/patch-1
+    
+    Note that seek uses SEEK_SET behavior.
+
+commit 6941bc67cf0b152adde1a46746037b7e96e947b2
+Author: Campbell Barton &lt;ideasman42@gmail.com&gt;
+Date:   2018-01-18 15:16:03 +1100
+
+    Note that seek uses SEEK_SET behavior.
+
+commit 07d526e4cb93b6d2e1a52cf49e3d011d3d4caa11
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-01-08 09:38:44 +0100
 
@@ -576,12 +591,6 @@ Date:   2017-09-01 16:31:04 +0200
 
     opj_tcd_dc_level_shift_decode(): optimize lossy case
 
-commit 470f3ed416a8cc3618b2c04000ea7b4694043f34
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:31:02 +0200
-
-    opj_dwt_decode_partial_1_parallel(): add SSE2 optimization
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -599,12 +608,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-28 18:07:44 +0200
 
     Add test for fix of a55c024fc6b917a409b85aeafd7326421c4aea34
-
-commit a55c024fc6b917a409b85aeafd7326421c4aea34
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-28 17:18:33 +0200
-
-    Subtile decoding: fix overflows in subband coordinate computation that cause later buffer overflow. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3115. Credit to OSS Fuzz. master only
 
 ...</pre></div>
 
