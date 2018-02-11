@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d96d2b9a2524f41a8e024462f94417c09747ba99
+<pre class='wrap'>commit da5e897232ef824daf9a492e746ed22cf2a43f18
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-02-11 13:31:04 +0100
+
+    Avoid out-of-bounds write overflow due to uint32 overflow computation on images with huge dimensions. Credit to Google Autofuzz project for providing test case
+
+commit d96d2b9a2524f41a8e024462f94417c09747ba99
 Merge: 07d526e 6941bc6
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-02-05 17:31:49 +0100
@@ -585,12 +591,6 @@ Date:   2017-09-01 16:31:06 +0200
 
     opj_dwt_decode_partial_97(): simplify/more efficient use of sparse arrays in vertical pass
 
-commit ae19001ba425a9b396a29fba3417dccc746bd2ef
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:31:04 +0200
-
-    opj_tcd_dc_level_shift_decode(): optimize lossy case
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
@@ -602,12 +602,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-08-29 11:40:53 +0200
 
     Use IDWT whole tile decoding if the area of interest equals to the image bounds, taking into account the reduced resolution factor
-
-commit 4776b15fa7ec2afa74f65cd471f94513ea08205a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-28 18:07:44 +0200
-
-    Add test for fix of a55c024fc6b917a409b85aeafd7326421c4aea34
 
 ...</pre></div>
 
