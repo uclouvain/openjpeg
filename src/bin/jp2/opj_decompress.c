@@ -69,6 +69,8 @@
 
 #ifdef OPJ_HAVE_LIBLCMS2
 #include <lcms2.h>
+#include <sys/stat.h>
+
 #endif
 #ifdef OPJ_HAVE_LIBLCMS1
 #include <lcms.h>
@@ -1785,7 +1787,15 @@ int main(int argc, char **argv)
         /* destroy the codestream index */
         opj_destroy_cstr_index(&cstr_index);
 
-        if (failed) {
+        /* delete the destination file, if it's a regular file */
+        struct stat info;
+        int retval = lstat(parameters.outfile, &info);
+        int file = 1;
+        if (retval >= 0) {
+            file = S_ISREG(info.st_mode);
+        }
+
+        if (failed && file != 0) {
             (void)remove(parameters.outfile);    /* ignore return value */
         }
     }
