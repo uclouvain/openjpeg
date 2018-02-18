@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit da5e897232ef824daf9a492e746ed22cf2a43f18
+<pre class='wrap'>commit 06f7d412435ddb62f8e9935af7e306783bc4b75b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-02-18 14:38:16 +0100
+
+    bench_dwt: fix wrong index in iteration (issue found by Fethi Migaou)
+
+commit da5e897232ef824daf9a492e746ed22cf2a43f18
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-02-11 13:31:04 +0100
 
@@ -585,23 +591,11 @@ Date:   2017-09-01 16:31:08 +0200
 
     opj_v4dwt_decode_step2_sse(): loop unroll
 
-commit 83b5a168ec0e89210671d60670c9a1143ce8776b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:31:06 +0200
-
-    opj_dwt_decode_partial_97(): simplify/more efficient use of sparse arrays in vertical pass
-
 commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 10:26:18 +0200
 
     Fix undefined shift behaviour in opj_dwt_is_whole_tile_decoding(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3255. Credit to OSS Fuzz
-
-commit 04b70908a7ada29481d2e1903b76f44a68d4d268
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-08-29 11:40:53 +0200
-
-    Use IDWT whole tile decoding if the area of interest equals to the image bounds, taking into account the reduced resolution factor
 
 ...</pre></div>
 
