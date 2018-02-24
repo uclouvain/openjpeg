@@ -9,7 +9,7 @@
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
- * Copyright (c) 2006, Mónica Díez, LPI-UVA, Spain
+ * Copyright (c) 2006, MÃ³nica DÃ­ez, LPI-UVA, Spain
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -1,5 +1,5 @@
 /*
- * Copyrigth (c) 2006, Mónica Díez, LPI-UVA, Spain
+ * Copyrigth (c) 2006, MÃ³nica DÃ­ez, LPI-UVA, Spain
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
