@@ -67,9 +67,10 @@ matrix:
             - valgrind
 
 # Test under ASAN
-    - os: linux
-      compiler: clang
-      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_ASAN=1
+# Temporarily disabled since broken. See https://github.com/uclouvain/openjpeg/issues/1091
+#    - os: linux
+#      compiler: clang
+#      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_ASAN=1
 
 # Test with CLang 3.8
     - os: linux
