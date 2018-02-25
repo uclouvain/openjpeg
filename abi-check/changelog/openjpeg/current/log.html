@@ -20,11 +20,28 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 06f7d412435ddb62f8e9935af7e306783bc4b75b
+<pre class='wrap'>commit 90b1bffa7e745c754afb56dc89ccb70f8aeeadcf
+Merge: 06f7d41 24d08ff
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-02-25 18:21:23 +0100
+
+    Merge pull request #1080 from setharnold/patch-1
+    
+    fix unchecked integer multiplication overflow
+
+commit 06f7d412435ddb62f8e9935af7e306783bc4b75b
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-02-18 14:38:16 +0100
 
     bench_dwt: fix wrong index in iteration (issue found by Fethi Migaou)
+
+commit 24d08ff94ad8b0f51534e46f87cf5a2f2f85d22a
+Author: setharnold &lt;seth.arnold@gmail.com&gt;
+Date:   2018-02-14 17:46:38 -0800
+
+    fix unchecked integer multiplication overflow
+    
+    Hello, this fixes an unchecked integer multiplication overflow. Thanks.
 
 commit da5e897232ef824daf9a492e746ed22cf2a43f18
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -584,18 +601,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 17:32:54 +0200
 
     opj_compress help: indicate 0 value, instead of 1, for -r parameter to get lossless encoding (#1009)
-
-commit 8a17be8945f6f8fcae3f9e5c7c4988e971d245ee
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:31:08 +0200
-
-    opj_v4dwt_decode_step2_sse(): loop unroll
-
-commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 10:26:18 +0200
-
-    Fix undefined shift behaviour in opj_dwt_is_whole_tile_decoding(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3255. Credit to OSS Fuzz
 
 ...</pre></div>
 
