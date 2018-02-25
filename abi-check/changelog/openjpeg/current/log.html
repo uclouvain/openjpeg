@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 90b1bffa7e745c754afb56dc89ccb70f8aeeadcf
+<pre class='wrap'>commit bce2bd71c06e3550e57442dfa715fcce5351bc7a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-02-25 19:20:38 +0100
+
+    .travis.yml: temporarily disable OPJ_CI_ASAN=1 (refs #1091)
+
+commit 90b1bffa7e745c754afb56dc89ccb70f8aeeadcf
 Merge: 06f7d41 24d08ff
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-02-25 18:21:23 +0100
@@ -564,12 +570,6 @@ Date:   2017-09-01 16:31:13 +0200
 
     opj_t1_decode_cblk(): move some code to codeblock processor for (theoretical) better multi-threading in subtile decoding
 
-commit 7017e67a01c378a7a1ee5e34dd544c793b5c23e4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:31:10 +0200
-
-    sparse_array: optimizations for lossy case
-
 commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 20:01:39 +0200
@@ -595,12 +595,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 19:16:35 +0200
 
     opj_compress help: revert 32572617765cb9d77302384653a48d793b8f657f and indicate 1 again as being the value to get lossless for -r. In opj_j2k_setup_encoder(), make sure that ll rates[] &lt;= 1.0 are set to 0. Document 0 as being lossless for -q / tcp_distoratio (#1009)
-
-commit 32572617765cb9d77302384653a48d793b8f657f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 17:32:54 +0200
-
-    opj_compress help: indicate 0 value, instead of 1, for -r parameter to get lossless encoding (#1009)
 
 ...</pre></div>
 
