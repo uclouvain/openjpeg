@@ -20,11 +20,36 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit bce2bd71c06e3550e57442dfa715fcce5351bc7a
+<pre class='wrap'>commit 564fbfb67830e2eb234bc16b3db8fecf54261f95
+Merge: bce2bd7 b49fa93
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-02-25 19:59:18 +0100
+
+    Merge pull request #1090 from stweil/utf8
+    
+    Convert files to UTF-8 encoding
+
+commit bce2bd71c06e3550e57442dfa715fcce5351bc7a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-02-25 19:20:38 +0100
 
     .travis.yml: temporarily disable OPJ_CI_ASAN=1 (refs #1091)
+
+commit b49fa93aa759cb2e2e22e174ef793470eb02a148
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2018-02-24 14:55:33 +0100
+
+    openjp3d: Convert ISO-8859 to UTF-8
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 244f52483df75e6507d676b25d31e6e7bf08bdf5
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2018-02-24 14:51:28 +0100
+
+    jp3d: Convert ISO-8859 to UTF-8
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 90b1bffa7e745c754afb56dc89ccb70f8aeeadcf
 Merge: 06f7d41 24d08ff
@@ -564,12 +589,6 @@ Date:   2017-09-01 20:43:39 +0200
 
     Replace error message 'Not enough memory for tile data' by 'Size of tile data exceeds system limits' (refs https://github.com/uclouvain/openjpeg/pull/730#issuecomment-326654188)
 
-commit 559d16e8f43a0cd090d217d7d111820989299b85
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 16:31:13 +0200
-
-    opj_t1_decode_cblk(): move some code to codeblock processor for (theoretical) better multi-threading in subtile decoding
-
 commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 20:01:39 +0200
@@ -589,12 +608,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 19:27:56 +0200
 
     opj_j2k_setup_encoder(): avoid potential int overflow in computations related to max_cs_size
-
-commit 09929bb615bd6bf2a9f7703fc7b04a12096b091e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 19:16:35 +0200
-
-    opj_compress help: revert 32572617765cb9d77302384653a48d793b8f657f and indicate 1 again as being the value to get lossless for -r. In opj_j2k_setup_encoder(), make sure that ll rates[] &lt;= 1.0 are set to 0. Document 0 as being lossless for -q / tcp_distoratio (#1009)
 
 ...</pre></div>
 
