@@ -71,6 +71,7 @@ set(OPENJPEG_LIBRARY_PROPERTIES
 # Path to additional CMake modules
 set(CMAKE_MODULE_PATH
     ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake
+    ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/externals/sanitizers-cmake/cmake
     ${CMAKE_MODULE_PATH})
 
 # --------------------------------------------------------------------------
@@ -243,6 +244,10 @@ check_symbol_exists(posix_memalign stdlib.h OPJ_HAVE_POSIX_MEMALIGN)
 unset(CMAKE_REQUIRED_DEFINITIONS)
 # memalign (obsolete)
 check_symbol_exists(memalign malloc.h OPJ_HAVE_MEMALIGN)
+
+# Make sure there is Sanitizer support in CMake
+find_package(Sanitizers)
+
 #-----------------------------------------------------------------------------
 # Build Library
 if(BUILD_JPIP_SERVER)
