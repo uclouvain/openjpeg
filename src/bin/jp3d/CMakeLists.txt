@@ -28,6 +28,7 @@ endif()
 # Loop over all executables:
 foreach(exe opj_jp3d_compress opj_jp3d_decompress)
   add_executable(${exe} ${exe}.c ${common_SRCS})
+  add_sanitizers(${exe})
   target_link_libraries(${exe} openjp3d)
   # On unix you need to link to the math library:
   if(UNIX)
