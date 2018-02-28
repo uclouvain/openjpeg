@@ -23,6 +23,7 @@ endif()
 
 # build jp3d lib:
 add_library(${OPENJP3D_LIBRARY_NAME} ${OPENJP3D_SRCS})
+add_sanitizers(${OPENJP3D_LIBRARY_NAME})
 if(UNIX)
   target_link_libraries(${OPENJP3D_LIBRARY_NAME} m)
 endif()
