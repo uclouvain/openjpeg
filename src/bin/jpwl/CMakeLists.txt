@@ -37,6 +37,7 @@ foreach(exe decompress compress)
     ${jpwl_exe}.c
     ${common_SRCS}
   )
+  add_sanitizers(${jpwl_exe})
   set_property(
     TARGET ${jpwl_exe}
     APPEND PROPERTY COMPILE_DEFINITIONS USE_JPWL
