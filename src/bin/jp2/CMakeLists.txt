@@ -44,6 +44,7 @@ endif()
 # Loop over all executables:
 foreach(exe opj_decompress opj_compress opj_dump)
   add_executable(${exe} ${exe}.c ${common_SRCS})
+  add_sanitizers(${exe})
   if(NOT ${CMAKE_VERSION} VERSION_LESS "2.8.12")
     target_compile_options(${exe} PRIVATE ${OPENJP2_COMPILE_OPTIONS})
   endif()
