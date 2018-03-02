@@ -140,10 +140,21 @@ int main(int argc, char *argv[])
         fread(frame_codestream, sample->sample_size - 8, 1,
               file); /* Assuming that jp and ftyp markers size do*/
 
-        sprintf(outfilename, "%s_%05d.j2k", argv[2], snum);
+        {
+            int num = snprintf(outfilename, sizeof(outfilename),
+                               "%s_%05d.j2k", argv[2],
+                               snum);
+            if (num >= sizeof(outfilename)) {
+                fprintf(stderr, "maximum length of output prefix exceeded\n");
+                free(frame_codestream);
+                return 1;
+            }
+        }
+
         outfile = fopen(outfilename, "wb");
         if (!outfile) {
             fprintf(stderr, "failed to open %s for writing\n", outfilename);
+            free(frame_codestream);
             return 1;
         }
         fwrite(frame_codestream, sample->sample_size - 8, 1, outfile);
