@@ -1372,8 +1372,10 @@ int imagetopgx(opj_image_t * image, const char *outfile)
         const size_t dotpos = olen - 4;
         const size_t total = dotpos + 1 + 1 + 4; /* '-' + '[1-3]' + '.pgx' */
 
-        if (outfile[dotpos] != '.') {
-            /* `pgx` was recognized but there is no dot at expected position */
+        if (olen < 5 || outfile[dotpos] != '.') {
+            /* `pgx` was recognized but there is no dot at expected position
+                or outfile is too short to contain anything meaningful other
+                than the file extension `.pgx` itself */
             fprintf(stderr, "ERROR -> Impossible happen.");
             goto fin;
         }
