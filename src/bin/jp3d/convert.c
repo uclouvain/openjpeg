@@ -788,7 +788,7 @@ int volumetobin(opj_volume_t * volume, char *outfile)
 
     fclose(fdest);
 
-    sprintf(name, "%s.img", outfile);
+    snprintf(name, sizeof(name), "%s.img", outfile);
     fimgdest = fopen(name, "w");
     if (!fimgdest) {
         fprintf(stdout, "[ERROR] Failed to open %s for writing\n", name);
