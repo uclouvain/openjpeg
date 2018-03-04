@@ -89,7 +89,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			mv KDU77_Demo_Apps_for_Linux-x86-64_150710 kdu
 		elif [ "${TRAVIS_OS_NAME:-}" == "osx" ] || uname -s | grep -i Darwin &> /dev/null; then
 			echo "Retrieving Kakadu"
-			wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_OSX109_150710.dmg_.zip
+			wget -v http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_OSX109_150710.dmg_.zip
 			cmake -E tar -xf KDU77_Demo_Apps_for_OSX109_150710.dmg_.zip
 			wget -q http://downloads.sourceforge.net/project/catacombae/HFSExplorer/0.23/hfsexplorer-0.23-bin.zip
 			mkdir hfsexplorer && cmake -E chdir hfsexplorer tar -xf ../hfsexplorer-0.23-bin.zip
