@@ -20,7 +20,27 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 564fbfb67830e2eb234bc16b3db8fecf54261f95
+<pre class='wrap'>commit b02e0d9c4e746faf7448cb06f0487402dff66083
+Merge: 564fbfb e351c22
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-03-04 23:10:48 +0100
+
+    Merge pull request #1101 from kbabioch/fix/jp3d-sprintf-overflow
+    
+    jp3d: Replace sprintf() by snprintf() in volumetobin()
+
+commit e351c22ee8c4d8cef0f212831a00447bc0400601
+Author: Karol Babioch &lt;karol@babioch.de&gt;
+Date:   2018-03-03 10:10:32 +0100
+
+    jp3d: Replace sprintf() by snprintf() in volumetobin()
+    
+    This replaces the unsafe sprintf() invocation by the safer snprintf()
+    one, with the correct buffer size to prevent buffer overflows.
+    
+    This fixes #1085.
+
+commit 564fbfb67830e2eb234bc16b3db8fecf54261f95
 Merge: bce2bd7 b49fa93
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-02-25 19:59:18 +0100
@@ -589,6 +609,18 @@ Date:   2017-09-01 20:43:39 +0200
 
     Replace error message 'Not enough memory for tile data' by 'Size of tile data exceeds system limits' (refs https://github.com/uclouvain/openjpeg/pull/730#issuecomment-326654188)
 
+commit 559d16e8f43a0cd090d217d7d111820989299b85
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:13 +0200
+
+    opj_t1_decode_cblk(): move some code to codeblock processor for (theoretical) better multi-threading in subtile decoding
+
+commit 7017e67a01c378a7a1ee5e34dd544c793b5c23e4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:10 +0200
+
+    sparse_array: optimizations for lossy case
+
 commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 20:01:39 +0200
@@ -608,6 +640,30 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 19:27:56 +0200
 
     opj_j2k_setup_encoder(): avoid potential int overflow in computations related to max_cs_size
+
+commit 09929bb615bd6bf2a9f7703fc7b04a12096b091e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 19:16:35 +0200
+
+    opj_compress help: revert 32572617765cb9d77302384653a48d793b8f657f and indicate 1 again as being the value to get lossless for -r. In opj_j2k_setup_encoder(), make sure that ll rates[] &lt;= 1.0 are set to 0. Document 0 as being lossless for -q / tcp_distoratio (#1009)
+
+commit 32572617765cb9d77302384653a48d793b8f657f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 17:32:54 +0200
+
+    opj_compress help: indicate 0 value, instead of 1, for -r parameter to get lossless encoding (#1009)
+
+commit 8a17be8945f6f8fcae3f9e5c7c4988e971d245ee
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 16:31:08 +0200
+
+    opj_v4dwt_decode_step2_sse(): loop unroll
+
+commit 6ce49bf5aebb3c45c464fa82d14cfd4bf7026a28
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 10:26:18 +0200
+
+    Fix undefined shift behaviour in opj_dwt_is_whole_tile_decoding(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3255. Credit to OSS Fuzz
 
 ...</pre></div>
 
