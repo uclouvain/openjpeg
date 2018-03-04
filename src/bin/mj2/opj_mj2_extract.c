@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     mj2_dparameters_t parameters;
 
     if (argc != 3) {
-        printf("Usage: %s mj2filename output_location\n", argv[0]);
+        printf("Usage: %s mj2filename output_prefix\n", argv[0]);
         printf("Example: %s foreman.mj2 output/foreman\n", argv[0]);
         return 1;
     }
