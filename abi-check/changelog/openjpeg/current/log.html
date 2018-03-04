@@ -20,7 +20,34 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b02e0d9c4e746faf7448cb06f0487402dff66083
+<pre class='wrap'>commit 3910be8a68d21df5f23e764c593058ba35557051
+Merge: e98d0a2 cfc5395
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-03-04 23:19:59 +0100
+
+    Merge pull request #1062 from radarhere/master
+    
+    Fixed typos
+
+commit e98d0a20f049c59ba31a19de2fccfaabdcbce502
+Merge: 31a347a d4d7827
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-03-04 23:16:04 +0100
+
+    Merge pull request #1094 from kbabioch/fix/missing-format-string-parameter
+    
+    mj2: Add missing variable to format string in fprintf() invocation in meta_out.c
+
+commit 31a347a9a04209933c63b180c9ff04bdf8a427e5
+Merge: b02e0d9 db6841a
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-03-04 23:13:45 +0100
+
+    Merge pull request #1096 from kbabioch/fix/opj_mj2_extract-help
+    
+    opj_mj2_extract: Rename output_location to output_prefix
+
+commit b02e0d9c4e746faf7448cb06f0487402dff66083
 Merge: 564fbfb e351c22
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-03-04 23:10:48 +0100
@@ -39,6 +66,25 @@ Date:   2018-03-03 10:10:32 +0100
     one, with the correct buffer size to prevent buffer overflows.
     
     This fixes #1085.
+
+commit db6841a099645f5063dc8c2f804b0724a9ea557b
+Author: Karol Babioch &lt;kbabioch@suse.de&gt;
+Date:   2018-03-02 15:19:19 +0100
+
+    opj_mj2_extract: Rename output_location to output_prefix
+    
+    This renames the argument in the help output, as the latter better describes
+    the the purpose of this argument.
+
+commit d4d78272ebe3b65a22e5c98841d451f2078625fa
+Author: Karol Babioch &lt;kbabioch@suse.de&gt;
+Date:   2018-03-02 14:03:03 +0100
+
+    mj2: Add missing variable to format string in fprintf() invocation in meta_out.c
+    
+    This adds the appropriate variables to the invocation of fprintf(). They were
+    specified in the format string, but were missing in the actual call. This
+    fixes #1074 and #1075.
 
 commit 564fbfb67830e2eb234bc16b3db8fecf54261f95
 Merge: bce2bd7 b49fa93
@@ -99,6 +145,12 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-02-11 13:31:04 +0100
 
     Avoid out-of-bounds write overflow due to uint32 overflow computation on images with huge dimensions. Credit to Google Autofuzz project for providing test case
+
+commit cfc539512a1b138c2feedda9fd2f57d36cdaa0db
+Author: Andrew Murray &lt;radarhere@users.noreply.github.com&gt;
+Date:   2018-02-09 21:02:25 +1100
+
+    Fixed typos
 
 commit d96d2b9a2524f41a8e024462f94417c09747ba99
 Merge: 07d526e 6941bc6
