@@ -846,7 +846,7 @@ void xml_write_mdia(FILE* file, FILE* xmlout, mj2_tk_t *track,
         }
         for (i = 0; i < 4; i++) {
             uint_to_chars(track->url[track->num_url].location[i], buf);
-            fprintf(xmlout,  "              <Location>%s</Location>\n");
+            fprintf(xmlout,  "              <Location>%s</Location>\n", buf);
         }
         fprintf(xmlout,
                 "            </DataEntryUrlBox>\n"); // table w. flags, URLs, URNs
@@ -868,7 +868,7 @@ void xml_write_mdia(FILE* file, FILE* xmlout, mj2_tk_t *track,
         fprintf(xmlout,  "              <Location>");
         for (i = 0; i < 4; i++) {
             uint_to_chars(track->urn[track->num_urn].location[i], buf);
-            fprintf(xmlout, "%s");
+            fprintf(xmlout, "%s", buf);
         }
         fprintf(xmlout,  "</Location>\n");
         fprintf(xmlout,  "            </DataEntryUrnBox>\n");
