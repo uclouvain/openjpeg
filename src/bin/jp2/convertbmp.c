@@ -955,6 +955,10 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             adjustB = 0;
         }
 
+		int max = 1024*1024;
+		OPJ_UINT8 *pBuffer = (OPJ_UINT8 *) calloc(1, max);
+		int c = 0;
+		
         for (i = 0; i < w * h; i++) {
             OPJ_UINT8 rc, gc, bc;
             int r, g, b;
@@ -995,15 +999,35 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             }
             bc = (OPJ_UINT8)b;
 
-            fprintf(fdest, "%c%c%c", bc, gc, rc);
+			if(c >= (max - 3)) {
+				fwrite(pBuffer,1,c,fdest);
+				c = 0;
+			}
+
+			*(pBuffer + c++) = bc;
+			*(pBuffer + c++) = gc;
+			*(pBuffer + c++) = rc;
 
             if ((i + 1) % w == 0) {
                 for (pad = ((3 * w) % 4) ? (4 - (3 * w) % 4) : 0; pad > 0; pad--) { /* ADD */
-                    fprintf(fdest, "%c", 0);
+
+                    if(c >= (max - 1)) {
+                        fwrite(pBuffer,1,c,fdest);
+                        c = 0;
+                    }
+
+                    *(pBuffer + c++) = 0;
                 }
             }
         }
+		
+		if(c > 0) {
+			fwrite(pBuffer,1,c,fdest);
+        }
+
         fclose(fdest);
+		
+		free(pBuffer);
     } else {            /* Gray-scale */
 
         /* -->> -->> -->> -->>
