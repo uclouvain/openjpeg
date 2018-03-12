@@ -205,7 +205,7 @@ static void encode_help_display(void)
     fprintf(stdout,
             "    resolution levels. The last specified record is right-shifted for each \n");
     fprintf(stdout, "    remaining lower resolution levels.\n");
-    fprintf(stdout, "    Default: 215x215 at each resolution.\n");
+    fprintf(stdout, "    Default: 2^15x2^15 at each resolution.\n");
     fprintf(stdout, "-t <tile width>,<tile height>\n");
     fprintf(stdout, "    Tile size.\n");
     fprintf(stdout,
