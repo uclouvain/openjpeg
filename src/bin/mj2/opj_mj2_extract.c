@@ -82,12 +82,17 @@ int main(int argc, char *argv[])
     mj2_sample_t *sample;
     unsigned char* frame_codestream;
     FILE *file, *outfile;
-    char outfilename[50];
+    char outfilename[FILENAME_MAX];
     mj2_dparameters_t parameters;
 
     if (argc != 3) {
         printf("Usage: %s mj2filename output_prefix\n", argv[0]);
         printf("Example: %s foreman.mj2 output/foreman\n", argv[0]);
+        return 1;
+    }
+
+    if(strlen(argv[2]) + 11 > sizeof(outfilename)) {
+        fprintf(stderr,"filename %d too long\n",strlen(argv[2]) + 11);
         return 1;
     }
 
