@@ -114,7 +114,7 @@ static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color,
 /**
  * Destroy list of ASOC entities
  */
- static void opj_jp2_asoc_destroy( opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num );
+static void opj_jp2_asoc_destroy( opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num );
 
 /**
  * Writes the Channel Definition box.
@@ -177,10 +177,10 @@ static OPJ_BOOL opj_jp2_read_ftyp(opj_jp2_t *jp2,
  *
  * @return true if the ASOC box is valid.
  */
- static OPJ_BOOL opj_jp2_read_asoc(	opj_jp2_t *jp2,
-									OPJ_BYTE * p_header_data,
-									OPJ_UINT32 p_header_size,
-									opj_event_mgr_t * p_manager);
+static OPJ_BOOL opj_jp2_read_asoc(	opj_jp2_t *jp2,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager);
 
 static OPJ_BOOL opj_jp2_skip_jp2c(opj_jp2_t *jp2,
                                   opj_stream_private_t *stream,
@@ -982,7 +982,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color,
         for (i = 0; i < nr_channels; i++) {
             OPJ_BYTE mtyp = cmap[i].mtyp;
             OPJ_BYTE pcol = cmap[i].pcol;
-            /* See ISO 15444-1 Table I.14 â€“ MTYPi field values */
+            /* See ISO 15444-1 Table I.14 – MTYPi field values */
             if (mtyp != 0 && mtyp != 1) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid value for cmap[%d].mtyp = %d.\n", i,
@@ -2661,9 +2661,9 @@ static OPJ_BOOL opj_jp2_read_ftyp(opj_jp2_t *jp2,
 }
 
 static OPJ_BOOL opj_jp2_read_asoc(	opj_jp2_t *jp2,
-									OPJ_BYTE * p_header_data,
-									OPJ_UINT32 p_header_size,
-									opj_event_mgr_t * p_manager)
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager)
 {
     OPJ_UINT32 label_tag;
     OPJ_UINT32 asoc_tag;
@@ -2697,15 +2697,14 @@ static OPJ_BOOL opj_jp2_read_asoc(	opj_jp2_t *jp2,
     if (label_tag != JP2_LBL) {
         /* TODO: Verify that ASOC must have a following label ? */
         opj_event_msg(p_manager, EVT_WARNING, "ASOC data does not have a label (LBL)\n");
-            return OPJ_TRUE; // No error if we could not parse
+        return OPJ_TRUE; // No error if we could not parse
     }
 
     if ( jp2->numasoc == 0 ) {
         /* Create a first asoc */
         jp2->numasoc = 1;
         jp2->asoc = opj_malloc(sizeof(opj_jp2_asoc_t));
-    }
-    else {
+    } else {
         /* Add an asoc to existing ones */
         (jp2->numasoc)++;
         jp2->asoc = opj_realloc(jp2->asoc, jp2->numasoc * sizeof(opj_jp2_asoc_t));
@@ -2733,30 +2732,30 @@ static OPJ_BOOL opj_jp2_read_asoc(	opj_jp2_t *jp2,
     p_header_size -= 4;
 
     switch (asoc_tag) {
-        case JP2_ASOC: {
-          /* Start of nested ASOC tags. Parse this level. */
-          if (!opj_jp2_read_asoc( jp2, p_header_data, p_header_size, p_manager )) {
+    case JP2_ASOC: {
+        /* Start of nested ASOC tags. Parse this level. */
+        if (!opj_jp2_read_asoc( jp2, p_header_data, p_header_size, p_manager )) {
             return OPJ_FALSE;
-          }
         }
-        break;
+    }
+    break;
 
-        case JP2_XML: {
-          asoc->xml_len = p_header_size+1;
-          asoc->xml_buf  = opj_malloc(p_header_size);
-          memcpy( asoc->xml_buf, p_header_data, p_header_size );
-          asoc->xml_buf[asoc->xml_len-1] = '\0';
-        }
-        break;
+    case JP2_XML: {
+        asoc->xml_len = p_header_size+1;
+        asoc->xml_buf  = opj_malloc(p_header_size);
+        memcpy( asoc->xml_buf, p_header_data, p_header_size );
+        asoc->xml_buf[asoc->xml_len-1] = '\0';
+    }
+    break;
 
-        default: {
+    default: {
         /* Copy the unknown data for external handling.
         NOTE: This is not tested, but does the same as if an XML tag was found.*/
-          asoc->xml_len = p_header_size+1;
-          asoc->xml_buf  = opj_malloc(p_header_size);
-          memcpy( asoc->xml_buf, p_header_data, p_header_size );
-          asoc->xml_buf[asoc->xml_len-1] = '\0';
-        }
+        asoc->xml_len = p_header_size+1;
+        asoc->xml_buf  = opj_malloc(p_header_size);
+        memcpy( asoc->xml_buf, p_header_data, p_header_size );
+        asoc->xml_buf[asoc->xml_len-1] = '\0';
+    }
     }
 
     return OPJ_TRUE;
@@ -2764,19 +2763,18 @@ static OPJ_BOOL opj_jp2_read_asoc(	opj_jp2_t *jp2,
 
 static void opj_jp2_asoc_destroy( opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num )
 {
-  OPJ_UINT32 i;
-  opj_jp2_asoc_t *asoc;
-  for (i=0; i<num; i++)
-  {
-    asoc = &(p_asoc[i]);
-    opj_free( asoc->label );
-    asoc->label = 00;
-    asoc->label_length = 0;
+    OPJ_UINT32 i;
+    opj_jp2_asoc_t *asoc;
+    for (i=0; i<num; i++) {
+        asoc = &(p_asoc[i]);
+        opj_free( asoc->label );
+        asoc->label = 00;
+        asoc->label_length = 0;
 
-    opj_free( asoc->xml_buf );
-    asoc->xml_buf = 00;
-    asoc->xml_len = 0;
-  }
+        opj_free( asoc->xml_buf );
+        asoc->xml_buf = 00;
+        asoc->xml_len = 0;
+    }
 }
 
 static OPJ_BOOL opj_jp2_skip_jp2c(opj_jp2_t *jp2,
@@ -3399,15 +3397,13 @@ OPJ_BOOL jp2_copy_asoc_data( opj_jp2_t* p_jp2, opj_codestream_info_v2_t* p_info 
         if (asoc->label_length && asoc->label) {
             to_asoc->label = opj_malloc( to_asoc->label_length );
             memcpy(to_asoc->label, asoc->label, to_asoc->label_length);
-        }
-        else {
+        } else {
             to_asoc->label = 00;
         }
         if (asoc->xml_len && asoc->xml_buf) {
             to_asoc->xml_buf = opj_malloc( to_asoc->xml_len);
             memcpy(to_asoc->xml_buf, asoc->xml_buf, to_asoc->xml_len);
-        }
-        else {
+        } else {
             to_asoc->xml_buf = 00;
         }
     }

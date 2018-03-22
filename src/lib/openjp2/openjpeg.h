@@ -922,13 +922,12 @@ E.g. georeferencing with GML uses this (http://docs.opengeospatial.org/is/08-085
 In this case the first asoc is labelled 'gml.data' and has no XML data. The second asoc is named
 'gml.root-instance' and contains XML formatted geo-information.
 */
-typedef struct opj_jp2_asoc
-{
-  OPJ_UINT32 level;
-  OPJ_BYTE *label;
-  OPJ_UINT32 label_length;
-  OPJ_BYTE *xml_buf;
-  OPJ_UINT32 xml_len;
+typedef struct opj_jp2_asoc {
+    OPJ_UINT32 level;
+    OPJ_BYTE *label;
+    OPJ_UINT32 label_length;
+    OPJ_BYTE *xml_buf;
+    OPJ_UINT32 xml_len;
 
 } opj_jp2_asoc_t;
 
@@ -959,11 +958,11 @@ typedef struct opj_codestream_info_v2 {
     /** information regarding tiles inside image */
     opj_tile_info_v2_t *tile_info; /* FIXME not used for the moment */
 
-  /** Number of associated data boxes*/
-  OPJ_UINT32 nbasoc;
+    /** Number of associated data boxes*/
+    OPJ_UINT32 nbasoc;
 
-  /** Associated data, e.g. GML geoinformation */
-  opj_jp2_asoc_t *asoc_info;
+    /** Associated data, e.g. GML geoinformation */
+    opj_jp2_asoc_t *asoc_info;
 
 } opj_codestream_info_v2_t;
 

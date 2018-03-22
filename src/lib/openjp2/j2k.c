@@ -10442,9 +10442,9 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
     if (!cstr_info) {
         return NULL;
     }
-	
-	cstr_info->nbasoc = 0;
-	cstr_info->asoc_info = 00;
+
+    cstr_info->nbasoc = 0;
+    cstr_info->asoc_info = 00;
 
     cstr_info->nbcomps = p_j2k->m_private_image->numcomps;
 
