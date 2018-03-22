@@ -37,6 +37,7 @@
 
 #include "opj_includes.h"
 
+static void opj_asoc_destroy( opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num );
 
 /* ---------------------------------------------------------------------- */
 /* Functions to set the message handlers */
@@ -952,6 +953,26 @@ void OPJ_CALLCONV opj_dump_codec(opj_codec_t *p_codec,
     return;
 }
 
+void OPJ_CALLCONV opj_dump_associated_data(
+    opj_codestream_info_v2_t* cstr_info,
+    FILE* output_stream )
+{
+    OPJ_UINT32 i;
+    if ( cstr_info->asoc_info ) {
+        fprintf(output_stream, "\n\nAssociated data: {\n");
+        for (i=0; i<cstr_info->nbasoc; i++) {
+            fprintf(output_stream, "\tlabel=%s, xml/data=", (char*) cstr_info->asoc_info[i].label);
+            if (cstr_info->asoc_info[i].xml_buf) {
+                fprintf(output_stream, "%s\n", (char*) cstr_info->asoc_info[i].xml_buf);
+            }
+            else {
+                fprintf(output_stream, "NULL\n");
+            }
+        }
+        fprintf(output_stream, "}\n");
+    }
+}
+
 opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_codec)
 {
     if (p_codec) {
@@ -961,6 +982,23 @@ opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_codec)
     }
 
     return NULL;
+}
+
+void opj_asoc_destroy( opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num )
+{
+  OPJ_UINT32 i;
+  opj_jp2_asoc_t *asoc;
+  for (i=0; i<num; i++)
+  {
+    asoc = &(p_asoc[i]);
+    opj_free( asoc->label );
+    asoc->label = 00;
+    asoc->label_length = 0;
+
+    opj_free( asoc->xml_buf );
+    asoc->xml_buf = 00;
+    asoc->xml_len = 0;
+  }
 }
 
 void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info)
@@ -974,6 +1012,12 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info)
         if ((*cstr_info)->tile_info) {
             /* FIXME not used for the moment*/
         }
+
+		if ((*cstr_info)->nbasoc) {
+			opj_asoc_destroy((*cstr_info)->asoc_info, (*cstr_info)->nbasoc);
+			(*cstr_info)->asoc_info = 00;
+			(*cstr_info)->nbasoc = 0;
+    	}
 
         opj_free((*cstr_info));
         (*cstr_info) = NULL;
@@ -1050,6 +1094,11 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream(
     return l_stream;
 }
 
+OPJ_OFF_T opj_stream_skip_api(opj_stream_t * p_stream, OPJ_OFF_T p_size)
+{
+    opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+    return l_stream->m_opj_skip(l_stream, p_size, NULL);
+}
 
 void* OPJ_CALLCONV opj_image_data_alloc(OPJ_SIZE_T size)
 {

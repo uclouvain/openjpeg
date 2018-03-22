@@ -917,6 +917,22 @@ typedef struct opj_tile_v2_info {
 } opj_tile_info_v2_t;
 
 /**
+Collector for association box (ASOC data), defined by a level, label and optionally XML data.
+E.g. georeferencing with GML uses this (http://docs.opengeospatial.org/is/08-085r4/08-085r4.html).
+In this case the first asoc is labelled 'gml.data' and has no XML data. The second asoc is named
+'gml.root-instance' and contains XML formatted geo-information.
+*/
+typedef struct opj_jp2_asoc
+{
+  OPJ_UINT32 level;
+  OPJ_BYTE *label;
+  OPJ_UINT32 label_length;
+  OPJ_BYTE *xml_buf;
+  OPJ_UINT32 xml_len;
+
+} opj_jp2_asoc_t;
+
+/**
  * Information structure about the codestream (FIXME should be expand and enhance)
  */
 typedef struct opj_codestream_info_v2 {
@@ -942,6 +958,12 @@ typedef struct opj_codestream_info_v2 {
 
     /** information regarding tiles inside image */
     opj_tile_info_v2_t *tile_info; /* FIXME not used for the moment */
+
+  /** Number of associated data boxes*/
+  OPJ_UINT32 nbasoc;
+
+  /** Associated data, e.g. GML geoinformation */
+  opj_jp2_asoc_t *asoc_info;
 
 } opj_codestream_info_v2_t;
 
@@ -1178,13 +1200,22 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream,
         opj_stream_skip_fn p_function);
 
 /**
- * Sets the given function to be used as a seek function, the stream is then seekable,
- * using SEEK_SET behavior.
+ * Sets the given function to be used as a seek function, the stream is then seekable.
  * @param       p_stream    the stream to modify
  * @param       p_function  the function to use a skip function.
 */
 OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream,
         opj_stream_seek_fn p_function);
+
+ /**
+ * Skips a number of bytes from the stream.
+ * @param       p_stream    the stream to skip data from.
+ * @param       p_size      the number of bytes to skip.
+ * @param       p_event_mgr the user event manager to be notified of special events.
+ * @return      the number of bytes skipped, or -1 if an error occurred.
+ */
+OPJ_API OPJ_OFF_T OPJ_CALLCONV opj_stream_skip_api(opj_stream_t * p_stream, OPJ_OFF_T p_size);
+
 
 /**
  * Sets the given data to be used as a user data for the stream.
@@ -1313,9 +1344,6 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
  * used to initialize the number of threads. The value can be either an integer
  * number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is called,
  * this function will override the behaviour of the environment variable.
- *
- * Currently this function must be called after opj_setup_decoder() and
- * before opj_read_header().
  *
  * Note: currently only has effect on the decompressor.
  *
@@ -1610,6 +1638,10 @@ OPJ_API void OPJ_CALLCONV opj_dump_codec(opj_codec_t *p_codec,
  */
 OPJ_API opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(
     opj_codec_t *p_codec);
+
+OPJ_API void OPJ_CALLCONV opj_dump_associated_data(
+    opj_codestream_info_v2_t* cstr_info,
+    FILE* output_stream );
 
 /**
  * Get the codestream index from the codec
