@@ -1094,12 +1094,6 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream(
     return l_stream;
 }
 
-OPJ_OFF_T opj_stream_skip_api(opj_stream_t * p_stream, OPJ_OFF_T p_size)
-{
-    opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
-    return l_stream->m_opj_skip(l_stream, p_size, NULL);
-}
-
 void* OPJ_CALLCONV opj_image_data_alloc(OPJ_SIZE_T size)
 {
     void* ret = opj_aligned_malloc(size);

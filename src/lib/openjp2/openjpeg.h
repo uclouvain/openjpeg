@@ -1207,16 +1207,6 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream,
 OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream,
         opj_stream_seek_fn p_function);
 
- /**
- * Skips a number of bytes from the stream.
- * @param       p_stream    the stream to skip data from.
- * @param       p_size      the number of bytes to skip.
- * @param       p_event_mgr the user event manager to be notified of special events.
- * @return      the number of bytes skipped, or -1 if an error occurred.
- */
-OPJ_API OPJ_OFF_T OPJ_CALLCONV opj_stream_skip_api(opj_stream_t * p_stream, OPJ_OFF_T p_size);
-
-
 /**
  * Sets the given data to be used as a user data for the stream.
  * @param       p_stream    the stream to modify
