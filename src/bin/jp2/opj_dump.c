@@ -602,6 +602,9 @@ int main(int argc, char *argv[])
 
         cstr_info = opj_get_cstr_info(l_codec);
 
+		/* Dum associated data if there is any */
+		opj_dump_associated_data(cstr_info, stdout);
+
         cstr_index = opj_get_cstr_index(l_codec);
 
         /* close the byte stream */
