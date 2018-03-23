@@ -1199,7 +1199,8 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream,
         opj_stream_skip_fn p_function);
 
 /**
- * Sets the given function to be used as a seek function, the stream is then seekable.
+ * Sets the given function to be used as a seek function, the stream is then seekable,
+ * using SEEK_SET behavior.
  * @param       p_stream    the stream to modify
  * @param       p_function  the function to use a skip function.
 */
@@ -1333,6 +1334,9 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
  * used to initialize the number of threads. The value can be either an integer
  * number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is called,
  * this function will override the behaviour of the environment variable.
+ *
+ * Currently this function must be called after opj_setup_decoder() and
+ * before opj_read_header().
  *
  * Note: currently only has effect on the decompressor.
  *
@@ -1628,6 +1632,14 @@ OPJ_API void OPJ_CALLCONV opj_dump_codec(opj_codec_t *p_codec,
 OPJ_API opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(
     opj_codec_t *p_codec);
 
+/**
+ * Dumps info in ASOC and nested LBL and XML boxes if any.
+ * For example GML geo data may be stored in these associated boxes.
+ *
+ * @param   p_codec         codestream information
+ * @param   output_stream   stream to dump info to
+ *
+ */
 OPJ_API void OPJ_CALLCONV opj_dump_associated_data(
     opj_codestream_info_v2_t* cstr_info,
     FILE* output_stream );
