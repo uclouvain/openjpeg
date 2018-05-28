@@ -3387,11 +3387,11 @@ opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2)
     return p_info;
 }
 
-OPJ_BOOL jp2_copy_asoc_data(opj_jp2_t* p_jp2, opj_codestream_info_v2_t* p_info)
+opj_jp2_metadata_t* jp2_get_metadata( opj_jp2_t* p_jp2 )
 {
-  opj_jp2_metadata_t* p_metadata = opj_malloc(sizeof(opj_jp2_metadata_t));
-  jp2_copy_asoc_data( p_jp2, p_metadata );
-  return p_metadata;
+    opj_jp2_metadata_t* p_metadata = opj_malloc(sizeof(opj_jp2_metadata_t));
+    jp2_copy_asoc_data(p_jp2, p_metadata);
+    return p_metadata;
 }
 
 OPJ_BOOL jp2_copy_asoc_data( opj_jp2_t* p_jp2, opj_jp2_metadata_t* p_jp2_metadata )
