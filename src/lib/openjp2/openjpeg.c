@@ -37,7 +37,7 @@
 
 #include "opj_includes.h"
 
-static void opj_asoc_destroy( opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num );
+static void opj_asoc_destroy(opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num);
 
 /* ---------------------------------------------------------------------- */
 /* Functions to set the message handlers */
@@ -961,12 +961,12 @@ void OPJ_CALLCONV opj_dump_codec(opj_codec_t *p_codec,
 
 void OPJ_CALLCONV opj_dump_associated_data(
     opj_jp2_metadata_t* jp2_info,
-    FILE* output_stream )
+    FILE* output_stream)
 {
     OPJ_UINT32 i;
-    if ( jp2_info && jp2_info->asoc_info ) {
+    if (jp2_info && jp2_info->asoc_info) {
         fprintf(output_stream, "\n\nAssociated data: {\n");
-        for (i=0; i<jp2_info->nbasoc; i++) {
+        for (i = 0; i < jp2_info->nbasoc; i++) {
             fprintf(output_stream, "\tlabel=%s, xml/data=", (char*) jp2_info->asoc_info[i].label);
             if (jp2_info->asoc_info[i].xml_buf) {
                 fprintf(output_stream, "%s\n", (char*) jp2_info->asoc_info[i].xml_buf);
@@ -989,17 +989,17 @@ opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_codec)
     return NULL;
 }
 
-void opj_asoc_destroy( opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num )
+void opj_asoc_destroy(opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num)
 {
     OPJ_UINT32 i;
     opj_jp2_asoc_t *asoc;
-    for (i=0; i<num; i++) {
+    for (i = 0; i < num; i++) {
         asoc = &(p_asoc[i]);
-        opj_free( asoc->label );
+        opj_free(asoc->label);
         asoc->label = 00;
         asoc->label_length = 0;
 
-        opj_free( asoc->xml_buf );
+        opj_free(asoc->xml_buf);
         asoc->xml_buf = 00;
         asoc->xml_len = 0;
     }

@@ -498,7 +498,7 @@ opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2);
 /**
  * Copy associated data
  */
-OPJ_BOOL jp2_copy_asoc_data( opj_jp2_t* p_jp2, opj_jp2_metadata_t* p_jp2_metadata );
+OPJ_BOOL jp2_copy_asoc_data(opj_jp2_t* p_jp2, opj_jp2_metadata_t* p_jp2_metadata);
 
 /**
  * Get the codestream index from a JPEG2000 codec.

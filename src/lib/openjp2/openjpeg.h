@@ -1641,7 +1641,7 @@ OPJ_API opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(
  */
 OPJ_API void OPJ_CALLCONV opj_dump_associated_data(
     opj_jp2_metadata_t* cstr_info,
-    FILE* output_stream );
+    FILE* output_stream);
 
 /**
  * Get the codestream index from the codec
