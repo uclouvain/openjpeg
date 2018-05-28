@@ -487,9 +487,18 @@ void jp2_dump(opj_jp2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
 opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2);
 
 /**
+ * Get the metadata from a JPEG2000 codec.
+ *
+ *@param  p_jp2        jp2 codec.
+ *
+ *@return  the metadata extract from the jpg2000 codec
+ */
+ opj_jp2_metadata_t* jp2_get_metadata( opj_jp2_t* p_jp2 );
+
+/**
  * Copy associated data
  */
-OPJ_BOOL jp2_copy_asoc_data( opj_jp2_t* p_jp2, opj_codestream_info_v2_t* p_info );
+OPJ_BOOL jp2_copy_asoc_data( opj_jp2_t* p_jp2, opj_jp2_metadata_t* p_jp2_metadata );
 
 /**
  * Get the codestream index from a JPEG2000 codec.

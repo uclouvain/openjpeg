@@ -187,6 +187,9 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
         l_codec->opj_get_codec_index = (opj_codestream_index_t* (*)(
                                             void*)) j2k_get_cstr_index;
 
+        l_codec->opj_get_jp2_metadata = (opj_jp2_metadata_t* (*)(
+                                            void*)) j2k_get_metadata;
+
         l_codec->m_codec_data.m_decompression.opj_decode =
             (OPJ_BOOL(*)(void *,
                          struct opj_stream_private *,
@@ -273,6 +276,9 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 
         l_codec->opj_get_codec_index = (opj_codestream_index_t* (*)(
                                             void*)) jp2_get_cstr_index;
+
+        l_codec->opj_get_jp2_metadata = (opj_jp2_metadata_t* (*)(
+                                            void*)) jp2_get_metadata;
 
         l_codec->m_codec_data.m_decompression.opj_decode =
             (OPJ_BOOL(*)(void *,
@@ -954,16 +960,16 @@ void OPJ_CALLCONV opj_dump_codec(opj_codec_t *p_codec,
 }
 
 void OPJ_CALLCONV opj_dump_associated_data(
-    opj_codestream_info_v2_t* cstr_info,
+    opj_jp2_metadata_t* jp2_info,
     FILE* output_stream )
 {
     OPJ_UINT32 i;
-    if ( cstr_info->asoc_info ) {
+    if ( jp2_info && jp2_info->asoc_info ) {
         fprintf(output_stream, "\n\nAssociated data: {\n");
-        for (i=0; i<cstr_info->nbasoc; i++) {
-            fprintf(output_stream, "\tlabel=%s, xml/data=", (char*) cstr_info->asoc_info[i].label);
-            if (cstr_info->asoc_info[i].xml_buf) {
-                fprintf(output_stream, "%s\n", (char*) cstr_info->asoc_info[i].xml_buf);
+        for (i=0; i<jp2_info->nbasoc; i++) {
+            fprintf(output_stream, "\tlabel=%s, xml/data=", (char*) jp2_info->asoc_info[i].label);
+            if (jp2_info->asoc_info[i].xml_buf) {
+                fprintf(output_stream, "%s\n", (char*) jp2_info->asoc_info[i].xml_buf);
             } else {
                 fprintf(output_stream, "NULL\n");
             }
@@ -1011,12 +1017,6 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info)
             /* FIXME not used for the moment*/
         }
 
-        if ((*cstr_info)->nbasoc) {
-            opj_asoc_destroy((*cstr_info)->asoc_info, (*cstr_info)->nbasoc);
-            (*cstr_info)->asoc_info = 00;
-            (*cstr_info)->nbasoc = 0;
-        }
-
         opj_free((*cstr_info));
         (*cstr_info) = NULL;
     }
@@ -1031,6 +1031,27 @@ opj_codestream_index_t * OPJ_CALLCONV opj_get_cstr_index(opj_codec_t *p_codec)
     }
 
     return NULL;
+}
+
+opj_jp2_metadata_t * OPJ_CALLCONV opj_get_jp2_metadata(opj_codec_t *p_codec)
+{
+   if (p_codec) {
+     opj_codec_private_t* l_codec = (opj_codec_private_t*) p_codec;
+     return l_codec->opj_get_jp2_metadata(l_codec->m_codec);
+  }
+  return NULL;
+}
+
+OPJ_API void opj_destroy_jp2_metadata(opj_jp2_metadata_t **p_jp2_meta_data)
+{
+  if (*p_jp2_meta_data) {
+    if ((*p_jp2_meta_data)->nbasoc) {
+      opj_asoc_destroy((*p_jp2_meta_data)->asoc_info, (*p_jp2_meta_data)->nbasoc);
+      (*p_jp2_meta_data)->asoc_info = 00;
+      (*p_jp2_meta_data)->nbasoc = 0;
+    }
+    (*p_jp2_meta_data) = NULL;
+  }
 }
 
 void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)

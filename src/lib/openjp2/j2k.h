@@ -795,6 +795,15 @@ void j2k_dump_image_comp_header(opj_image_comp_t* comp, OPJ_BOOL dev_dump_flag,
 opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k);
 
 /**
+ * Get the metadata from a JPEG2000 codec.
+ *
+ *@param    p_j2k               the component image header to dump.
+ *
+ *@return   NULL for j2k streams. The metadata extract from the jpg2000 codec
+ */
+ opj_jp2_metadata_t* j2k_get_metadata( opj_j2k_t* p_j2k );
+
+/**
  * Get the codestream index from a JPEG2000 codec.
  *
  *@param    p_j2k               the component image header to dump.

@@ -958,11 +958,6 @@ typedef struct opj_codestream_info_v2 {
     /** information regarding tiles inside image */
     opj_tile_info_v2_t *tile_info; /* FIXME not used for the moment */
 
-    /** Number of associated data boxes*/
-    OPJ_UINT32 nbasoc;
-
-    /** Associated data, e.g. GML geoinformation */
-    opj_jp2_asoc_t *asoc_info;
 
 } opj_codestream_info_v2_t;
 
@@ -1049,11 +1044,15 @@ typedef struct opj_codestream_index {
 
 /**
  * Info structure of the JP2 file
- * EXPERIMENTAL FOR THE MOMENT
+ * Includes associated data (ASOC boxes) if available in JP2 stream. See opj_dump for sample code. 
  */
 typedef struct opj_jp2_metadata {
-    /** */
-    OPJ_INT32   not_used;
+    
+     /** Number of associated data boxes*/
+    OPJ_UINT32 nbasoc;
+
+    /** Associated data, e.g. GML geoinformation */
+    opj_jp2_asoc_t *asoc_info;
 
 } opj_jp2_metadata_t;
 
@@ -1641,7 +1640,7 @@ OPJ_API opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(
  *
  */
 OPJ_API void OPJ_CALLCONV opj_dump_associated_data(
-    opj_codestream_info_v2_t* cstr_info,
+    opj_jp2_metadata_t* cstr_info,
     FILE* output_stream );
 
 /**
@@ -1660,15 +1659,20 @@ OPJ_API void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t
 
 
 /**
- * Get the JP2 file information from the codec FIXME
+ * Get the JP2 metadata file information from the codec 
  *
  * @param   p_codec         the jpeg2000 codec.
  *
- * @return                  a pointer to a JP2 metadata structure.
+ * @return                  a pointer to a JP2 metadata structure or NULL if no metadata available. The metadata structure will contain associated data (ASOC tag) such as GML geoinfo-data if available.
  *
  */
 OPJ_API opj_jp2_metadata_t* OPJ_CALLCONV opj_get_jp2_metadata(
     opj_codec_t *p_codec);
+
+/**
+ * Destroy the JP2 metadata file information 
+ */
+OPJ_API void opj_destroy_jp2_metadata(opj_jp2_metadata_t **p_jp2_meta_data);
 
 /**
  * Get the JP2 file index from the codec FIXME
