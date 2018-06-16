@@ -203,7 +203,7 @@ static void encode_help_display(void)
     fprintf(stdout,
             "    to the highest resolution level and subsequent records to lower \n");
     fprintf(stdout,
-            "    resolution levels. The last specified record is right-shifted for each \n");
+            "    resolution levels. The last specified record is halved successively for each \n");
     fprintf(stdout, "    remaining lower resolution levels.\n");
     fprintf(stdout, "    Default: 2^15x2^15 at each resolution.\n");
     fprintf(stdout, "-t <tile width>,<tile height>\n");
