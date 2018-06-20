@@ -4094,7 +4094,12 @@ static OPJ_BOOL opj_j2k_merge_ppt(opj_tcp_t *p_tcp, opj_event_mgr_t * p_manager)
     /* preconditions */
     assert(p_tcp != 00);
     assert(p_manager != 00);
-    assert(p_tcp->ppt_buffer == NULL);
+
+    if (p_tcp->ppt_buffer != NULL) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "opj_j2k_merge_ppt() has already been called\n");
+        return OPJ_FALSE;
+    }
 
     if (p_tcp->ppt == 0U) {
         return OPJ_TRUE;
