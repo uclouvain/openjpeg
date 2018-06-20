@@ -625,3 +625,8 @@ opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c0-t0-r1.
 !opj_decompress -i @INPUT_CONF_PATH@/file1.jp2 -o @TEMP_PATH@/file1.jp2-c10.tif -c 10
 
 opj_decompress -i @INPUT_NR_PATH@/db11217111510058.jp2 -o @TEMP_PATH@/issue1043.png
+
+opj_decompress -i @INPUT_NR_PATH@/tnsot_zero.jp2 -o @TEMP_PATH@/tnsot_zero.png
+
+# try to decompress file with repeated PPT marker
+!opj_decompress -i @INPUT_NR_PATH@/oss-fuzz2785.jp2 -o @TEMP_PATH@/oss-fuzz2785.png
