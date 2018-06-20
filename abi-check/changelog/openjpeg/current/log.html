@@ -20,7 +20,37 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit fd205f457b157e925e2a6eb03aba397b45b0ed4e
+<pre class='wrap'>commit d2205ba2ee78faeea659263383446c4472b1f9df
+Merge: fd205f4 4170681
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-06-20 16:26:24 +0200
+
+    Merge pull request #1121 from rouault/fix_tnsot_zero
+    
+    Fix regression in reading files with TNsot == 0 (refs #1120)
+
+commit 4170681661126bc9c1348a0183633dc2f4fc8b05
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-06-20 15:06:16 +0200
+
+    Add test cases for https://github.com/uclouvain/openjpeg/issues/1120 and https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785
+
+commit 0c913b0aba409148b51ca43d45c50ae595449723
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-06-20 14:54:09 +0200
+
+    Avoid assertion when running opj_j2k_merge_ppt() several time due to e6674f7ed66abdb32a0be5944f618722b6a7b5d5 revert. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785
+
+commit 832dfd18665da08745748bde2d2563f00c7cd9e7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-06-20 14:38:41 +0200
+
+    Revert "Avoid assertion in opj_j2k_merge_ppt() in case premature EOC is encountered in opj_j2k_read_tile_header(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785. Credit to OSS Fuzz" (fixes #1120)
+    
+    This reverts commit 9906fbf737692486cebabe98169988d818e2e66a.
+    which broke decoding of images where TNsot == 0
+
+commit fd205f457b157e925e2a6eb03aba397b45b0ed4e
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-06-16 16:17:58 +0200
 
@@ -682,12 +712,6 @@ Date:   2017-09-01 21:17:26 +0200
 
     opj_t1_clbl_decode_processor(): use SSE2 in subtile decoding code path, for irreversible
 
-commit 2c365fe0ecc8c6597db491a953a91308b1d0d4b1
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 20:43:39 +0200
-
-    Replace error message 'Not enough memory for tile data' by 'Size of tile data exceeds system limits' (refs https://github.com/uclouvain/openjpeg/pull/730#issuecomment-326654188)
-
 commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 20:01:39 +0200
@@ -701,12 +725,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 19:49:01 +0200
 
     opj_j2k_setup_encoder(): emit warnings if tcp_rates are not decreasing or tcp_distoratio are not increasing (#1009)
-
-commit a538815c774db94a0d3fa323c9ca4f456ef04903
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 19:27:56 +0200
-
-    opj_j2k_setup_encoder(): avoid potential int overflow in computations related to max_cs_size
 
 ...</pre></div>
 
