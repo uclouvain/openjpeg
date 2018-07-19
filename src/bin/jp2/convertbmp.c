@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <malloc.h>
 
 #include "openjpeg.h"
 #include "convert.h"
@@ -862,6 +863,8 @@ int imagetobmp(opj_image_t * image, const char *outfile)
     int i, pad;
     FILE *fdest = NULL;
     int adjustR, adjustG, adjustB;
+	OPJ_UINT8 *pBuffer = (OPJ_UINT8 *) calloc(1, 1024*1024);
+	OPJ_SIZE_T c = 0;
 
     if (image->comps[0].prec < 8) {
         fprintf(stderr, "imagetobmp: Unsupported precision: %d\n",
@@ -995,15 +998,35 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             }
             bc = (OPJ_UINT8)b;
 
-            fprintf(fdest, "%c%c%c", bc, gc, rc);
+			if(c >= (malloc_usable_size(pBuffer) - 3)) {
+				fwrite(pBuffer,1,c,fdest);
+				c = 0;
+			}
+
+			*(pBuffer + c++) = bc;
+			*(pBuffer + c++) = gc;
+			*(pBuffer + c++) = rc;
 
             if ((i + 1) % w == 0) {
                 for (pad = ((3 * w) % 4) ? (4 - (3 * w) % 4) : 0; pad > 0; pad--) { /* ADD */
-                    fprintf(fdest, "%c", 0);
+
+                    if(c >= (malloc_usable_size(pBuffer) - 1)) {
+                        fwrite(pBuffer,1,c,fdest);
+                        c = 0;
+                    }
+
+                    *(pBuffer + c++) = 0;
                 }
             }
         }
+		
+		if(c > 0) {
+			fwrite(pBuffer,1,c,fdest);
+        }
+
         fclose(fdest);
+		
+		free(pBuffer);
     } else {            /* Gray-scale */
 
         /* -->> -->> -->> -->>
