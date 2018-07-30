@@ -534,7 +534,7 @@ void mj2_write_stsz(mj2_tk_t * tk, opj_cio_t *cio)
 
     else {
         cio_write(cio, 0,
-                  4);       /* Sample Size = 0 becase they all have different sizes */
+                  4);       /* Sample Size = 0 because they all have different sizes */
 
         cio_write(cio, tk->num_samples, 4); /* Sample Count */
 
