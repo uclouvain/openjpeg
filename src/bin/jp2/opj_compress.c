@@ -658,9 +658,9 @@ static int parse_cmdline_encoder(int argc, char **argv,
                 sprintf(outformat, ".%s", of);
                 img_fol->set_out_format = 1;
                 parameters->cod_format = get_file_format(outformat);
-	    } else {
-	        parameters->cod_format = -1;
-	    }
+            } else {
+                parameters->cod_format = -1;
+            }
             switch (parameters->cod_format) {
             case J2K_CFMT:
             case JP2_CFMT:

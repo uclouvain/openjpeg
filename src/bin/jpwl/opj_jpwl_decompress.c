@@ -346,11 +346,11 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,
             char outformat[50];
             char *of = opj_optarg;
             if (strlen(opj_optarg) < sizeof(outformat)) {
-	      sprintf(outformat, ".%s", of);
-	      img_fol->set_out_format = 1;
-	      parameters->cod_format = get_file_format(outformat);
+                sprintf(outformat, ".%s", of);
+                img_fol->set_out_format = 1;
+                parameters->cod_format = get_file_format(outformat);
             } else {
-	      parameters->cod_format = -1;
+                parameters->cod_format = -1;
             }
             switch (parameters->cod_format) {
             case PGX_DFMT:
