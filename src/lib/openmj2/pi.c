@@ -224,6 +224,13 @@ static opj_bool pi_next_rpcl(opj_pi_iterator_t * pi)
                     try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
                     rpx = res->pdx + levelno;
                     rpy = res->pdy + levelno;
+
+                    /* To avoid divisions by zero / undefined behaviour on shift */
+                    if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                            rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy) {
+                        continue;
+                    }
+
                     if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) &&
                             ((try0 << levelno) % (1 << rpy))))) {
                         continue;
@@ -317,6 +324,13 @@ static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi)
                     try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
                     rpx = res->pdx + levelno;
                     rpy = res->pdy + levelno;
+
+                    /* To avoid divisions by zero / undefined behaviour on shift */
+                    if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                            rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy) {
+                        continue;
+                    }
+
                     if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) &&
                             ((try0 << levelno) % (1 << rpy))))) {
                         continue;
@@ -408,6 +422,13 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi)
                     try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
                     rpx = res->pdx + levelno;
                     rpy = res->pdy + levelno;
+
+                    /* To avoid divisions by zero / undefined behaviour on shift */
+                    if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                            rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy) {
+                        continue;
+                    }
+
                     if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) &&
                             ((try0 << levelno) % (1 << rpy))))) {
                         continue;
