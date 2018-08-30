@@ -444,7 +444,7 @@ int imagetotga(opj_image_t * image, const char *outfile)
 {
     int width, height, bpp, x, y;
     opj_bool write_alpha;
-    int i, adjustR, adjustG, adjustB;
+    int i, adjustR, adjustG = 0, adjustB = 0;
     unsigned int alpha_channel;
     float r, g, b, a;
     unsigned char value;
@@ -485,8 +485,10 @@ int imagetotga(opj_image_t * image, const char *outfile)
     scale = 255.0f / (float)((1 << image->comps[0].prec) - 1);
 
     adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-    adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
-    adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+    if (image->numcomps >= 3) {
+        adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+        adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+    }
 
     for (y = 0; y < height; y++) {
         unsigned int index = y * width;
