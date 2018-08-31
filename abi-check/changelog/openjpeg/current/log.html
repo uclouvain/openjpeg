@@ -20,7 +20,24 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit d2205ba2ee78faeea659263383446c4472b1f9df
+<pre class='wrap'>commit 9d1a9dc20dd5155bab977a4f53d05c4bbd66533a
+Merge: d2205ba 56f23b2
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-08-11 23:35:35 +0200
+
+    Merge pull request #1133 from robe2/robe2-pkgconfig-instructions
+    
+    Add -DBUILD_PKGCONFIG_FILES to install instructions
+
+commit 56f23b29a075467fc2377ba086c0263a3eb70fe6
+Author: Regina Obe &lt;lr@pcorp.us&gt;
+Date:   2018-08-11 16:59:30 -0400
+
+    Add -DBUILD_PKGCONFIG_FILES to install instructions
+    
+    Building under msys/mingw doesn't automatically install the pkg config files needed to build GDAL and other libraries
+
+commit d2205ba2ee78faeea659263383446c4472b1f9df
 Merge: fd205f4 4170681
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-06-20 16:26:24 +0200
@@ -706,12 +723,6 @@ Date:   2017-09-01 21:36:35 +0200
 
     opj_j2k_update_image_data(): avoid allocating image buffer if we can just reuse the tile buffer one
 
-commit 4c7effa6bc37beb2a8e2f29ecf5845cde93f6b88
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 21:17:26 +0200
-
-    opj_t1_clbl_decode_processor(): use SSE2 in subtile decoding code path, for irreversible
-
 commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-01 20:01:39 +0200
@@ -719,12 +730,6 @@ Date:   2017-09-01 20:01:39 +0200
     opj_tcd_rateallocate(): make sure to use all passes for a lossless layer (#1009)
     
     And save a useless loop, which should be a tiny faster.
-
-commit 7aa071aa273aa0b8fafbf055e5eb99b9cb8600a8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 19:49:01 +0200
-
-    opj_j2k_setup_encoder(): emit warnings if tcp_rates are not decreasing or tcp_distoratio are not increasing (#1009)
 
 ...</pre></div>
 
