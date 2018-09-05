@@ -1005,7 +1005,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color,
                 if (!pcol_usage[i]) {
                     is_sane = 0U;
                     opj_event_msg(p_manager, EVT_WARNING,
-                                  "Component mapping seems wrong. Trying to correct.\n", i);
+                                  "Component mapping seems wrong. Trying to correct.\n");
                     break;
                 }
             }
