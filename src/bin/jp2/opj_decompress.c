@@ -134,7 +134,7 @@ typedef struct opj_decompress_params {
     /** Verbose mode */
     OPJ_BOOL m_verbose;
 
-    /** tile number ot the decoded tile*/
+    /** tile number of the decoded tile */
     OPJ_UINT32 tile_index;
     /** Nb of tile to decode */
     OPJ_UINT32 nb_tile_to_decode;
