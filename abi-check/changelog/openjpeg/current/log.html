@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8fc09e50e557fa6af4c099b9c6d36bb1071ee1ed
+<pre class='wrap'>commit 0e6a5553cfef21b764d289585af2c6934a95456b
+Merge: 8fc09e5 ca16fe5
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 23:54:12 +0200
+
+    Merge pull request #1148 from hlef/master
+    
+    CVE-2018-5785: fix issues with zero bitmasks
+
+commit 8fc09e50e557fa6af4c099b9c6d36bb1071ee1ed
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-09-22 23:47:56 +0200
 
@@ -126,6 +135,34 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-09-22 21:56:50 +0200
 
     Update knownfailures- files given current configurations
+
+commit ca16fe55014c57090dd97369256c7657aeb25975
+Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
+Date:   2018-09-22 14:33:19 -0400
+
+    convertbmp: fix issues with zero bitmasks
+    
+    In the case where a BMP file declares compression 3 (BI_BITFIELDS)
+    with header size &lt;= 56, all bitmask values keep their initialization
+    value 0. This may lead to various undefined behavior later e.g. when
+    doing 1 &lt;&lt; (l_comp-&gt;prec - 1).
+    
+    This issue does not affect files with bit count 16 because of a check
+    added in 16240e2 which sets default values to the color masks if they
+    are all 0.
+    
+    This commit adds similar checks for the 32 bit case.
+    
+    Also, if a BMP file declares compression 3 with header size &gt;= 56 and
+    intentional 0 bitmasks, the same issue will be triggered in both the
+    16 and 32 bit count case.
+    
+    This commit adds checks to bmp_read_info_header() rejecting BMP files
+    with "intentional" 0 bitmasks. These checks might be removed in the
+    future when proper handling of zero bitmasks will be available in
+    openjpeg2.
+    
+    fixes #1057 (CVE-2018-5785)
 
 commit 31a03b390a77bfbe4b0f140121d1296acb611f76
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
@@ -766,18 +803,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-19 12:46:20 +0200
 
     Fix warnings and errors when compiling with a c++ compiler (#1021)
-
-commit 18f6696372f4c32334385f8dcc8d39ad8ac24601
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-19 12:13:34 +0200
-
-    Fix compilation with AppleClang 8.1.0.8020042 (#1020)
-
-commit 3dfc6ca2bcf06fd1adb6b6b4cecc6c092f08ba0b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-17 12:17:49 +0200
-
-    Build: make sure that -DBUILD_SHARED_LIBS:bool=off is honoured to build only the static lib (#1019)
 
 ...</pre></div>
 
