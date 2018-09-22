@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9d1a9dc20dd5155bab977a4f53d05c4bbd66533a
+<pre class='wrap'>commit 1b9a81dff7c22ed0cb22bf1033e6dfee1292da31
+Merge: 9d1a9dc c28ed52
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 22:27:14 +0200
+
+    Merge pull request #1149 from rouault/fix_knownfailures
+    
+    Update knownfailures- files given current configurations
+
+commit c28ed521633c074f1e4891208028fe97f7602a14
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-09-22 21:56:50 +0200
+
+    Update knownfailures- files given current configurations
+
+commit 9d1a9dc20dd5155bab977a4f53d05c4bbd66533a
 Merge: d2205ba 56f23b2
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-08-11 23:35:35 +0200
@@ -704,32 +719,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-03 00:30:36 +0200
 
     opj_getopt.c: avoid crash on invalid input (#301)
-
-commit e5ab1682a1bf52c203b16720011d869901929ac9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-02 09:10:53 +0200
-
-    Improve error message when specifying a too big cp_reduce parameter (#474)
-
-commit c1e0fba0c46cb528a08b89b986e86ff0f4792558
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 22:09:58 +0200
-
-    opj_v4dwt_decode_step1_sse(): rework a bit to improve code generation
-
-commit 676d4c807f0162877f9f32e4cdda2e242788d410
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 21:36:35 +0200
-
-    opj_j2k_update_image_data(): avoid allocating image buffer if we can just reuse the tile buffer one
-
-commit b428b8c7e7227cf96c83229df4d7bf009b6d2172
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 20:01:39 +0200
-
-    opj_tcd_rateallocate(): make sure to use all passes for a lossless layer (#1009)
-    
-    And save a useless loop, which should be a tiny faster.
 
 ...</pre></div>
 
