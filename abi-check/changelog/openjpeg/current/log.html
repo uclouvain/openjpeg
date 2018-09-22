@@ -20,7 +20,26 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit ee827ad3f32469d4854b2da71c9703a2af359f9f
+<pre class='wrap'>commit aaf48ee6bae91032f025f9ac11592c4085a0d96b
+Merge: ee827ad cc38247
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-09-22 23:12:50 +0200
+
+    Merge branch 'pr1095'
+
+commit cc3824767bde397fedb8a1ae4786a222ba860c8d
+Author: Karol Babioch &lt;kbabioch@suse.de&gt;
+Date:   2018-03-02 14:40:58 +0100
+
+    opj_mj2_extract: Check provided output prefix for length
+    
+    This uses snprintf() with correct buffer length instead of sprintf(), which
+    prevents a buffer overflow when providing a long output prefix. Furthermore
+    the program exits with an error when the provided output prefix is too long.
+    
+    Fixes #1088.
+
+commit ee827ad3f32469d4854b2da71c9703a2af359f9f
 Merge: 5d94bcd 1eb9a57
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-09-22 23:05:54 +0200
@@ -759,18 +778,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-08 10:56:49 +0200
 
     opj_tcd_mct_decode(): avoid heap buffer overflow when components have not the same number of resolutions. Also fixes an issue with subtile decoding. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3331. Credit to OSS Fuzz
-
-commit 33167ddc13fd20313ccfcdc64141000407b68b8f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-08 09:53:52 +0200
-
-    opj_j2k_update_image_data(): restrict optimized path
-
-commit b73ce715d2a484d7355639d863d0418a0e5b8858
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-08 09:16:51 +0200
-
-    Use opj_image_data_free() where appropriate (adapted from https://github.com/uclouvain/openjpeg/pull/1015/commits/dab9db0723a5bb9f3d745f9dd7a0b8b3b18b8054, #1014)
 
 ...</pre></div>
 
