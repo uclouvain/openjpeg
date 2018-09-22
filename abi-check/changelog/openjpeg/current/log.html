@@ -20,7 +20,65 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 2d2861036cfb68560e0cf21340760781ea78595d
+<pre class='wrap'>commit ee827ad3f32469d4854b2da71c9703a2af359f9f
+Merge: 5d94bcd 1eb9a57
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-09-22 23:05:54 +0200
+
+    Merge branch 'pr1107'
+
+commit 1eb9a57ac1216209a4d9adf87bc47ba19810d3b3
+Author: szukw000 &lt;szukw000@arcor.de&gt;
+Date:   2018-03-13 18:11:54 +0100
+
+    opj_mj2_extract: Avoid segfault for long filenames
+
+commit 5d94bcd89c6e281614955c56cbfebb11b866a9dd
+Merge: b54c06f 0fa7ebe
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 22:59:36 +0200
+
+    Merge pull request #1136 from reverson/master
+    
+    Cast on uint ceildiv
+
+commit b54c06fb350d318c8e74755710b3480eae3b9911
+Merge: 17bbb0e 4aaf52e
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 22:59:17 +0200
+
+    Merge pull request #1119 from stweil/ssize_t
+    
+    Use local type declaration for POSIX standard type only for MS compiler
+
+commit 17bbb0e23ff03bb722914841a9b962b21fe7a310
+Merge: ccc4441 3d6ffaf
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 22:55:33 +0200
+
+    Merge pull request #1128 from stweil/typos
+    
+    Fix some typos in code comments and documentation
+
+commit ccc4441aeb7bf4928e55bd543fab8de662f6d5e7
+Merge: c6ee006 24fd3ce
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 22:54:51 +0200
+
+    Merge pull request #1140 from bukatlib/fix_relpath
+    
+    Relative path to header files is hardcoded in OpenJPEGConfig.cmake.in file
+
+commit c6ee006250b093f443e226288c6c866c5ebe12f5
+Merge: 2d28610 98363e2
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 22:47:27 +0200
+
+    Merge pull request #1141 from szukw000/changes-in-pnmtoimage
+    
+    Changes in pnmtoimage if image data are missing
+
+commit 2d2861036cfb68560e0cf21340760781ea78595d
 Merge: 1b9a81d 31a03b3
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-09-22 22:28:04 +0200
@@ -58,6 +116,36 @@ Date:   2018-09-05 21:51:30 +0200
      format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘OPJ_OFF_T {aka long int}’ [-Wformat=]
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 3d6ffaf3f3463b62830f88f50a8c1b510f555eb5
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2018-07-30 21:04:28 +0200
+
+    Fix some typos in code comments and documentation
+    
+    All typos were found by Codespell.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 98363e244e027c731f73ee8239d3c19451a9153b
+Author: szukw000 &lt;szukw000@arcor.de&gt;
+Date:   2018-08-31 16:24:41 +0200
+
+    Changes in pnmtoimage if image data are missing
+
+commit 24fd3ce777a64b8b315cfe1ee642ec7b1cc6aa97
+Author: Libor Bukata &lt;libor.bukata@oracle.com&gt;
+Date:   2018-08-31 12:57:40 +0200
+
+    The change makes a relative path to header files
+    always correct regardless of the number of sub-
+    directories in OPENJPEG_INSTALL_PACKAGE_DIR variable.
+
+commit 0fa7ebe2540990f590c2247b3505ac1dc84b6eec
+Author: Robert Everson &lt;robert@reverson.net&gt;
+Date:   2018-08-27 15:28:53 -0700
+
+    Cast on uint ceildiv
 
 commit 9d1a9dc20dd5155bab977a4f53d05c4bbd66533a
 Merge: d2205ba 56f23b2
@@ -105,6 +193,19 @@ Date:   2018-06-20 14:38:41 +0200
     
     This reverts commit 9906fbf737692486cebabe98169988d818e2e66a.
     which broke decoding of images where TNsot == 0
+
+commit 4aaf52ec8d8ec7b94c73f77f9c0029a3d3cabbf9
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2018-06-18 14:06:25 +0200
+
+    Use local type declaration for POSIX standard type only for MS compiler
+    
+    ssize_t is a POSIX type which is declared in POSIX include files.
+    Mingw-w64 provides it also for Windows.
+    
+    Use the local declaration only with MS compilers.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit fd205f457b157e925e2a6eb03aba397b45b0ed4e
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -670,91 +771,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-08 09:16:51 +0200
 
     Use opj_image_data_free() where appropriate (adapted from https://github.com/uclouvain/openjpeg/pull/1015/commits/dab9db0723a5bb9f3d745f9dd7a0b8b3b18b8054, #1014)
-
-commit 5abd86b14bb26d1882ee1c07b03f809f85162a5d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-07 18:01:33 +0200
-
-    Properly fix cc893a4ebfaf8c42cf1221ac82c83df91e77340b to avoid heap-buffer-overflow when numcomps &lt; 3
-
-commit 51a1dcaa6ed5713520dca36fc58cd9240c08b7ca
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-07 17:52:59 +0200
-
-    Avoid malloc poisoning issue when including &lt;pthread.h&gt; of uclibc (#1013)
-
-commit cc893a4ebfaf8c42cf1221ac82c83df91e77340b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-07 15:32:54 +0200
-
-    opj_tcd_mct_decode(): fix checks to verify MCT can be done safely. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3305 (master only)
-
-commit c67e1cd73f6c1fca081f5445af4f65b240c40edc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-06 17:33:38 +0200
-
-    Fix invalid access out of bounds, and bad behaviour, when calling repeatdly opj_get_decoded_tile() on an image with a color palette
-
-commit 297f202104fc0ff6b0627e15e7e6883c915f80bf
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-06 16:49:28 +0200
-
-    Fix 2.2.0 regression when reading codestream with reperated calls to opj_get_decoded_tile() where tile parts of a same tile are not consecutive
-    
-    This check was introduced per #939, but relied on the incorrect assumption
-    we decode all the tile parts of all tiles.
-
-commit 003759a4829f3f1baa5a2292956618fecf314818
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-06 15:59:19 +0200
-
-    Fix null pointer dereference on partial tile decoding when they are empty. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3297 (master only)
-
-commit e656822f927c869f31f2685c67644eacb75fc5d2
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-05 23:32:03 +0200
-
-    Add knownfailures-Ubuntu12.04-gcc4.6.3-x86_64-Release-3rdP.txt
-    
-    For some reason, the OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_NUM_THREADS=2
-    configuration fails once PR1010 has been merged in master
-    ( https://travis-ci.org/uclouvain/openjpeg/jobs/272219011 ) whereas (almost) the same
-    code in my branch didn't fail per https://travis-ci.org/rouault/openjpeg/jobs/271738113
-    
-    The errors we get are the same as with the other x86_64 compilers, so nothing alarming here.
-
-commit 968e36bbd989fdf789c6a02c80c747346bb851c5
-Merge: 3a382d3 579b893
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-09-05 22:18:58 +0200
-
-    Merge pull request #1010 from rouault/subtile_decoding_stage3
-    
-    Subtile decoding: memory use reduction and perf improvements
-
-commit 579b8937eae7e6b6868b8b5c6286a742c10a5130
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-04 17:35:52 +0200
-
-    Replace uses of size_t by OPJ_SIZE_T
-
-commit 3a382d312306f45853b3ad78b770754d4bc7e440
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-03 00:30:36 +0200
-
-    opj_getopt.c: avoid crash on invalid input (#301)
-
-commit e5ab1682a1bf52c203b16720011d869901929ac9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-02 09:10:53 +0200
-
-    Improve error message when specifying a too big cp_reduce parameter (#474)
-
-commit c1e0fba0c46cb528a08b89b986e86ff0f4792558
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-01 22:09:58 +0200
-
-    opj_v4dwt_decode_step1_sse(): rework a bit to improve code generation
 
 ...</pre></div>
 
