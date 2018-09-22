@@ -51,6 +51,7 @@ matrix:
     - os: linux
       compiler: g++
       env: OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
+      dist: trusty
       addons:
         apt:
           packages:
@@ -61,6 +62,7 @@ matrix:
     - os: linux
       compiler: g++
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_PROFILE=1
+      dist: trusty
       addons:
         apt:
           packages:
@@ -76,6 +78,7 @@ matrix:
     - os: linux
       compiler: clang-3.8
       env: OPJ_CI_CC=clang-3.8 OPJ_CI_CXX=clang-3.8 OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_PERF_TESTS=1 OPJ_CI_BUILD_FUZZERS=1
+      dist: trusty
       addons:
         apt:
           sources:
@@ -88,6 +91,7 @@ matrix:
     - os: linux
       compiler: x86_64-w64-mingw32-g++
       env: OPJ_CI_CC=x86_64-w64-mingw32-gcc OPJ_CI_CXX=x86_64-w64-mingw32-g++ OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
+      dist: trusty
       addons:
         apt:
           packages:
@@ -103,6 +107,7 @@ matrix:
     - os: linux
       compiler: x86_64-w64-mingw32-g++
       env: OPJ_CI_CC=x86_64-w64-mingw32-gcc OPJ_CI_CXX=x86_64-w64-mingw32-g++ OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release
+      dist: trusty
       addons:
         apt:
           packages:
