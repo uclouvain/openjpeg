@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 1b9a81dff7c22ed0cb22bf1033e6dfee1292da31
+<pre class='wrap'>commit 2d2861036cfb68560e0cf21340760781ea78595d
+Merge: 1b9a81d 31a03b3
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-09-22 22:28:04 +0200
+
+    Merge pull request #1143 from stweil/format
+    
+    openjp2/jp2: Fix two format strings
+
+commit 1b9a81dff7c22ed0cb22bf1033e6dfee1292da31
 Merge: 9d1a9dc c28ed52
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-09-22 22:27:14 +0200
@@ -34,6 +43,21 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-09-22 21:56:50 +0200
 
     Update knownfailures- files given current configurations
+
+commit 31a03b390a77bfbe4b0f140121d1296acb611f76
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2018-09-05 21:51:30 +0200
+
+    openjp2/jp2: Fix two format strings
+    
+    Compiler warnings:
+    
+    src/lib/openjp2/jp2.c:1008:35: warning:
+     too many arguments for format [-Wformat-extra-args]
+    src/lib/openjp2/j2k.c:1928:73: warning:
+     format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘OPJ_OFF_T {aka long int}’ [-Wformat=]
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 commit 9d1a9dc20dd5155bab977a4f53d05c4bbd66533a
 Merge: d2205ba 56f23b2
@@ -719,6 +743,18 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-03 00:30:36 +0200
 
     opj_getopt.c: avoid crash on invalid input (#301)
+
+commit e5ab1682a1bf52c203b16720011d869901929ac9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-02 09:10:53 +0200
+
+    Improve error message when specifying a too big cp_reduce parameter (#474)
+
+commit c1e0fba0c46cb528a08b89b986e86ff0f4792558
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2017-09-01 22:09:58 +0200
+
+    opj_v4dwt_decode_step1_sse(): rework a bit to improve code generation
 
 ...</pre></div>
 
