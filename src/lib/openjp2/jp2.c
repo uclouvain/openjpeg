@@ -1106,7 +1106,6 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
 
         /* Direct use: */
         if (cmap[i].mtyp == 0) {
-            assert(cmp == 0);
             dst = new_comps[i].data;
             assert(dst);
             for (j = 0; j < max; ++j) {
