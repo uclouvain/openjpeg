@@ -955,7 +955,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
             if (cblockw_init > 1024 || cblockw_init < 4 ||
                     cblockh_init > 1024 || cblockh_init < 4 ||
                     cblockw_init * cblockh_init > 4096) {
-               fprintf(stderr,
+                fprintf(stderr,
                         "!! Size of code_block error (option -b) !!\n\nRestriction :\n"
                         "    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
                 return 1;
