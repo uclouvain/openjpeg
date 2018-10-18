@@ -2021,13 +2021,25 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
     int *red, *green, *blue, *alpha;
     int wr, hr, max;
     int i;
-    unsigned int compno, ncomp;
+    unsigned int compno, ncomp, ui;
     int adjustR, adjustG, adjustB, adjustA;
     int fails, two, want_gray, has_alpha, triple;
     int prec, v;
     FILE *fdest = NULL;
     const char *tmp = outfile;
     char *destname;
+
+    fails = 0;
+    ncomp = image->numcomps;
+    for (ui = 0; ui < ncomp; ++ui) {
+        if (image->comps[ui].data == NULL) {
+            fprintf(stderr, "imagetopnm data[%u] == NULL\n", ui);
+            fails = 1;
+        }
+    }
+    if (fails) {
+        return 1;
+    }
 
     alpha = NULL;
 

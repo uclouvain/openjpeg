@@ -538,12 +538,25 @@ static int infile_format(const char *fname)
         return ext_format;
     }
 
-    s = fname + strlen(fname) - 4;
+    s = fname + strlen(fname) - 1;
 
-    fputs("\n===========================================\n", stderr);
+#ifdef WIN32
+    while (s > fname && (*s != '.' && *s != '\\')) {
+        --s;
+    }
+#else
+    while (s > fname && (*s != '.' && *s != '/')) {
+        --s;
+    }
+#endif
+    if (*s != '.') {
+        s = "";
+    }
+
+    fputs("\n===============================================\n", stderr);
     fprintf(stderr, "The extension of this file is incorrect.\n"
-            "FOUND %s. SHOULD BE %s\n", s, magic_s);
-    fputs("===========================================\n", stderr);
+            "    FOUND '%s'. SHOULD BE '%s'", s, magic_s);
+    fputs("\n===============================================\n", stderr);
 
     return magic_format;
 }
