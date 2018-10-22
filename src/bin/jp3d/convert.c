@@ -297,8 +297,8 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters)
         fprintf(stdout, "[INFO] Loading %s \n", pgxfiles[pos]);
 
         fseek(f, 0, SEEK_SET);
-        fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d", temp, &endian1, &endian2,
-               signtmp, &prec, temp, &w, temp, &h);
+        fscanf(f, "PG%31[ \t]%c%c%31[ \t+-]%d%31[ \t]%d%31[ \t]%d", temp, &endian1,
+               &endian2, signtmp, &prec, temp, &w, temp, &h);
 
         i = 0;
         sign = '+';
