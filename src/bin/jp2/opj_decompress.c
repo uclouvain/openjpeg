@@ -1119,11 +1119,11 @@ static opj_image_t* convert_gray_to_rgb(opj_image_t* original)
             l_new_image->comps[2].resno_decoded = original->comps[0].resno_decoded;
 
     memcpy(l_new_image->comps[0].data, original->comps[0].data,
-           original->comps[0].w * original->comps[0].h * sizeof(OPJ_INT32));
+           sizeof(OPJ_INT32) * original->comps[0].w * original->comps[0].h);
     memcpy(l_new_image->comps[1].data, original->comps[0].data,
-           original->comps[0].w * original->comps[0].h * sizeof(OPJ_INT32));
+           sizeof(OPJ_INT32) * original->comps[0].w * original->comps[0].h);
     memcpy(l_new_image->comps[2].data, original->comps[0].data,
-           original->comps[0].w * original->comps[0].h * sizeof(OPJ_INT32));
+           sizeof(OPJ_INT32) * original->comps[0].w * original->comps[0].h);
 
     for (compno = 1U; compno < original->numcomps; ++compno) {
         l_new_image->comps[compno + 2U].factor        = original->comps[compno].factor;
@@ -1131,7 +1131,7 @@ static opj_image_t* convert_gray_to_rgb(opj_image_t* original)
         l_new_image->comps[compno + 2U].resno_decoded =
             original->comps[compno].resno_decoded;
         memcpy(l_new_image->comps[compno + 2U].data, original->comps[compno].data,
-               original->comps[compno].w * original->comps[compno].h * sizeof(OPJ_INT32));
+               sizeof(OPJ_INT32) * original->comps[compno].w * original->comps[compno].h);
     }
     opj_image_destroy(original);
     return l_new_image;
@@ -1301,7 +1301,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
             }
         } else {
             memcpy(l_new_cmp->data, l_org_cmp->data,
-                   l_org_cmp->w * l_org_cmp->h * sizeof(OPJ_INT32));
+                   sizeof(OPJ_INT32) * l_org_cmp->w * l_org_cmp->h);
         }
     }
     opj_image_destroy(original);
@@ -1360,8 +1360,8 @@ int main(int argc, char **argv)
             destroy_parameters(&parameters);
             return EXIT_FAILURE;
         }
-        dirptr->filename_buf = (char*)malloc((size_t)num_images * OPJ_PATH_LEN * sizeof(
-                char)); /* Stores at max 10 image file names*/
+        dirptr->filename_buf = (char*)malloc(sizeof(char) *
+          (size_t)num_images * OPJ_PATH_LEN); /* Stores at max 10 image file names*/
         if (!dirptr->filename_buf) {
             failed = 1;
             goto fin;

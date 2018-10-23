@@ -763,7 +763,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         fclose(IN);
         return NULL;
     }
-    pData = (OPJ_UINT8 *) calloc(1, stride * Info_h.biHeight * sizeof(OPJ_UINT8));
+    pData = (OPJ_UINT8 *) calloc(1, sizeof(OPJ_UINT8) * stride * Info_h.biHeight);
     if (pData == NULL) {
         fclose(IN);
         return NULL;
