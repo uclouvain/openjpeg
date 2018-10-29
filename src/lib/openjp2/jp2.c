@@ -1193,7 +1193,8 @@ static OPJ_BOOL opj_jp2_read_pclr(opj_jp2_t *jp2,
         return OPJ_FALSE;
     }
 
-    entries = (OPJ_UINT32*) opj_malloc(sizeof(OPJ_UINT32) * nr_channels * nr_entries);
+    entries = (OPJ_UINT32*) opj_malloc(sizeof(OPJ_UINT32) * nr_channels *
+                                       nr_entries);
     if (!entries) {
         return OPJ_FALSE;
     }

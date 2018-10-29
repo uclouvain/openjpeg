@@ -1360,8 +1360,9 @@ int main(int argc, char **argv)
             destroy_parameters(&parameters);
             return EXIT_FAILURE;
         }
+        /* Stores at max 10 image file names */
         dirptr->filename_buf = (char*)malloc(sizeof(char) *
-          (size_t)num_images * OPJ_PATH_LEN); /* Stores at max 10 image file names*/
+                                             (size_t)num_images * OPJ_PATH_LEN);
         if (!dirptr->filename_buf) {
             failed = 1;
             goto fin;

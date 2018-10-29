@@ -1619,7 +1619,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         cblk_h = (OPJ_UINT32)(cblk->y1 - cblk->y0);
 
         cblk->decoded_data = (OPJ_INT32*)opj_aligned_malloc(sizeof(OPJ_INT32) *
-                                                            cblk_w * cblk_h);
+                             cblk_w * cblk_h);
         if (cblk->decoded_data == NULL) {
             if (job->p_manager_mutex) {
                 opj_mutex_lock(job->p_manager_mutex);
