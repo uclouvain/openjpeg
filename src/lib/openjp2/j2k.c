@@ -2698,6 +2698,12 @@ static OPJ_BOOL opj_j2k_read_cod(opj_j2k_t *p_j2k,
     opj_read_bytes(p_header_data, &l_tcp->mct, 1);          /* SGcod (C) */
     ++p_header_data;
 
+    if (l_tcp->mct > 1) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Invalid multiple component transformation\n");
+        return OPJ_FALSE;
+    }
+
     p_header_size -= 5;
     for (i = 0; i < l_image->numcomps; ++i) {
         l_tcp->tccps[i].csty = l_tcp->csty & J2K_CCP_CSTY_PRT;
@@ -9791,6 +9797,12 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(opj_j2k_t *p_j2k,
     /* SPcod (H) / SPcoc (E) */
     opj_read_bytes(l_current_ptr, &l_tccp->qmfbid, 1);
     ++l_current_ptr;
+
+    if (l_tccp->qmfbid > 1) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Error reading SPCod SPCoc element, Invalid transformation found\n");
+        return OPJ_FALSE;
+    }
 
     *p_header_size = *p_header_size - 5;
 

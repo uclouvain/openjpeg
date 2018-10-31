@@ -34,7 +34,6 @@ set(BLACKLIST_JPEG2000_TMP
     edf_c2_1178956.jp2
     edf_c2_1000290.jp2
     #edf_c2_1000691.jp2 # ok
-    #edf_c2_20.jp2 #looks ok as per kdu_jp2info
     edf_c2_1377017.jp2
     edf_c2_1002767.jp2
     edf_c2_10025.jp2
@@ -61,6 +60,7 @@ set(BLACKLIST_JPEG2000
     broken2.jp2
     broken3.jp2
     broken4.jp2
+    edf_c2_20.jp2 #may look ok as per kdu_jp2info, but inspection it reveals that the transformation value is out of range
     gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2	
     gdal_fuzzer_check_comp_dx_dy.jp2
     gdal_fuzzer_check_number_of_tiles.jp2
@@ -82,6 +82,8 @@ set(BLACKLIST_JPEG2000
     issue475.jp2 #kdu_jp2info ok
     issue413.jp2 #kdu_jp2info ok
     issue823.jp2 #kdu_jp2info ok
+    issue826.jp2 #inspection reveales that the transformation value is out of range
+    oss-fuzz2785.jp2 #inspection reveales that the transformation value is out of range
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
