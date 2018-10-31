@@ -2696,17 +2696,20 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
     /* overflow check */
     if (l_data_size > (SIZE_MAX - 5U)) {
         /* FIXME event manager error callback */
+        opj_sparse_array_int32_free(sa);
         return OPJ_FALSE;
     }
     l_data_size += 5U;
     /* overflow check */
     if (l_data_size > (SIZE_MAX / sizeof(opj_v4_t))) {
         /* FIXME event manager error callback */
+        opj_sparse_array_int32_free(sa);
         return OPJ_FALSE;
     }
     h.wavelet = (opj_v4_t*) opj_aligned_malloc(l_data_size * sizeof(opj_v4_t));
     if (!h.wavelet) {
         /* FIXME event manager error callback */
+        opj_sparse_array_int32_free(sa);
         return OPJ_FALSE;
     }
     v.wavelet = h.wavelet;
