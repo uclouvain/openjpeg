@@ -1739,6 +1739,8 @@ int main(int argc, char **argv)
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
 
+    int ret = 0;
+
     OPJ_BOOL bSuccess;
     OPJ_BOOL bUseTiles = OPJ_FALSE; /* OPJ_TRUE */
     OPJ_UINT32 l_nb_tiles = 4;
@@ -1764,7 +1766,8 @@ int main(int argc, char **argv)
                          255; /* This will be set later according to the input image or the provided option */
     if (parse_cmdline_encoder(argc, argv, &parameters, &img_fol, &raw_cp,
                               indexfilename, sizeof(indexfilename)) == 1) {
-        goto fails;
+        ret = 1;
+        goto fin;
     }
 
     /* Read directory if necessary */
@@ -1776,18 +1779,21 @@ int main(int argc, char **argv)
                     char)); /* Stores at max 10 image file names*/
             dirptr->filename = (char**) malloc(num_images * sizeof(char*));
             if (!dirptr->filename_buf) {
-                return 0;
+                ret = 0;
+                goto fin;
             }
             for (i = 0; i < num_images; i++) {
                 dirptr->filename[i] = dirptr->filename_buf + i * OPJ_PATH_LEN;
             }
         }
         if (load_images(dirptr, img_fol.imgdirpath) == 1) {
-            return 0;
+            ret = 0;
+            goto fin;
         }
         if (num_images == 0) {
             fprintf(stdout, "Folder is empty\n");
-            return 0;
+            ret = 0;
+            goto fin;
         }
     } else {
         num_images = 1;
@@ -1833,7 +1839,8 @@ int main(int argc, char **argv)
             image = pgxtoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load pgx file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 
@@ -1841,7 +1848,8 @@ int main(int argc, char **argv)
             image = pnmtoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load pnm file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 
@@ -1849,7 +1857,8 @@ int main(int argc, char **argv)
             image = bmptoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load bmp file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 
@@ -1858,7 +1867,8 @@ int main(int argc, char **argv)
             image = tiftoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load tiff file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 #endif /* OPJ_HAVE_LIBTIFF */
@@ -1867,7 +1877,8 @@ int main(int argc, char **argv)
             image = rawtoimage(parameters.infile, &parameters, &raw_cp);
             if (!image) {
                 fprintf(stderr, "Unable to load raw file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 
@@ -1875,7 +1886,8 @@ int main(int argc, char **argv)
             image = rawltoimage(parameters.infile, &parameters, &raw_cp);
             if (!image) {
                 fprintf(stderr, "Unable to load raw file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 
@@ -1883,7 +1895,8 @@ int main(int argc, char **argv)
             image = tgatoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load tga file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 
@@ -1892,7 +1905,8 @@ int main(int argc, char **argv)
             image = pngtoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load png file\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             break;
 #endif /* OPJ_HAVE_LIBPNG */
@@ -1903,7 +1917,8 @@ int main(int argc, char **argv)
         */
         if (!image) {
             fprintf(stderr, "Unable to load file: got no image\n");
-            return 1;
+            ret = 1;
+            goto fin;
         }
 
         /* Decide if MCT should be used */
@@ -1914,12 +1929,14 @@ int main(int argc, char **argv)
             if ((parameters.tcp_mct == 1) && (image->numcomps < 3)) {
                 fprintf(stderr, "RGB->YCC conversion cannot be used:\n");
                 fprintf(stderr, "Input image has less than 3 components\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
             if ((parameters.tcp_mct == 2) && (!parameters.mct_data)) {
                 fprintf(stderr, "Custom MCT has been set but no array-based MCT\n");
                 fprintf(stderr, "has been provided. Aborting.\n");
-                return 1;
+                ret = 1;
+                goto fin;
             }
         }
 
@@ -1959,13 +1976,15 @@ int main(int argc, char **argv)
             fprintf(stderr, "failed to encode image: opj_setup_encoder\n");
             opj_destroy_codec(l_codec);
             opj_image_destroy(image);
-            return 1;
+            ret = 1;
+            goto fin;
         }
 
         /* open a byte stream for writing and allocate memory for all tiles */
         l_stream = opj_stream_create_default_file_stream(parameters.outfile, OPJ_FALSE);
         if (! l_stream) {
-            return 1;
+            ret = 1;
+            goto fin;
         }
 
         /* encode the image */
@@ -1978,7 +1997,8 @@ int main(int argc, char **argv)
             OPJ_UINT32 l_data_size = 512 * 512 * 3;
             l_data = (OPJ_BYTE*) calloc(1, l_data_size);
             if (l_data == NULL) {
-                goto fails;
+                ret = 1;
+                goto fin;
             }
             for (i = 0; i < l_nb_tiles; ++i) {
                 if (! opj_write_tile(l_codec, i, l_data, l_data_size, l_stream)) {
@@ -1987,7 +2007,8 @@ int main(int argc, char **argv)
                     opj_stream_destroy(l_stream);
                     opj_destroy_codec(l_codec);
                     opj_image_destroy(image);
-                    return 1;
+                    ret = 1;
+                    goto fin;
                 }
             }
             free(l_data);
@@ -2008,7 +2029,8 @@ int main(int argc, char **argv)
             opj_image_destroy(image);
             fprintf(stderr, "failed to encode image\n");
             remove(parameters.outfile);
-            return 1;
+            ret = 1;
+            goto fin;
         }
 
         num_compressed_files++;
@@ -2024,26 +2046,15 @@ int main(int argc, char **argv)
 
     }
 
-    /* free user parameters structure */
-    if (parameters.cp_comment) {
-        free(parameters.cp_comment);
-    }
-    if (parameters.cp_matrice) {
-        free(parameters.cp_matrice);
-    }
-    if (raw_cp.rawComps) {
-        free(raw_cp.rawComps);
-    }
-
     t = opj_clock() - t;
     if (num_compressed_files) {
         fprintf(stdout, "encode time: %d ms \n",
                 (int)((t * 1000.0) / (OPJ_FLOAT64)num_compressed_files));
     }
 
-    return 0;
+    ret = 0;
 
-fails:
+fin:
     if (parameters.cp_comment) {
         free(parameters.cp_comment);
     }
@@ -2065,5 +2076,5 @@ fails:
         }
         free(dirptr);
     }
-    return 1;
+    return ret;
 }
