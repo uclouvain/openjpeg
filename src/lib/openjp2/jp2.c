@@ -1079,7 +1079,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
 
         /* Palette mapping: */
         new_comps[i].data = (OPJ_INT32*)
-                            opj_image_data_alloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
+                            opj_image_data_alloc(sizeof(OPJ_INT32) * old_comps[cmp].w * old_comps[cmp].h);
         if (!new_comps[i].data) {
             while (i > 0) {
                 -- i;
@@ -1193,8 +1193,8 @@ static OPJ_BOOL opj_jp2_read_pclr(opj_jp2_t *jp2,
         return OPJ_FALSE;
     }
 
-    entries = (OPJ_UINT32*) opj_malloc((size_t)nr_channels * nr_entries * sizeof(
-                                           OPJ_UINT32));
+    entries = (OPJ_UINT32*) opj_malloc(sizeof(OPJ_UINT32) * nr_channels *
+                                       nr_entries);
     if (!entries) {
         return OPJ_FALSE;
     }

@@ -725,8 +725,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
         TIFFClose(tif);
         return 1;
     }
-    buffer32s = (OPJ_INT32 *)malloc((OPJ_SIZE_T)(width * numcomps * sizeof(
-                                        OPJ_INT32)));
+    buffer32s = (OPJ_INT32 *)malloc(sizeof(OPJ_INT32) * width * numcomps);
     if (buffer32s == NULL) {
         _TIFFfree(buf);
         TIFFClose(tif);
@@ -1447,8 +1446,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     }
 
     rowStride = (int64_t)((tiWidth * tiSpp * tiBps + 7U) / 8U);
-    buffer32s = (OPJ_INT32 *)malloc((OPJ_SIZE_T)(tiWidth * tiSpp * sizeof(
-                                        OPJ_INT32)));
+    buffer32s = (OPJ_INT32 *)malloc(sizeof(OPJ_INT32) * tiWidth * tiSpp);
     if (buffer32s == NULL) {
         _TIFFfree(buf);
         TIFFClose(tif);

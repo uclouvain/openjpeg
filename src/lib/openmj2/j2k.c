@@ -331,7 +331,7 @@ static int j2k_calculate_tp(opj_cp_t *cp, int img_numcomp, opj_image_t *image,
 
     OPJ_ARG_NOT_USED(img_numcomp);
 
-    j2k->cur_totnum_tp = (int *) opj_malloc(cp->tw * cp->th * sizeof(int));
+    j2k->cur_totnum_tp = (int *) opj_malloc(sizeof(int) * cp->tw * cp->th);
     for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
         int cur_totnum_tp = 0;
         opj_tcp_t *tcp = &cp->tcps[tileno];
@@ -611,7 +611,7 @@ static void j2k_read_siz(opj_j2k_t *j2k)
         opj_event_msg(j2k->cinfo, EVT_ERROR, "Out of memory\n");
         return;
     }
-    cp->tileno = (int*) opj_malloc(cp->tw * cp->th * sizeof(int));
+    cp->tileno = (int*) opj_malloc(sizeof(int) * cp->tw * cp->th);
     if (cp->tileno == NULL) {
         opj_event_msg(j2k->cinfo, EVT_ERROR, "Out of memory\n");
         return;

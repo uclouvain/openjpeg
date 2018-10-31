@@ -824,7 +824,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
             parameters->tcp_numlayers = (int)numlayers;
             numresolution = (OPJ_UINT32)parameters->numresolution;
             matrix_width = numresolution * 3;
-            parameters->cp_matrice = (int *) malloc(numlayers * matrix_width * sizeof(int));
+            parameters->cp_matrice = (int *) malloc(sizeof(int) * numlayers * matrix_width);
             if (parameters->cp_matrice == NULL) {
                 return 1;
             }

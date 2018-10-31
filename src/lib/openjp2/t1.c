@@ -1618,8 +1618,8 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         cblk_w = (OPJ_UINT32)(cblk->x1 - cblk->x0);
         cblk_h = (OPJ_UINT32)(cblk->y1 - cblk->y0);
 
-        cblk->decoded_data = (OPJ_INT32*)opj_aligned_malloc(cblk_w * cblk_h * sizeof(
-                                 OPJ_INT32));
+        cblk->decoded_data = (OPJ_INT32*)opj_aligned_malloc(sizeof(OPJ_INT32) *
+                             cblk_w * cblk_h);
         if (cblk->decoded_data == NULL) {
             if (job->p_manager_mutex) {
                 opj_mutex_lock(job->p_manager_mutex);
@@ -1634,7 +1634,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
             return;
         }
         /* Zero-init required */
-        memset(cblk->decoded_data, 0, cblk_w * cblk_h * sizeof(OPJ_INT32));
+        memset(cblk->decoded_data, 0, sizeof(OPJ_INT32) * cblk_w * cblk_h);
     } else if (cblk->decoded_data) {
         /* Not sure if that code path can happen, but better be */
         /* safe than sorry */

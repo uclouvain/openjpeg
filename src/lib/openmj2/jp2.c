@@ -393,7 +393,7 @@ static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image,
         }
         /* Palette mapping: */
         new_comps[pcol].data = (int*)
-                               opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(int));
+                               opj_malloc(sizeof(int) * old_comps[cmp].w * old_comps[cmp].h);
         new_comps[pcol].prec = channel_size[i];
         new_comps[pcol].sgnd = channel_sign[i];
     }
@@ -461,7 +461,7 @@ static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
     nr_channels = (unsigned short)cio_read(cio, 1);/* NPC */
 
     entries = (unsigned int*)
-              opj_malloc(nr_channels * nr_entries * sizeof(unsigned int));
+              opj_malloc(sizeof(unsigned int) * nr_channels * nr_entries);
     channel_size = (unsigned char*)opj_malloc(nr_channels);
     channel_sign = (unsigned char*)opj_malloc(nr_channels);
 
