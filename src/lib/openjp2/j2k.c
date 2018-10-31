@@ -10657,6 +10657,42 @@ static OPJ_BOOL opj_j2k_allocate_tile_element_cstr_index(opj_j2k_t *p_j2k)
     return OPJ_TRUE;
 }
 
+static OPJ_BOOL opj_j2k_are_all_used_components_decoded(opj_j2k_t *p_j2k,
+        opj_event_mgr_t * p_manager)
+{
+    OPJ_UINT32 compno;
+    OPJ_BOOL decoded_all_used_components = OPJ_TRUE;
+
+    if (p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode) {
+        for (compno = 0;
+                compno < p_j2k->m_specific_param.m_decoder.m_numcomps_to_decode; compno++) {
+            OPJ_UINT32 dec_compno =
+                p_j2k->m_specific_param.m_decoder.m_comps_indices_to_decode[compno];
+            if (p_j2k->m_output_image->comps[dec_compno].data == NULL) {
+                opj_event_msg(p_manager, EVT_WARNING, "Failed to decode component %d\n",
+                              dec_compno);
+                decoded_all_used_components = OPJ_FALSE;
+            }
+        }
+    } else {
+        for (compno = 0; compno < p_j2k->m_output_image->numcomps; compno++) {
+            if (p_j2k->m_output_image->comps[compno].data == NULL) {
+                opj_event_msg(p_manager, EVT_WARNING, "Failed to decode component %d\n",
+                              compno);
+                decoded_all_used_components = OPJ_FALSE;
+            }
+        }
+    }
+
+    if (decoded_all_used_components == OPJ_FALSE) {
+        opj_event_msg(p_manager, EVT_ERROR, "Failed to decode all used components\n");
+        return OPJ_FALSE;
+    }
+
+    return OPJ_TRUE;
+}
+
+
 static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
                                      opj_stream_private_t *p_stream,
                                      opj_event_mgr_t * p_manager)
@@ -10766,6 +10802,10 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
         if (++nr_tiles ==  p_j2k->m_cp.th * p_j2k->m_cp.tw) {
             break;
         }
+    }
+
+    if (! opj_j2k_are_all_used_components_decoded(p_j2k, p_manager)) {
+        return OPJ_FALSE;
     }
 
     return OPJ_TRUE;
@@ -10894,6 +10934,10 @@ static OPJ_BOOL opj_j2k_decode_one_tile(opj_j2k_t *p_j2k,
                           l_current_tile_no + 1, l_tile_no_to_dec + 1);
         }
 
+    }
+
+    if (! opj_j2k_are_all_used_components_decoded(p_j2k, p_manager)) {
+        return OPJ_FALSE;
     }
 
     return OPJ_TRUE;
