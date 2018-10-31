@@ -20,7 +20,31 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e52909f4c7896c5efff3340d707c12d0df55d3f9
+<pre class='wrap'>commit 948332e6ed17565100d1df5f6fdbf66865218e36
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2018-10-31 20:44:30 +0100
+
+    Fix some potential overflow issues (#1161)
+    
+    * Fix some potential overflow issues
+    
+    Put sizeof to the beginning of the multiplication to enforce that
+    size_t instead of smaller integer types is used for the calculation.
+    
+    This fixes warnings from LGTM:
+    
+        Multiplication result may overflow 'unsigned int'
+        before it is converted to 'unsigned long'.
+    
+    It also allows removing some type casts.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+    
+    * Fix code indentation
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit e52909f4c7896c5efff3340d707c12d0df55d3f9
 Merge: cd900d9 943db0f
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-10-31 20:41:52 +0100
@@ -802,12 +826,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-19 12:48:12 +0200
 
     src/bin/jp3d/convert.c: add missing fclose() in error code path (#1018)
-
-commit fdef69b43ce5222ac0f2a87f2fad1442ece340e8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-19 12:46:20 +0200
-
-    Fix warnings and errors when compiling with a c++ compiler (#1021)
 
 ...</pre></div>
 
