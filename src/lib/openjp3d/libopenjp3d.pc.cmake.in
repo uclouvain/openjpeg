@@ -1,7 +1,7 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 bindir=${prefix}/@CMAKE_INSTALL_BINDIR@
 mandir=${prefix}/@CMAKE_INSTALL_MANDIR@
-docdir=${prefix}/@OPENJPEG_INSTALL_DOC_DIR@
+docdir=${prefix}/@CMAKE_INSTALL_DOCDIR@
 libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
 includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/@OPENJPEG_INSTALL_SUBDIR@
 
