@@ -112,10 +112,6 @@ option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF
 string(TOLOWER ${PROJECT_NAME} projectname)
 set(OPENJPEG_INSTALL_SUBDIR "${projectname}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
 
-if(NOT OPENJPEG_INSTALL_LIB_DIR)
-  set(OPENJPEG_INSTALL_LIB_DIR "lib")
-endif()
-
 if(NOT OPENJPEG_INSTALL_SHARE_DIR)
   set(OPENJPEG_INSTALL_SHARE_DIR "share")
 endif()
@@ -142,7 +138,7 @@ if(NOT OPENJPEG_INSTALL_JNI_DIR)
   if(WIN32)
     set(OPENJPEG_INSTALL_JNI_DIR ${CMAKE_INSTALL_BINDIR})
   else()
-    set(OPENJPEG_INSTALL_JNI_DIR ${OPENJPEG_INSTALL_LIB_DIR})
+    set(OPENJPEG_INSTALL_JNI_DIR ${CMAKE_INSTALL_LIBDIR})
   endif()
 endif()
 
@@ -150,11 +146,11 @@ if(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
   # We could install *.cmake files in share/ however those files contains
   # hardcoded path to libraries on a multi-arch system (fedora/debian) those
   # path will be different (lib/i386-linux-gnu vs lib/x86_64-linux-gnu)
-  set(OPENJPEG_INSTALL_PACKAGE_DIR "${OPENJPEG_INSTALL_LIB_DIR}/${OPENJPEG_INSTALL_SUBDIR}")
+  set(OPENJPEG_INSTALL_PACKAGE_DIR "${CMAKE_INSTALL_LIBDIR}/${OPENJPEG_INSTALL_SUBDIR}")
 endif()
 
 if (APPLE)
-	list(APPEND OPENJPEG_LIBRARY_PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${OPENJPEG_INSTALL_LIB_DIR}")
+	list(APPEND OPENJPEG_LIBRARY_PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
 	option(OPJ_USE_DSYMUTIL "Call dsymutil on binaries after build." OFF)
 endif()
 
@@ -364,14 +360,14 @@ if(BUILD_PKGCONFIG_FILES)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/libopenjp2.pc.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc @ONLY)
   install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc DESTINATION
-    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
+    ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
 #
   if(BUILD_JPWL)
   # install in lib and not share (see multi-arch note above)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjpwl/libopenjpwl.pc.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjpwl.pc @ONLY)
   install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpwl.pc DESTINATION
-    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
+    ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
   endif()
 #
   if(BUILD_JPIP)
@@ -379,7 +375,7 @@ if(BUILD_PKGCONFIG_FILES)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjpip/libopenjpip.pc.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjpip.pc @ONLY)
   install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpip.pc DESTINATION
-    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
+    ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
   endif()
 #
   if(BUILD_JP3D)
@@ -387,7 +383,7 @@ if(BUILD_PKGCONFIG_FILES)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp3d/libopenjp3d.pc.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjp3d.pc @ONLY)
   install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp3d.pc DESTINATION
-    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
+    ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
   endif()
 endif()
 
