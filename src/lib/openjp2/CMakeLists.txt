@@ -128,7 +128,7 @@ if(BUILD_DOC)
 # install man page of the library
 install(
   FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man3/libopenjp2.3
-  DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man3)
+  DESTINATION ${CMAKE_INSTALL_MANDIR}/man3)
 endif()
 
 if(BUILD_LUTS_GENERATOR)
