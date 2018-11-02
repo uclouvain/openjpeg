@@ -121,10 +121,7 @@ if(NOT OPENJPEG_INSTALL_JNI_DIR)
 endif()
 
 if(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
-  # We could install *.cmake files in share/ however those files contains
-  # hardcoded path to libraries on a multi-arch system (fedora/debian) those
-  # path will be different (lib/i386-linux-gnu vs lib/x86_64-linux-gnu)
-  set(OPENJPEG_INSTALL_PACKAGE_DIR "${CMAKE_INSTALL_LIBDIR}/${OPENJPEG_INSTALL_SUBDIR}")
+  set(OPENJPEG_INSTALL_PACKAGE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${OPENJPEG_INSTALL_SUBDIR}")
 endif()
 
 if (APPLE)
