@@ -311,14 +311,6 @@ install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
 )
 
 #-----------------------------------------------------------------------------
-# install CHANGES and LICENSE
-if(BUILD_DOC)
-if(EXISTS ${OPENJPEG_SOURCE_DIR}/CHANGES)
-  install(FILES CHANGES DESTINATION ${CMAKE_INSTALL_DOCDIR})
-endif()
-
-install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DOCDIR})
-endif()
 
 include (cmake/OpenJPEGCPack.cmake)
 
