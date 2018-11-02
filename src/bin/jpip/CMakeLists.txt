@@ -13,7 +13,7 @@ add_executable(opj_jpip_addxml opj_jpip_addxml.c)
 # Install exe
 install(TARGETS opj_jpip_addxml
   EXPORT OpenJPEGTargets
-  DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+  DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Applications
   )
 
 if(BUILD_JPIP_SERVER)
@@ -38,7 +38,7 @@ if(BUILD_JPIP_SERVER)
   # Install exe
   install(TARGETS opj_server
     EXPORT OpenJPEGTargets
-    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+    DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Applications
     )
 endif()
 
@@ -52,7 +52,7 @@ add_executable(${exe} ${exe}.c)
   target_link_libraries(${exe} openjpip)
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets
-    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+    DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Applications
     )
 endforeach()
 
