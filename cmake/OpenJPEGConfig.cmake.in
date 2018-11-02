@@ -27,7 +27,7 @@ if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   # This is an install tree
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
 
-  set(INC_DIR "@CMAKE_INSTALL_PREFIX@/@OPENJPEG_INSTALL_INCLUDE_DIR@")
+  set(INC_DIR "@CMAKE_INSTALL_FULL_INCLUDEDIR@/@OPENJPEG_INSTALL_SUBDIR@")
   get_filename_component(OPENJPEG_INCLUDE_DIRS "${INC_DIR}" ABSOLUTE)
 
 else()

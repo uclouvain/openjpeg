@@ -3,7 +3,7 @@ bindir=${prefix}/@CMAKE_INSTALL_BINDIR@
 mandir=${prefix}/@OPENJPEG_INSTALL_MAN_DIR@
 docdir=${prefix}/@OPENJPEG_INSTALL_DOC_DIR@
 libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=${prefix}/@OPENJPEG_INSTALL_INCLUDE_DIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/@OPENJPEG_INSTALL_SUBDIR@
 
 Name: openjp3d
 Description: JPEG2000 Extensions for three-dimensional data (Part 10)
