@@ -113,10 +113,6 @@ option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF
 string(TOLOWER ${PROJECT_NAME} projectname)
 set(OPENJPEG_INSTALL_SUBDIR "${projectname}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
 
-if(NOT OPENJPEG_INSTALL_SHARE_DIR)
-  set(OPENJPEG_INSTALL_SHARE_DIR "share")
-endif()
-
 if(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
   set(OPENJPEG_INSTALL_INCLUDE_DIR "include/${OPENJPEG_INSTALL_SUBDIR}")
 endif()

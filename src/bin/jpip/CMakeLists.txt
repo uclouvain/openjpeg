@@ -123,7 +123,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
       )
 
     install(FILES ${LIBRARY_OUTPUT_PATH}/opj_jpip_viewer.jar
-      DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR} COMPONENT JavaModule
       )
   else()
     # opj_viewer (simple, no xerces)
@@ -153,7 +153,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
       )
 
     install(FILES ${LIBRARY_OUTPUT_PATH}/opj_jpip_viewer.jar
-      DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR} COMPONENT JavaModule
       )
   endif()
 else()
