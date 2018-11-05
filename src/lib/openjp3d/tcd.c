@@ -228,7 +228,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp,
         } else {
             float num = (float)tile->numcomps * (tile->x1 - tile->x0) *
                                 (tile->y1 - tile->y0) * (tile->z1 - tile->z0) * volume->comps[0].prec;
-            float den = (float)8 * volume->comps[0].dx * volume->comps[0].dy *
+            float den = 8.0f * volume->comps[0].dx * volume->comps[0].dy *
                                 volume->comps[0].dz;
             den = tcp->rates[j] * den;
             tcp->rates[j] = (num + den - 1) / den;
