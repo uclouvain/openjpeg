@@ -2233,6 +2233,11 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                 opj_version(), wr, hr, max);
 
         red = image->comps[compno].data;
+        if (!red) {
+            fclose(fdest);
+            continue;
+        }
+
         adjustR =
             (image->comps[compno].sgnd ? 1 << (image->comps[compno].prec - 1) : 0);
 
