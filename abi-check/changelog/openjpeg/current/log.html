@@ -20,13 +20,49 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit c196b23b90321b5c7e3238294607a2e8626c503f
+<pre class='wrap'>commit 92023cd6c377e0384a7725949b25655d4d94dced
+Merge: c196b23 cab352e
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-11-16 09:42:19 +0100
+
+    Merge pull request #1160 from hlef/master
+    
+    jp3d/jpwl convert: fix write stack buffer overflow
+
+commit c196b23b90321b5c7e3238294607a2e8626c503f
 Author: ichlubna &lt;43234438+ichlubna@users.noreply.github.com&gt;
 Date:   2018-11-16 09:40:31 +0100
 
     openjp3d: Int overflow fixed (#1159)
     
     When compressing a lot of slices (starting from 44 FullHD slices with 3 8bit components in our experiments) the rate values are high enough to cause an int overflow that leads to negative lengths and wrong results. The cast happens too late.
+
+commit cab352e249ed3372dd9355c85e837613fff98fa2
+Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
+Date:   2018-11-07 18:48:29 +0100
+
+    jp2: convert: fix null pointer dereference
+    
+    Tile components in a JP2 image might have null data pointer by defining a
+    zero component size (for example using large horizontal or vertical
+    sampling periods). This null data pointer leads to null image component
+    data pointer, causing crash when dereferenced without != null check in
+    imagetopnm.
+    
+    Add != null check.
+    
+    This commit addresses #1152 (CVE-2018-18088).
+
+commit 0bc90e4062a5f9258c91eca018c019b179066c62
+Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
+Date:   2018-10-22 16:59:41 +0200
+
+    jp3d/jpwl convert: fix write stack buffer overflow
+    
+    Missing buffer length formatter in fscanf call might lead to write
+    stack buffer overflow.
+    
+    fixes #1044 (CVE-2017-17480)
 
 commit 948332e6ed17565100d1df5f6fdbf66865218e36
 Author: Stefan Weil &lt;sw@weilnetz.de&gt;
@@ -800,34 +836,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-19 18:35:31 +0200
 
     Workaroudn cppcheck (correct) warning about same code in then and else branches
-
-commit c84e594cffb181b96f522becf1ba0302e2cc6da7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-19 18:35:07 +0200
-
-    Fix badly named variable in function prototype (raised by cppcheck)
-
-commit e17bbde9066600528ab523adee69d9c9c33ba157
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-19 17:48:07 +0200
-
-    opj_set_decoded_components(): add a provision for a apply_color_transforms parameter in case we support it in the future
-
-commit 7e2b6bebff12eab8bdc17fc9af017e8c11652f4f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-19 16:52:07 +0200
-
-    Add capability to decode only a subset of all components of an image.
-    
-    This adds a opj_set_decoded_components(opj_codec_t *p_codec,
-    OPJ_UINT32 numcomps, const OPJ_UINT32* comps_indices) function,
-    and equivalent "opj_decompress -c compno[,compno]*" option.
-    
-    When specified, neither the MCT transform nor JP2 channel transformations
-    will be applied.
-    
-    Tests added for various combinations of whole image vs tiled-based decoding,
-    full or reduced resolution, use of decode area or not.
 
 ...</pre></div>
 
