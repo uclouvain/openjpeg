@@ -223,6 +223,14 @@ static bool pi_next_rpcl(opj_pi_iterator_t * pi)
                         rpx = res->pdx + levelnox;
                         rpy = res->pdy + levelnoy;
                         rpz = res->pdz + levelnoz;
+
+                        /* To avoid divisions by zero / undefined behaviour on shift */
+                        if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                                rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy ||
+                                rpz >= 31 || ((comp->dz << rpz) >> rpz) != comp->dz) {
+                            continue;
+                        }
+
                         if ((!(pi->x % (comp->dx << rpx) == 0) || (pi->x == pi->tx0 &&
                                 (trx0 << levelnox) % (1 << rpx)))) {
                             continue;
@@ -329,6 +337,14 @@ static bool pi_next_pcrl(opj_pi_iterator_t * pi)
                         rpx = res->pdx + levelnox;
                         rpy = res->pdy + levelnoy;
                         rpz = res->pdz + levelnoz;
+
+                        /* To avoid divisions by zero / undefined behaviour on shift */
+                        if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                                rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy ||
+                                rpz >= 31 || ((comp->dz << rpz) >> rpz) != comp->dz) {
+                            continue;
+                        }
+
                         if ((!(pi->x % (comp->dx << rpx) == 0) || (pi->x == pi->tx0 &&
                                 (trx0 << levelnox) % (1 << rpx)))) {
                             continue;
@@ -432,6 +448,14 @@ static bool pi_next_cprl(opj_pi_iterator_t * pi)
                         rpx = res->pdx + levelnox;
                         rpy = res->pdy + levelnoy;
                         rpz = res->pdz + levelnoz;
+
+                        /* To avoid divisions by zero / undefined behaviour on shift */
+                        if (rpx >= 31 || ((comp->dx << rpx) >> rpx) != comp->dx ||
+                                rpy >= 31 || ((comp->dy << rpy) >> rpy) != comp->dy ||
+                                rpz >= 31 || ((comp->dz << rpz) >> rpz) != comp->dz) {
+                            continue;
+                        }
+
                         if ((!(pi->x % (comp->dx << rpx) == 0) || (pi->x == pi->tx0 &&
                                 (trx0 << levelnox) % (1 << rpx)))) {
                             continue;
