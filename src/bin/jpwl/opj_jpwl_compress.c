@@ -952,8 +952,9 @@ static int parse_cmdline_encoder(int argc, char **argv,
         case 'b': {         /* code-block dimension */
             int cblockw_init = 0, cblockh_init = 0;
             sscanf(opj_optarg, "%d,%d", &cblockw_init, &cblockh_init);
-            if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
-                    || cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
+            if (cblockw_init > 1024 || cblockw_init < 4 ||
+                    cblockh_init > 1024 || cblockh_init < 4 ||
+                    cblockw_init * cblockh_init > 4096) {
                 fprintf(stderr,
                         "!! Size of code_block error (option -b) !!\n\nRestriction :\n"
                         "    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
