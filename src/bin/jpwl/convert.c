@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 
 #ifdef OPJ_HAVE_LIBTIFF
 #include <tiffio.h>
@@ -1858,6 +1859,15 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     read_pnm_header(fp, &header_info);
 
     if (!header_info.ok) {
+        fclose(fp);
+        return NULL;
+    }
+
+    /* This limitation could be removed by making sure to use size_t below */
+    if (header_info.height != 0 &&
+            header_info.width > INT_MAX / header_info.height) {
+        fprintf(stderr, "pnmtoimage:Image %dx%d too big!\n",
+                header_info.width, header_info.height);
         fclose(fp);
         return NULL;
     }
