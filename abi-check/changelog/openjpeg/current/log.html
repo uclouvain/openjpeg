@@ -20,7 +20,24 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 92023cd6c377e0384a7725949b25655d4d94dced
+<pre class='wrap'>commit e0f5212888c0c1abc5e060a75a3a4a5ff99afd1a
+Merge: 92023cd 2e5ab1d
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-11-28 00:04:30 +0100
+
+    Merge pull request #1170 from rouault/fix_color_apply_icc_profile
+    
+    color_apply_icc_profile: avoid potential heap buffer overflow
+
+commit 2e5ab1d9987831c981ff05862e8ccf1381ed58ea
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2018-11-27 23:31:30 +0100
+
+    color_apply_icc_profile: avoid potential heap buffer overflow
+    
+    Derived from a patch by Thuan Pham
+
+commit 92023cd6c377e0384a7725949b25655d4d94dced
 Merge: c196b23 cab352e
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-11-16 09:42:19 +0100
@@ -824,18 +841,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-20 00:43:54 +0200
 
     Avoid index-out-of-bounds access when invoking opj_compress with -n 11 or higher. But not a proper fix itself (refs #493)
-
-commit 8df07d5866c9e3517bf04a7abee4a07a04735df4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-19 18:35:52 +0200
-
-    Avoid relying on operator precedence (raised by cppcheck)
-
-commit c22ea12219c711031ef9b5823f2d9eb1081261e9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-19 18:35:31 +0200
-
-    Workaroudn cppcheck (correct) warning about same code in then and else branches
 
 ...</pre></div>
 
