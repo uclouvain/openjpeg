@@ -456,7 +456,7 @@ char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
                    opj_decompress_parameters *parameters)
 {
     char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
-         outfilename[OPJ_PATH_LEN], temp_ofname[OPJ_PATH_LEN];
+         outfilename[OPJ_PATH_LEN * 2], temp_ofname[OPJ_PATH_LEN];
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
