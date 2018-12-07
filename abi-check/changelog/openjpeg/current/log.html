@@ -20,7 +20,58 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e0f5212888c0c1abc5e060a75a3a4a5ff99afd1a
+<pre class='wrap'>commit e7640f58f122d1228f3d750864543ad4703e18fc
+Merge: e0f5212 05be308
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-12-07 21:27:38 +0100
+
+    Merge pull request #1168 from Young-X/fix_dev
+    
+    Fix multiple potential vulnerabilities and bugs
+
+commit 05be3084460e46282ee63f04c72c451f3271fd28
+Author: Young Xiao &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-28 14:44:06 +0800
+
+    [JPWL] tgatoimage(): avoid excessive memory allocation attempt,
+    and fixes unaligned load
+    
+    Signed-off-by: Young Xiao &lt;YangX92@hotmail.com&gt;
+
+commit bd88611ed9ad7144ec4f3de54790cd848175891b
+Author: Young_X &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-23 17:15:05 +0800
+
+     [JP3D] To avoid divisions by zero / undefined behaviour on shift (CVE-2018-14423
+    
+    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
+
+commit ce9583d1d7627e007a34a31ae4e22a00d78bd153
+Author: Young_X &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-23 17:12:06 +0800
+
+     [JPWL] opj_compress: reorder checks related to code block dimensions to avoid potential int overflow
+    
+    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
+
+commit c58df149900df862806d0e892859b41115875845
+Author: Young_X &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-23 16:24:19 +0800
+
+    [OPENJP2] change the way to compute *p_tx0, *p_tx1, *p_ty0, *p_ty1 in function
+    opj_get_encoding_parameters
+    
+    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
+
+commit c277159986c80142180fbe5efb256bbf3bdf3edc
+Author: Young_X &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-23 16:12:53 +0800
+
+    [MJ2] Avoid index out of bounds access to pi-&gt;include[]
+    
+    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
+
+commit e0f5212888c0c1abc5e060a75a3a4a5ff99afd1a
 Merge: 92023cd 2e5ab1d
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-11-28 00:04:30 +0100
@@ -36,6 +87,30 @@ Date:   2018-11-27 23:31:30 +0100
     color_apply_icc_profile: avoid potential heap buffer overflow
     
     Derived from a patch by Thuan Pham
+
+commit 46822d0eddc3324b2a056bc60ffa997027bebd66
+Author: Young_X &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-23 15:58:23 +0800
+
+    [JPWL] imagetotga(): fix read heap buffer overflow if numcomps &lt; 3 (#987)
+    
+    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
+
+commit 619e1b086eaa21ebd9b23eb67deee543b07bf06f
+Author: Young_X &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-23 15:02:26 +0800
+
+    [JPWL] fix CVE-2018-16375
+    
+    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
+
+commit c5bd64ea146162967c29bd2af0cbb845ba3eaaaf
+Author: Young_X &lt;YangX92@hotmail.com&gt;
+Date:   2018-11-23 14:47:36 +0800
+
+    [MJ2] To avoid divisions by zero / undefined behaviour on shift
+    
+    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
 
 commit 92023cd6c377e0384a7725949b25655d4d94dced
 Merge: c196b23 cab352e
@@ -787,60 +862,6 @@ Date:   2017-09-14 22:02:41 +0200
      no newline at end of file [-Wnewline-eof]
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 4c8aba2add074c4a8101156037e9ca7051bc4baf
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-21 14:37:01 +0200
-
-    Add assertion
-
-commit 113e0976e232ac2110d50405f8629787f3f53cfc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-21 14:14:32 +0200
-
-    Comment dead code (Coverity CID 94681)
-
-commit 39082fc6654553f43f6f3a73e0eeaedebc4bdf9f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-21 14:13:16 +0200
-
-    Workaround Coverity CID 113061
-
-commit 7711307d865d46ca1bb8bb152071178b10066d05
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-21 14:10:49 +0200
-
-    Workaround Coverity CID 169392
-
-commit 19e157871ff28bb5e8296f9e9f9aee6a17a37ace
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-21 14:06:03 +0200
-
-    opj_j2k_get_default_thread_count(): validate value of OPJ_NUM_THREADS to fix Coverity 179465 and 179463
-
-commit 68e596dada2ee38a66b01494e5a425e623688300
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-21 13:54:14 +0200
-
-    Fix copy&amp;paste error (Coverity CID 169394)
-
-commit 16b701659d7d9f72aade1d695818a645e2f603a6
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-20 01:06:02 +0200
-
-    opj_decompress: add a warning when -d and -t are used together (#693)
-
-commit b8c4b450c4b5bec649463573f57235c4f41c57cd
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-20 00:55:22 +0200
-
-    Use a #define J2K_MAX_POCS 32 to avoid hard-coded constant (#349)
-
-commit 9cba05762ded66b803df94b00adbd5a97727da95
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-20 00:43:54 +0200
-
-    Avoid index-out-of-bounds access when invoking opj_compress with -n 11 or higher. But not a proper fix itself (refs #493)
 
 ...</pre></div>
 
