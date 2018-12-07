@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 
 #ifdef OPJ_HAVE_LIBTIFF
 #include <tiffio.h>
@@ -98,15 +99,10 @@ struct tga_header {
 };
 #endif /* INFORMATION_ONLY */
 
-static unsigned short get_ushort(unsigned short val)
+/* Returns a ushort from a little-endian serialized value */
+static unsigned short get_tga_ushort(const unsigned char *data)
 {
-
-#ifdef OPJ_BIG_ENDIAN
-    return (((val & 0xff) << 8) + (val >> 8));
-#else
-    return (val);
-#endif
-
+    return data[0] | (data[1] << 8);
 }
 
 #define TGA_HEADER_SIZE 18
@@ -135,15 +131,15 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     id_len = (unsigned char)tga[0];
     cmap_type = (unsigned char)tga[1];
     image_type = (unsigned char)tga[2];
-    cmap_index = get_ushort(*(unsigned short*)(&tga[3]));
-    cmap_len = get_ushort(*(unsigned short*)(&tga[5]));
+    cmap_index = get_tga_ushort(*(unsigned short*)(&tga[3]));
+    cmap_len = get_tga_ushort(*(unsigned short*)(&tga[5]));
     cmap_entry_size = (unsigned char)tga[7];
 
 
-    x_origin = get_ushort(*(unsigned short*)(&tga[8]));
-    y_origin = get_ushort(*(unsigned short*)(&tga[10]));
-    image_w = get_ushort(*(unsigned short*)(&tga[12]));
-    image_h = get_ushort(*(unsigned short*)(&tga[14]));
+    x_origin = get_tga_ushort(*(unsigned short*)(&tga[8]));
+    y_origin = get_tga_ushort(*(unsigned short*)(&tga[10]));
+    image_w = get_tga_ushort(*(unsigned short*)(&tga[12]));
+    image_h = get_tga_ushort(*(unsigned short*)(&tga[14]));
     pixel_depth = (unsigned char)tga[16];
     image_desc  = (unsigned char)tga[17];
 
@@ -333,6 +329,24 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
         color_space = CLRSPC_SRGB;
     }
 
+    /* If the declared file size is > 10 MB, check that the file is big */
+    /* enough to avoid excessive memory allocations */
+    if (image_height != 0 && image_width > 10000000 / image_height / numcomps) {
+        char ch;
+        OPJ_UINT64 expected_file_size =
+            (OPJ_UINT64)image_width * image_height * numcomps;
+        long curpos = ftell(f);
+        if (expected_file_size > (OPJ_UINT64)INT_MAX) {
+            expected_file_size = (OPJ_UINT64)INT_MAX;
+        }
+        fseek(f, (long)expected_file_size - 1, SEEK_SET);
+        if (fread(&ch, 1, 1, f) != 1) {
+            fclose(f);
+            return NULL;
+        }
+        fseek(f, curpos, SEEK_SET);
+    }
+
     subsampling_dx = parameters->subsampling_dx;
     subsampling_dy = parameters->subsampling_dy;
 
@@ -444,7 +458,7 @@ int imagetotga(opj_image_t * image, const char *outfile)
 {
     int width, height, bpp, x, y;
     opj_bool write_alpha;
-    int i, adjustR, adjustG, adjustB;
+    int i, adjustR, adjustG = 0, adjustB = 0;
     unsigned int alpha_channel;
     float r, g, b, a;
     unsigned char value;
@@ -485,8 +499,10 @@ int imagetotga(opj_image_t * image, const char *outfile)
     scale = 255.0f / (float)((1 << image->comps[0].prec) - 1);
 
     adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-    adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
-    adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+    if (image->numcomps >= 3) {
+        adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+        adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+    }
 
     for (y = 0; y < height; y++) {
         unsigned int index = y * width;
@@ -1858,6 +1874,15 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     read_pnm_header(fp, &header_info);
 
     if (!header_info.ok) {
+        fclose(fp);
+        return NULL;
+    }
+
+    /* This limitation could be removed by making sure to use size_t below */
+    if (header_info.height != 0 &&
+            header_info.width > INT_MAX / header_info.height) {
+        fprintf(stderr, "pnmtoimage:Image %dx%d too big!\n",
+                header_info.width, header_info.height);
         fclose(fp);
         return NULL;
     }
