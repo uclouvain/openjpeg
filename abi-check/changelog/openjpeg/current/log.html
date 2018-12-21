@@ -20,7 +20,33 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e7640f58f122d1228f3d750864543ad4703e18fc
+<pre class='wrap'>commit 51f097e6d5754ddae93e716276fe8176b44ec548
+Merge: e7640f5 8ee3352
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2018-12-21 16:41:00 +0100
+
+    Merge pull request #1172 from hlef/master
+    
+    convertbmp: detect invalid file dimensions early (CVE-2018-6616)
+
+commit 8ee335227bbcaf1614124046aa25e53d67b11ec3
+Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
+Date:   2018-12-14 04:58:40 +0100
+
+    convertbmp: detect invalid file dimensions early
+    
+    width/length dimensions read from bmp headers are not necessarily
+    valid. For instance they may have been maliciously set to very large
+    values with the intention to cause DoS (large memory allocation, stack
+    overflow). In these cases we want to detect the invalid size as early
+    as possible.
+    
+    This commit introduces a counter which verifies that the number of
+    written bytes corresponds to the advertized width/length.
+    
+    Fixes #1059 (CVE-2018-6616).
+
+commit e7640f58f122d1228f3d750864543ad4703e18fc
 Merge: e0f5212 05be308
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-12-07 21:27:38 +0100
@@ -840,28 +866,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-09-22 12:03:29 +0200
 
     INSTALL.md: add instructions to build with Visual Studio (#1023, from Winfried instructions)
-
-commit e5a561b5d86e6292832a7baefdcdf24e25821ae3
-Merge: 4c8aba2 f92d30f
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-09-21 17:39:24 +0200
-
-    Merge pull request #1024 from stweil/warnings
-    
-    Add missing newline at end of file
-
-commit f92d30f9e7340f50294cca438c1fb62fb4fb03dd
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2017-09-14 22:02:41 +0200
-
-    Add missing newline at end of file
-    
-    This fixes warnings from the clang compiler:
-    
-    /openjpeg/src/lib/openjp2/sparse_array.h:141:32: warning:
-     no newline at end of file [-Wnewline-eof]
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 ...</pre></div>
 
