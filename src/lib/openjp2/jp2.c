@@ -111,6 +111,24 @@ static OPJ_BOOL opj_jp2_read_cdef(opj_jp2_t * jp2,
 static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color,
                                opj_event_mgr_t *);
 
+
+/**
+ * Reads a pixel format box.
+ *
+ * @param   p_pxfm_header_data           pointer to actual data (already read from file)
+ * @param   jp2                         the jpeg2000 file codec.
+ * @param   p_pxfm_header_size           the size of the pxfm header
+ * @param   p_manager                   the user event manager.
+ *
+ * @return  true if the bpc header is valid, false else.
+ */
+
+static OPJ_BOOL opj_jp2_read_pxfm(opj_jp2_t * jp2,
+                                  OPJ_BYTE * p_pxfm_header_data,
+                                  OPJ_UINT32 p_pxfm_header_size,
+                                  opj_event_mgr_t * p_manager);
+
+
 /**
  * Writes the Channel Definition box.
  *
@@ -434,7 +452,8 @@ static const opj_jp2_header_handler_t jp2_img_header [] = {
     {JP2_BPCC, opj_jp2_read_bpcc},
     {JP2_PCLR, opj_jp2_read_pclr},
     {JP2_CMAP, opj_jp2_read_cmap},
-    {JP2_CDEF, opj_jp2_read_cdef}
+    {JP2_CDEF, opj_jp2_read_cdef},
+    {JP2_PXFM, opj_jp2_read_pxfm}
 
 };
 
@@ -1450,6 +1469,59 @@ static OPJ_BOOL opj_jp2_read_cdef(opj_jp2_t * jp2,
         opj_read_bytes(p_cdef_header_data, &l_value, 2);            /* Asoc^i */
         p_cdef_header_data += 2;
         cdef_info[i].asoc = (OPJ_UINT16) l_value;
+    }
+
+    return OPJ_TRUE;
+}
+
+
+static OPJ_BOOL opj_jp2_read_pxfm(opj_jp2_t * jp2,
+                                  OPJ_BYTE * p_pxfm_header_data,
+                                  OPJ_UINT32 p_pxfm_header_size,
+                                  opj_event_mgr_t * p_manager
+                                 )
+{
+    opj_jp2_cdef_info_t *cdef_info;
+    OPJ_UINT16 i;
+    OPJ_UINT32 l_value;
+    OPJ_UINT16 num_channel;
+    OPJ_UINT8 Channel_index;
+
+    assert(jp2 != 00);
+    assert(p_pxfm_header_data != 00);
+    assert(p_manager != 00);
+    (void)p_pxfm_header_size;
+
+    opj_read_bytes(p_pxfm_header_data, &l_value,
+                       2);
+
+    num_channel = (OPJ_UINT16) l_value;
+
+    p_pxfm_header_data+=2;
+
+    if (jp2->numcomps != num_channel) {
+        opj_event_msg(p_manager, EVT_ERROR, "Mismatch between num comps and PXFM number of channel \n");
+        return OPJ_FALSE;
+    }
+    jp2->pixel_format = (opj_jp2_pixel_format_t*) opj_malloc(jp2->numcomps * sizeof(
+                     opj_jp2_pixel_format_t));
+
+    for (i = 0; i < jp2->numcomps; ++i) {
+        opj_read_bytes(p_pxfm_header_data, &l_value,
+                       2);
+        p_pxfm_header_data+=2;
+        Channel_index = (OPJ_UINT16) l_value;
+        opj_read_bytes(p_pxfm_header_data, &l_value,
+                       2);
+        p_pxfm_header_data+=2;
+        if(Channel_index < jp2->numcomps){
+            jp2->pixel_format[Channel_index].pixel_format_type = ((OPJ_UINT16) l_value) & 0xF000;
+
+            if(jp2->pixel_format[Channel_index].pixel_format_type == 0 ||
+               jp2->pixel_format[Channel_index].pixel_format_type == 4
+            )
+                jp2->pixel_format[Channel_index].pixel_format_values.mentissa = ((OPJ_UINT16) l_value) & 0x0FFF;
+        }
     }
 
     return OPJ_TRUE;
@@ -3015,6 +3087,11 @@ void opj_jp2_destroy(opj_jp2_t *jp2)
         if (jp2->comps) {
             opj_free(jp2->comps);
             jp2->comps = 00;
+        }
+
+        if (jp2->pixel_format) {
+            opj_free(jp2->pixel_format);
+            jp2->pixel_format = 00;
         }
 
         if (jp2->cl) {
