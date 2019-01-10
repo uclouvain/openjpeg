@@ -1493,34 +1493,38 @@ static OPJ_BOOL opj_jp2_read_pxfm(opj_jp2_t * jp2,
     (void)p_pxfm_header_size;
 
     opj_read_bytes(p_pxfm_header_data, &l_value,
-                       2);
+                   2);
 
     num_channel = (OPJ_UINT16) l_value;
 
-    p_pxfm_header_data+=2;
+    p_pxfm_header_data += 2;
 
     if (jp2->numcomps != num_channel) {
-        opj_event_msg(p_manager, EVT_ERROR, "Mismatch between num comps and PXFM number of channel \n");
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Mismatch between num comps and PXFM number of channel \n");
         return OPJ_FALSE;
     }
     jp2->pixel_format = (opj_jp2_pixel_format_t*) opj_malloc(jp2->numcomps * sizeof(
-                     opj_jp2_pixel_format_t));
+                            opj_jp2_pixel_format_t));
 
     for (i = 0; i < jp2->numcomps; ++i) {
         opj_read_bytes(p_pxfm_header_data, &l_value,
                        2);
-        p_pxfm_header_data+=2;
+        p_pxfm_header_data += 2;
         Channel_index = (OPJ_UINT16) l_value;
         opj_read_bytes(p_pxfm_header_data, &l_value,
                        2);
-        p_pxfm_header_data+=2;
-        if(Channel_index < jp2->numcomps){
-            jp2->pixel_format[Channel_index].pixel_format_type = ((OPJ_UINT16) l_value) & 0xF000;
+        p_pxfm_header_data += 2;
+        if (Channel_index < jp2->numcomps) {
+            jp2->pixel_format[Channel_index].pixel_format_type = ((OPJ_UINT16) l_value) &
+                    0xF000;
 
-            if(jp2->pixel_format[Channel_index].pixel_format_type == 0 ||
-               jp2->pixel_format[Channel_index].pixel_format_type == 4
-            )
-                jp2->pixel_format[Channel_index].pixel_format_values.mentissa = ((OPJ_UINT16) l_value) & 0x0FFF;
+            if (jp2->pixel_format[Channel_index].pixel_format_type == 0 ||
+                    jp2->pixel_format[Channel_index].pixel_format_type == 4
+               ) {
+                jp2->pixel_format[Channel_index].pixel_format_values.mentissa = ((
+                            OPJ_UINT16) l_value) & 0x0FFF;
+            }
         }
     }
 

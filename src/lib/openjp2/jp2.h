@@ -156,13 +156,13 @@ typedef enum {
 JP2_TRANSFORM_TYPE;
 
 typedef struct opj_jp2_pixel_format_values_t {
-   OPJ_UINT8 exponent;
-   OPJ_UINT8 mentissa;
-   OPJ_UINT8 fractional_bits;
-}opj_jp2_pixel_format_values_t;
+    OPJ_UINT8 exponent;
+    OPJ_UINT8 mentissa;
+    OPJ_UINT8 fractional_bits;
+} opj_jp2_pixel_format_values_t;
 
 /**
-    Non Linear Transform 
+    Non Linear Transform
 */
 typedef struct opj_jp2_pixel_format_t {
     OPJ_UINT8 pixel_format_type;
