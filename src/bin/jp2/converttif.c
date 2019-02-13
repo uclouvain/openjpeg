@@ -570,7 +570,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
     tdata_t buf;
     uint32 width, height;
     uint16 bps, tiPhoto;
-    int adjust, sgnd;
+    int sgnd;
     int64_t strip_size, rowStride, TIFF_MAX;
     OPJ_UINT32 i, numcomps;
     OPJ_INT32* buffer32s = NULL;
@@ -687,7 +687,6 @@ int imagetotif(opj_image_t * image, const char *outfile)
         break;
     }
     sgnd = (int)image->comps[0].sgnd;
-    adjust = sgnd ? (int)(1 << (image->comps[0].prec - 1)) : 0;
     width   = (uint32)image->comps[0].w;
     height  = (uint32)image->comps[0].h;
 
@@ -699,6 +698,11 @@ int imagetotif(opj_image_t * image, const char *outfile)
     TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
     TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, tiPhoto);
     TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
+    if (sgnd) {
+        TIFFSetField(tif, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_INT);
+    } else {
+        TIFFSetField(tif, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
+    }
     if (sizeof(tsize_t) == 4) {
         TIFF_MAX = INT_MAX;
     } else {
@@ -733,7 +737,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
     }
 
     for (i = 0; i < image->comps[0].h; ++i) {
-        cvtPxToCx(planes, buffer32s, (OPJ_SIZE_T)width, adjust);
+        cvtPxToCx(planes, buffer32s, (OPJ_SIZE_T)width, 0);
         cvt32sToTif(buffer32s, (OPJ_BYTE *)buf, (OPJ_SIZE_T)width * numcomps);
         (void)TIFFWriteEncodedStrip(tif, i, (void*)buf, (tsize_t)strip_size);
         planes[0] += width;
@@ -1505,4 +1509,3 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     return image;
 
 }/* tiftoimage() */
-
