@@ -622,13 +622,13 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
 static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
                                    OPJ_UINT32 stride, OPJ_UINT32 width, OPJ_UINT32 height)
 {
-    OPJ_UINT32 x, y;
+    OPJ_UINT32 x, y, written;
     OPJ_UINT8 *pix;
     const OPJ_UINT8 *beyond;
 
     beyond = pData + stride * height;
     pix = pData;
-    x = y = 0U;
+    x = y = written = 0U;
     while (y < height) {
         int c = getc(IN);
         if (c == EOF) {
@@ -642,6 +642,7 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
             for (j = 0; (j < c) && (x < width) &&
                     ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
                 *pix = (OPJ_UINT8)((j & 1) ? (c1 & 0x0fU) : ((c1 >> 4) & 0x0fU));
+                written++;
             }
         } else { /* absolute mode */
             c = getc(IN);
@@ -671,6 +672,7 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
                         c1 = (OPJ_UINT8)getc(IN);
                     }
                     *pix = (OPJ_UINT8)((j & 1) ? (c1 & 0x0fU) : ((c1 >> 4) & 0x0fU));
+                    written++;
                 }
                 if (((c & 3) == 1) || ((c & 3) == 2)) { /* skip padding byte */
                     getc(IN);
@@ -678,6 +680,10 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
             }
         }
     }  /* while(y < height) */
+    if (written != width * height) {
+        fprintf(stderr, "warning, image's actual size does not match advertized one\n");
+        return OPJ_FALSE;
+    }
     return OPJ_TRUE;
 }
 
