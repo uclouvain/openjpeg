@@ -20,7 +20,27 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 51f097e6d5754ddae93e716276fe8176b44ec548
+<pre class='wrap'>commit 25b815dc460dbf9def7e6b822c8998727094f85a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-03-29 10:44:35 +0100
+
+    Revert "[JPWL] tgatoimage(): avoid excessive memory allocation attempt,"
+    
+    This reverts commit 05be3084460e46282ee63f04c72c451f3271fd28.
+    
+    This commit doesn't compile due to missing OPJ_UINT64 type
+
+commit e1740e7ce79d0a1676db4da0f4189b64e85f52cb
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-03-29 10:40:58 +0100
+
+    Revert "[MJ2] Avoid index out of bounds access to pi-&gt;include[]"
+    
+    This reverts commit c277159986c80142180fbe5efb256bbf3bdf3edc.
+    
+    The commit didn't compile. include_size is not defined in openmj2
+
+commit 51f097e6d5754ddae93e716276fe8176b44ec548
 Merge: e7640f5 8ee3352
 Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
 Date:   2018-12-21 16:41:00 +0100
@@ -854,18 +874,6 @@ Date:   2017-09-26 18:30:20 -0300
     Merge pull request #1022 from rouault/partial_component_decoding
     
     Add capability to decode only a subset of all components of an image.
-
-commit 3f0de88c7bf4e56826987aa7d3edb5acdd4399f2
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-22 21:43:09 +0200
-
-    Remove opjstyle binary that went inadvertently committed in d4e54e9f35d532062533f1d369c159810b01d224 (#1026)
-
-commit 3dfb01228b4f06a538c2a19352e34fd172e20fe3
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-09-22 12:03:29 +0200
-
-    INSTALL.md: add instructions to build with Visual Studio (#1023, from Winfried instructions)
 
 ...</pre></div>
 
