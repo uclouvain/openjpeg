@@ -85,12 +85,6 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
 ==========================================================
 */
 
-static void opj_pi_emit_error(opj_pi_iterator_t * pi, const char* msg)
-{
-    (void)pi;
-    (void)msg;
-}
-
 static opj_bool pi_next_lrcp(opj_pi_iterator_t * pi)
 {
     opj_pi_comp_t *comp = NULL;
@@ -120,11 +114,6 @@ static opj_bool pi_next_lrcp(opj_pi_iterator_t * pi)
                 for (pi->precno = pi->poc.precno0; pi->precno < pi->poc.precno1; pi->precno++) {
                     index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                             pi->step_c + pi->precno * pi->step_p;
-                    /* Avoids index out of bounds access with include*/
-                    if (index >= pi->include_size) {
-                        opj_pi_emit_error(pi, "Invalid access to pi->include");
-                        return OPJ_FALSE;
-                    }
                     if (!pi->include[index]) {
                         pi->include[index] = 1;
                         return OPJ_TRUE;
@@ -167,11 +156,6 @@ static opj_bool pi_next_rlcp(opj_pi_iterator_t * pi)
                 for (pi->precno = pi->poc.precno0; pi->precno < pi->poc.precno1; pi->precno++) {
                     index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                             pi->step_c + pi->precno * pi->step_p;
-                    /* Avoids index out of bounds access with include*/
-                    if (index >= pi->include_size) {
-                        opj_pi_emit_error(pi, "Invalid access to pi->include");
-                        return OPJ_FALSE;
-                    }
                     if (!pi->include[index]) {
                         pi->include[index] = 1;
                         return OPJ_TRUE;
@@ -272,11 +256,6 @@ static opj_bool pi_next_rpcl(opj_pi_iterator_t * pi)
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
-                        /* Avoids index out of bounds access with include*/
-                        if (index >= pi->include_size) {
-                            opj_pi_emit_error(pi, "Invalid access to pi->include");
-                            return OPJ_FALSE;
-                        }
                         if (!pi->include[index]) {
                             pi->include[index] = 1;
                             return OPJ_TRUE;
@@ -377,11 +356,6 @@ static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi)
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
-                        /* Avoids index out of bounds access with include*/
-                        if (index >= pi->include_size) {
-                            opj_pi_emit_error(pi, "Invalid access to pi->include");
-                            return OPJ_FALSE;
-                        }
                         if (!pi->include[index]) {
                             pi->include[index] = 1;
                             return OPJ_TRUE;
@@ -480,11 +454,6 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi)
                     for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
                         index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno *
                                 pi->step_c + pi->precno * pi->step_p;
-                        /* Avoids index out of bounds access with include*/
-                        if (index >= pi->include_size) {
-                            opj_pi_emit_error(pi, "Invalid access to pi->include");
-                            return OPJ_FALSE;
-                        }
                         if (!pi->include[index]) {
                             pi->include[index] = 1;
                             return OPJ_TRUE;
