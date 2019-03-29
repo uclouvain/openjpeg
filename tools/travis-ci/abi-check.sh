@@ -61,9 +61,10 @@ make check &> /dev/null
 make install &> /dev/null
 cd ..
 export PATH=${PWD}/tools/wdiff/bin:$PATH
-wget -qO - https://tools.ietf.org/tools/rfcdiff/rfcdiff-1.42.tgz | tar -xz
-mv rfcdiff-1.42 ${PWD}/tools/rfcdiff
-export PATH=${PWD}/tools/rfcdiff:$PATH
+wget https://tools.ietf.org/tools/rfcdiff/rfcdiff
+chmod +x rfcdiff
+mv rfcdiff ${PWD}/tools
+export PATH=${PWD}/tools:$PATH
 wget -qO - https://github.com/lvc/installer/archive/0.10.tar.gz | tar -xz
 mkdir ${PWD}/tools/abi-tracker
 make -C installer-0.10 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
