@@ -20,7 +20,29 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 25b815dc460dbf9def7e6b822c8998727094f85a
+<pre class='wrap'>commit d6b8aed5612e6be6d3a4053867fbd2ae0cb7c8af
+Merge: 25b815d a1d32a5
+Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
+Date:   2019-03-29 11:52:38 +0100
+
+    Merge pull request #1187 from rouault/fix_ubsan_in_opj_t1_encode_cblks
+    
+    opj_t1_encode_cblks: fix UBSAN signed integer overflow
+
+commit a1d32a596a94280178c44a55d7e7f1acd992ed5d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-03-29 11:17:39 +0100
+
+    opj_t1_encode_cblks: fix UBSAN signed integer overflow
+    
+    Fixes #1053 / CVE-2018-5727
+    
+    Note: I don't consider this issue to be a security vulnerability, in
+    practice.
+    At least with gcc or clang compilers on x86_64 which generate the same
+    assembly code with or without that fix.
+
+commit 25b815dc460dbf9def7e6b822c8998727094f85a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-03-29 10:44:35 +0100
 
@@ -859,21 +881,6 @@ Date:   2017-09-28 11:24:59 +0200
     Merge pull request #1028 from quangnh89/master
     
     update instructions to build with Visual Studio and 64-Bit Visual C++ Toolset.
-
-commit 8ed588608f13af16f63e38267c1d51b124d6d8ad
-Author: Quang Nguyen &lt;quangnh89@gmail.com&gt;
-Date:   2017-09-28 10:00:09 +0700
-
-    update instructions to build with Visual Studio and 64-Bit Visual C++ Toolset.
-
-commit d45ccb048bb2166c5d975f4e1b8acaf8ba3d198d
-Merge: 3f0de88 e17bbde
-Author: Antonin Descampe &lt;antonin@descampe.net&gt;
-Date:   2017-09-26 18:30:20 -0300
-
-    Merge pull request #1022 from rouault/partial_component_decoding
-    
-    Add capability to decode only a subset of all components of an image.
 
 ...</pre></div>
 
