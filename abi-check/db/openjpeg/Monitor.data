@@ -14,7 +14,8 @@ $VAR1 = {
                            '2.1.1' => 'Off',
                            '2.1.2' => 'Off',
                            '2.2.0' => 'Off',
-                           '2.3.0' => 'Off'
+                           '2.3.0' => 'Off',
+                           '2.3.1' => 'Off'
                          },
           'Installed' => {
                            '1.1' => 'installed/openjpeg/1.1',
@@ -30,6 +31,7 @@ $VAR1 = {
                            '2.1.2' => 'installed/openjpeg/2.1.2',
                            '2.2.0' => 'installed/openjpeg/2.2.0',
                            '2.3.0' => 'installed/openjpeg/2.3.0',
+                           '2.3.1' => 'installed/openjpeg/2.3.1',
                            'current' => 'installed/openjpeg/current'
                          },
           'Source' => {
