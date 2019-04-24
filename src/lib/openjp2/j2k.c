@@ -1628,7 +1628,10 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
     OPJ_UINT32 step_r = p_num_comps * step_c;
     OPJ_UINT32 step_l = p_nb_resolutions * step_r;
     OPJ_BOOL loss = OPJ_FALSE;
-    OPJ_UINT32 layno0 = 0;
+
+    if (p_nb_pocs == 0) {
+        return OPJ_TRUE;
+    }
 
     packet_array = (OPJ_UINT32*) opj_calloc(step_l * p_num_layers,
                                             sizeof(OPJ_UINT32));
@@ -1638,39 +1641,8 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
         return OPJ_FALSE;
     }
 
-    if (p_nb_pocs == 0) {
-        opj_free(packet_array);
-        return OPJ_TRUE;
-    }
-
-    index = step_r * p_pocs->resno0;
-    /* take each resolution for each poc */
-    for (resno = p_pocs->resno0 ; resno < p_pocs->resno1 ; ++resno) {
-        OPJ_UINT32 res_index = index + p_pocs->compno0 * step_c;
-
-        /* take each comp of each resolution for each poc */
-        for (compno = p_pocs->compno0 ; compno < p_pocs->compno1 ; ++compno) {
-            OPJ_UINT32 comp_index = res_index + layno0 * step_l;
-
-            /* and finally take each layer of each res of ... */
-            for (layno = layno0; layno < p_pocs->layno1 ; ++layno) {
-                /*index = step_r * resno + step_c * compno + step_l * layno;*/
-                packet_array[comp_index] = 1;
-                comp_index += step_l;
-            }
-
-            res_index += step_c;
-        }
-
-        index += step_r;
-    }
-    ++p_pocs;
-
     /* iterate through all the pocs */
-    for (i = 1; i < p_nb_pocs ; ++i) {
-        OPJ_UINT32 l_last_layno1 = (p_pocs - 1)->layno1 ;
-
-        layno0 = (p_pocs->layno1 > l_last_layno1) ? l_last_layno1 : 0;
+    for (i = 0; i < p_nb_pocs ; ++i) {
         index = step_r * p_pocs->resno0;
 
         /* take each resolution for each poc */
@@ -1679,11 +1651,12 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
 
             /* take each comp of each resolution for each poc */
             for (compno = p_pocs->compno0 ; compno < p_pocs->compno1 ; ++compno) {
+                /* The layer index always starts at zero for every progression. */
+                const OPJ_UINT32 layno0 = 0;
                 OPJ_UINT32 comp_index = res_index + layno0 * step_l;
 
                 /* and finally take each layer of each res of ... */
                 for (layno = layno0; layno < p_pocs->layno1 ; ++layno) {
-                    /*index = step_r * resno + step_c * compno + step_l * layno;*/
                     packet_array[comp_index] = 1;
                     comp_index += step_l;
                 }
@@ -1709,7 +1682,6 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
                             layno, resno, compno);
                 }
 #endif
-                /*index = step_r * resno + step_c * compno + step_l * layno;*/
                 index += step_c;
             }
         }
