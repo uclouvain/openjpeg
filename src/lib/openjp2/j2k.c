@@ -1669,7 +1669,6 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
 
             index += step_r;
         }
-
         ++p_pocs;
     }
 
@@ -7179,7 +7178,6 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
 
         if (parameters->numpocs) {
             /* initialisation of POC */
-            tcp->POC = 1;
             for (i = 0; i < parameters->numpocs; i++) {
                 if (tileno + 1 == parameters->POC[i].tile)  {
                     opj_poc_t *tcp_poc = &tcp->pocs[numpocs_tile];
@@ -7196,7 +7194,10 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
                 }
             }
 
-            tcp->numpocs = numpocs_tile - 1 ;
+            if (numpocs_tile) {
+                tcp->POC = 1;
+                tcp->numpocs = numpocs_tile - 1 ;
+            }
         } else {
             tcp->numpocs = 0;
         }
