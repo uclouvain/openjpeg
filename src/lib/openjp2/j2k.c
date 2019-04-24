@@ -1646,17 +1646,20 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
         index = step_r * p_pocs->resno0;
 
         /* take each resolution for each poc */
-        for (resno = p_pocs->resno0 ; resno < p_pocs->resno1 ; ++resno) {
+        for (resno = p_pocs->resno0 ;
+                resno < opj_uint_min(p_pocs->resno1, p_nb_resolutions); ++resno) {
             OPJ_UINT32 res_index = index + p_pocs->compno0 * step_c;
 
             /* take each comp of each resolution for each poc */
-            for (compno = p_pocs->compno0 ; compno < p_pocs->compno1 ; ++compno) {
+            for (compno = p_pocs->compno0 ;
+                    compno < opj_uint_min(p_pocs->compno1, p_num_comps); ++compno) {
                 /* The layer index always starts at zero for every progression. */
                 const OPJ_UINT32 layno0 = 0;
                 OPJ_UINT32 comp_index = res_index + layno0 * step_l;
 
                 /* and finally take each layer of each res of ... */
-                for (layno = layno0; layno < p_pocs->layno1 ; ++layno) {
+                for (layno = layno0; layno < opj_uint_min(p_pocs->layno1, p_num_layers);
+                        ++layno) {
                     packet_array[comp_index] = 1;
                     comp_index += step_l;
                 }
