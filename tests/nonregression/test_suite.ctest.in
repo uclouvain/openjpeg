@@ -171,6 +171,9 @@ opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_empty_ban
 
 opj_compress -i @INPUT_NR_PATH@/issue982.bmp -o @TEMP_PATH@/issue982.j2k -n 1
 
+# Test generating only one POC
+opj_compress -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_one_poc.j2k -n 2 -r 20,1 -POC T1=0,0,2,2,1,CPRL -b 4,4
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx

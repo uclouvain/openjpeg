@@ -1702,6 +1702,13 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
         for (resno = 0; resno < p_nb_resolutions; ++resno) {
             for (compno = 0; compno < p_num_comps; ++compno) {
                 loss |= (packet_array[index] != 1);
+#ifdef DEBUG_VERBOSE
+                if (packet_array[index] != 1) {
+                    fprintf(stderr,
+                            "Missing packet in POC: layno=%d resno=%d compno=%d\n",
+                            layno, resno, compno);
+                }
+#endif
                 /*index = step_r * resno + step_c * compno + step_l * layno;*/
                 index += step_c;
             }
@@ -11759,7 +11766,7 @@ static OPJ_BOOL opj_j2k_write_first_tile_part(opj_j2k_t *p_j2k,
             total_data_size -= l_current_nb_bytes_written;
         }
 #endif
-        if (l_cp->tcps[p_j2k->m_current_tile_number].numpocs) {
+        if (l_cp->tcps[p_j2k->m_current_tile_number].POC) {
             l_current_nb_bytes_written = 0;
             opj_j2k_write_poc_in_memory(p_j2k, p_data, &l_current_nb_bytes_written,
                                         p_manager);
