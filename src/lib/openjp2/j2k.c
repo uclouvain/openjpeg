@@ -1219,6 +1219,7 @@ static OPJ_BOOL opj_j2k_write_epc(opj_j2k_t *p_j2k,
  * A nice message is outputted at errors.
  *
  * @param       p_pocs                  the progression order changes.
+ * @param       tileno                  the tile number of interest
  * @param       p_nb_pocs               the number of progression order changes.
  * @param       p_nb_resolutions        the number of resolutions.
  * @param       numcomps                the number of components
@@ -1228,6 +1229,7 @@ static OPJ_BOOL opj_j2k_write_epc(opj_j2k_t *p_j2k,
  * @return      true if the pocs are valid.
  */
 static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
+                                      OPJ_UINT32 tileno,
                                       OPJ_UINT32 p_nb_pocs,
                                       OPJ_UINT32 p_nb_resolutions,
                                       OPJ_UINT32 numcomps,
@@ -1615,6 +1617,7 @@ const char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order)
 }
 
 static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
+                                      OPJ_UINT32 tileno,
                                       OPJ_UINT32 p_nb_pocs,
                                       OPJ_UINT32 p_nb_resolutions,
                                       OPJ_UINT32 p_num_comps,
@@ -1629,9 +1632,7 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
     OPJ_UINT32 step_l = p_nb_resolutions * step_r;
     OPJ_BOOL loss = OPJ_FALSE;
 
-    if (p_nb_pocs == 0) {
-        return OPJ_TRUE;
-    }
+    assert(p_nb_pocs > 0);
 
     packet_array = (OPJ_UINT32*) opj_calloc(step_l * p_num_layers,
                                             sizeof(OPJ_UINT32));
@@ -1641,35 +1642,37 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
         return OPJ_FALSE;
     }
 
-    /* iterate through all the pocs */
-    for (i = 0; i < p_nb_pocs ; ++i) {
-        index = step_r * p_pocs->resno0;
+    /* iterate through all the pocs that match our tile of interest. */
+    for (i = 0; i < p_nb_pocs; ++i) {
+        const opj_poc_t *poc = &p_pocs[i];
+        if (tileno + 1 == poc->tile) {
+            index = step_r * poc->resno0;
 
-        /* take each resolution for each poc */
-        for (resno = p_pocs->resno0 ;
-                resno < opj_uint_min(p_pocs->resno1, p_nb_resolutions); ++resno) {
-            OPJ_UINT32 res_index = index + p_pocs->compno0 * step_c;
+            /* take each resolution for each poc */
+            for (resno = poc->resno0 ;
+                    resno < opj_uint_min(poc->resno1, p_nb_resolutions); ++resno) {
+                OPJ_UINT32 res_index = index + poc->compno0 * step_c;
 
-            /* take each comp of each resolution for each poc */
-            for (compno = p_pocs->compno0 ;
-                    compno < opj_uint_min(p_pocs->compno1, p_num_comps); ++compno) {
-                /* The layer index always starts at zero for every progression. */
-                const OPJ_UINT32 layno0 = 0;
-                OPJ_UINT32 comp_index = res_index + layno0 * step_l;
+                /* take each comp of each resolution for each poc */
+                for (compno = poc->compno0 ;
+                        compno < opj_uint_min(poc->compno1, p_num_comps); ++compno) {
+                    /* The layer index always starts at zero for every progression. */
+                    const OPJ_UINT32 layno0 = 0;
+                    OPJ_UINT32 comp_index = res_index + layno0 * step_l;
 
-                /* and finally take each layer of each res of ... */
-                for (layno = layno0; layno < opj_uint_min(p_pocs->layno1, p_num_layers);
-                        ++layno) {
-                    packet_array[comp_index] = 1;
-                    comp_index += step_l;
+                    /* and finally take each layer of each res of ... */
+                    for (layno = layno0; layno < opj_uint_min(poc->layno1, p_num_layers);
+                            ++layno) {
+                        packet_array[comp_index] = 1;
+                        comp_index += step_l;
+                    }
+
+                    res_index += step_c;
                 }
 
-                res_index += step_c;
+                index += step_r;
             }
-
-            index += step_r;
         }
-        ++p_pocs;
     }
 
     index = 0;
@@ -7138,13 +7141,6 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
                       "Not enough memory to allocate tile coding parameters\n");
         return OPJ_FALSE;
     }
-    if (parameters->numpocs) {
-        /* initialisation of POC */
-        opj_j2k_check_poc_val(parameters->POC, parameters->numpocs,
-                              (OPJ_UINT32)parameters->numresolution, image->numcomps,
-                              (OPJ_UINT32)parameters->tcp_numlayers, p_manager);
-        /* TODO MSD use the return value*/
-    }
 
     for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
         opj_tcp_t *tcp = &cp->tcps[tileno];
@@ -7195,6 +7191,12 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
             }
 
             if (numpocs_tile) {
+
+                /* TODO MSD use the return value*/
+                opj_j2k_check_poc_val(parameters->POC, tileno, parameters->numpocs,
+                                      (OPJ_UINT32)parameters->numresolution, image->numcomps,
+                                      (OPJ_UINT32)parameters->tcp_numlayers, p_manager);
+
                 tcp->POC = 1;
                 tcp->numpocs = numpocs_tile - 1 ;
             }
