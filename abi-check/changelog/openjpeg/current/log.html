@@ -20,7 +20,61 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5dd75f62e20efff9f094fd1dbd0d4d00e8b37689
+<pre class='wrap'>commit 4f447c6e18444a4182f7844d25033861eee8df55
+Merge: 5dd75f6 a94cfbd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 15:32:22 +0200
+
+    Merge pull request #1192 from rouault/poc_fixes
+    
+    compression: emit POC marker when only one single POC is requested (f…
+
+commit a94cfbd5334922ca5b63cfac9d2e5e0ec98155be
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 14:07:46 +0200
+
+    Change opj_j2k_check_poc_val() to take into account tile number
+
+commit bdec5ae2723369be5abba7aaae398aa4ae3225cc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 01:29:38 +0200
+
+    Add test for previous commit
+
+commit 6423163141412cb93364de4e33d90bcffefa0885
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 01:27:02 +0200
+
+    Fix POC in multi-tile scenarios: avoid almost endless loop when a tile has no POC settings
+
+commit b86717fdd36b628ea7ecb5c24f7a086bf5bcd3a7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 00:40:04 +0200
+
+    Add test for previous commit
+
+commit 23883458b9de2c57fc1890b42efbd0832c8fbe3b
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 00:34:44 +0200
+
+    opj_j2k_check_poc_val(): prevent potential write outside of allocated array
+
+commit 6589c609f6d6b3743715fceefbdac6e4ecb76aee
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 00:28:05 +0200
+
+    opj_j2k_check_poc_val(): fix starting index for checking layer dimension
+    
+    The standard mandates that the layer index always starts at zero for every
+    progression.
+
+commit 1e3a57563defb6aa7cf24ffd2394d4a820e13bda
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-25 00:17:13 +0200
+
+    compression: emit POC marker when only one single POC is requested (fixes #1191)
+
+commit 5dd75f62e20efff9f094fd1dbd0d4d00e8b37689
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-04-23 16:52:21 +0200
 
@@ -822,65 +876,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2017-11-30 15:39:45 +0100
 
     Add known failure for i386 target (refs #1043)
-
-commit 98cfdd31340509895f3e2a36f667f66bb3cf1ff2
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-11-30 14:48:34 +0100
-
-    opj_j2k_read_cod: remove check for 'No more than one COD marker per tile' (fixes #1043)
-    
-    This check was added per https://github.com/uclouvain/openjpeg/commit/daed8cc9195555e101ab708a501af2dfe6d5e001
-    to fix https://github.com/uclouvain/openjpeg/issues/476 , but it does not seem
-    to be necessary with latest master (issue476.jp2 doesn't cause memory issues),
-    and breaks reading legit files.
-
-commit 936910cf7a4d85e341582746126d105a8a044f30
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-11-30 14:26:17 +0100
-
-    Fix typo in comments
-
-commit 370d024d108ffe2d5ce9b52f6b7fae5261c4871d
-Merge: d9f8f7b 157a3d8
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-11-14 12:28:44 +0100
-
-    Merge pull request #1042 from radarhere/cmake
-    
-    Changed cmake version test to allow for cmake 2.8.11.x
-
-commit 157a3d840884abe5020b1a8b94576a7447063385
-Author: Andrew Murray &lt;radarhere@users.noreply.github.com&gt;
-Date:   2017-11-14 21:45:09 +1100
-
-    Changed cmake version test to allow for cmake 2.8.11.x
-
-commit d9f8f7ba9a51732eda9017cea6493cc86a62c7ef
-Merge: 53d2655 10d22ec
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2017-10-20 21:59:14 +0200
-
-    Merge pull request #1037 from gfiumara/master
-    
-    Add missing fclose() statement in error condition.
-
-commit 10d22ec26d864e93ad92b4570f044258c6c5bdf9
-Author: Gregory Fiumara &lt;gregory.fiumara@nist.gov&gt;
-Date:   2017-10-20 15:31:45 -0400
-
-    Add missing fclose() statement in error condition.
-
-commit 53d265576ae0cea480f22f3b08f1c05c8af40d4d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-10-14 22:42:12 +0200
-
-    CMakeLists.txt: turn BUILD_PKGCONFIG_FILES ON by default on Windows if compiler is GCC
-
-commit be6ea90e13fe81a922d831b589c54554282e5545
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-10-12 01:16:23 +0200
-
-    opj_j2k_set_threads(): add sanity check to error out if called after opj_read_header()
 
 ...</pre></div>
 

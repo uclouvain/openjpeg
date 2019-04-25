@@ -705,7 +705,7 @@ $VAR1 = {
                       '2.2.0' => '2017-08-10 00:31',
                       '2.3.0' => '2017-10-04 22:23',
                       '2.3.1' => '2019-04-02 10:08',
-                      'current' => '2019-04-23 16:52:21'
+                      'current' => '2019-04-25 15:32:22'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -806,14 +806,14 @@ $VAR1 = {
                              '2.3.1' => {
                                           'current' => {
                                                          'Path' => 'headers_diff/openjpeg/2.3.1/current/diff.html',
-                                                         'Total' => 0
+                                                         'Total' => 1
                                                        }
                                         }
                            },
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1556032208',
+          'ScmUpdateTime' => '1556200333',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'

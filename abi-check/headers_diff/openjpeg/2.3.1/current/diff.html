@@ -18,7 +18,44 @@
 <table width='100%' cellpadding='0' cellspacing='0'><tr><td><table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
 <br/>
 <br/>
-<h1>Headers diff: <span class='version'>2.3.1</span> vs <span class='version'>current</span></h1><br/><br/><br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
+<h1>Headers diff: <span class='version'>2.3.1</span> vs <span class='version'>current</span></h1><br/><br/> 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr id="part-1" bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (2.3.1)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (current)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr id="part-1" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-1"><em> line 334<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-1"><em> line 334<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Resolution num start, Component num start, given by POC */</td><td> </td><td class="right">    /** Resolution num start, Component num start, given by POC */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 resno0, compno0;</td><td> </td><td class="right">    OPJ_UINT32 resno0, compno0;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Layer num end,Resolution num end, Component num end, given by POC *
+/</td><td> </td><td class="right">    /** Layer num end,Resolution num end, Component num end, given by POC *
+/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 layno1, resno1, compno1;</td><td> </td><td class="right">    OPJ_UINT32 layno1, resno1, compno1;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Layer num start,Precinct num start, Precinct num end */</td><td> </td><td class="right">    /** Layer num start,Precinct num start, Precinct num end */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 layno0, precno0, precno1;</td><td> </td><td class="right">    OPJ_UINT32 layno0, precno0, precno1;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Progression order enum*/</td><td> </td><td class="right">    /** Progression order enum*/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_PROG_ORDER prg1, prg;</td><td> </td><td class="right">    OPJ_PROG_ORDER prg1, prg;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Progression order string*/</td><td> </td><td class="right">    /** Progression order string*/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_CHAR progorder[5];</td><td> </td><td class="right">    OPJ_CHAR progorder[5];</td><td class="lineno"></td></tr>
+      <tr id="diff0001"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">    /** Tile number */</td><td> </td><td class="rblock">    /** Tile number <span class="insert">(starting at 1) </span>*/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 tile;</td><td> </td><td class="right">    OPJ_UINT32 tile;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Start and end values for Tile width and height*/</td><td> </td><td class="right">    /** Start and end values for Tile width and height*/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_INT32 tx0, tx1, ty0, ty1;</td><td> </td><td class="right">    OPJ_INT32 tx0, tx1, ty0, ty1;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Start value, initialised in pi_initialise_encode*/</td><td> </td><td class="right">    /** Start value, initialised in pi_initialise_encode*/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 layS, resS, compS, prcS;</td><td> </td><td class="right">    OPJ_UINT32 layS, resS, compS, prcS;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** End value, initialised in pi_initialise_encode */</td><td> </td><td class="right">    /** End value, initialised in pi_initialise_encode */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 layE, resE, compE, prcE;</td><td> </td><td class="right">    OPJ_UINT32 layE, resE, compE, prcE;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Start and end values of Tile width and height, initialised in pi_in
+itialise_encode*/</td><td> </td><td class="right">    /** Start and end values of Tile width and height, initialised in pi_in
+itialise_encode*/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 txS, txE, tyS, tyE, dx, dy;</td><td> </td><td class="right">    OPJ_UINT32 txS, txE, tyS, tyE, dx, dy;</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">    /** Temporary values for Tile parts, initialised in pi_create_encode */</td><td> </td><td class="right">    /** Temporary values for Tile parts, initialised in pi_create_encode */</td><td class="lineno"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 1 change blocks.&nbsp;</th></tr>
+     <tr class="stats"><td></td><th><i>1 lines changed or deleted</i></th><th><i> </i></th><th><i>1 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
 </td></tr></table>
 </body>
 </html>
