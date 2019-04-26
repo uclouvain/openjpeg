@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 4f447c6e18444a4182f7844d25033861eee8df55
+<pre class='wrap'>commit 9b7620ee7a3d72bfcdbebd78e607c5ee8aa7fade
+Merge: 4f447c6 3aef207
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-04-26 19:52:52 +0200
+
+    Merge pull request #1185 from Young-X/fix
+    
+    Fix several potential vulnerabilities
+
+commit 4f447c6e18444a4182f7844d25033861eee8df55
 Merge: 5dd75f6 a94cfbd
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-04-25 15:32:22 +0200
@@ -79,6 +88,31 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-04-23 16:52:21 +0200
 
     j2k.c: use correct naming convention for total_data_size variable
+
+commit 3aef207f90e937d4931daf6d411e092f76d82e66
+Author: Young Xiao &lt;YangX92@hotmail.com&gt;
+Date:   2019-03-16 20:09:59 +0800
+
+    bmp_read_rle4_data(): avoid potential infinite loop
+
+commit 21399f6b7d318fcdf4406d5e88723c4922202aa3
+Author: Young Xiao &lt;YangX92@hotmail.com&gt;
+Date:   2019-03-16 19:57:27 +0800
+
+    convertbmp: detect invalid file dimensions early
+    
+    width/length dimensions read from bmp headers are not necessarily
+    valid. For instance they may have been maliciously set to very large
+    values with the intention to cause DoS (large memory allocation, stack
+    overflow). In these cases we want to detect the invalid size as early
+    as possible.
+    
+    This commit introduces a counter which verifies that the number of
+    written bytes corresponds to the advertized width/length.
+    
+    See commit 8ee335227bbc for details.
+    
+    Signed-off-by: Young Xiao &lt;YangX92@hotmail.com&gt;
 
 commit d0dd894ae24d0f2f09072adf1b966033dd64672d
 Author: Antonin Descampe &lt;antonin@gmail.com&gt;
@@ -851,31 +885,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-01-07 17:45:53 +0100
 
     Add known failure for Windows VC10 i386 target (refs #1043)
-
-commit 6e6f8354a0614a6af61568a73aea573b8e76f894
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2018-01-07 17:11:09 +0100
-
-    Some Doxygen tags are removed
-
-commit 4841292b5df8f5ed3c92f1760769428ad7500b7a
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2017-12-15 16:49:33 +0100
-
-    Fix resource leak (CID 179466)
-    
-    Coverity report:
-    
-    CID 179466 (#1 of 1): Resource leak (RESOURCE_LEAK)
-    93. leaked_storage: Variable name going out of scope leaks the storage it points to.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 9d0d1a0128c7a9324c9a935b2ded01deb4d660d4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2017-11-30 15:39:45 +0100
-
-    Add known failure for i386 target (refs #1043)
 
 ...</pre></div>
 
