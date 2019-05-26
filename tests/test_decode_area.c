@@ -198,7 +198,7 @@ opj_image_t* decode(
             *ptilew = pCodeStreamInfo->tdx;
         }
         if (ptileh) {
-            *ptilew = pCodeStreamInfo->tdy;
+            *ptileh = pCodeStreamInfo->tdy;
         }
         //int numResolutions = pCodeStreamInfo->m_default_tile_info.tccp_info[0].numresolutions;
         if (pcblkw) {
