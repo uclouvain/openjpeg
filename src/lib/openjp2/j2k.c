@@ -2072,6 +2072,8 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                    2);                                                /* Rsiz (capabilities) */
     p_header_data += 2;
     l_cp->rsiz = (OPJ_UINT16) l_tmp;
+    l_image->rsiz = l_cp->rsiz;
+
     opj_read_bytes(p_header_data, (OPJ_UINT32*) &l_image->x1, 4);   /* Xsiz */
     p_header_data += 4;
     opj_read_bytes(p_header_data, (OPJ_UINT32*) &l_image->y1, 4);   /* Ysiz */
