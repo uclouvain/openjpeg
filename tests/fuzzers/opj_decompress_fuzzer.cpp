@@ -153,6 +153,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *buf, size_t len)
     OPJ_UINT32 width = psImage->x1 - psImage->x0;
     OPJ_UINT32 height = psImage->y1 - psImage->y0;
 
+#if 0
     // Reject too big images since that will require allocating a lot of
     // memory
     if (width != 0 && psImage->numcomps != 0 &&
@@ -180,6 +181,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *buf, size_t len)
 
         return 0;
     }
+#endif
 
     OPJ_UINT32 width_to_read = width;
     if (width_to_read > 1024) {
