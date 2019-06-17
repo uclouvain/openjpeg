@@ -667,8 +667,6 @@ typedef struct opj_image_comp {
  * Defines image data and characteristics
  * */
 typedef struct opj_image {
-    /** RSIZ: capabilities */
-    OPJ_UINT16 rsiz;
     /** XOsiz: horizontal offset from the origin of the reference grid to the left side of the image area */
     OPJ_UINT32 x0;
     /** YOsiz: vertical offset from the origin of the reference grid to the top side of the image area */
@@ -687,6 +685,8 @@ typedef struct opj_image {
     OPJ_BYTE *icc_profile_buf;
     /** size of ICC profile */
     OPJ_UINT32 icc_profile_len;
+    /** RSIZ: capabilities */
+    OPJ_UINT16 rsiz;
 } opj_image_t;
 
 
