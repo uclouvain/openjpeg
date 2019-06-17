@@ -85,7 +85,7 @@ configure_file(
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
   set(MANGLE_PREFIX ${OPENJPEG_LIBRARY_NAME})
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/openjpeg_mangle.h
+               ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h
                @ONLY)
 endif()
 
