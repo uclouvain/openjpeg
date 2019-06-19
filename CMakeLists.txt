@@ -78,7 +78,7 @@ endif()
 
 configure_file(
   ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake/CTestCustom.cmake.in
-  ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/CTestCustom.cmake
+  ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/CTestCustom.cmake
   @ONLY
   )
 
@@ -128,20 +128,3 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config_private.h
   @ONLY
  )
-
-install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
-configure_file( ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake/OpenJPEGConfig.cmake.in
-  ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/OpenJPEGConfig.cmake
-  @ONLY
-)
-install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
-  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
-)
-
-if(BUILD_CODEC OR BUILD_MJ2)
-  # OFF: It will only build 3rd party libs if they are not found on the system
-  # ON: 3rd party libs will ALWAYS be build, and used
-  option(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
-  add_subdirectory(thirdparty)
-  add_subdirectory(src/bin)
-endif ()
