@@ -78,7 +78,7 @@ endif()
 
 # Build the library
 if(WIN32)
-  add_library(${OPENJPEG_LIBRARY_NAME} 
+  add_library(${OPENJPEG_LIBRARY_NAME} SHARED
       	${HEADER_FILES}
   	    ${SOURCE_FILES}
     )
