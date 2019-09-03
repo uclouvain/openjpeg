@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8db9d25dcf360528fd1e094e4f9274c0635e90cc
+<pre class='wrap'>commit e66125fe260deee49fdf6e9978d9bd29871dd5bb
+Merge: 8db9d25 b275196
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-09-03 17:03:54 +0200
+
+    Merge pull request #1164 from sebras/master
+    
+    openjp2/j2k: Report error if all wanted components are not decoded.
+
+commit 8db9d25dcf360528fd1e094e4f9274c0635e90cc
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-06-15 09:55:16 +0200
 
@@ -230,6 +239,20 @@ Date:   2019-03-29 10:40:58 +0100
     This reverts commit c277159986c80142180fbe5efb256bbf3bdf3edc.
     
     The commit didn't compile. include_size is not defined in openmj2
+
+commit b2751967ecabf8d8856e85ab91e25d4f235e2eb3
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2018-10-31 20:22:11 +0100
+
+    openjp2/j2k: Report error if all wanted components are not decoded.
+    
+    Previously the caller had to check whether each component data had
+    been decoded. This means duplicating the checking in every user of
+    openjpeg which is unnecessary. If the caller wantes to decode all
+    or a set of, or a specific component then openjpeg ought to error
+    out if it was unable to do so.
+    
+    Fixes #1158.
 
 commit 51f097e6d5754ddae93e716276fe8176b44ec548
 Merge: e7640f5 8ee3352
@@ -862,26 +885,6 @@ Author: Campbell Barton &lt;ideasman42@gmail.com&gt;
 Date:   2018-01-18 15:16:03 +1100
 
     Note that seek uses SEEK_SET behavior.
-
-commit 07d526e4cb93b6d2e1a52cf49e3d011d3d4caa11
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-01-08 09:38:44 +0100
-
-    opj_t2_encode_packet(): disable setting empty packet header bit to 1 when there is an empty packet
-    
-    This effectively reverts commit 2609fb8077125b5b31f1bcc2f98c12ff1e6572d7
-    since it has been reported that
-    such packets cause decoding issues with cinema J2K hardware
-    decoders: https://groups.google.com/forum/#!topic/openjpeg/M7M_fLX_Bco
-
-commit bdcead70d5900cf5b90774b218183334ca898723
-Merge: e4c3595 4841292
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-01-07 17:49:37 +0100
-
-    Merge pull request #1047 from stweil/coverity
-    
-    Fix resource leak (CID 179466)
 
 ...</pre></div>
 
