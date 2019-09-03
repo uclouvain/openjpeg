@@ -1571,17 +1571,6 @@ int main(int argc, char **argv)
             }
         }
 
-        /* FIXME? Shouldn't that situation be considered as an error of */
-        /* opj_decode() / opj_get_decoded_tile() ? */
-        if (image->comps[0].data == NULL) {
-            fprintf(stderr, "ERROR -> opj_decompress: no image data!\n");
-            opj_destroy_codec(l_codec);
-            opj_stream_destroy(l_stream);
-            opj_image_destroy(image);
-            failed = 1;
-            goto fin;
-        }
-
         tCumulative += opj_clock() - t;
         numDecompressedImages++;
 
