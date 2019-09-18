@@ -65,10 +65,12 @@ foreach(exe opj_decompress opj_compress opj_dump)
     endif()
   endif()
   # Install exe
-  install(TARGETS ${exe}
-    EXPORT OpenJPEGTargets
-    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
-  )
+  if(NOT OPENJPEG_SKIP_INSTALL)
+    install(TARGETS ${exe}
+      EXPORT OpenJPEGTargets
+      DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+    )
+  endif()
   if(OPJ_USE_DSYMUTIL)
     add_custom_command(TARGET ${exe} POST_BUILD
     COMMAND "dsymutil" "$<TARGET_FILE:${exe}>"
