@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e66125fe260deee49fdf6e9978d9bd29871dd5bb
+<pre class='wrap'>commit 5875a6b44618fb7dfd5cd6d742533eaee2014060
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-10-03 11:04:30 +0200
+
+    opj_tcd_mct_decode()/opj_mct_decode()/opj_mct_encode_real()/opj_mct_decode_real(): proper deal with a number of samples larger than 4 billion (refs #1151)
+
+commit e66125fe260deee49fdf6e9978d9bd29871dd5bb
 Merge: 8db9d25 b275196
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-09-03 17:03:54 +0200
@@ -878,12 +884,6 @@ Date:   2018-02-05 17:31:49 +0100
 
     Merge pull request #1055 from ideasman42/patch-1
     
-    Note that seek uses SEEK_SET behavior.
-
-commit 6941bc67cf0b152adde1a46746037b7e96e947b2
-Author: Campbell Barton &lt;ideasman42@gmail.com&gt;
-Date:   2018-01-18 15:16:03 +1100
-
     Note that seek uses SEEK_SET behavior.
 
 ...</pre></div>
