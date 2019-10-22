@@ -1157,11 +1157,11 @@ typedef struct mem_stream {
 
 
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_memory_create(
-    OPJ_SIZE_T p_size,
-    OPJ_BOOL p_is_input);
+        OPJ_SIZE_T p_size,
+        OPJ_BOOL p_is_input);
 
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_memory_stream(
-    OPJ_BOOL p_is_input);
+        OPJ_BOOL p_is_input);
 
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_memory_stream(
         void * buffer,
