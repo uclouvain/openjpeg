@@ -1130,7 +1130,7 @@ OPJ_API void OPJ_CALLCONV opj_image_data_free(void* ptr);
 /**
     Memory (sub)stream structure.
 **/
-typedef OPJ_BOOL (* mem_stream_resize_fn )( void *m_buffer);
+typedef OPJ_BOOL (* mem_stream_resize_fn)(void *m_buffer);
 
 typedef struct mem_stream {
     /**
@@ -1149,7 +1149,7 @@ typedef struct mem_stream {
     OPJ_UINT64 mem_cursize;
 
     /**
-     * Reszie function to increase the current array size in mem_data
+     * Resize function to increase the current array size in mem_data
      */
     mem_stream_resize_fn  mem_resize_fn;
 
@@ -1163,9 +1163,8 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_memory_create(
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_memory_stream(
     OPJ_BOOL p_is_input);
 
-
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_memory_stream(
-        void * buffer, 
+        void * buffer,
         OPJ_SIZE_T p_buffer_size,
         OPJ_BOOL p_is_input);
 
