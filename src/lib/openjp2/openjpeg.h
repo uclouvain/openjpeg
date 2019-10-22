@@ -548,7 +548,7 @@ typedef struct opj_dparameters {
     /** Verbose mode */
     OPJ_BOOL m_verbose;
 
-    /** tile number of the decoded tile */
+    /** tile number ot the decoded tile*/
     OPJ_UINT32 tile_index;
     /** Nb of tile to decode */
     OPJ_UINT32 nb_tile_to_decode;
@@ -624,6 +624,7 @@ typedef void (* opj_stream_free_user_data_fn)(void * p_user_data) ;
  * JPEG2000 Stream.
  */
 typedef void * opj_stream_t;
+typedef void * memory_stream_t;
 
 /*
 ==========================================================
@@ -1118,6 +1119,115 @@ OPJ_API void* OPJ_CALLCONV opj_image_data_alloc(OPJ_SIZE_T size);
 */
 OPJ_API void OPJ_CALLCONV opj_image_data_free(void* ptr);
 
+/** CPB **/
+/*
+==========================================================
+   memory stream struct and functions definitions
+==========================================================
+*/
+
+
+/**
+    Memory (sub)stream structure.
+**/
+typedef OPJ_BOOL (* mem_stream_resize_fn )( void *m_buffer);
+
+typedef struct mem_stream {
+    /**
+     * The holder of actual data; can be increased with mem_resize_fn
+     */
+    OPJ_BYTE *mem_data;
+
+    /**
+     * Index value of current element of mem_data
+     */
+    OPJ_UINT64 mem_curidx;
+
+    /**
+     * Current size of mem_data array
+     */
+    OPJ_UINT64 mem_cursize;
+
+    /**
+     * Reszie function to increase the current array size in mem_data
+     */
+    mem_stream_resize_fn  mem_resize_fn;
+
+} mem_stream_t;
+
+
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_memory_create(
+    OPJ_SIZE_T p_size,
+    OPJ_BOOL p_is_input);
+
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_memory_stream(
+    OPJ_BOOL p_is_input);
+
+
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_memory_stream(
+        void * buffer, 
+        OPJ_SIZE_T p_buffer_size,
+        OPJ_BOOL p_is_input);
+
+/**
+ * Reads some bytes from the stream.
+ * @param       p_buffer    pointer to the data buffer that will receive the data.
+ * @param       p_nb_bytes  number of bytes to read.
+ * @param       p_user_data the memory stream to read data from.
+ *
+ * @return      the number of bytes read, or -1 if an error occurred or if the stream is at the end.
+ */
+OPJ_SIZE_T mem_stream_read(void * p_buffer, OPJ_SIZE_T p_nb_bytes,
+                           void * p_user_data);
+
+/**
+ * Writes some bytes to the memory stream.
+ * @param       p_user_data    pointer to the memory stream that will receive the data.
+ * @param       p_nb_bytes     number of bytes to written.
+ * @param       p_buffer       the data buffer to read data from.
+ *
+ * @return      the number of bytes read, or -1 if an error occurred or if the stream is at the end.
+ */
+OPJ_SIZE_T mem_stream_write(void * p_user_data, OPJ_SIZE_T p_nb_bytes,
+                            void * p_buffer);
+
+/**
+ * Skips a number of bytes from the memory stream.
+ * @param       p_nb_bytes     the number of bytes to skip.
+ * @param       p_user_data    the memory stream to skip data from.
+ *
+ * @return      the number of bytes skipped, or -1 if an error occurred.
+ */
+OPJ_OFF_T mem_stream_skip(OPJ_OFF_T p_nb_bytes, void * p_user_data);
+
+
+/**
+ * Seeks to a given position within the memory stream.
+ *   Assumes from start of memory stream data
+ * @param       p_nb_bytes     the byte position to seek.
+ * @param       p_user_data    the memory stream to seek
+ *
+ * @return      OPJ_TRUE if success, or OPJ_FALSE if an error occurred.
+ */
+OPJ_BOOL mem_stream_seek(OPJ_OFF_T p_nb_bytes, void * p_user_data);
+
+/**
+ * FIXME DOC.
+ */
+OPJ_BOOL mem_stream_resize(mem_stream_t * p_user_data);
+
+/**
+ * FIXME DOC.
+ */
+OPJ_BOOL mem_stream_free(void * p_user_data);
+
+/**
+ * FIXME DOC.
+**/
+OPJ_BYTE* opj_mem_stream_copy(opj_stream_t *l_stream, size_t *compressed_size);
+
+/** CPB END **/
+
 /*
 ==========================================================
    stream functions definitions
@@ -1131,6 +1241,7 @@ OPJ_API void OPJ_CALLCONV opj_image_data_free(void* ptr);
  *
  * @return  a stream object.
 */
+
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(
     OPJ_BOOL p_is_input);
 
@@ -1142,6 +1253,7 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(
  *
  * @return  a stream object.
 */
+
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,
         OPJ_BOOL p_is_input);
 
@@ -1178,8 +1290,7 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream,
         opj_stream_skip_fn p_function);
 
 /**
- * Sets the given function to be used as a seek function, the stream is then seekable,
- * using SEEK_SET behavior.
+ * Sets the given function to be used as a seek function, the stream is then seekable.
  * @param       p_stream    the stream to modify
  * @param       p_function  the function to use a skip function.
 */
@@ -1314,9 +1425,6 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
  * number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is called,
  * this function will override the behaviour of the environment variable.
  *
- * Currently this function must be called after opj_setup_decoder() and
- * before opj_read_header().
- *
  * Note: currently only has effect on the decompressor.
  *
  * @param p_codec       decompressor handler
@@ -1385,7 +1493,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_components(opj_codec_t *p_codec,
  * performance improvements when reading an image by chunks.
  *
  * @param   p_codec         the jpeg2000 codec.
- * @param   p_image         the decoded image previously set by opj_read_header
+ * @param   p_image         the decoded image previously setted by opj_read_header
  * @param   p_start_x       the left position of the rectangle to decode (in image coordinates).
  * @param   p_end_x         the right position of the rectangle to decode (in image coordinates).
  * @param   p_start_y       the up position of the rectangle to decode (in image coordinates).

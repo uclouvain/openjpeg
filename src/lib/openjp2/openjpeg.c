@@ -1050,6 +1050,292 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream(
     return l_stream;
 }
 
+/** CPB *******************************************************************/
+/* Added for Omics Data Automation                                        */
+/**************************************************************************/
+
+
+opj_stream_t* OPJ_CALLCONV opj_stream_memory_create(OPJ_SIZE_T p_buffer_size,
+        OPJ_BOOL l_is_input)
+{
+    opj_stream_private_t * l_stream = 00;
+    mem_stream_t * m_stream = 00;
+    l_stream = (opj_stream_private_t*) opj_calloc(1, sizeof(opj_stream_private_t));
+    if (! l_stream) {
+        return 00;
+    }
+
+    m_stream = (mem_stream_t*) opj_calloc(1, sizeof(mem_stream_t));
+    if (! m_stream) {
+        return 00;
+    }
+    if (! l_is_input) {  /* writing to user data (compression) */
+       /* Allocate initial stream data holder as twice default size */
+       m_stream->mem_data = opj_malloc(2 * p_buffer_size);
+       m_stream->mem_cursize = 2 * p_buffer_size;
+       /* Set resize function to reallocate mem_data size if write_fn */
+       /*  atempts to add more than currently allocated size          */
+       m_stream->mem_resize_fn = (mem_stream_resize_fn) mem_stream_resize;
+    }
+    m_stream->mem_curidx = 0; /* Initially at first elelment [0] */
+
+    l_stream->m_user_data = (void *)m_stream;
+
+/** CPB **/
+/*
+    if (OPJ_TRUE) {
+       mem_stream_t * my_data;
+       my_data = (mem_stream_t*) l_stream->m_user_data;
+       fprintf(stderr, "opj_stream_memory_create: memory stream data, size idx: %d %d\n",my_data->mem_cursize, my_data->mem_curidx);
+    }
+*/
+/** CPB debug END **/
+
+    l_stream->m_buffer_size = p_buffer_size;
+    l_stream->m_stored_data = (OPJ_BYTE *) opj_malloc(p_buffer_size);
+    if (! l_stream->m_stored_data) {
+        opj_free(l_stream);
+        return 00;
+    }
+
+    l_stream->m_current_data = l_stream->m_stored_data;
+
+    if (l_is_input) {
+        l_stream->m_status |= OPJ_STREAM_STATUS_INPUT;
+        l_stream->m_opj_skip = opj_stream_read_skip;
+        l_stream->m_opj_seek = opj_stream_read_seek;
+    } else {
+        l_stream->m_status |= OPJ_STREAM_STATUS_OUTPUT;
+        l_stream->m_opj_skip = opj_stream_write_skip;
+        l_stream->m_opj_seek = opj_stream_write_seek;
+    }
+
+    l_stream->m_read_fn  = (opj_stream_read_fn)  mem_stream_read;
+    l_stream->m_write_fn = (opj_stream_write_fn) mem_stream_write;
+    l_stream->m_skip_fn  = (opj_stream_skip_fn)  mem_stream_skip;
+    l_stream->m_seek_fn  = (opj_stream_seek_fn)  mem_stream_seek;
+    l_stream->m_free_user_data_fn  = (opj_stream_free_user_data_fn) mem_stream_free;
+
+    return (opj_stream_t *) l_stream;
+}
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_default_memory_stream(OPJ_BOOL l_is_input)
+{
+    return opj_stream_memory_create(OPJ_J2K_STREAM_CHUNK_SIZE, l_is_input);
+}
+
+/** CPB **/ 
+void OPJ_CALLCONV opj_stream_mem_set_user_data(opj_stream_t* p_stream,
+        void * p_data, OPJ_UINT64 size_in,
+        opj_stream_free_user_data_fn p_function)
+{
+    mem_stream_t * m_stream = 00;
+    opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+    if (!l_stream) {
+        return;
+    }
+
+    m_stream = (mem_stream_t*) opj_calloc(1, sizeof(mem_stream_t));
+    if (! m_stream) {
+        return;
+    }
+
+    m_stream->mem_data = opj_malloc(size_in * sizeof(OPJ_BYTE));
+    if (! m_stream->mem_data) {
+        return;
+    }
+
+    memcpy((void*)m_stream->mem_data, p_data, size_in);
+    m_stream->mem_curidx = 0;
+    m_stream->mem_cursize = size_in;
+    // should only need to read from mem_data
+    m_stream->mem_resize_fn = NULL;
+
+/* CPB: if called after default chunk of memory allocated */
+    if (l_stream->m_user_data) p_function(l_stream->m_user_data);
+
+    l_stream->m_user_data = (void*)m_stream;
+    l_stream->m_user_data_length = size_in;
+    if (p_function)
+       l_stream->m_free_user_data_fn = p_function;
+    else // Default
+       l_stream->m_free_user_data_fn =
+           (opj_stream_free_user_data_fn)mem_stream_free;
+}
+
+/** CPB END **/
+
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_memory_stream(
+    void *buffer,
+    OPJ_SIZE_T p_size,
+    OPJ_BOOL p_is_read_stream)
+{
+    opj_stream_t* l_stream = 00;
+
+    if (! buffer) {
+        return NULL;
+    }
+
+    if (p_size == 0) {} /* Memory buffer is empty? */
+                        /* Use next call to allocate OPJ_J2K_STREAM_CHUNK_SIZE as default initial size? */
+    l_stream = opj_stream_memory_create(OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
+    if (! l_stream) {
+        return NULL;
+    }
+
+    opj_stream_mem_set_user_data(l_stream, buffer, p_size,
+                             (opj_stream_free_user_data_fn) mem_stream_free);
+    opj_stream_set_read_function(l_stream, (opj_stream_read_fn) mem_stream_read);
+    opj_stream_set_write_function(l_stream,
+                                  (opj_stream_write_fn) mem_stream_write);
+    opj_stream_set_skip_function(l_stream, (opj_stream_skip_fn) mem_stream_skip);
+    opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) mem_stream_seek);
+
+    return l_stream;
+}
+
+OPJ_BOOL mem_stream_resize(mem_stream_t * mem_stream)
+{
+    size_t cursize = mem_stream->mem_cursize;
+    OPJ_BYTE *old_data = mem_stream->mem_data;
+
+/* Allocate twice the amount of memory currently used */
+    OPJ_BYTE *new_data = opj_malloc((cursize * 2) * sizeof(OPJ_BYTE));
+
+    if (! new_data) {
+       return OPJ_FALSE;  /* resize failed */
+    }
+
+    memcpy(new_data, old_data, cursize);
+    mem_stream->mem_data = new_data;
+    mem_stream->mem_cursize = cursize * 2;
+    opj_free(old_data);
+
+    return OPJ_TRUE;
+}
+
+OPJ_SIZE_T mem_stream_read(void * p_buffer, OPJ_SIZE_T p_nb_bytes,
+                           void * p_user_data)
+{
+    size_t available;
+    size_t l_nb_bytes_to_read;
+    mem_stream_t *l_dest = 00;
+
+    l_dest = (mem_stream_t *) p_user_data;
+
+    available = l_dest->mem_cursize - l_dest->mem_curidx;
+    if (! available) 
+       return (OPJ_SIZE_T) -1;
+
+    l_nb_bytes_to_read = (available < p_nb_bytes) ? available : p_nb_bytes;
+    memcpy(p_buffer, &(l_dest->mem_data[l_dest->mem_curidx]), l_nb_bytes_to_read); 
+    l_dest->mem_curidx += l_nb_bytes_to_read;
+    
+    return l_nb_bytes_to_read;
+}
+
+OPJ_SIZE_T mem_stream_write(void * p_buffer, OPJ_SIZE_T p_nb_bytes,
+                            void * p_user_data)
+{
+    mem_stream_t *l_dest = 00;
+    l_dest = (mem_stream_t *) p_user_data;
+
+/* Ensure there is enough space to hold p_nb_bytes more bytes of data */
+    while ((l_dest->mem_cursize - l_dest->mem_curidx) < p_nb_bytes) {
+       if (!l_dest->mem_resize_fn(l_dest)) {
+          return (OPJ_SIZE_T) -1;
+       }
+    }
+
+   memcpy((void *) &(l_dest->mem_data[l_dest->mem_curidx]), 
+                       p_buffer, p_nb_bytes); 
+   l_dest->mem_curidx += p_nb_bytes;
+
+   return (OPJ_SIZE_T) p_nb_bytes;
+}
+
+OPJ_OFF_T mem_stream_skip(OPJ_OFF_T p_nb_bytes, void * p_user_data)
+{
+/* Position user memory pointer to p_nb_bytes bytes from CURRENT */
+    mem_stream_t *l_mem_stream = 00;
+    l_mem_stream = (mem_stream_t *) p_user_data;
+
+    if (p_nb_bytes >= 0) {
+       OPJ_UINT64 new_pos = l_mem_stream->mem_curidx + (OPJ_UINT64) p_nb_bytes;
+       if (new_pos > l_mem_stream->mem_cursize) {
+          /* Not enough bytes to move to SEEK position */
+          return (OPJ_OFF_T) -1;  
+       }
+
+       l_mem_stream->mem_curidx = new_pos;
+    } 
+    else { 
+    /* p_nb_bytes is negative, ensure it's absolute value is less than curidx */
+       OPJ_OFF_T new_pos = (OPJ_OFF_T)l_mem_stream->mem_curidx + p_nb_bytes;
+       if (new_pos < 0) {
+          /* Can't move past [0] */
+          return (OPJ_OFF_T) -1;  
+       }
+
+       l_mem_stream->mem_curidx = (OPJ_UINT64)new_pos; 
+    }      
+    return p_nb_bytes;
+}
+
+OPJ_BOOL mem_stream_seek(OPJ_OFF_T p_position, void * p_user_data)
+{
+/* Position user memory pointer to p_position bytes from START */
+/* Return OPJ_TRUE if successful to recreate negation of fseek() results */
+    mem_stream_t *l_mem_stream = 00;
+    l_mem_stream = (mem_stream_t *) p_user_data;
+
+    if (p_position < 0) {
+       /* Can't move to negative index position */
+       return OPJ_FALSE;
+    }
+    if (l_mem_stream->mem_cursize < (OPJ_UINT64)p_position) {
+       /* Not enough bytes to move to SKIP position */
+       return OPJ_FALSE;
+    }
+
+    l_mem_stream->mem_curidx = (OPJ_UINT64)p_position; 
+    return OPJ_TRUE; /* Success */
+}
+
+OPJ_BOOL mem_stream_free(void * p_user_data)
+{
+    mem_stream_t *l_mem_stream = 00;
+    l_mem_stream = (mem_stream_t *) p_user_data;
+
+    opj_free(l_mem_stream->mem_data);
+    opj_free(l_mem_stream);
+
+    return (l_mem_stream == NULL);
+}
+
+OPJ_BYTE * opj_mem_stream_copy(opj_stream_t *s, size_t* size_out)
+{
+   opj_stream_private_t* p = (opj_stream_private_t*) s;
+   mem_stream_t* m = (mem_stream_t*) p->m_user_data;
+
+   size_t image_bytes = m->mem_curidx;
+
+   OPJ_BYTE *out_buff = (OPJ_BYTE *) opj_malloc(image_bytes * sizeof(OPJ_BYTE));
+   if (! out_buff) {
+     fprintf(stderr, "Fail to allocate %u bytes: image_copy_out\n", (unsigned int)image_bytes);
+     return NULL;
+   }
+   memcpy(out_buff, (m->mem_data), image_bytes);
+
+   *size_out = image_bytes;
+   return out_buff;
+}
+
+/**************************************************************************/
+/* End Additions for Omics Data Automation                                */
+/** CPB END ***************************************************************/
+
 
 void* OPJ_CALLCONV opj_image_data_alloc(OPJ_SIZE_T size)
 {
