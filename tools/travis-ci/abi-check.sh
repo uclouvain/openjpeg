@@ -31,7 +31,8 @@ if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
 else
 	OPJ_LIMIT_ABI_BUILDS="-limit 2"
 fi
-OPJ_REPO="https://github.com/uclouvain/openjpeg.git"
+#OPJ_REPO="https://github.com/uclouvain/openjpeg.git"
+OPJ_REPO="https://github.com/OmicsDataAutomation/openjpeg.git"
 OPJ_SSH_REPO=${OPJ_REPO/https:\/\/github.com\//git@github.com:}
 OPJ_UPLOAD_BRANCH="gh-pages"
 OPJ_UPLOAD_DIR="abi-check"
@@ -122,8 +123,10 @@ rm -rf src/openjpeg/current
 rm -rf build_logs
 	
 if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
-	git config user.name "OpenJPEG Travis CI"
-	git config user.email "info@openjpeg.org"
+	#git config user.name "OpenJPEG Travis CI"
+	#git config user.email "info@openjpeg.org"
+	git config user.name "Clay Breshears"
+	git config user.email "clay@omicsautomation.com"
 
 	git add --all .
 	git commit -m "Update ABI/API compatibility reports after commit ${TRAVIS_COMMIT:-}"
