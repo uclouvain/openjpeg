@@ -508,7 +508,7 @@ static OPJ_BOOL opj_j2k_write_cod(opj_j2k_t *p_j2k,
                                   opj_event_mgr_t * p_manager);
 
 /**
- * Reads a COD marker (Coding Styke defaults)
+ * Reads a COD marker (Coding style defaults)
  * @param       p_header_data   the data contained in the COD box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the COD marker.
@@ -1805,32 +1805,22 @@ static OPJ_BOOL opj_j2k_calculate_tp(opj_j2k_t *p_j2k,
     /* TODO mergeV2: check this part which use cstr_info */
     /*if (p_j2k->cstr_info) {
             opj_tile_info_t * l_info_tile_ptr = p_j2k->cstr_info->tile;
-
             for (tileno = 0; tileno < l_nb_tiles; ++tileno) {
                     OPJ_UINT32 cur_totnum_tp = 0;
-
                     opj_pi_update_encoding_parameters(image,cp,tileno);
-
                     for (pino = 0; pino <= tcp->numpocs; ++pino)
                     {
                             OPJ_UINT32 tp_num = opj_j2k_get_num_tp(cp,pino,tileno);
-
                             *p_nb_tiles = *p_nb_tiles + tp_num;
-
                             cur_totnum_tp += tp_num;
                     }
-
                     tcp->m_nb_tile_parts = cur_totnum_tp;
-
                     l_info_tile_ptr->tp = (opj_tp_info_t *) opj_malloc(cur_totnum_tp * sizeof(opj_tp_info_t));
                     if (l_info_tile_ptr->tp == 00) {
                             return OPJ_FALSE;
                     }
-
                     memset(l_info_tile_ptr->tp,0,cur_totnum_tp * sizeof(opj_tp_info_t));
-
                     l_info_tile_ptr->num_tps = cur_totnum_tp;
-
                     ++l_info_tile_ptr;
                     ++tcp;
             }
@@ -1925,7 +1915,8 @@ static OPJ_BOOL opj_j2k_read_soc(opj_j2k_t *p_j2k,
     /* FIXME move it in a index structure included in p_j2k*/
     p_j2k->cstr_index->main_head_start = opj_stream_tell(p_stream) - 2;
 
-    opj_event_msg(p_manager, EVT_INFO, "Start to read j2k main header (%d).\n",
+    opj_event_msg(p_manager, EVT_INFO,
+                  "Start to read j2k main header (%" PRId64 ").\n",
                   p_j2k->cstr_index->main_head_start);
 
     /* Add the marker to the codestream index*/
@@ -2625,7 +2616,7 @@ static OPJ_BOOL opj_j2k_write_cod(opj_j2k_t *p_j2k,
 }
 
 /**
- * Reads a COD marker (Coding Styke defaults)
+ * Reads a COD marker (Coding style defaults)
  * @param       p_header_data   the data contained in the COD box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the COD marker.
@@ -2657,12 +2648,17 @@ static OPJ_BOOL opj_j2k_read_cod(opj_j2k_t *p_j2k,
             &l_cp->tcps[p_j2k->m_current_tile_number] :
             p_j2k->m_specific_param.m_decoder.m_default_tcp;
 
+#if 0
+    /* This check was added per https://github.com/uclouvain/openjpeg/commit/daed8cc9195555e101ab708a501af2dfe6d5e001 */
+    /* but this is no longer necessary to handle issue476.jp2 */
+    /* and this actually cause issues on legit files. See https://github.com/uclouvain/openjpeg/issues/1043 */
     /* Only one COD per tile */
     if (l_tcp->cod) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "COD marker already read. No more than one COD marker per tile.\n");
         return OPJ_FALSE;
     }
+#endif
     l_tcp->cod = 1;
 
     /* Make sure room is sufficient */
@@ -3676,7 +3672,6 @@ static OPJ_BOOL opj_j2k_read_plm(opj_j2k_t *p_j2k,
     opj_read_bytes(p_header_data,&l_Zplm,1);                                        // Zplm
     ++p_header_data;
     --p_header_size;
-
     while
             (p_header_size > 0)
     {
@@ -4089,7 +4084,12 @@ static OPJ_BOOL opj_j2k_merge_ppt(opj_tcp_t *p_tcp, opj_event_mgr_t * p_manager)
     /* preconditions */
     assert(p_tcp != 00);
     assert(p_manager != 00);
-    assert(p_tcp->ppt_buffer == NULL);
+
+    if (p_tcp->ppt_buffer != NULL) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "opj_j2k_merge_ppt() has already been called\n");
+        return OPJ_FALSE;
+    }
 
     if (p_tcp->ppt == 0U) {
         return OPJ_TRUE;
@@ -4576,12 +4576,10 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
        if (tileno == 0) {
        p_j2k->cstr_info->main_head_end = p_stream_tell(p_stream) - 13;
        }
-
        p_j2k->cstr_info->tile[tileno].tileno = tileno;
        p_j2k->cstr_info->tile[tileno].start_pos = p_stream_tell(p_stream) - 12;
        p_j2k->cstr_info->tile[tileno].end_pos = p_j2k->cstr_info->tile[tileno].start_pos + totlen - 1;
        p_j2k->cstr_info->tile[tileno].num_tps = numparts;
-
        if (numparts) {
        p_j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_malloc(numparts * sizeof(opj_tp_info_t));
        }
@@ -4592,7 +4590,6 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
        else {
        p_j2k->cstr_info->tile[tileno].end_pos += totlen;
        }
-
        p_j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos = p_stream_tell(p_stream) - 12;
        p_j2k->cstr_info->tile[tileno].tp[partno].tp_end_pos =
        p_j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos + totlen - 1;
@@ -6419,7 +6416,9 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
 
 OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads)
 {
-    if (opj_has_thread_support()) {
+    /* Currently we pass the thread-pool to the tcd, so we cannot re-set it */
+    /* afterwards */
+    if (opj_has_thread_support() && j2k->m_tcd == NULL) {
         opj_thread_pool_destroy(j2k->m_tp);
         j2k->m_tp = NULL;
         if (num_threads <= (OPJ_UINT32)INT_MAX) {
@@ -8319,12 +8318,10 @@ void opj_j2k_destroy(opj_j2k_t *p_j2k)
     j2k_destroy_cstr_index(p_j2k->cstr_index);
     p_j2k->cstr_index = NULL;
 
-    opj_image_destroy(p_j2k->m_private_image);   // "local" call
-    //opj_image_destroy(p_j2k->m_private_image);
+    opj_image_destroy(p_j2k->m_private_image);
     p_j2k->m_private_image = NULL;
 
-    opj_image_destroy(p_j2k->m_output_image);   // "local" call
-    //opj_image_destroy(p_j2k->m_output_image);
+    opj_image_destroy(p_j2k->m_output_image);
     p_j2k->m_output_image = NULL;
 
     opj_thread_pool_destroy(p_j2k->m_tp);
@@ -8840,7 +8837,10 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
 
     /* Current marker is the EOC marker ?*/
     if (l_current_marker == J2K_MS_EOC) {
-        p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_EOC;
+        if (p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_EOC) {
+            p_j2k->m_current_tile_number = 0;
+            p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_EOC;
+        }
     }
 
     /* FIXME DOC ???*/
@@ -12003,34 +12003,25 @@ static OPJ_BOOL opj_j2k_init_info(opj_j2k_t *p_j2k,
 
     /* TODO mergeV2: check this part which use cstr_info */
     /*l_cstr_info = p_j2k->cstr_info;
-
     if (l_cstr_info)  {
             OPJ_UINT32 compno;
             l_cstr_info->tile = (opj_tile_info_t *) opj_malloc(p_j2k->m_cp.tw * p_j2k->m_cp.th * sizeof(opj_tile_info_t));
-
             l_cstr_info->image_w = p_j2k->m_image->x1 - p_j2k->m_image->x0;
             l_cstr_info->image_h = p_j2k->m_image->y1 - p_j2k->m_image->y0;
-
             l_cstr_info->prog = (&p_j2k->m_cp.tcps[0])->prg;
-
             l_cstr_info->tw = p_j2k->m_cp.tw;
             l_cstr_info->th = p_j2k->m_cp.th;
-
             l_cstr_info->tile_x = p_j2k->m_cp.tdx;*/        /* new version parser */
     /*l_cstr_info->tile_y = p_j2k->m_cp.tdy;*/      /* new version parser */
     /*l_cstr_info->tile_Ox = p_j2k->m_cp.tx0;*/     /* new version parser */
     /*l_cstr_info->tile_Oy = p_j2k->m_cp.ty0;*/     /* new version parser */
 
     /*l_cstr_info->numcomps = p_j2k->m_image->numcomps;
-
     l_cstr_info->numlayers = (&p_j2k->m_cp.tcps[0])->numlayers;
-
     l_cstr_info->numdecompos = (OPJ_INT32*) opj_malloc(p_j2k->m_image->numcomps * sizeof(OPJ_INT32));
-
     for (compno=0; compno < p_j2k->m_image->numcomps; compno++) {
             l_cstr_info->numdecompos[compno] = (&p_j2k->m_cp.tcps[0])->tccps->numresolutions - 1;
     }
-
     l_cstr_info->D_max = 0.0;       */      /* ADD Marcela */
 
     /*l_cstr_info->main_head_start = opj_stream_tell(p_stream);*/ /* position of SOC */
