@@ -508,7 +508,7 @@ static OPJ_BOOL opj_j2k_write_cod(opj_j2k_t *p_j2k,
                                   opj_event_mgr_t * p_manager);
 
 /**
- * Reads a COD marker (Coding style defaults)
+ * Reads a COD marker (Coding Styke defaults)
  * @param       p_header_data   the data contained in the COD box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the COD marker.
@@ -1925,8 +1925,7 @@ static OPJ_BOOL opj_j2k_read_soc(opj_j2k_t *p_j2k,
     /* FIXME move it in a index structure included in p_j2k*/
     p_j2k->cstr_index->main_head_start = opj_stream_tell(p_stream) - 2;
 
-    opj_event_msg(p_manager, EVT_INFO,
-                  "Start to read j2k main header (%" PRId64 ").\n",
+    opj_event_msg(p_manager, EVT_INFO, "Start to read j2k main header (%d).\n",
                   p_j2k->cstr_index->main_head_start);
 
     /* Add the marker to the codestream index*/
@@ -2626,7 +2625,7 @@ static OPJ_BOOL opj_j2k_write_cod(opj_j2k_t *p_j2k,
 }
 
 /**
- * Reads a COD marker (Coding style defaults)
+ * Reads a COD marker (Coding Styke defaults)
  * @param       p_header_data   the data contained in the COD box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the COD marker.
@@ -2658,17 +2657,12 @@ static OPJ_BOOL opj_j2k_read_cod(opj_j2k_t *p_j2k,
             &l_cp->tcps[p_j2k->m_current_tile_number] :
             p_j2k->m_specific_param.m_decoder.m_default_tcp;
 
-#if 0
-    /* This check was added per https://github.com/uclouvain/openjpeg/commit/daed8cc9195555e101ab708a501af2dfe6d5e001 */
-    /* but this is no longer necessary to handle issue476.jp2 */
-    /* and this actually cause issues on legit files. See https://github.com/uclouvain/openjpeg/issues/1043 */
     /* Only one COD per tile */
     if (l_tcp->cod) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "COD marker already read. No more than one COD marker per tile.\n");
         return OPJ_FALSE;
     }
-#endif
     l_tcp->cod = 1;
 
     /* Make sure room is sufficient */
@@ -4095,12 +4089,7 @@ static OPJ_BOOL opj_j2k_merge_ppt(opj_tcp_t *p_tcp, opj_event_mgr_t * p_manager)
     /* preconditions */
     assert(p_tcp != 00);
     assert(p_manager != 00);
-
-    if (p_tcp->ppt_buffer != NULL) {
-        opj_event_msg(p_manager, EVT_ERROR,
-                      "opj_j2k_merge_ppt() has already been called\n");
-        return OPJ_FALSE;
-    }
+    assert(p_tcp->ppt_buffer == NULL);
 
     if (p_tcp->ppt == 0U) {
         return OPJ_TRUE;
@@ -6430,9 +6419,7 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
 
 OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads)
 {
-    /* Currently we pass the thread-pool to the tcd, so we cannot re-set it */
-    /* afterwards */
-    if (opj_has_thread_support() && j2k->m_tcd == NULL) {
+    if (opj_has_thread_support()) {
         opj_thread_pool_destroy(j2k->m_tp);
         j2k->m_tp = NULL;
         if (num_threads <= (OPJ_UINT32)INT_MAX) {
@@ -8332,10 +8319,12 @@ void opj_j2k_destroy(opj_j2k_t *p_j2k)
     j2k_destroy_cstr_index(p_j2k->cstr_index);
     p_j2k->cstr_index = NULL;
 
-    opj_image_destroy(p_j2k->m_private_image);
+    opj_image_destroy(p_j2k->m_private_image);   // "local" call
+    //opj_image_destroy(p_j2k->m_private_image);
     p_j2k->m_private_image = NULL;
 
-    opj_image_destroy(p_j2k->m_output_image);
+    opj_image_destroy(p_j2k->m_output_image);   // "local" call
+    //opj_image_destroy(p_j2k->m_output_image);
     p_j2k->m_output_image = NULL;
 
     opj_thread_pool_destroy(p_j2k->m_tp);
@@ -8851,10 +8840,7 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
 
     /* Current marker is the EOC marker ?*/
     if (l_current_marker == J2K_MS_EOC) {
-        if (p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_EOC) {
-            p_j2k->m_current_tile_number = 0;
-            p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_EOC;
-        }
+        p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_EOC;
     }
 
     /* FIXME DOC ???*/
