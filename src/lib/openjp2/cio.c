@@ -154,6 +154,13 @@ void opj_read_float_LE(const OPJ_BYTE * p_buffer, OPJ_FLOAT32 * p_value)
         *(l_data_ptr--) = *(p_buffer++);
     }
 }
+/** CPB *******************************************************************/
+/* Added for Omics Data Automation                                        */
+/**************************************************************************/
+
+/**************************************************************************/
+/* End Additions for Omics Data Automation                                */
+/** CPB END ***************************************************************/
 
 opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,
         OPJ_BOOL l_is_input)
@@ -204,6 +211,7 @@ void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
         if (l_stream->m_free_user_data_fn) {
             l_stream->m_free_user_data_fn(l_stream->m_user_data);
         }
+//else {fprintf(stderr, "ERROR: No m_free_user_data_fn function set\n");}
         opj_free(l_stream->m_stored_data);
         l_stream->m_stored_data = 00;
         opj_free(l_stream);
@@ -264,6 +272,11 @@ void OPJ_CALLCONV opj_stream_set_user_data(opj_stream_t* p_stream,
     if (!l_stream) {
         return;
     }
+    /* CPB: if called after default chunk of memory allocated */
+    if (l_stream->m_user_data) {
+        p_function(l_stream->m_user_data);
+    }
+
     l_stream->m_user_data = p_data;
     l_stream->m_free_user_data_fn = p_function;
 }
