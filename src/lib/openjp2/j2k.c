@@ -1805,32 +1805,22 @@ static OPJ_BOOL opj_j2k_calculate_tp(opj_j2k_t *p_j2k,
     /* TODO mergeV2: check this part which use cstr_info */
     /*if (p_j2k->cstr_info) {
             opj_tile_info_t * l_info_tile_ptr = p_j2k->cstr_info->tile;
-
             for (tileno = 0; tileno < l_nb_tiles; ++tileno) {
                     OPJ_UINT32 cur_totnum_tp = 0;
-
                     opj_pi_update_encoding_parameters(image,cp,tileno);
-
                     for (pino = 0; pino <= tcp->numpocs; ++pino)
                     {
                             OPJ_UINT32 tp_num = opj_j2k_get_num_tp(cp,pino,tileno);
-
                             *p_nb_tiles = *p_nb_tiles + tp_num;
-
                             cur_totnum_tp += tp_num;
                     }
-
                     tcp->m_nb_tile_parts = cur_totnum_tp;
-
                     l_info_tile_ptr->tp = (opj_tp_info_t *) opj_malloc(cur_totnum_tp * sizeof(opj_tp_info_t));
                     if (l_info_tile_ptr->tp == 00) {
                             return OPJ_FALSE;
                     }
-
                     memset(l_info_tile_ptr->tp,0,cur_totnum_tp * sizeof(opj_tp_info_t));
-
                     l_info_tile_ptr->num_tps = cur_totnum_tp;
-
                     ++l_info_tile_ptr;
                     ++tcp;
             }
@@ -3682,7 +3672,6 @@ static OPJ_BOOL opj_j2k_read_plm(opj_j2k_t *p_j2k,
     opj_read_bytes(p_header_data,&l_Zplm,1);                                        // Zplm
     ++p_header_data;
     --p_header_size;
-
     while
             (p_header_size > 0)
     {
@@ -4587,12 +4576,10 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
        if (tileno == 0) {
        p_j2k->cstr_info->main_head_end = p_stream_tell(p_stream) - 13;
        }
-
        p_j2k->cstr_info->tile[tileno].tileno = tileno;
        p_j2k->cstr_info->tile[tileno].start_pos = p_stream_tell(p_stream) - 12;
        p_j2k->cstr_info->tile[tileno].end_pos = p_j2k->cstr_info->tile[tileno].start_pos + totlen - 1;
        p_j2k->cstr_info->tile[tileno].num_tps = numparts;
-
        if (numparts) {
        p_j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_malloc(numparts * sizeof(opj_tp_info_t));
        }
@@ -4603,7 +4590,6 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
        else {
        p_j2k->cstr_info->tile[tileno].end_pos += totlen;
        }
-
        p_j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos = p_stream_tell(p_stream) - 12;
        p_j2k->cstr_info->tile[tileno].tp[partno].tp_end_pos =
        p_j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos + totlen - 1;
@@ -12017,34 +12003,25 @@ static OPJ_BOOL opj_j2k_init_info(opj_j2k_t *p_j2k,
 
     /* TODO mergeV2: check this part which use cstr_info */
     /*l_cstr_info = p_j2k->cstr_info;
-
     if (l_cstr_info)  {
             OPJ_UINT32 compno;
             l_cstr_info->tile = (opj_tile_info_t *) opj_malloc(p_j2k->m_cp.tw * p_j2k->m_cp.th * sizeof(opj_tile_info_t));
-
             l_cstr_info->image_w = p_j2k->m_image->x1 - p_j2k->m_image->x0;
             l_cstr_info->image_h = p_j2k->m_image->y1 - p_j2k->m_image->y0;
-
             l_cstr_info->prog = (&p_j2k->m_cp.tcps[0])->prg;
-
             l_cstr_info->tw = p_j2k->m_cp.tw;
             l_cstr_info->th = p_j2k->m_cp.th;
-
             l_cstr_info->tile_x = p_j2k->m_cp.tdx;*/        /* new version parser */
     /*l_cstr_info->tile_y = p_j2k->m_cp.tdy;*/      /* new version parser */
     /*l_cstr_info->tile_Ox = p_j2k->m_cp.tx0;*/     /* new version parser */
     /*l_cstr_info->tile_Oy = p_j2k->m_cp.ty0;*/     /* new version parser */
 
     /*l_cstr_info->numcomps = p_j2k->m_image->numcomps;
-
     l_cstr_info->numlayers = (&p_j2k->m_cp.tcps[0])->numlayers;
-
     l_cstr_info->numdecompos = (OPJ_INT32*) opj_malloc(p_j2k->m_image->numcomps * sizeof(OPJ_INT32));
-
     for (compno=0; compno < p_j2k->m_image->numcomps; compno++) {
             l_cstr_info->numdecompos[compno] = (&p_j2k->m_cp.tcps[0])->tccps->numresolutions - 1;
     }
-
     l_cstr_info->D_max = 0.0;       */      /* ADD Marcela */
 
     /*l_cstr_info->main_head_start = opj_stream_tell(p_stream);*/ /* position of SOC */

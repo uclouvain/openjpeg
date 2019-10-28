@@ -69,6 +69,7 @@
 #include "index.h"
 
 #include "format_defs.h"
+
 #include "opj_string.h"
 
 typedef struct dircnt {
