@@ -1346,7 +1346,7 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                     ++l_cblk->numsegs;
                 }
             }
-
+            int truncate = 0
             do {
                 /* Check possible overflow (on l_current_data only, assumes input args already checked) then size */
                if ((((OPJ_SIZE_T)l_current_data + (OPJ_SIZE_T)l_seg->newlen) <
@@ -1356,9 +1356,9 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                    opj_event_msg(p_manager, EVT_WARNING,
                                  "read: segment too long (%d) current data (%d) p_src_data (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                  l_seg->newlen, l_current_data, p_src_data, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
-                                 p_pi->compno);
-                   break;
-                 
+                                 p_pi->compno);                   
+                   truncate = 1;
+                   l_seg->newlen =p_src_data + p_max_length - l_current_data
                  
                    //opj_event_msg(p_manager, EVT_ERROR,
                    //              "read: segment too long (%d) current data (%d) p_src_data (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
@@ -1417,7 +1417,7 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                     ++l_seg;
                     ++l_cblk->numsegs;
                 }
-            } while (l_cblk->numnewpasses > 0);
+            } while (l_cblk->numnewpasses > 0 && !truncate);
 
             l_cblk->real_num_segs = l_cblk->numsegs;
             ++l_cblk;
