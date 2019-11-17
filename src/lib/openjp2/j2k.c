@@ -4747,8 +4747,15 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
             /* LH: oddly enough, in this path, l_tile_len!=0.
              * TODO: If this was consistent, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
              */
-            *l_current_data = (OPJ_BYTE*) opj_malloc(
-                                  p_j2k->m_specific_param.m_decoder.m_sot_length + OPJ_COMMON_CBLK_DATA_EXTRA);
+            if (!truncate)
+            {
+                    *l_current_data = (OPJ_BYTE*) opj_malloc(
+                                          p_j2k->m_specific_param.m_decoder.m_sot_length + OPJ_COMMON_CBLK_DATA_EXTRA);
+            }
+            else
+            {
+                *l_current_data = (OPJ_BYTE*) opj_malloc(opj_stream_get_number_byte_left(p_stream) + OPJ_COMMON_CBLK_DATA_EXTRA);
+            }
         } else {
             OPJ_BYTE *l_new_current_data;
             if (*l_tile_len > UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA -
@@ -4758,10 +4765,18 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
                               "p_j2k->m_specific_param.m_decoder.m_sot_length");
                 return OPJ_FALSE;
             }
-
+            if (!truncate)
+            {
             l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data,
                                  *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length +
                                  OPJ_COMMON_CBLK_DATA_EXTRA);
+            }
+            else
+            {
+            l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data,
+                                 *l_tile_len + opj_stream_get_number_byte_left(p_stream) +
+                                 OPJ_COMMON_CBLK_DATA_EXTRA);
+            }
             if (! l_new_current_data) {
                 opj_free(*l_current_data);
                 /*nothing more is done as l_current_data will be set to null, and just
