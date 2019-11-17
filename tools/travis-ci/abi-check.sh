@@ -95,6 +95,12 @@ else
 fi
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
 abi-monitor -v current -build openjpeg.json
+
+rm -rf ./installed/openjpeg/${OPJ_LATEST_VERSION}
+rm -rf ./compat_report/openjpeg/${OPJ_LATEST_VERSION}
+rm -rf ./abi_dump/openjpeg/${OPJ_LATEST_VERSION}
+rm -rf ./headers_diff/openjpeg/${OPJ_LATEST_VERSION}
+rm -rf ./objects_report/openjpeg/${OPJ_LATEST_VERSION}
 abi-monitor -v ${OPJ_LATEST_VERSION} -build openjpeg.json
 if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
 	abi-monitor -v ${OPJ_PREVIOUS_VERSION} -build openjpeg.json
@@ -112,6 +118,9 @@ fi
 # Check ABI
 if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
 	abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
+        if [ ${EXIT_CODE} -eq 1 ]; then
+            cat "compat_reports/openjpeg/${OPJ_LATEST_VERSION}_to_current/abi_compat_report.html"
+        fi
 	if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
 		abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/$OPJ_PREVIOUS_VERSION -name '*.dump') -new $(find ./abi_dump/openjpeg/$OPJ_LATEST_VERSION -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
 	fi
