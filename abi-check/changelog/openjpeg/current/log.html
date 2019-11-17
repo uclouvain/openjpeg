@@ -20,7 +20,15 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit cb332992a7c84316824b1c4810103ee4f190937c
+<pre class='wrap'>commit 9701b3305db58d35e4446946309f88937e2f5342
+Author: Robert Ancell &lt;robert.ancell@gmail.com&gt;
+Date:   2019-11-17 15:09:59 +1300
+
+    JPWL: convert: Fix buffer overflow reading an image file less than four characters (#1196)
+    
+    Fixes #1068
+
+commit cb332992a7c84316824b1c4810103ee4f190937c
 Merge: 5875a6b 016f80a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-11-17 02:47:26 +0100
@@ -884,12 +892,6 @@ Date:   2018-02-14 17:46:38 -0800
     fix unchecked integer multiplication overflow
     
     Hello, this fixes an unchecked integer multiplication overflow. Thanks.
-
-commit da5e897232ef824daf9a492e746ed22cf2a43f18
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-02-11 13:31:04 +0100
-
-    Avoid out-of-bounds write overflow due to uint32 overflow computation on images with huge dimensions. Credit to Google Autofuzz project for providing test case
 
 ...</pre></div>
 
