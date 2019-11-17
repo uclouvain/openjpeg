@@ -20,7 +20,27 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5875a6b44618fb7dfd5cd6d742533eaee2014060
+<pre class='wrap'>commit cb332992a7c84316824b1c4810103ee4f190937c
+Merge: 5875a6b 016f80a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-11-17 02:47:26 +0100
+
+    Merge pull request #1218 from rouault/fix_broken_abi_check
+    
+    abi-check.sh: fix false postive ABI error, and display output error log
+
+commit 016f80ae2106c2b1b5bca08a684b0bd082e231e6
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-11-17 01:35:26 +0100
+
+    abi-check.sh: fix false postive ABI error, and display output error log
+    
+    There is currently a false positive ABI check failure between v2.3.1
+    and current. It disappears when removing the generated reports of v2.3.1
+    and recreating them. It is likely that some tooling has evolved since
+    the initial v2.3.1 report generation.
+
+commit 5875a6b44618fb7dfd5cd6d742533eaee2014060
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-10-03 11:04:30 +0200
 
@@ -870,21 +890,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-02-11 13:31:04 +0100
 
     Avoid out-of-bounds write overflow due to uint32 overflow computation on images with huge dimensions. Credit to Google Autofuzz project for providing test case
-
-commit cfc539512a1b138c2feedda9fd2f57d36cdaa0db
-Author: Andrew Murray &lt;radarhere@users.noreply.github.com&gt;
-Date:   2018-02-09 21:02:25 +1100
-
-    Fixed typos
-
-commit d96d2b9a2524f41a8e024462f94417c09747ba99
-Merge: 07d526e 6941bc6
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-02-05 17:31:49 +0100
-
-    Merge pull request #1055 from ideasman42/patch-1
-    
-    Note that seek uses SEEK_SET behavior.
 
 ...</pre></div>
 

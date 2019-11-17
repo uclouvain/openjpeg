@@ -1,4 +1,4 @@
-<!-- verdict:incompatible;affected:2;added:0;removed:0;type_problems_high:0;type_problems_medium:0;type_problems_low:0;interface_problems_high:2;interface_problems_medium:0;interface_problems_low:0;changed_constants:0;tool_version:1.99.21 -->
+<!-- verdict:compatible;affected:0;added:0;removed:0;type_problems_high:0;type_problems_medium:0;type_problems_low:0;interface_problems_high:0;interface_problems_medium:0;interface_problems_low:0;changed_constants:0;tool_version:1.99.21 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -272,9 +272,10 @@ function showContent(header, id)
 <h2>Test Info</h2><hr/>
 <table class='summary'>
 <tr><th>Module Name</th><td>libopenjp2</td></tr>
-<tr><th>Version #1</th><td>2.3.1 (gcc 4.8.1)</td></tr>
-<tr><th>Version #2</th><td>current (gcc 4.8.4)</td></tr>
+<tr><th>Version #1</th><td>2.3.1</td></tr>
+<tr><th>Version #2</th><td>current</td></tr>
 <tr><th>CPU Type</th><td>x86_64</td></tr>
+<tr><th>GCC Version</th><td>4.8.4</td></tr>
 </table>
 <h2>Test Results</h2><hr/>
 <table class='summary'><tr><th>Total Header Files</th><td><a href='#Headers' style='color:Blue;'>1</a></td></tr>
@@ -282,7 +283,7 @@ function showContent(header, id)
 <tr><th>Total Objects</th><td><a href='#Libs' style='color:Blue;'>1</a></td></tr>
 <tr><th>Total Symbols / Types</th><td>49 / 112</td></tr>
 <tr><th>Compatibility</th>
-<td class='warning'>98%</td>
+<td class='compatible'>100%</td>
 </tr>
 </table>
 <h2>Problem Summary</h2><hr/>
@@ -291,41 +292,12 @@ function showContent(header, id)
 <tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td>0</td></tr>
 <tr><td>Medium</td><td>0</td></tr>
 <tr><td>Low</td><td>0</td></tr>
-<tr><th rowspan='3'>Problems with<br/>Symbols</th><td>High</td><td class='failed'><a href='#Symbol_Problems_High' style='color:Blue;'>2</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Symbols</th><td>High</td><td>0</td></tr>
 <tr><td>Medium</td><td>0</td></tr>
 <tr><td>Low</td><td>0</td></tr>
 <tr><th>Problems with<br/>Constants</th><td>Low</td><td>0</td></tr>
 </table>
 
-<a name='High_Risk_Problems'></a><a name='Symbol_Problems_High'></a><a name='Interface_Problems_High'></a>
-<h2>Problems with Symbols, High Severity <span class='failed'>&nbsp;2&nbsp;</span></h2><hr/>
-<span class='h_name'>openjpeg.h</span>, <span class='lib_name'>libopenjp2.so.2.3.1</span><br/>
-<span class="section" onclick="javascript:showContent(this, 'c_1')">
-<span class='ext'>[+]</span> opj_read_tile_header&#160;<span class='sym_p'>(&#160;opj_codec_t* <span class='color_p'>p_codec</span>, opj_stream_t* <span class='color_p'>p_stream</span>, OPJ_UINT32* <span class='color_p'>p_tile_index</span>, OPJ_UINT32* <span class='color_p'>p_data_size</span>, OPJ_INT32* <span class='color_p'>p_tile_x0</span>, OPJ_INT32* <span class='color_p'>p_tile_y0</span>, OPJ_INT32* <span class='color_p'>p_tile_x1</span>, OPJ_INT32* <span class='color_p'>p_tile_y1</span>, OPJ_UINT32* <span class='color_p'>p_nb_comps</span>, <span class='nowrap'>OPJ_BOOL* <span class='color_p'>p_should_go_on</span> )</span></span> <span class='failed'>&nbsp;2&nbsp;</span></span>
-<br/>
-<div id="c_1" style="display:none;">
-
-<table class='ptable'>
-<tr>
-<th width='2%'></th>
-<th width='47%'>Change</th>
-<th>Effect</th>
-</tr>
-<tr>
-<th>1</th>
-<td>The parameter <b>p_data_size</b> became passed in <b>r11</b> register instead of <b>rbx</b>.</td>
-<td>Applications will read the wrong memory block instead of the parameter value.</td>
-</tr>
-<tr>
-<th>2</th>
-<td>The parameter <b>p_tile_index</b> became passed in <b>rbx</b> register instead of <b>rbp</b>.</td>
-<td>Applications will read the wrong memory block instead of the parameter value.</td>
-</tr>
-</table>
-<br/>
-</div>
-<br/>
-<a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='Headers'></a><h2>Header Files <span class='gray'>&nbsp;1&nbsp;</span></h2><hr/>
 <div class='h_list'>
 openjpeg.h<br/>
