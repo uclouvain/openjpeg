@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 9701b3305db58d35e4446946309f88937e2f5342
+<pre class='wrap'>commit ac3737372a00b8778b528094dd5bd58a74f67d42
+Merge: 9701b33 4cb1f66
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-11-17 13:08:41 +0100
+
+    Merge pull request #1217 from rouault/fix_ossfuzz_18979
+    
+    pi.c: avoid integer overflow, resulting in later invalid access to memory in opj_t2_decode_packets()
+
+commit 9701b3305db58d35e4446946309f88937e2f5342
 Author: Robert Ancell &lt;robert.ancell@gmail.com&gt;
 Date:   2019-11-17 15:09:59 +1300
 
@@ -47,6 +56,12 @@ Date:   2019-11-17 01:35:26 +0100
     and current. It disappears when removing the generated reports of v2.3.1
     and recreating them. It is likely that some tooling has evolved since
     the initial v2.3.1 report generation.
+
+commit 4cb1f663049aab96e122d1ff16f601d0cc0be976
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2019-11-17 01:18:26 +0100
+
+    pi.c: avoid integer overflow, resulting in later invalid access to memory in opj_t2_decode_packets(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18979
 
 commit 5875a6b44618fb7dfd5cd6d742533eaee2014060
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -878,20 +893,6 @@ Date:   2018-02-25 18:21:23 +0100
     Merge pull request #1080 from setharnold/patch-1
     
     fix unchecked integer multiplication overflow
-
-commit 06f7d412435ddb62f8e9935af7e306783bc4b75b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-02-18 14:38:16 +0100
-
-    bench_dwt: fix wrong index in iteration (issue found by Fethi Migaou)
-
-commit 24d08ff94ad8b0f51534e46f87cf5a2f2f85d22a
-Author: setharnold &lt;seth.arnold@gmail.com&gt;
-Date:   2018-02-14 17:46:38 -0800
-
-    fix unchecked integer multiplication overflow
-    
-    Hello, this fixes an unchecked integer multiplication overflow. Thanks.
 
 ...</pre></div>
 
