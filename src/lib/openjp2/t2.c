@@ -1497,7 +1497,7 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                     //              l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
                     //              p_pi->compno);
                     truncate = 1;
-                    l_seg->newlen = (OPJ_SIZE_T)(p_max_length - p_src_data);
+                    l_seg->newlen = (OPJ_SIZE_T)(p_max_length - p_data_read);
                   
                     return OPJ_FALSE;
                 }
