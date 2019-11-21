@@ -1499,7 +1499,7 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                     truncate = 1;
                     l_seg->newlen = (OPJ_SIZE_T)(p_max_length - *p_data_read);
                   
-                    return OPJ_FALSE;
+                    // return OPJ_FALSE;
                 }
 
 #ifdef USE_JPWL
