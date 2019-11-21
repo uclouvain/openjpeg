@@ -1444,6 +1444,7 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
 {
     OPJ_UINT32 bandno, cblkno;
     OPJ_UINT32 l_nb_code_blocks;
+    int truncate;
     opj_tcd_band_t *l_band = 00;
     opj_tcd_cblk_dec_t* l_cblk = 00;
     opj_tcd_resolution_t* l_res =
@@ -1486,15 +1487,18 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                     ++l_cblk->numsegs;
                 }
             }
-
+            truncate = 0;
             do {
                 /* Check possible overflow then size */
                 if (((*p_data_read + l_seg->newlen) < (*p_data_read)) ||
                         ((*p_data_read + l_seg->newlen) > p_max_length)) {
-                    opj_event_msg(p_manager, EVT_ERROR,
-                                  "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                  l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
-                                  p_pi->compno);
+                    //opj_event_msg(p_manager, EVT_ERROR,
+                    //              "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                    //              l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
+                    //              p_pi->compno);
+                    truncate = 1;
+                    l_seg->newlen = (OPJ_SIZE_T)(p_src_data + p_max_length - l_current_data);
+                  
                     return OPJ_FALSE;
                 }
 
@@ -1528,7 +1532,7 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                     ++l_seg;
                     ++l_cblk->numsegs;
                 }
-            } while (l_cblk->numnewpasses > 0);
+            } while (l_cblk->numnewpasses > 0  && !truncate);
 
             ++l_cblk;
         }
