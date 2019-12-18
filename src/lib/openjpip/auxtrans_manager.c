@@ -232,6 +232,9 @@ void * aux_streaming(void *arg)
             }
             break;
         }
+        if (close_socket(connected_socket) != 0) {
+            perror("close");
+        }
     }
     opj_free(chunk);
 

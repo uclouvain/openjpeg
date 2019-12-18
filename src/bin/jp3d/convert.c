@@ -280,6 +280,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters)
     if (!sliceno) {
         fprintf(stdout,
                 "[ERROR] No slices with this pattern founded !! Please check input volume name\n");
+        closedir(dirp);
         return NULL;
     }
     /*if ( maxslice != sliceno) {
@@ -317,6 +318,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters)
         } else {
             fprintf(stdout, "[ERROR] Bad pgx header, please check input file\n");
             fclose(f);
+            closedir(dirp);
             return NULL;
         }
 
@@ -396,9 +398,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters)
         fclose(f);
     } /* for s --> sliceno*/
     comp->bpp = int_floorlog2(maxvalue) + 1;
-    if (sliceno != 1) {
-        closedir(dirp);
-    }
+    closedir(dirp);
     /*dump_volume(stdout, volume);*/
     return volume;
 }
@@ -581,6 +581,7 @@ opj_volume_t* bintovolume(char *filename, char *fileimg,
     f = fopen(filename, "rb");
     if (!f) {
         fprintf(stdout, "[ERROR] Failed to open %s for reading !!\n", filename);
+        opj_free(volume);
         return 0;
     }
 
@@ -918,7 +919,7 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters)
     f = fopen(filename, "rb");
     if (!f) {
         fprintf(stderr, "[ERROR] Failed to open %s for reading !!\n", filename);
-        fclose(f);
+        opj_free(volume);
         return 0;
     }
 

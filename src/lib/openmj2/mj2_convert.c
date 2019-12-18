@@ -62,6 +62,7 @@ unsigned int OPJ_CALLCONV yuv_num_frames(mj2_tk_t * tk, char *infile)
         fprintf(stderr,
                 "YUV does not contains any frame of %d x %d size\n", tk->w,
                 tk->h);
+        fclose(f);
         return 0;
     }
     fclose(f);

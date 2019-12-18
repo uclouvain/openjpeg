@@ -270,6 +270,7 @@ OPJ_BOOL check_JP2boxidx(boxlist_param_t *toplev_boxlist)
     ni = fetch_DBox1byte(prxy, pos);
     if (ni != 1) {
         fprintf(FCGI_stderr, "Multiple indexes not supported\n");
+        opj_free(prxy);
         return OPJ_FALSE;
     }
     pos += 1;
@@ -361,6 +362,7 @@ OPJ_BOOL set_cidxdata(box_param_t *cidx_box, index_param_t *jp2idx)
     if (!search_boxheader("mhix", manf)) {
         fprintf(FCGI_stderr, "Error: mhix box not present in manfbox\n");
         opj_free(jp2idx);
+        delete_manfbox(&manf);
         return OPJ_FALSE;
     }
     set_mainmhixdata(cidx_box, codestream, jp2idx);
@@ -368,6 +370,7 @@ OPJ_BOOL set_cidxdata(box_param_t *cidx_box, index_param_t *jp2idx)
     if (!search_boxheader("tpix", manf)) {
         fprintf(FCGI_stderr, "Error: tpix box not present in manfbox\n");
         opj_free(jp2idx);
+        delete_manfbox(&manf);
         return OPJ_FALSE;
     }
     set_tpixdata(cidx_box, jp2idx);
@@ -375,6 +378,7 @@ OPJ_BOOL set_cidxdata(box_param_t *cidx_box, index_param_t *jp2idx)
     if (!search_boxheader("thix", manf)) {
         fprintf(FCGI_stderr, "Error: thix box not present in manfbox\n");
         opj_free(jp2idx);
+        delete_manfbox(&manf);
         return OPJ_FALSE;
     }
     set_thixdata(cidx_box, jp2idx);
@@ -382,6 +386,7 @@ OPJ_BOOL set_cidxdata(box_param_t *cidx_box, index_param_t *jp2idx)
     if (!search_boxheader("ppix", manf)) {
         fprintf(FCGI_stderr, "Error: ppix box not present in manfbox\n");
         opj_free(jp2idx);
+        delete_manfbox(&manf);
         return OPJ_FALSE;
     }
     set_ppixdata(cidx_box, jp2idx);
@@ -497,6 +502,7 @@ OPJ_BOOL set_tpixdata(box_param_t *cidx_box, index_param_t *jp2idx)
     if (!(faix_box = gene_boxbyType(tpix_box->fd, get_DBoxoff(tpix_box),
                                     get_DBoxlen(tpix_box), "faix"))) {
         fprintf(FCGI_stderr, "Error: faix box not present in tpix box\n");
+        opj_free(tpix_box);
         return OPJ_FALSE;
     }
 
@@ -602,11 +608,13 @@ OPJ_BOOL set_ppixdata(box_param_t *cidx_box, index_param_t *jp2idx)
         if (jp2idx->SIZ.Csiz <= comp_idx) {
             fprintf(FCGI_stderr,
                     "Error: num of faix boxes is not identical to num of components in ppix box\n");
+            delete_manfbox(&manf);
             return OPJ_FALSE;
         }
 
         if (!(faix_box = gene_boxbyOffset(cidx_box->fd, inbox_offset))) {
             fprintf(FCGI_stderr, "Error: faix box not present in ppix box\n");
+            delete_manfbox(&manf);
             return OPJ_FALSE;
         }
 

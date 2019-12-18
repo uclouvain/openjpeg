@@ -76,6 +76,8 @@ Byte_t * j2k_to_pnm(const char *fn, ihdrbox_param_t **ihdrbox)
     /* setup the decoder decoding parameters using user parameters */
     if (!opj_setup_decoder(l_codec, &parameters)) {
         fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
+        opj_stream_destroy(l_stream);
+        opj_destroy_codec(l_codec);
         return NULL;
     }
 

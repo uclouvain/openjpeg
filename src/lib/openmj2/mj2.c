@@ -2822,16 +2822,24 @@ int OPJ_CALLCONV mj2_read_struct(FILE *file, opj_mj2_t *movie)
 
     fseek(file, foffset, SEEK_SET);
     src = (unsigned char*)opj_realloc(src, box.length);
+    if (src == NULL) {
+        opj_event_msg(cio->cinfo, EVT_ERROR, "Error reallocation memory\n");
+        opj_free(src);
+        return 1;
+    }
+
     fsresult = fread(src, box.length, 1, file);
     if (fsresult != 1) {
         opj_event_msg(cio->cinfo, EVT_ERROR,
                       "End of file reached while trying to read MOOV box\n");
+        opj_free(src);
         return 1;
     }
 
     cio = opj_cio_open((opj_common_ptr)movie->cinfo, src, box.length);
 
     if (mj2_read_moov(movie, &img, cio)) {
+        opj_free(src);
         return 1;
     }
 
