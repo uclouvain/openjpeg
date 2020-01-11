@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit ac3737372a00b8778b528094dd5bd58a74f67d42
+<pre class='wrap'>commit 46c1eff9e98bbcf794d042f7b2e3d45556e805ce
+Merge: ac37373 024b840
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-01-11 11:29:11 +0100
+
+    Merge pull request #1229 from rouault/fix_1228
+    
+    opj_j2k_update_image_dimensions(): reject images whose coordinates are beyond INT_MAX (fixes #1228)
+
+commit 024b8407392cb0b82b04b58ed256094ed5799e04
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-01-11 01:51:19 +0100
+
+    opj_j2k_update_image_dimensions(): reject images whose coordinates are beyond INT_MAX (fixes #1228)
+
+commit ac3737372a00b8778b528094dd5bd58a74f67d42
 Merge: 9701b33 4cb1f66
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-11-17 13:08:41 +0100
@@ -876,23 +891,6 @@ Date:   2018-02-24 14:55:33 +0100
     openjp3d: Convert ISO-8859 to UTF-8
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 244f52483df75e6507d676b25d31e6e7bf08bdf5
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2018-02-24 14:51:28 +0100
-
-    jp3d: Convert ISO-8859 to UTF-8
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 90b1bffa7e745c754afb56dc89ccb70f8aeeadcf
-Merge: 06f7d41 24d08ff
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-02-25 18:21:23 +0100
-
-    Merge pull request #1080 from setharnold/patch-1
-    
-    fix unchecked integer multiplication overflow
 
 ...</pre></div>
 
