@@ -20,7 +20,17 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 46c1eff9e98bbcf794d042f7b2e3d45556e805ce
+<pre class='wrap'>commit b63a433ba168bad5fa10e83de04d6305e6a222e2
+Author: Max Moroz &lt;dor3s1@gmail.com&gt;
+Date:   2020-01-13 09:07:54 -0800
+
+    tests/fuzzers: link fuzz binaries using $LIB_FUZZING_ENGINE. (#1230)
+    
+    This was changed some time ago (https://google.github.io/oss-fuzz/getting-started/new-project-guide/) but the build didn't fail as there is a fallback mechanism. The main advantage of the new approach is that for libFuzzer this produces more performant binaries (as `$LIB_FUZZING_ENGINE` expands into `-fsanitize=fuzzer`, which links libFuzzer from the compiler-rt, allowing better optimization tricks).
+    
+    I'm also experimenting with dataflow (https://github.com/google/oss-fuzz/issues/1632) on your project, and the dataflow config doesn't have a fallback (as it's a new configuration), therefore I'm proposing a change to migrate from `-lFuzzingEngine` to `$LIB_FUZZING_ENGINE`.
+
+commit 46c1eff9e98bbcf794d042f7b2e3d45556e805ce
 Merge: ac37373 024b840
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-01-11 11:29:11 +0100
@@ -883,14 +893,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-02-25 19:20:38 +0100
 
     .travis.yml: temporarily disable OPJ_CI_ASAN=1 (refs #1091)
-
-commit b49fa93aa759cb2e2e22e174ef793470eb02a148
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2018-02-24 14:55:33 +0100
-
-    openjp3d: Convert ISO-8859 to UTF-8
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 ...</pre></div>
 
