@@ -8,5 +8,6 @@ fuzzingengine.o: fuzzingengine.c
 
 dummyfuzzers: fuzzingengine.o
 	$(AR) r libFuzzingEngine.a fuzzingengine.o
-	CXX="${CXX}" CXXFLAGS="-L. ${CXXFLAGS}" SRC=/tmp OUT=/tmp ./build_google_oss_fuzzers.sh
+	LIB_FUZZING_ENGINE="-lFuzzingEngine" CXX="${CXX}" CXXFLAGS="-L. ${CXXFLAGS}" \
+	    SRC=/tmp OUT=/tmp ./build_google_oss_fuzzers.sh
 	OUT=/tmp ./build_seed_corpus.sh

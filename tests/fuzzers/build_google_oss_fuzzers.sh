@@ -28,7 +28,7 @@ build_fuzzer()
     echo "Building fuzzer $fuzzerName"
     $CXX $CXXFLAGS -std=c++11 -I$SRC_DIR/src/lib/openjp2 -I$SRC_DIR/build/src/lib/openjp2 \
         $sourceFilename $* -o $OUT/$fuzzerName \
-        -lFuzzingEngine $SRC_DIR/build/bin/libopenjp2.a -lm -lpthread
+        $LIB_FUZZING_ENGINE $SRC_DIR/build/bin/libopenjp2.a -lm -lpthread
 }
 
 fuzzerFiles=$(dirname $0)/*.cpp
