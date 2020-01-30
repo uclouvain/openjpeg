@@ -20,7 +20,26 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b63a433ba168bad5fa10e83de04d6305e6a222e2
+<pre class='wrap'>commit 647f9b118d12819c63635eea65909b0e49e0f201
+Merge: b63a433 05f9b91
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-01-30 13:07:31 +0100
+
+    Merge pull request #1232 from rouault/fix_1231
+    
+    opj_tcd_init_tile(): avoid integer overflow
+
+commit 05f9b91e60debda0e83977e5e63b2e66486f7074
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-01-30 00:59:57 +0100
+
+    opj_tcd_init_tile(): avoid integer overflow
+    
+    That could lead to later assertion failures.
+    
+    Fixes #1231 / CVE-2020-8112
+
+commit b63a433ba168bad5fa10e83de04d6305e6a222e2
 Author: Max Moroz &lt;dor3s1@gmail.com&gt;
 Date:   2020-01-13 09:07:54 -0800
 
@@ -878,21 +897,6 @@ Date:   2018-03-02 14:03:03 +0100
     This adds the appropriate variables to the invocation of fprintf(). They were
     specified in the format string, but were missing in the actual call. This
     fixes #1074 and #1075.
-
-commit 564fbfb67830e2eb234bc16b3db8fecf54261f95
-Merge: bce2bd7 b49fa93
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-02-25 19:59:18 +0100
-
-    Merge pull request #1090 from stweil/utf8
-    
-    Convert files to UTF-8 encoding
-
-commit bce2bd71c06e3550e57442dfa715fcce5351bc7a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-02-25 19:20:38 +0100
-
-    .travis.yml: temporarily disable OPJ_CI_ASAN=1 (refs #1091)
 
 ...</pre></div>
 
