@@ -46,10 +46,15 @@ foreach(pgxfullpath ${globfiles})
 
   string(REGEX MATCH "[0-9a-f]+  ${pgxfile}" output_var "${variable}")
 
+  # Search for variant md5sum for libtiff >= 4.1
+  string(REGEX MATCH "libtiff_4_1:[0-9a-f]+  ${pgxfile}" alternate_output_var "${variable}")
+
   set(output "${output}  ${pgxfile}")
 
   if("${output_var}" STREQUAL "${output}")
     message(STATUS "equal: [${output_var}] vs [${output}]")
+  elseif("${alternate_output_var}" STREQUAL "libtiff_4_1:${output}")
+    message(STATUS "equal: [${alternate_output_var}] vs [libtiff_4_1:${output}]")
   else()
     message(SEND_ERROR "not equal: [${output_var}] vs [${output}]")
   endif()
