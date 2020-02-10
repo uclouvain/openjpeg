@@ -20,7 +20,29 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 647f9b118d12819c63635eea65909b0e49e0f201
+<pre class='wrap'>commit 28881453f6b1ae68a357557999498a11a2bc8b7e
+Merge: 647f9b1 b5cb419
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-02-10 11:20:20 +0100
+
+    Merge pull request #1234 from rouault/md5_libtiff_4_1
+    
+    tests: add alternate checksums for libtiff 4.1
+
+commit b5cb419faff300fdbc0b4e98dab5c9010db6f39d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-02-07 21:53:10 +0100
+
+    tests: add alternate checksums for libtiff 4.1
+    
+    Fixes #1233
+    
+    libtiff 4.1 slightly modifies the way it generates files. So
+    add the new expected md5sum.
+    
+    Not super elegant solution admitedly.
+
+commit 647f9b118d12819c63635eea65909b0e49e0f201
 Merge: b63a433 05f9b91
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-01-30 13:07:31 +0100
@@ -878,25 +900,6 @@ Date:   2018-03-03 10:10:32 +0100
     one, with the correct buffer size to prevent buffer overflows.
     
     This fixes #1085.
-
-commit db6841a099645f5063dc8c2f804b0724a9ea557b
-Author: Karol Babioch &lt;kbabioch@suse.de&gt;
-Date:   2018-03-02 15:19:19 +0100
-
-    opj_mj2_extract: Rename output_location to output_prefix
-    
-    This renames the argument in the help output, as the latter better describes
-    the the purpose of this argument.
-
-commit d4d78272ebe3b65a22e5c98841d451f2078625fa
-Author: Karol Babioch &lt;kbabioch@suse.de&gt;
-Date:   2018-03-02 14:03:03 +0100
-
-    mj2: Add missing variable to format string in fprintf() invocation in meta_out.c
-    
-    This adds the appropriate variables to the invocation of fprintf(). They were
-    specified in the format string, but were missing in the actual call. This
-    fixes #1074 and #1075.
 
 ...</pre></div>
 
