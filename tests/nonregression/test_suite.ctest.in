@@ -176,6 +176,13 @@ opj_compress -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_one_poc.j2k -n 2 -r
 opj_compress -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_one_poc_funky_bounds.j2k -n 2 -r 20,1 -POC T1=0,0,65535,33,255,CPRL -b 4,4
 opj_compress -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_one_poc_unrelated_tile.j2k -n 1 -POC T1000=0,0,1,1,1,CPRL
 
+opj_compress_no_raw -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_2K.j2k -IMF 2K
+opj_compress_no_raw -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_4K.j2k -IMF 4K
+opj_compress_no_raw -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_8K.j2k -IMF 8K
+opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_2K_R.j2k -IMF 2K_R
+opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_4K_R.j2k -IMF 4K_R
+opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_8K_R.j2k -IMF 8K_R
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx

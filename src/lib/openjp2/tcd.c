@@ -573,7 +573,7 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                 opj_tcd_makelayer(tcd, layno, thresh, 0);
 
                 if (cp->m_specific_param.m_enc.m_fixed_quality) {       /* fixed_quality */
-                    if (OPJ_IS_CINEMA(cp->rsiz)) {
+                    if (OPJ_IS_CINEMA(cp->rsiz) || OPJ_IS_IMF(cp->rsiz)) {
                         if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,
                                                     p_data_written, maxlen, cstr_info, tcd->cur_tp_num, tcd->tp_pos, tcd->cur_pino,
                                                     THRESH_CALC, p_manager)) {

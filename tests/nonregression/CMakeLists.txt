@@ -232,11 +232,13 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
     else ()
       # Check if the first argument is equal to opj_compress
-      string(REGEX MATCH "^opj_compress$|^opj_decompress$" EXE_NAME_FOUND ${EXE_NAME})
+      string(REGEX MATCH "^opj_compress$|^opj_compress_no_raw$|^opj_compress_no_raw_lossless$|^opj_decompress$" EXE_NAME_FOUND ${EXE_NAME})
 
       if(EXE_NAME_FOUND)
 
-        string(REGEX MATCH "opj_compress" ENC_TEST_FOUND ${EXE_NAME})
+        string(REGEX MATCH "^opj_compress$|^opj_compress_no_raw$|^opj_compress_no_raw_lossless$" ENC_TEST_FOUND ${EXE_NAME})
+        string(REGEX MATCH "^opj_compress_no_raw$|^opj_compress_no_raw_lossless$" NO_RAW ${EXE_NAME})
+        string(REGEX MATCH "opj_compress_no_raw_lossless" LOSSLESS ${EXE_NAME})
 
       else()
 
@@ -330,16 +332,18 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  PROPERTIES DEPENDS
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode)
 
-            # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k
-            add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
-              COMMAND compare_raw_files
-              -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.raw
-              -t ${OUTPUT_FILENAME}.raw
-            )
+            if(NOT NO_RAW)
+                # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k
+                add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+                COMMAND compare_raw_files
+                -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.raw
+                -t ${OUTPUT_FILENAME}.raw
+                )
 
-            set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
-                                 PROPERTIES DEPENDS
-                                 NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
+                set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+                                    PROPERTIES DEPENDS
+                                    NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
+            endif()
 
           endif()
 
@@ -359,7 +363,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
           # If lossless compression (simple test is 4 arguments), decompress & compare
           list(LENGTH CMD_ARG_LIST_2 ARG_COUNT)
-          if (ARG_COUNT EQUAL 4)
+          if ((ARG_COUNT EQUAL 4) OR LOSSLESS)
             # can we compare with the input image ?
             if (${INPUT_FILENAME_NAME} MATCHES "\\.tif$")
               add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
