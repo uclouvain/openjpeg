@@ -22,7 +22,147 @@
   <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
   <tr id="part-1" bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (2.3.1)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (current)&nbsp;</th><th></th></tr> 
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="part-1" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-1"><em> line 334<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-1"><em> line 334<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr id="part-1" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-1"><em> line 206<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-1"><em> line 206<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_PART2       0x8000 /** At least 1 extension defined in 
+15444-2 (Part-2) */</td><td> </td><td class="right">#define OPJ_PROFILE_PART2       0x8000 /** At least 1 extension defined in 
+15444-2 (Part-2) */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_CINEMA_2K   0x0003 /** 2K cinema profile defined in 154
+44-1 AMD1 */</td><td> </td><td class="right">#define OPJ_PROFILE_CINEMA_2K   0x0003 /** 2K cinema profile defined in 154
+44-1 AMD1 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_CINEMA_4K   0x0004 /** 4K cinema profile defined in 154
+44-1 AMD1 */</td><td> </td><td class="right">#define OPJ_PROFILE_CINEMA_4K   0x0004 /** 4K cinema profile defined in 154
+44-1 AMD1 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_CINEMA_S2K  0x0005 /** Scalable 2K cinema profile defin
+ed in 15444-1 AMD2 */</td><td> </td><td class="right">#define OPJ_PROFILE_CINEMA_S2K  0x0005 /** Scalable 2K cinema profile defin
+ed in 15444-1 AMD2 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_CINEMA_S4K  0x0006 /** Scalable 4K cinema profile defin
+ed in 15444-1 AMD2 */</td><td> </td><td class="right">#define OPJ_PROFILE_CINEMA_S4K  0x0006 /** Scalable 4K cinema profile defin
+ed in 15444-1 AMD2 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_CINEMA_LTS  0x0007 /** Long term storage cinema profile
+ defined in 15444-1 AMD2 */</td><td> </td><td class="right">#define OPJ_PROFILE_CINEMA_LTS  0x0007 /** Long term storage cinema profile
+ defined in 15444-1 AMD2 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_BC_SINGLE   0x0100 /** Single Tile Broadcast profile de
+fined in 15444-1 AMD3 */</td><td> </td><td class="right">#define OPJ_PROFILE_BC_SINGLE   0x0100 /** Single Tile Broadcast profile de
+fined in 15444-1 AMD3 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_BC_MULTI    0x0200 /** Multi Tile Broadcast profile def
+ined in 15444-1 AMD3 */</td><td> </td><td class="right">#define OPJ_PROFILE_BC_MULTI    0x0200 /** Multi Tile Broadcast profile def
+ined in 15444-1 AMD3 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_BC_MULTI_R  0x0300 /** Multi Tile Reversible Broadcast 
+profile defined in 15444-1 AMD3 */</td><td> </td><td class="right">#define OPJ_PROFILE_BC_MULTI_R  0x0300 /** Multi Tile Reversible Broadcast 
+profile defined in 15444-1 AMD3 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_IMF_2K      0x0400 /** 2K Single Tile Lossy IMF profile
+ defined in 15444-1 AMD 8 */</td><td> </td><td class="right">#define OPJ_PROFILE_IMF_2K      0x0400 /** 2K Single Tile Lossy IMF profile
+ defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
+      <tr id="diff0001"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">#define OPJ_PROFILE_IMF_4K      <span class="delete">0x0401</span> /** 4K Single Tile Lossy IMF profile</td><td> </td><td class="rblock">#define OPJ_PROFILE_IMF_4K      <span class="insert">0x0500</span> /** 4K Single Tile Lossy IMF profile</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"> defined in 15444-1 AMD 8 */</td><td> </td><td class="rblock"> defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">#define OPJ_PROFILE_IMF_8K      <span class="delete">0x0402</span> /** 8K Single Tile Lossy IMF profile</td><td> </td><td class="rblock">#define OPJ_PROFILE_IMF_8K      <span class="insert">0x0600</span> /** 8K Single Tile Lossy IMF profile</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"> defined in 15444-1 AMD 8 */</td><td> </td><td class="rblock"> defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">#define OPJ_PROFILE_IMF_2K_R    <span class="delete">0x0403</span> /** 2K Single/Multi Tile Reversible </td><td> </td><td class="rblock">#define OPJ_PROFILE_IMF_2K_R    <span class="insert">0x0700</span> /** 2K Single/Multi Tile Reversible </td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">IMF profile defined in 15444-1 AMD 8 */</td><td> </td><td class="rblock">IMF profile defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_IMF_4K_R    0x0800 /** 4K Single/Multi Tile Reversible 
+IMF profile defined in 15444-1 AMD 8 */</td><td> </td><td class="right">#define OPJ_PROFILE_IMF_4K_R    0x0800 /** 4K Single/Multi Tile Reversible 
+IMF profile defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
+      <tr id="diff0002"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">#define OPJ_PROFILE_IMF_8K_R    0x0<span class="delete">801  /** 8K Single/Multi Tile Reversible
+ </span>IMF profile defined in 15444-1 AMD 8 */</td><td> </td><td class="rblock">#define OPJ_PROFILE_IMF_8K_R    0x0<span class="insert">900 /** 8K Single/Multi Tile Reversible 
+</span>IMF profile defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * JPEG 2000 Part-2 extensions</td><td> </td><td class="right"> * JPEG 2000 Part-2 extensions</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_EXTENSION_NONE      0x0000 /** No Part-2 extension */</td><td> </td><td class="right">#define OPJ_EXTENSION_NONE      0x0000 /** No Part-2 extension */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_EXTENSION_MCT       0x0100  /** Custom MCT support */</td><td> </td><td class="right">#define OPJ_EXTENSION_MCT       0x0100  /** Custom MCT support */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * JPEG 2000 profile macros</td><td> </td><td class="right"> * JPEG 2000 profile macros</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_IS_CINEMA(v)     (((v) &gt;= OPJ_PROFILE_CINEMA_2K)&amp;&amp;((v) &lt;= OPJ_P
+ROFILE_CINEMA_S4K))</td><td> </td><td class="right">#define OPJ_IS_CINEMA(v)     (((v) &gt;= OPJ_PROFILE_CINEMA_2K)&amp;&amp;((v) &lt;= OPJ_P
+ROFILE_CINEMA_S4K))</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_IS_STORAGE(v)    ((v) == OPJ_PROFILE_CINEMA_LTS)</td><td> </td><td class="right">#define OPJ_IS_STORAGE(v)    ((v) == OPJ_PROFILE_CINEMA_LTS)</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_IS_BROADCAST(v)  (((v) &gt;= OPJ_PROFILE_BC_SINGLE)&amp;&amp;((v) &lt;= ((OPJ
+_PROFILE_BC_MULTI_R) | (0x000b))))</td><td> </td><td class="right">#define OPJ_IS_BROADCAST(v)  (((v) &gt;= OPJ_PROFILE_BC_SINGLE)&amp;&amp;((v) &lt;= ((OPJ
+_PROFILE_BC_MULTI_R) | (0x000b))))</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_IS_IMF(v)        (((v) &gt;= OPJ_PROFILE_IMF_2K)&amp;&amp;((v) &lt;= ((OPJ_PR
+OFILE_IMF_8K_R) | (0x009b))))</td><td> </td><td class="right">#define OPJ_IS_IMF(v)        (((v) &gt;= OPJ_PROFILE_IMF_2K)&amp;&amp;((v) &lt;= ((OPJ_PR
+OFILE_IMF_8K_R) | (0x009b))))</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_IS_PART2(v)      ((v) &amp; OPJ_PROFILE_PART2)</td><td> </td><td class="right">#define OPJ_IS_PART2(v)      ((v) &amp; OPJ_PROFILE_PART2)</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr id="diff0003"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_GET_IMF_PROFILE(v)   ((v) &amp; 0xff00)      /** Extract IMF profil</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">e without mainlevel/sublevel */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_GET_IMF_MAINLEVEL(v) ((v) &amp; 0xf)         /** Extract IMF main l</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">evel */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_GET_IMF_SUBLEVEL(v)  (((v) &gt;&gt; 4) &amp; 0xf)  /** Extract IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_MAX    11   /** Maximum main level */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/** Max. Components Sampling Rate (MSamples/sec) per IMF main level */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_1_MSAMPLESEC   65      /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 1 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_2_MSAMPLESEC   130     /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 2 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_3_MSAMPLESEC   195     /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 3 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_4_MSAMPLESEC   260     /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 4 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_5_MSAMPLESEC   520     /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 5 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_6_MSAMPLESEC   1200    /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 6 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_7_MSAMPLESEC   2400    /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 7 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_8_MSAMPLESEC   4800    /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 8 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_9_MSAMPLESEC   9600    /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 9 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_10_MSAMPLESEC  19200   /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 10 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_MAINLEVEL_11_MSAMPLESEC  38400   /** MSamples/sec for IMF m</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ain level 11 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/** Max. compressed Bit Rate (Mbits/s) per IMF sub level */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_1_MBITSSEC      200     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 1 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_2_MBITSSEC      400     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 2 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_3_MBITSSEC      800     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 3 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_4_MBITSSEC     1600     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 4 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_5_MBITSSEC     3200     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 5 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_6_MBITSSEC     6400     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 6 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_7_MBITSSEC    12800     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 7 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_8_MBITSSEC    25600     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 8 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_IMF_SUBLEVEL_9_MBITSSEC    51200     /** Mbits/s for IMF sub le</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">vel 9 */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * JPEG 2000 codestream and component size limits in cinema profiles</td><td> </td><td class="right"> * JPEG 2000 codestream and component size limits in cinema profiles</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_CINEMA_24_CS     1302083    /** Maximum codestream length for 2
+4fps */</td><td> </td><td class="right">#define OPJ_CINEMA_24_CS     1302083    /** Maximum codestream length for 2
+4fps */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_CINEMA_48_CS     651041     /** Maximum codestream length for 4
+8fps */</td><td> </td><td class="right">#define OPJ_CINEMA_48_CS     651041     /** Maximum codestream length for 4
+8fps */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_CINEMA_24_COMP   1041666    /** Maximum size per color componen
+t for 2K &amp; 4K @ 24fps */</td><td> </td><td class="right">#define OPJ_CINEMA_24_COMP   1041666    /** Maximum size per color componen
+t for 2K &amp; 4K @ 24fps */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_CINEMA_48_COMP   520833     /** Maximum size per color componen
+t for 2K @ 48fps */</td><td> </td><td class="right">#define OPJ_CINEMA_48_COMP   520833     /** Maximum size per color componen
+t for 2K @ 48fps */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr id="part-2" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-2"><em> line 334<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-2"><em> line 364<span class="hide"> &para;</span></em></a></th><td></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Resolution num start, Component num start, given by POC */</td><td> </td><td class="right">    /** Resolution num start, Component num start, given by POC */</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 resno0, compno0;</td><td> </td><td class="right">    OPJ_UINT32 resno0, compno0;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Layer num end,Resolution num end, Component num end, given by POC *
@@ -35,7 +175,7 @@
       <tr><td class="lineno"></td><td class="left">    OPJ_PROG_ORDER prg1, prg;</td><td> </td><td class="right">    OPJ_PROG_ORDER prg1, prg;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Progression order string*/</td><td> </td><td class="right">    /** Progression order string*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_CHAR progorder[5];</td><td> </td><td class="right">    OPJ_CHAR progorder[5];</td><td class="lineno"></td></tr>
-      <tr id="diff0001"><td></td></tr>
+      <tr id="diff0004"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock">    /** Tile number */</td><td> </td><td class="rblock">    /** Tile number <span class="insert">(starting at 1) </span>*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 tile;</td><td> </td><td class="right">    OPJ_UINT32 tile;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Start and end values for Tile width and height*/</td><td> </td><td class="right">    /** Start and end values for Tile width and height*/</td><td class="lineno"></td></tr>
@@ -51,8 +191,8 @@ itialise_encode*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Temporary values for Tile parts, initialised in pi_create_encode */</td><td> </td><td class="right">    /** Temporary values for Tile parts, initialised in pi_create_encode */</td><td class="lineno"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
-     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 1 change blocks.&nbsp;</th></tr>
-     <tr class="stats"><td></td><th><i>1 lines changed or deleted</i></th><th><i> </i></th><th><i>1 lines changed or added</i></th><td></td></tr>
+     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 4 change blocks.&nbsp;</th></tr>
+     <tr class="stats"><td></td><th><i>8 lines changed or deleted</i></th><th><i> </i></th><th><i>61 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"></td></tr>
    </table>
    <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>

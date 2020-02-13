@@ -20,7 +20,30 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 28881453f6b1ae68a357557999498a11a2bc8b7e
+<pre class='wrap'>commit 4e5501b3c72a98b3117e68263afb922092c309cf
+Merge: 2888145 84f3beb
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-02-13 09:54:20 +0100
+
+    Merge pull request #1235 from rouault/imf
+    
+    Implement writing of IMF profiles
+
+commit 84f3bebbff515f2b00ccf0c817930ebb10b91760
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-02-12 15:55:16 +0100
+
+    Implement writing of IMF profiles
+    
+    Add -IMF switch to opj_compress as well
+
+commit fffe32adcb9f41a00805f4120012be9625ba450a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-02-12 15:55:02 +0100
+
+    openjpeg.h: fix values of OPJ_PROFILE_IMF_ constants
+
+commit 28881453f6b1ae68a357557999498a11a2bc8b7e
 Merge: 647f9b1 b5cb419
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-02-10 11:20:20 +0100
@@ -871,35 +894,6 @@ Date:   2018-03-04 23:16:04 +0100
     Merge pull request #1094 from kbabioch/fix/missing-format-string-parameter
     
     mj2: Add missing variable to format string in fprintf() invocation in meta_out.c
-
-commit 31a347a9a04209933c63b180c9ff04bdf8a427e5
-Merge: b02e0d9 db6841a
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-03-04 23:13:45 +0100
-
-    Merge pull request #1096 from kbabioch/fix/opj_mj2_extract-help
-    
-    opj_mj2_extract: Rename output_location to output_prefix
-
-commit b02e0d9c4e746faf7448cb06f0487402dff66083
-Merge: 564fbfb e351c22
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-03-04 23:10:48 +0100
-
-    Merge pull request #1101 from kbabioch/fix/jp3d-sprintf-overflow
-    
-    jp3d: Replace sprintf() by snprintf() in volumetobin()
-
-commit e351c22ee8c4d8cef0f212831a00447bc0400601
-Author: Karol Babioch &lt;karol@babioch.de&gt;
-Date:   2018-03-03 10:10:32 +0100
-
-    jp3d: Replace sprintf() by snprintf() in volumetobin()
-    
-    This replaces the unsafe sprintf() invocation by the safer snprintf()
-    one, with the correct buffer size to prevent buffer overflows.
-    
-    This fixes #1085.
 
 ...</pre></div>
 
