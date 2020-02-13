@@ -287,9 +287,9 @@ static void encode_help_display(void)
     fprintf(stdout, "-cinema4K\n");
     fprintf(stdout, "    Digital Cinema 4K profile compliant codestream.\n");
     fprintf(stdout, "	Frames per second not required. Default value is 24fps.\n");
-    fprintf(stdout, "-IMF profile=P[,mainlevel=X][,sublevel=Y][,framerate=FPS]\n");
+    fprintf(stdout, "-IMF <PROFILE>[,mainlevel=X][,sublevel=Y][,framerate=FPS]\n");
     fprintf(stdout, "    Interoperable Master Format compliant codestream.\n");
-    fprintf(stdout, "    P=2K, 4K, 8K, 2K_R, 4K_R or 8K_R.\n");
+    fprintf(stdout, "    <PROFILE>=2K, 4K, 8K, 2K_R, 4K_R or 8K_R.\n");
     fprintf(stdout, "    X >= 0 and X <= 11.\n");
     fprintf(stdout, "    Y >= 0 and Y <= 9.\n");
     fprintf(stdout,
@@ -1145,7 +1145,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
             int framerate = 0;
             const char* msg =
                 "Wrong value for -IMF. Should be "
-                "profile[,mainlevel=X][,sublevel=Y][,framerate=FPS] where profile is one "
+                "<PROFILE>[,mainlevel=X][,sublevel=Y][,framerate=FPS] where <PROFILE> is one "
                 "of 2K/4K/8K/2K_R/4K_R/8K_R.\n";
             char* comma;
 
