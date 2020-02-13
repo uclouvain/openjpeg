@@ -718,11 +718,11 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t
         parameters->cp_cinema = OPJ_OFF; /* DEPRECATED */
         parameters->rsiz = OPJ_PROFILE_NONE;
         parameters->max_comp_size = 0;
-        parameters->numresolution = 6;
+        parameters->numresolution = OPJ_COMP_PARAM_DEFAULT_NUMRESOLUTION;
         parameters->cp_rsiz = OPJ_STD_RSIZ; /* DEPRECATED */
-        parameters->cblockw_init = 64;
-        parameters->cblockh_init = 64;
-        parameters->prog_order = OPJ_LRCP;
+        parameters->cblockw_init = OPJ_COMP_PARAM_DEFAULT_CBLOCKW;
+        parameters->cblockh_init = OPJ_COMP_PARAM_DEFAULT_CBLOCKH;
+        parameters->prog_order = OPJ_COMP_PARAM_DEFAULT_PROG_ORDER;
         parameters->roi_compno = -1;        /* no ROI */
         parameters->subsampling_dx = 1;
         parameters->subsampling_dy = 1;

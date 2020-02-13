@@ -1761,7 +1761,8 @@ void opj_pi_create_encode(opj_pi_iterator_t *pi,
     pi[pino].poc.prg = tcp->prg;
 
     if (!(cp->m_specific_param.m_enc.m_tp_on && ((!OPJ_IS_CINEMA(cp->rsiz) &&
-            (t2_mode == FINAL_PASS)) || OPJ_IS_CINEMA(cp->rsiz)))) {
+            !OPJ_IS_IMF(cp->rsiz) &&
+            (t2_mode == FINAL_PASS)) || OPJ_IS_CINEMA(cp->rsiz) || OPJ_IS_IMF(cp->rsiz)))) {
         pi[pino].poc.resno0 = tcp->resS;
         pi[pino].poc.resno1 = tcp->resE;
         pi[pino].poc.compno0 = tcp->compS;
