@@ -297,6 +297,12 @@ int imagetopng(opj_image_t * image, const char *write_idf)
     memset(&sig_bit, 0, sizeof(sig_bit));
     prec = (int)image->comps[0].prec;
     planes[0] = image->comps[0].data;
+    if (planes[0] == NULL) {
+        fprintf(stderr,
+                "imagetopng: planes[%d] == NULL.\n", 0);
+        fprintf(stderr, "\tAborting\n");
+        return 1;
+    }
     nr_comp = (int)image->numcomps;
 
     if (nr_comp > 4) {
@@ -316,6 +322,12 @@ int imagetopng(opj_image_t * image, const char *write_idf)
             break;
         }
         planes[i] = image->comps[i].data;
+        if (planes[i] == NULL) {
+            fprintf(stderr,
+                    "imagetopng: planes[%d] == NULL.\n", i);
+            fprintf(stderr, "\tAborting\n");
+            return 1;
+        }
     }
     if (i != nr_comp) {
         fprintf(stderr,

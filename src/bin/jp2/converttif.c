@@ -616,6 +616,12 @@ int imagetotif(opj_image_t * image, const char *outfile)
             break;
         }
         planes[i] = image->comps[i].data;
+        if (planes[i] == NULL) {
+            fprintf(stderr,
+                    "imagetotif: planes[%d] == NULL.\n", i);
+            fprintf(stderr, "\tAborting\n");
+            return 1;
+        }
     }
     if (i != numcomps) {
         fprintf(stderr,

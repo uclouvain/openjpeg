@@ -2067,10 +2067,26 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
         has_alpha = (ncomp == 4 || ncomp == 2);
 
         red = image->comps[0].data;
+        if (red == NULL) {
+            fprintf(stderr,
+                    "imagetopnm: planes[%d] == NULL.\n", 0);
+            fprintf(stderr, "\tAborting\n");
+            fclose(fdest);
+            return fails;
+        }
 
         if (triple) {
             green = image->comps[1].data;
             blue = image->comps[2].data;
+            for (i = 1; i <= 2; i++) {
+                if (image->comps[i].data == NULL) {
+                    fprintf(stderr,
+                            "imagetopnm: planes[%d] == NULL.\n", i);
+                    fprintf(stderr, "\tAborting\n");
+                    fclose(fdest);
+                    return fails;
+                }
+            }
         } else {
             green = blue = NULL;
         }
