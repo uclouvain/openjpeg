@@ -20,7 +20,28 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 563ecfb55ca77c0fc5ea19e4885e00f55ec82ca9
+<pre class='wrap'>commit 9c1cfb034a8cf24eb5e35fe9c7074fd079d14b80
+Merge: 563ecfb 1c54024
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-04-01 22:00:19 +0200
+
+    Merge pull request #1240 from rouault/fix_crash_opj_decompress
+    
+    opj_decompress: add sanity checks to avoid segfault in case of decoding error
+
+commit 1c54024165fd5db0e6047f28903274eb27d0980f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-04-01 20:58:55 +0200
+
+    opj_decompress: add sanity checks to avoid segfault in case of decoding error
+    
+    Prevent crashes like:
+    opj_decompress -i 0722_5-1_2019.jp2 -o out.ppm -r 4 -t 0
+    
+    where 0722_5-1_2019.jp2 is
+    https://drive.google.com/file/d/1ZxOUZg2-FKjYwa257VFLMpTXRWxEoP0a/view?usp=sharing
+
+commit 563ecfb55ca77c0fc5ea19e4885e00f55ec82ca9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-02-13 09:59:17 +0100
 
@@ -876,21 +897,6 @@ Date:   2018-03-04 23:54:09 +0100
     Merge pull request #1104 from rouault/macos_fix
     
     Fix Mac builds
-
-commit 8ad94f689ecabc5e9058874af42306793d5b93e9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-03-04 23:27:44 +0100
-
-    Fix Mac builds
-
-commit 3910be8a68d21df5f23e764c593058ba35557051
-Merge: e98d0a2 cfc5395
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-03-04 23:19:59 +0100
-
-    Merge pull request #1062 from radarhere/master
-    
-    Fixed typos
 
 ...</pre></div>
 
