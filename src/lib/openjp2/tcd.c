@@ -2349,7 +2349,7 @@ static void opj_tcd_code_block_enc_deallocate(opj_tcd_precinct_t * p_precinct)
     }
 }
 
-OPJ_SIZE_T opj_tcd_get_encoded_tile_size(opj_tcd_t *p_tcd)
+OPJ_SIZE_T opj_tcd_get_encoder_input_buffer_size(opj_tcd_t *p_tcd)
 {
     OPJ_UINT32 i;
     OPJ_SIZE_T l_data_size = 0;
@@ -2617,7 +2617,7 @@ OPJ_BOOL opj_tcd_copy_tile_data(opj_tcd_t *p_tcd,
     OPJ_UINT32 l_size_comp, l_remaining;
     OPJ_SIZE_T l_nb_elem;
 
-    l_data_size = opj_tcd_get_encoded_tile_size(p_tcd);
+    l_data_size = opj_tcd_get_encoder_input_buffer_size(p_tcd);
     if (l_data_size != p_src_length) {
         return OPJ_FALSE;
     }

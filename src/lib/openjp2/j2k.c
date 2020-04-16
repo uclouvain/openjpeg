@@ -11876,7 +11876,7 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                 }
             }
         }
-        l_current_tile_size = opj_tcd_get_encoded_tile_size(p_j2k->m_tcd);
+        l_current_tile_size = opj_tcd_get_encoder_input_buffer_size(p_j2k->m_tcd);
         if (!l_reuse_data) {
             if (l_current_tile_size > l_max_tile_size) {
                 OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(l_current_data,
