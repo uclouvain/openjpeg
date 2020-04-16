@@ -211,6 +211,7 @@ box_param_t * gene_boxbyType(int fd, OPJ_OFF_T offset, OPJ_SIZE_T length,
                 } else {
                     fprintf(FCGI_stderr, "Error: error in gene_boxbyType( %d, %" PRId64 ", %" PRId64
                             ", %s)\n", fd, offset, length, TBox);
+                    free(data);
                     return NULL;
                 }
             }

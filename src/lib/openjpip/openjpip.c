@@ -357,6 +357,7 @@ OPJ_BOOL OPJ_CALLCONV fread_jpip(const char fname[], jpip_dec_param_t *dec)
     }
 
     if (!(dec->jpiplen = (Byte8_t)get_filesize(infd))) {
+        close(infd);
         return OPJ_FALSE;
     }
 
@@ -365,6 +366,7 @@ OPJ_BOOL OPJ_CALLCONV fread_jpip(const char fname[], jpip_dec_param_t *dec)
     if (read(infd, dec->jpipstream, dec->jpiplen) != (int)dec->jpiplen) {
         fprintf(stderr, "file reading error\n");
         opj_free(dec->jpipstream);
+        close(infd);
         return OPJ_FALSE;
     }
 

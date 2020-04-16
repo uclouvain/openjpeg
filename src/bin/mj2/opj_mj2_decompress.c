@@ -99,8 +99,9 @@ int main(int argc, char *argv[])
 
     /* Checking output file */
     outfile = fopen(argv[2], "w");
-    if (!file) {
+    if (!outfile) {
         fprintf(stderr, "failed to open %s for writing\n", argv[2]);
+        fclose(file);
         return 1;
     }
     fclose(outfile);
@@ -169,6 +170,7 @@ int main(int argc, char *argv[])
             if ((frame_codestream = (unsigned char*)
                                     realloc(frame_codestream, max_codstrm_size)) == NULL) {
                 printf("Error reallocation memory\n");
+                free(frame_codestream);
                 return 1;
             };
         }

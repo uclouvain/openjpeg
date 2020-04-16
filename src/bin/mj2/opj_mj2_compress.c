@@ -708,6 +708,7 @@ int main(int argc, char **argv)
         yuv_num_frames(&movie->tk[0], mj2_parameters.infile);
 
     if (movie->tk[0].num_samples == 0) {
+        fclose(mj2file);
         return 1;
     }
 
