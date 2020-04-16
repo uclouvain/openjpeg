@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b6b7e96b0cf7819ef6a2e8ba2f8bdaaf938326ed
+<pre class='wrap'>commit 774889a328abd5d3c280d9a897f1ac4c672cb0e5
+Merge: b6b7e96 271a71e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-04-17 00:39:46 +0200
+
+    Merge pull request #1244 from rouault/fix_pi_warnings
+    
+    Fix warnings about signed/unsigned casts in pi.c
+
+commit b6b7e96b0cf7819ef6a2e8ba2f8bdaaf938326ed
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2020-04-17 00:37:33 +0200
 
@@ -33,6 +42,12 @@ Date:   2020-04-16 19:09:40 -0300
     jp3d/jpwl/mj2/jpip: Fix resource leaks (#1226)
     
     This issues were found by cppcheck and coverity.
+
+commit 271a71ef0f1dd4740c9f4474279c7da8d15850c9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-04-16 20:52:44 +0200
+
+    Fix warnings about signed/unsigned casts in pi.c
 
 commit 221a801a97a3ea968a311f7905c18a1eb7f034c4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -874,28 +889,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-06-20 14:54:09 +0200
 
     Avoid assertion when running opj_j2k_merge_ppt() several time due to e6674f7ed66abdb32a0be5944f618722b6a7b5d5 revert. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785
-
-commit 832dfd18665da08745748bde2d2563f00c7cd9e7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-06-20 14:38:41 +0200
-
-    Revert "Avoid assertion in opj_j2k_merge_ppt() in case premature EOC is encountered in opj_j2k_read_tile_header(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785. Credit to OSS Fuzz" (fixes #1120)
-    
-    This reverts commit 9906fbf737692486cebabe98169988d818e2e66a.
-    which broke decoding of images where TNsot == 0
-
-commit 4aaf52ec8d8ec7b94c73f77f9c0029a3d3cabbf9
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2018-06-18 14:06:25 +0200
-
-    Use local type declaration for POSIX standard type only for MS compiler
-    
-    ssize_t is a POSIX type which is declared in POSIX include files.
-    Mingw-w64 provides it also for Windows.
-    
-    Use the local declaration only with MS compilers.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 ...</pre></div>
 

@@ -348,6 +348,10 @@ typedef void (*opj_msg_callback)(const char *msg, void *client_data);
 ==========================================================
 */
 
+#ifndef OPJ_UINT32_SEMANTICALLY_BUT_INT32
+#define OPJ_UINT32_SEMANTICALLY_BUT_INT32 OPJ_INT32
+#endif
+
 /**
  * Progression order changes
  *
@@ -366,7 +370,7 @@ typedef struct opj_poc {
     /** Tile number (starting at 1) */
     OPJ_UINT32 tile;
     /** Start and end values for Tile width and height*/
-    OPJ_INT32 tx0, tx1, ty0, ty1;
+    OPJ_UINT32_SEMANTICALLY_BUT_INT32 tx0, tx1, ty0, ty1;
     /** Start value, initialised in pi_initialise_encode*/
     OPJ_UINT32 layS, resS, compS, prcS;
     /** End value, initialised in pi_initialise_encode */
