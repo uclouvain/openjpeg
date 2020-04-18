@@ -577,15 +577,16 @@ typedef struct opj_j2k {
     /** the current tile coder/decoder **/
     struct opj_tcd *    m_tcd;
 
-    /** Number of threads to use */
-    int m_num_threads;
-
     /** Thread pool */
     opj_thread_pool_t* m_tp;
 
+    /** Image width coming from JP2 IHDR box. 0 from a pure codestream */
     OPJ_UINT32 ihdr_w;
+
+    /** Image height coming from JP2 IHDR box. 0 from a pure codestream */
     OPJ_UINT32 ihdr_h;
-    OPJ_UINT32 enumcs;
+
+    /** Set to 1 by the decoder initialization if OPJ_DPARAMETERS_DUMP_FLAG is set */
     unsigned int dump_state;
 }
 opj_j2k_t;
