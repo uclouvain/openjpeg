@@ -31,7 +31,7 @@ int c_vector_init(c_vector **cVector) {
  * @return
  */
 size_t c_vector_size(c_vector *cVector) {
-    if (!cVector)return -1;
+    if (!cVector)return 0;
     return cVector->total;
 }
 
@@ -39,10 +39,11 @@ size_t c_vector_size(c_vector *cVector) {
  * resize c_vector
  * @param cVector
  */
-static int c_vector_resize(c_vector *cVector, size_t count) {
+int c_vector_resize(c_vector *cVector, size_t count) {
+    void *items = NULL;
     if (!cVector)return -1;
     if (cVector->items) {
-        void *items = (void *) realloc(cVector->items, sizeof(void) * count);
+        items = (void *) realloc(cVector->items, sizeof(void) * count);
         if (items) {
             cVector->items = items;
             cVector->total = count;
@@ -68,13 +69,14 @@ static int c_vector_resize(c_vector *cVector, size_t count) {
  * @param count
  */
 int c_vector_push_back(c_vector *cVector, void *data, size_t offset, size_t count) {
-    size_t index = cVector->total;
-    size_t new_size = count + cVector->total;
+    size_t index, new_size;
+    index = cVector->total;
+    new_size = count + cVector->total;
     if (c_vector_resize(cVector, new_size) < 0) {
         // error realloc
         return -1;
     }
-    memcpy(&(cVector->items[index]), &data[offset], count);
+    memcpy(cVector->items + index, data + offset, count);
     return 0;
 }
 
@@ -98,10 +100,10 @@ int c_vector_push_back_zero(c_vector *cVector) {
  */
 size_t c_vector_set(c_vector *cVector, size_t index, void *data, size_t offset, size_t count) {
     if (cVector->total <= index || index + count >= cVector->total) {
-        return -1;
+        return 0;
     }
-    memcpy(&(cVector->items[index]), &data[offset], count);
-    return 0;
+    memcpy(cVector->items + index, data + offset, count);
+    return count;
 }
 
 /**
@@ -114,21 +116,25 @@ size_t c_vector_set(c_vector *cVector, size_t index, void *data, size_t offset, 
  * @return
  */
 size_t c_vector_insert(c_vector *cVector, size_t index, void *data, size_t offset, size_t count) {
+    size_t last_total;
+    size_t len;
+    size_t i;
+    size_t new_size;
     if (cVector->total <= index) {
-        return -1;
+        return 0;
     }
-    size_t last_total = cVector->total;
-    size_t new_size = count + cVector->total;
+    last_total = cVector->total;
+    new_size = count + cVector->total;
     if (c_vector_resize(cVector, new_size) < 0) {
         // error realloc
-        return -1;
+        return 0;
     }
-    size_t len = last_total - index;
-    for (size_t i = 1; i <= len; i++) {
-        memcpy(&cVector->items[new_size - i], &cVector->items[last_total - i], 1);
+    len = last_total - index;
+    for (i = 1; i <= len; i++) {
+        memcpy(cVector->items + new_size - i, cVector->items + last_total - i, 1);
     }
-    memcpy(&(cVector->items[index]), &data[offset], count);
-    return 0;
+    memcpy(cVector->items + index, data + offset, count);
+    return count;
 }
 
 /**
@@ -141,7 +147,7 @@ void *c_vector_get(c_vector *cVector, size_t offset) {
     if (cVector->total <= offset) {
         return NULL;
     }
-    return &cVector->items[offset];
+    return cVector->items + offset;
 }
 
 /**
@@ -161,15 +167,15 @@ void *c_vector_data(c_vector *cVector) {
  */
 size_t c_vector_delete(c_vector *cVector, size_t offset, size_t count) {
     if (cVector->total <= offset) {
-        return -1;
+        return 0;
     }
     if (count + offset >= cVector->total) {
         cVector->total = cVector->total - offset;
-        return 0;
+        return count;
     }
-    memcpy(&(cVector->items[offset]), &(cVector->items[offset + count]), cVector->total - count - offset);
+    memcpy(cVector->items + offset, cVector->items + offset + count, cVector->total - count - offset);
     cVector->total = cVector->total - count;
-    return 0;
+    return count;
 }
 
 /**
@@ -211,7 +217,7 @@ size_t c_vector_read(void *p_buffer, size_t p_nb_bytes, c_vector *v) {
     if (v->total - v->index < p_nb_bytes) {
         p_nb_bytes = v->total - v->index;
     }
-    memcpy(p_buffer, &(v->items[v->index]), p_nb_bytes);
+    memcpy(p_buffer, v->items + v->index, p_nb_bytes);
     v->index += p_nb_bytes;
     return p_nb_bytes;
 }

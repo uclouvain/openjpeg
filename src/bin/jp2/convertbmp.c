@@ -1151,6 +1151,7 @@ int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile) {
     int w, h;
     int i, pad;
     int adjustR, adjustG, adjustB;
+    OPJ_UINT8 _tmp[100];
 
     if (image->comps[0].prec < 8) {
         fprintf(stderr, "imagetobmp: Unsupported precision: %d\n",
@@ -1182,58 +1183,83 @@ int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile) {
 
         /* FILE HEADER */
         /* ------------- */
-        OPJ_UINT8 _1185[4] = {
-                (OPJ_UINT8) (h * w * 3 + 3 * h * (w % 2) + 54) & 0xff,
-                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 8) & 0xff,
-                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 16) & 0xff,
-                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1185, 0, 4);
-        OPJ_UINT8 _1191[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
-                              ((0) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1191, 0, 4);
+        _tmp[0] = (OPJ_UINT8) (h * w * 3 + 3 * h * (w % 2) + 54) & 0xff;
+        _tmp[1] = (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
 
-        OPJ_UINT8 _1195[4] = {(54) & 0xff, ((54) >> 8) & 0xff, ((54) >> 16) & 0xff,
-                              ((54) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1195, 0, 4);
+        _tmp[0] = (0) & 0xff;
+        _tmp[1] = ((0) >> 8) & 0xff;
+        _tmp[2] = ((0) >> 16) & 0xff;
+        _tmp[3] = ((0) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (54) & 0xff;
+        _tmp[1] = ((54) >> 8) & 0xff;
+        _tmp[2] = ((54) >> 16) & 0xff;
+        _tmp[3] = ((54) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
 
         /* INFO HEADER   */
         /* ------------- */
-        OPJ_UINT8 _1201[4] = {(40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff,
-                              ((40) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1201, 0, 4);
+        _tmp[0] = (40) & 0xff;
+        _tmp[1] = ((40) >> 8) & 0xff;
+        _tmp[2] = ((40) >> 16) & 0xff;
+        _tmp[3] = ((40) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
 
-        OPJ_UINT8 _1205[4] = {(OPJ_UINT8) ((w) & 0xff),
-                              (OPJ_UINT8) ((w) >> 8) & 0xff,
-                              (OPJ_UINT8) ((w) >> 16) & 0xff,
-                              (OPJ_UINT8) ((w) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1205, 0, 4);
-        OPJ_UINT8 _1210[4] = {(OPJ_UINT8) ((h) & 0xff),
-                              (OPJ_UINT8) ((h) >> 8) & 0xff,
-                              (OPJ_UINT8) ((h) >> 16) & 0xff,
-                              (OPJ_UINT8) ((h) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1210, 0, 4);
-        OPJ_UINT8 _1215[4] = {(1) & 0xff, ((1) >> 8) & 0xff, (24) & 0xff, ((24) >> 8) & 0xff};
-        c_vector_push_back(outfile, _1215, 0, 4);
-        OPJ_UINT8 _1218[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
-                              ((0) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1218, 0, 4);
-        OPJ_UINT8 _1220[4] = {(OPJ_UINT8) (3 * h * w + 3 * h * (w % 2)) & 0xff,
-                              (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 8) & 0xff,
-                              (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 16) & 0xff,
-                              (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1220, 0, 4);
-        OPJ_UINT8 _1225[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
-                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1225, 0, 4);
-        OPJ_UINT8 _1228[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
-                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1228, 0, 4);
-        OPJ_UINT8 _1231[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
-                              ((0) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1231, 0, 4);
-        OPJ_UINT8 _1234[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
-                              ((0) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1234, 0, 4);
+        _tmp[0] = (OPJ_UINT8) ((w) & 0xff);
+        _tmp[1] = (OPJ_UINT8) ((w) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((w) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((w) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (OPJ_UINT8) ((h) & 0xff);
+        _tmp[1] = (OPJ_UINT8) ((h) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((h) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((h) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (1) & 0xff;
+        _tmp[1] = ((1) >> 8) & 0xff;
+        _tmp[2] = (24) & 0xff;
+        _tmp[3] = ((24) >> 8) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (0) & 0xff;
+        _tmp[1] = ((0) >> 8) & 0xff;
+        _tmp[2] = ((0) >> 16) & 0xff;
+        _tmp[3] = ((0) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (OPJ_UINT8) (3 * h * w + 3 * h * (w % 2)) & 0xff;
+        _tmp[1] = (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (7834) & 0xff;
+        _tmp[1] = ((7834) >> 8) & 0xff;
+        _tmp[2] = ((7834) >> 16) & 0xff;
+        _tmp[3] = ((7834) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (7834) & 0xff;
+        _tmp[1] = ((7834) >> 8) & 0xff;
+        _tmp[2] = ((7834) >> 16) & 0xff;
+        _tmp[3] = ((7834) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (0) & 0xff;
+        _tmp[1] = ((0) >> 8) & 0xff;
+        _tmp[2] = ((0) >> 16) & 0xff;
+        _tmp[3] = ((0) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (0) & 0xff;
+        _tmp[1] = ((0) >> 8) & 0xff;
+        _tmp[2] = ((0) >> 16) & 0xff;
+        _tmp[3] = ((0) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
 
         if (image->comps[0].prec > 8) {
             adjustR = (int) image->comps[0].prec - 8;
@@ -1297,8 +1323,10 @@ int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile) {
             }
             bc = (OPJ_UINT8) b;
 
-            OPJ_UINT8 _1300[3] = {bc, gc, rc};
-            c_vector_push_back(outfile, _1300, 0, 3);
+            _tmp[0] = bc;
+            _tmp[1] = gc;
+            _tmp[2] = rc;
+            c_vector_push_back(outfile, _tmp, 0, 3);
 
             if ((i + 1) % w == 0) {
                 for (pad = ((3 * w) % 4) ? (4 - (3 * w) % 4) : 0; pad > 0; pad--) { /* ADD */
@@ -1308,77 +1336,103 @@ int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile) {
         }
     } else {            /* Gray-scale */
 
-        /* -->> -->> -->> -->>
-        8 bits non code (Gray scale)
-        <<-- <<-- <<-- <<-- */
+/* -->> -->> -->> -->>
+8 bits non code (Gray scale)
+<<-- <<-- <<-- <<-- */
 
         if (!outfile) {
-            fprintf(stderr, "ERROR -> failed to writing\n");
+            fprintf(stderr,
+                    "ERROR -> failed to writing\n");
             return 1;
         }
         if (image->numcomps > 1) {
-            fprintf(stderr, "imagetobmp: only first component of %d is used.\n",
+            fprintf(stderr,
+                    "imagetobmp: only first component of %d is used.\n",
                     image->numcomps);
         }
         w = (int) image->comps[0].w;
         h = (int) image->comps[0].h;
 
 
-        c_vector_push_back(outfile, "BM", 0, 2);
+        c_vector_push_back(outfile,
+                           "BM", 0, 2);
 
-        /* FILE HEADER */
-        /* ------------- */
-        OPJ_UINT8 _1331[4] = {(OPJ_UINT8) (h * w + 54 + 1024 + h * (w % 2)) & 0xff,
-                              (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 8) & 0xff,
-                              (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 16) & 0xff,
-                              (OPJ_UINT8) ((h * w + 54 + 1024 + w * (w % 2)) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1331, 0, 4);
-        OPJ_UINT8 _1336[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
-                              ((0) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1336, 0, 4);
+/* FILE HEADER */
+/* ------------- */
+        _tmp[0] = (OPJ_UINT8) (h * w + 54 + 1024 + h * (w % 2)) & 0xff;
+        _tmp[1] = (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((h * w + 54 + 1024 + w * (w % 2)) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
 
-        OPJ_UINT8 _1340[4] = {(54 + 1024) & 0xff, ((54 + 1024) >> 8) & 0xff,
-                              ((54 + 1024) >> 16) & 0xff,
-                              ((54 + 1024) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1340, 0, 4);
+        _tmp[0] = (0) & 0xff;
+        _tmp[1] = ((0) >> 8) & 0xff;
+        _tmp[2] = ((0) >> 16) & 0xff;
+        _tmp[3] = ((0) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
 
-        /* INFO HEADER */
-        /* ------------- */
-        OPJ_UINT8 _1347[4] = {(40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff,
-                              ((40) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1347, 0, 4);
-        OPJ_UINT8 _1350[4] = {(OPJ_UINT8) ((w) & 0xff),
-                              (OPJ_UINT8) ((w) >> 8) & 0xff,
-                              (OPJ_UINT8) ((w) >> 16) & 0xff,
-                              (OPJ_UINT8) ((w) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1350, 0, 4);
-        OPJ_UINT8 _1355[4] = {(OPJ_UINT8) ((h) & 0xff),
-                              (OPJ_UINT8) ((h) >> 8) & 0xff,
-                              (OPJ_UINT8) ((h) >> 16) & 0xff,
-                              (OPJ_UINT8) ((h) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1355, 0, 4);
-        OPJ_UINT8 _1360[4] = {(1) & 0xff, ((1) >> 8) & 0xff, (8) & 0xff, ((8) >> 8) & 0xff};
-        c_vector_push_back(outfile, _1360, 0, 4);
-        OPJ_UINT8 _1363[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
-                              ((0) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1363, 0, 4);
-        OPJ_UINT8 _1366[4] = {(OPJ_UINT8) (h * w + h * (w % 2)) & 0xff,
-                              (OPJ_UINT8) ((h * w + h * (w % 2)) >> 8) & 0xff,
-                              (OPJ_UINT8) ((h * w + h * (w % 2)) >> 16) & 0xff,
-                              (OPJ_UINT8) ((h * w + h * (w % 2)) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1366, 0, 4);
-        OPJ_UINT8 _1371[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
-                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1371, 0, 4);
-        OPJ_UINT8 _1374[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
-                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1374, 0, 4);
-        OPJ_UINT8 _1377[4] = {(256) & 0xff, ((256) >> 8) & 0xff,
-                              ((256) >> 16) & 0xff, ((256) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1377, 0, 4);
-        OPJ_UINT8 _1380[4] = {(256) & 0xff, ((256) >> 8) & 0xff,
-                              ((256) >> 16) & 0xff, ((256) >> 24) & 0xff};
-        c_vector_push_back(outfile, _1380, 0, 4);
+        _tmp[0] = (54 + 1024) & 0xff;
+        _tmp[1] = ((54 + 1024) >> 8) & 0xff;
+        _tmp[2] = ((54 + 1024) >> 16) & 0xff;
+        _tmp[3] = ((54 + 1024) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+/* INFO HEADER */
+/* ------------- */
+        _tmp[0] = (40) & 0xff;
+        _tmp[1] = ((40) >> 8) & 0xff;
+        _tmp[2] = ((40) >> 16) & 0xff;
+        _tmp[3] = ((40) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (OPJ_UINT8) ((w) & 0xff);
+        _tmp[1] = (OPJ_UINT8) ((w) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((w) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((w) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (OPJ_UINT8) ((h) & 0xff);
+        _tmp[1] = (OPJ_UINT8) ((h) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((h) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((h) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (1) & 0xff;
+        _tmp[1] = ((1) >> 8) & 0xff;
+        _tmp[2] = (8) & 0xff;
+        _tmp[3] = ((8) >> 8) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (0) & 0xff;
+        _tmp[1] = ((0) >> 8) & 0xff;
+        _tmp[2] = ((0) >> 16) & 0xff;
+        _tmp[3] = ((0) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (OPJ_UINT8) (h * w + h * (w % 2)) & 0xff;
+        _tmp[1] = (OPJ_UINT8) ((h * w + h * (w % 2)) >> 8) & 0xff;
+        _tmp[2] = (OPJ_UINT8) ((h * w + h * (w % 2)) >> 16) & 0xff;
+        _tmp[3] = (OPJ_UINT8) ((h * w + h * (w % 2)) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (7834) & 0xff;
+        _tmp[1] = ((7834) >> 8) & 0xff;
+        _tmp[2] = ((7834) >> 16) & 0xff;
+        _tmp[3] = ((7834) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (7834) & 0xff;
+        _tmp[1] = ((7834) >> 8) & 0xff;
+        _tmp[2] = ((7834) >> 16) & 0xff;
+        _tmp[3] = ((7834) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+
+        _tmp[0] = (256) & 0xff;
+        _tmp[1] = ((256) >> 8) & 0xff;
+        _tmp[2] = ((256) >> 16) & 0xff;
+        _tmp[3] = ((256) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp, 0, 4);
+        _tmp[0] = (256) & 0xff;
+        _tmp[1] = ((256) >> 8) & 0xff;
+        _tmp[2] = ((256) >> 16) & 0xff;
+        _tmp[3] = ((256) >> 24) & 0xff;
+        c_vector_push_back(outfile, _tmp,
+                           0, 4);
 
         if (image->comps[0].prec > 8) {
             adjustR = (int) image->comps[0].prec - 8;
@@ -1389,8 +1443,12 @@ int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile) {
         }
 
         for (i = 0; i < 256; i++) {
-            OPJ_UINT8 _1392[4] = {i, i, i, 0};
-            c_vector_push_back(outfile, _1392, 0, 4);
+            _tmp[0] = i;
+            _tmp[1] = i;
+            _tmp[2] = i;
+            _tmp[3] = 0;
+            c_vector_push_back(outfile, _tmp,
+                               0, 4);
         }
 
         for (i = 0; i < w * h; i++) {
@@ -1407,8 +1465,7 @@ int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile) {
                 r = 0;
             }
 
-            OPJ_UINT8 _1410[1] = {(OPJ_UINT8) r};
-            c_vector_push_back(outfile, _1410, 0, 1);
+            c_vector_push_back(outfile, &r, 0, 1);
 
             if ((i + 1) % w == 0) {
                 for (pad = (w % 4) ? (4 - w % 4) : 0; pad > 0; pad--) { /* ADD */

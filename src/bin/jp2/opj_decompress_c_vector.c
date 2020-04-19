@@ -970,7 +970,7 @@ OPJ_FLOAT64 opj_clock(void) {
 #elif defined(__linux)
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
-    return ((OPJ_FLOAT64)ts.tv_sec + (OPJ_FLOAT64)ts.tv_nsec * 1e-9);
+    return ((OPJ_FLOAT64) ts.tv_sec + (OPJ_FLOAT64) ts.tv_nsec * 1e-9);
 #else
     /* Unix : use resource usage */
     /* FIXME: this counts the total CPU time, instead of the user perceived time */
@@ -1236,6 +1236,15 @@ int main(int argc, char **argv) {
     OPJ_UINT32 numDecompressedImages = 0;
     OPJ_UINT32 cp_reduce;
 
+    FILE *file;
+    size_t size;
+    size_t _size;
+    int64_t _size1 = 0;
+    c_vector *v = NULL;
+    c_vector *outfile = NULL;
+    unsigned char *buf = NULL;
+
+
     /* set decoding parameters to default values */
     set_default_parameters(&parameters);
 
@@ -1316,7 +1325,7 @@ int main(int argc, char **argv) {
         /* read the input file and put it in memory */
         /* ---------------------------------------- */
 
-        FILE *file = fopen(parameters.infile, "rb");
+        file = fopen(parameters.infile, "rb");
         if (!file) {
             fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n",
                     parameters.infile);
@@ -1325,22 +1334,26 @@ int main(int argc, char **argv) {
         }
         fseek(file, 0, SEEK_SET);
         fseek(file, 0, SEEK_END);
-        size_t size = ftell(file);
+        _size1 = ftell(file);
+        if(_size1<0){
+            size = (size_t) -_size1;
+        } else{
+            size = (size_t) _size1;
+        }
         fseek(file, 0, SEEK_SET);
-        unsigned char *buf = (unsigned char *) malloc(size * sizeof(unsigned char));
+        buf = (unsigned char *) malloc(size * sizeof(unsigned char));
         if (!buf) {
             fclose(file);
             failed = 1;
             goto fin;
         }
-        size_t _size = fread(buf, 1, size, file);
+        _size = fread(buf, 1, size, file);
         fclose(file);
         if (_size != size) {
             free(buf);
             failed = 1;
             goto fin;
         }
-        c_vector *v = NULL;
         c_vector_init(&v);
         if (v == NULL) {
             free(buf);
@@ -1627,7 +1640,6 @@ int main(int argc, char **argv) {
                 goto fin;
             }
         }
-        c_vector *outfile = NULL;
         c_vector_init(&outfile);
         if (outfile == NULL) {
             fprintf(stderr, "[ERROR] Outfile c_vector\n");
@@ -1649,7 +1661,7 @@ int main(int argc, char **argv) {
                 }
                 break;
             case RAW_DFMT:          /* RAW */
-                if (imagetoraw_c_vector(image, outfile,OPJ_TRUE)) {
+                if (imagetoraw_c_vector(image, outfile, OPJ_TRUE)) {
                     fprintf(stderr, "[ERROR] Error generating raw file. Outfile %s not generated\n",
                             parameters.outfile);
                     failed = 1;
@@ -1659,7 +1671,7 @@ int main(int argc, char **argv) {
                 break;
 
             case RAWL_DFMT:         /* RAWL */
-                if (imagetoraw_c_vector(image, outfile,OPJ_FALSE)) {
+                if (imagetoraw_c_vector(image, outfile, OPJ_FALSE)) {
                     fprintf(stderr,
                             "[ERROR] Error generating rawl file. Outfile %s not generated\n",
                             parameters.outfile);
