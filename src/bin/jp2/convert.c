@@ -51,8 +51,7 @@
  *
  * log2(a)
  */
-static int int_floorlog2(int a)
-{
+static int int_floorlog2(int a) {
     int l;
     for (l = 0; a > 1; l++) {
         a >>= 1;
@@ -61,20 +60,19 @@ static int int_floorlog2(int a)
 }
 
 /* Component precision scaling */
-void clip_component(opj_image_comp_t* component, OPJ_UINT32 precision)
-{
+void clip_component(opj_image_comp_t *component, OPJ_UINT32 precision) {
     OPJ_SIZE_T i;
     OPJ_SIZE_T len;
-    OPJ_UINT32 umax = (OPJ_UINT32)((OPJ_INT32) - 1);
+    OPJ_UINT32 umax = (OPJ_UINT32) ((OPJ_INT32) -1);
 
-    len = (OPJ_SIZE_T)component->w * (OPJ_SIZE_T)component->h;
+    len = (OPJ_SIZE_T) component->w * (OPJ_SIZE_T) component->h;
     if (precision < 32) {
         umax = (1U << precision) - 1U;
     }
 
     if (component->sgnd) {
-        OPJ_INT32* l_data = component->data;
-        OPJ_INT32 max = (OPJ_INT32)(umax / 2U);
+        OPJ_INT32 *l_data = component->data;
+        OPJ_INT32 max = (OPJ_INT32) (umax / 2U);
         OPJ_INT32 min = -max - 1;
         for (i = 0; i < len; ++i) {
             if (l_data[i] > max) {
@@ -84,7 +82,7 @@ void clip_component(opj_image_comp_t* component, OPJ_UINT32 precision)
             }
         }
     } else {
-        OPJ_UINT32* l_data = (OPJ_UINT32*)component->data;
+        OPJ_UINT32 *l_data = (OPJ_UINT32 *) component->data;
         for (i = 0; i < len; ++i) {
             if (l_data[i] > umax) {
                 l_data[i] = umax;
@@ -95,32 +93,31 @@ void clip_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 }
 
 /* Component precision scaling */
-static void scale_component_up(opj_image_comp_t* component,
-                               OPJ_UINT32 precision)
-{
+static void scale_component_up(opj_image_comp_t *component,
+                               OPJ_UINT32 precision) {
     OPJ_SIZE_T i, len;
 
-    len = (OPJ_SIZE_T)component->w * (OPJ_SIZE_T)component->h;
+    len = (OPJ_SIZE_T) component->w * (OPJ_SIZE_T) component->h;
     if (component->sgnd) {
-        OPJ_INT64  newMax = (OPJ_INT64)(1U << (precision - 1));
-        OPJ_INT64  oldMax = (OPJ_INT64)(1U << (component->prec - 1));
-        OPJ_INT32* l_data = component->data;
+        OPJ_INT64 newMax = (OPJ_INT64) (1U << (precision - 1));
+        OPJ_INT64 oldMax = (OPJ_INT64) (1U << (component->prec - 1));
+        OPJ_INT32 *l_data = component->data;
         for (i = 0; i < len; ++i) {
-            l_data[i] = (OPJ_INT32)(((OPJ_INT64)l_data[i] * newMax) / oldMax);
+            l_data[i] = (OPJ_INT32) (((OPJ_INT64) l_data[i] * newMax) / oldMax);
         }
     } else {
-        OPJ_UINT64  newMax = (OPJ_UINT64)((1U << precision) - 1U);
-        OPJ_UINT64  oldMax = (OPJ_UINT64)((1U << component->prec) - 1U);
-        OPJ_UINT32* l_data = (OPJ_UINT32*)component->data;
+        OPJ_UINT64 newMax = (OPJ_UINT64) ((1U << precision) - 1U);
+        OPJ_UINT64 oldMax = (OPJ_UINT64) ((1U << component->prec) - 1U);
+        OPJ_UINT32 *l_data = (OPJ_UINT32 *) component->data;
         for (i = 0; i < len; ++i) {
-            l_data[i] = (OPJ_UINT32)(((OPJ_UINT64)l_data[i] * newMax) / oldMax);
+            l_data[i] = (OPJ_UINT32) (((OPJ_UINT64) l_data[i] * newMax) / oldMax);
         }
     }
     component->prec = precision;
     component->bpp = precision;
 }
-void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
-{
+
+void scale_component(opj_image_comp_t *component, OPJ_UINT32 precision) {
     int shift;
     OPJ_SIZE_T i, len;
 
@@ -131,15 +128,15 @@ void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
         scale_component_up(component, precision);
         return;
     }
-    shift = (int)(component->prec - precision);
-    len = (OPJ_SIZE_T)component->w * (OPJ_SIZE_T)component->h;
+    shift = (int) (component->prec - precision);
+    len = (OPJ_SIZE_T) component->w * (OPJ_SIZE_T) component->h;
     if (component->sgnd) {
-        OPJ_INT32* l_data = component->data;
+        OPJ_INT32 *l_data = component->data;
         for (i = 0; i < len; ++i) {
             l_data[i] >>= shift;
         }
     } else {
-        OPJ_UINT32* l_data = (OPJ_UINT32*)component->data;
+        OPJ_UINT32 *l_data = (OPJ_UINT32 *) component->data;
         for (i = 0; i < len; ++i) {
             l_data[i] >>= shift;
         }
@@ -151,30 +148,29 @@ void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 
 /* planar / interleaved conversions */
 /* used by PNG/TIFF */
-static void convert_32s_C1P1(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst,
-                             OPJ_SIZE_T length)
-{
+static void convert_32s_C1P1(const OPJ_INT32 *pSrc, OPJ_INT32 *const *pDst,
+                             OPJ_SIZE_T length) {
     memcpy(pDst[0], pSrc, length * sizeof(OPJ_INT32));
 }
-static void convert_32s_C2P2(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst,
-                             OPJ_SIZE_T length)
-{
+
+static void convert_32s_C2P2(const OPJ_INT32 *pSrc, OPJ_INT32 *const *pDst,
+                             OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    OPJ_INT32* pDst0 = pDst[0];
-    OPJ_INT32* pDst1 = pDst[1];
+    OPJ_INT32 *pDst0 = pDst[0];
+    OPJ_INT32 *pDst1 = pDst[1];
 
     for (i = 0; i < length; i++) {
         pDst0[i] = pSrc[2 * i + 0];
         pDst1[i] = pSrc[2 * i + 1];
     }
 }
-static void convert_32s_C3P3(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst,
-                             OPJ_SIZE_T length)
-{
+
+static void convert_32s_C3P3(const OPJ_INT32 *pSrc, OPJ_INT32 *const *pDst,
+                             OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    OPJ_INT32* pDst0 = pDst[0];
-    OPJ_INT32* pDst1 = pDst[1];
-    OPJ_INT32* pDst2 = pDst[2];
+    OPJ_INT32 *pDst0 = pDst[0];
+    OPJ_INT32 *pDst1 = pDst[1];
+    OPJ_INT32 *pDst2 = pDst[2];
 
     for (i = 0; i < length; i++) {
         pDst0[i] = pSrc[3 * i + 0];
@@ -182,14 +178,14 @@ static void convert_32s_C3P3(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst,
         pDst2[i] = pSrc[3 * i + 2];
     }
 }
-static void convert_32s_C4P4(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst,
-                             OPJ_SIZE_T length)
-{
+
+static void convert_32s_C4P4(const OPJ_INT32 *pSrc, OPJ_INT32 *const *pDst,
+                             OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    OPJ_INT32* pDst0 = pDst[0];
-    OPJ_INT32* pDst1 = pDst[1];
-    OPJ_INT32* pDst2 = pDst[2];
-    OPJ_INT32* pDst3 = pDst[3];
+    OPJ_INT32 *pDst0 = pDst[0];
+    OPJ_INT32 *pDst1 = pDst[1];
+    OPJ_INT32 *pDst2 = pDst[2];
+    OPJ_INT32 *pDst3 = pDst[3];
 
     for (i = 0; i < length; i++) {
         pDst0[i] = pSrc[4 * i + 0];
@@ -198,43 +194,43 @@ static void convert_32s_C4P4(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst,
         pDst3[i] = pSrc[4 * i + 3];
     }
 }
+
 const convert_32s_CXPX convert_32s_CXPX_LUT[5] = {
-    NULL,
-    convert_32s_C1P1,
-    convert_32s_C2P2,
-    convert_32s_C3P3,
-    convert_32s_C4P4
+        NULL,
+        convert_32s_C1P1,
+        convert_32s_C2P2,
+        convert_32s_C3P3,
+        convert_32s_C4P4
 };
 
-static void convert_32s_P1C1(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst,
-                             OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
+static void convert_32s_P1C1(OPJ_INT32 const *const *pSrc, OPJ_INT32 *pDst,
+                             OPJ_SIZE_T length, OPJ_INT32 adjust) {
     OPJ_SIZE_T i;
-    const OPJ_INT32* pSrc0 = pSrc[0];
+    const OPJ_INT32 *pSrc0 = pSrc[0];
 
     for (i = 0; i < length; i++) {
         pDst[i] = pSrc0[i] + adjust;
     }
 }
-static void convert_32s_P2C2(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst,
-                             OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
+
+static void convert_32s_P2C2(OPJ_INT32 const *const *pSrc, OPJ_INT32 *pDst,
+                             OPJ_SIZE_T length, OPJ_INT32 adjust) {
     OPJ_SIZE_T i;
-    const OPJ_INT32* pSrc0 = pSrc[0];
-    const OPJ_INT32* pSrc1 = pSrc[1];
+    const OPJ_INT32 *pSrc0 = pSrc[0];
+    const OPJ_INT32 *pSrc1 = pSrc[1];
 
     for (i = 0; i < length; i++) {
         pDst[2 * i + 0] = pSrc0[i] + adjust;
         pDst[2 * i + 1] = pSrc1[i] + adjust;
     }
 }
-static void convert_32s_P3C3(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst,
-                             OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
+
+static void convert_32s_P3C3(OPJ_INT32 const *const *pSrc, OPJ_INT32 *pDst,
+                             OPJ_SIZE_T length, OPJ_INT32 adjust) {
     OPJ_SIZE_T i;
-    const OPJ_INT32* pSrc0 = pSrc[0];
-    const OPJ_INT32* pSrc1 = pSrc[1];
-    const OPJ_INT32* pSrc2 = pSrc[2];
+    const OPJ_INT32 *pSrc0 = pSrc[0];
+    const OPJ_INT32 *pSrc1 = pSrc[1];
+    const OPJ_INT32 *pSrc2 = pSrc[2];
 
     for (i = 0; i < length; i++) {
         pDst[3 * i + 0] = pSrc0[i] + adjust;
@@ -242,14 +238,14 @@ static void convert_32s_P3C3(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst,
         pDst[3 * i + 2] = pSrc2[i] + adjust;
     }
 }
-static void convert_32s_P4C4(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst,
-                             OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
+
+static void convert_32s_P4C4(OPJ_INT32 const *const *pSrc, OPJ_INT32 *pDst,
+                             OPJ_SIZE_T length, OPJ_INT32 adjust) {
     OPJ_SIZE_T i;
-    const OPJ_INT32* pSrc0 = pSrc[0];
-    const OPJ_INT32* pSrc1 = pSrc[1];
-    const OPJ_INT32* pSrc2 = pSrc[2];
-    const OPJ_INT32* pSrc3 = pSrc[3];
+    const OPJ_INT32 *pSrc0 = pSrc[0];
+    const OPJ_INT32 *pSrc1 = pSrc[1];
+    const OPJ_INT32 *pSrc2 = pSrc[2];
+    const OPJ_INT32 *pSrc3 = pSrc[3];
 
     for (i = 0; i < length; i++) {
         pDst[4 * i + 0] = pSrc0[i] + adjust;
@@ -258,48 +254,48 @@ static void convert_32s_P4C4(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst,
         pDst[4 * i + 3] = pSrc3[i] + adjust;
     }
 }
+
 const convert_32s_PXCX convert_32s_PXCX_LUT[5] = {
-    NULL,
-    convert_32s_P1C1,
-    convert_32s_P2C2,
-    convert_32s_P3C3,
-    convert_32s_P4C4
+        NULL,
+        convert_32s_P1C1,
+        convert_32s_P2C2,
+        convert_32s_P3C3,
+        convert_32s_P4C4
 };
 
 /* bit depth conversions */
 /* used by PNG/TIFF up to 8bpp */
-static void convert_1u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst,
-                              OPJ_SIZE_T length)
-{
+static void convert_1u32s_C1R(const OPJ_BYTE *pSrc, OPJ_INT32 *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)7U); i += 8U) {
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 7U); i += 8U) {
         OPJ_UINT32 val = *pSrc++;
-        pDst[i + 0] = (OPJ_INT32)(val >> 7);
-        pDst[i + 1] = (OPJ_INT32)((val >> 6) & 0x1U);
-        pDst[i + 2] = (OPJ_INT32)((val >> 5) & 0x1U);
-        pDst[i + 3] = (OPJ_INT32)((val >> 4) & 0x1U);
-        pDst[i + 4] = (OPJ_INT32)((val >> 3) & 0x1U);
-        pDst[i + 5] = (OPJ_INT32)((val >> 2) & 0x1U);
-        pDst[i + 6] = (OPJ_INT32)((val >> 1) & 0x1U);
-        pDst[i + 7] = (OPJ_INT32)(val & 0x1U);
+        pDst[i + 0] = (OPJ_INT32) (val >> 7);
+        pDst[i + 1] = (OPJ_INT32) ((val >> 6) & 0x1U);
+        pDst[i + 2] = (OPJ_INT32) ((val >> 5) & 0x1U);
+        pDst[i + 3] = (OPJ_INT32) ((val >> 4) & 0x1U);
+        pDst[i + 4] = (OPJ_INT32) ((val >> 3) & 0x1U);
+        pDst[i + 5] = (OPJ_INT32) ((val >> 2) & 0x1U);
+        pDst[i + 6] = (OPJ_INT32) ((val >> 1) & 0x1U);
+        pDst[i + 7] = (OPJ_INT32) (val & 0x1U);
     }
     if (length & 7U) {
         OPJ_UINT32 val = *pSrc++;
         length = length & 7U;
-        pDst[i + 0] = (OPJ_INT32)(val >> 7);
+        pDst[i + 0] = (OPJ_INT32) (val >> 7);
 
         if (length > 1U) {
-            pDst[i + 1] = (OPJ_INT32)((val >> 6) & 0x1U);
+            pDst[i + 1] = (OPJ_INT32) ((val >> 6) & 0x1U);
             if (length > 2U) {
-                pDst[i + 2] = (OPJ_INT32)((val >> 5) & 0x1U);
+                pDst[i + 2] = (OPJ_INT32) ((val >> 5) & 0x1U);
                 if (length > 3U) {
-                    pDst[i + 3] = (OPJ_INT32)((val >> 4) & 0x1U);
+                    pDst[i + 3] = (OPJ_INT32) ((val >> 4) & 0x1U);
                     if (length > 4U) {
-                        pDst[i + 4] = (OPJ_INT32)((val >> 3) & 0x1U);
+                        pDst[i + 4] = (OPJ_INT32) ((val >> 3) & 0x1U);
                         if (length > 5U) {
-                            pDst[i + 5] = (OPJ_INT32)((val >> 2) & 0x1U);
+                            pDst[i + 5] = (OPJ_INT32) ((val >> 2) & 0x1U);
                             if (length > 6U) {
-                                pDst[i + 6] = (OPJ_INT32)((val >> 1) & 0x1U);
+                                pDst[i + 6] = (OPJ_INT32) ((val >> 1) & 0x1U);
                             }
                         }
                     }
@@ -308,115 +304,115 @@ static void convert_1u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst,
         }
     }
 }
-static void convert_2u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst,
-                              OPJ_SIZE_T length)
-{
+
+static void convert_2u32s_C1R(const OPJ_BYTE *pSrc, OPJ_INT32 *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i += 4U) {
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 3U); i += 4U) {
         OPJ_UINT32 val = *pSrc++;
-        pDst[i + 0] = (OPJ_INT32)(val >> 6);
-        pDst[i + 1] = (OPJ_INT32)((val >> 4) & 0x3U);
-        pDst[i + 2] = (OPJ_INT32)((val >> 2) & 0x3U);
-        pDst[i + 3] = (OPJ_INT32)(val & 0x3U);
+        pDst[i + 0] = (OPJ_INT32) (val >> 6);
+        pDst[i + 1] = (OPJ_INT32) ((val >> 4) & 0x3U);
+        pDst[i + 2] = (OPJ_INT32) ((val >> 2) & 0x3U);
+        pDst[i + 3] = (OPJ_INT32) (val & 0x3U);
     }
     if (length & 3U) {
         OPJ_UINT32 val = *pSrc++;
         length = length & 3U;
-        pDst[i + 0] = (OPJ_INT32)(val >> 6);
+        pDst[i + 0] = (OPJ_INT32) (val >> 6);
 
         if (length > 1U) {
-            pDst[i + 1] = (OPJ_INT32)((val >> 4) & 0x3U);
+            pDst[i + 1] = (OPJ_INT32) ((val >> 4) & 0x3U);
             if (length > 2U) {
-                pDst[i + 2] = (OPJ_INT32)((val >> 2) & 0x3U);
+                pDst[i + 2] = (OPJ_INT32) ((val >> 2) & 0x3U);
 
             }
         }
     }
 }
-static void convert_4u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst,
-                              OPJ_SIZE_T length)
-{
+
+static void convert_4u32s_C1R(const OPJ_BYTE *pSrc, OPJ_INT32 *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)1U); i += 2U) {
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 1U); i += 2U) {
         OPJ_UINT32 val = *pSrc++;
-        pDst[i + 0] = (OPJ_INT32)(val >> 4);
-        pDst[i + 1] = (OPJ_INT32)(val & 0xFU);
+        pDst[i + 0] = (OPJ_INT32) (val >> 4);
+        pDst[i + 1] = (OPJ_INT32) (val & 0xFU);
     }
     if (length & 1U) {
         OPJ_UINT8 val = *pSrc++;
-        pDst[i + 0] = (OPJ_INT32)(val >> 4);
+        pDst[i + 0] = (OPJ_INT32) (val >> 4);
     }
 }
-static void convert_6u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst,
-                              OPJ_SIZE_T length)
-{
+
+static void convert_6u32s_C1R(const OPJ_BYTE *pSrc, OPJ_INT32 *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i += 4U) {
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 3U); i += 4U) {
         OPJ_UINT32 val0 = *pSrc++;
         OPJ_UINT32 val1 = *pSrc++;
         OPJ_UINT32 val2 = *pSrc++;
-        pDst[i + 0] = (OPJ_INT32)(val0 >> 2);
-        pDst[i + 1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
-        pDst[i + 2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
-        pDst[i + 3] = (OPJ_INT32)(val2 & 0x3FU);
+        pDst[i + 0] = (OPJ_INT32) (val0 >> 2);
+        pDst[i + 1] = (OPJ_INT32) (((val0 & 0x3U) << 4) | (val1 >> 4));
+        pDst[i + 2] = (OPJ_INT32) (((val1 & 0xFU) << 2) | (val2 >> 6));
+        pDst[i + 3] = (OPJ_INT32) (val2 & 0x3FU);
 
     }
     if (length & 3U) {
         OPJ_UINT32 val0 = *pSrc++;
         length = length & 3U;
-        pDst[i + 0] = (OPJ_INT32)(val0 >> 2);
+        pDst[i + 0] = (OPJ_INT32) (val0 >> 2);
 
         if (length > 1U) {
             OPJ_UINT32 val1 = *pSrc++;
-            pDst[i + 1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
+            pDst[i + 1] = (OPJ_INT32) (((val0 & 0x3U) << 4) | (val1 >> 4));
             if (length > 2U) {
                 OPJ_UINT32 val2 = *pSrc++;
-                pDst[i + 2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
+                pDst[i + 2] = (OPJ_INT32) (((val1 & 0xFU) << 2) | (val2 >> 6));
             }
         }
     }
 }
-static void convert_8u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst,
-                              OPJ_SIZE_T length)
-{
+
+static void convert_8u32s_C1R(const OPJ_BYTE *pSrc, OPJ_INT32 *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
     for (i = 0; i < length; i++) {
         pDst[i] = pSrc[i];
     }
 }
+
 const convert_XXx32s_C1R convert_XXu32s_C1R_LUT[9] = {
-    NULL,
-    convert_1u32s_C1R,
-    convert_2u32s_C1R,
-    NULL,
-    convert_4u32s_C1R,
-    NULL,
-    convert_6u32s_C1R,
-    NULL,
-    convert_8u32s_C1R
+        NULL,
+        convert_1u32s_C1R,
+        convert_2u32s_C1R,
+        NULL,
+        convert_4u32s_C1R,
+        NULL,
+        convert_6u32s_C1R,
+        NULL,
+        convert_8u32s_C1R
 };
 
 
-static void convert_32s1u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst,
-                              OPJ_SIZE_T length)
-{
+static void convert_32s1u_C1R(const OPJ_INT32 *pSrc, OPJ_BYTE *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)7U); i += 8U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
-        OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i + 1];
-        OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i + 2];
-        OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i + 3];
-        OPJ_UINT32 src4 = (OPJ_UINT32)pSrc[i + 4];
-        OPJ_UINT32 src5 = (OPJ_UINT32)pSrc[i + 5];
-        OPJ_UINT32 src6 = (OPJ_UINT32)pSrc[i + 6];
-        OPJ_UINT32 src7 = (OPJ_UINT32)pSrc[i + 7];
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 7U); i += 8U) {
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
+        OPJ_UINT32 src1 = (OPJ_UINT32) pSrc[i + 1];
+        OPJ_UINT32 src2 = (OPJ_UINT32) pSrc[i + 2];
+        OPJ_UINT32 src3 = (OPJ_UINT32) pSrc[i + 3];
+        OPJ_UINT32 src4 = (OPJ_UINT32) pSrc[i + 4];
+        OPJ_UINT32 src5 = (OPJ_UINT32) pSrc[i + 5];
+        OPJ_UINT32 src6 = (OPJ_UINT32) pSrc[i + 6];
+        OPJ_UINT32 src7 = (OPJ_UINT32) pSrc[i + 7];
 
-        *pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) |
-                             (src4 << 3) | (src5 << 2) | (src6 << 1) | src7);
+        *pDst++ = (OPJ_BYTE) ((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) |
+                              (src4 << 3) | (src5 << 2) | (src6 << 1) | src7);
     }
 
     if (length & 7U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
         OPJ_UINT32 src1 = 0U;
         OPJ_UINT32 src2 = 0U;
         OPJ_UINT32 src3 = 0U;
@@ -426,128 +422,126 @@ static void convert_32s1u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst,
         length = length & 7U;
 
         if (length > 1U) {
-            src1 = (OPJ_UINT32)pSrc[i + 1];
+            src1 = (OPJ_UINT32) pSrc[i + 1];
             if (length > 2U) {
-                src2 = (OPJ_UINT32)pSrc[i + 2];
+                src2 = (OPJ_UINT32) pSrc[i + 2];
                 if (length > 3U) {
-                    src3 = (OPJ_UINT32)pSrc[i + 3];
+                    src3 = (OPJ_UINT32) pSrc[i + 3];
                     if (length > 4U) {
-                        src4 = (OPJ_UINT32)pSrc[i + 4];
+                        src4 = (OPJ_UINT32) pSrc[i + 4];
                         if (length > 5U) {
-                            src5 = (OPJ_UINT32)pSrc[i + 5];
+                            src5 = (OPJ_UINT32) pSrc[i + 5];
                             if (length > 6U) {
-                                src6 = (OPJ_UINT32)pSrc[i + 6];
+                                src6 = (OPJ_UINT32) pSrc[i + 6];
                             }
                         }
                     }
                 }
             }
         }
-        *pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) |
-                             (src4 << 3) | (src5 << 2) | (src6 << 1));
+        *pDst++ = (OPJ_BYTE) ((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) |
+                              (src4 << 3) | (src5 << 2) | (src6 << 1));
     }
 }
 
-static void convert_32s2u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst,
-                              OPJ_SIZE_T length)
-{
+static void convert_32s2u_C1R(const OPJ_INT32 *pSrc, OPJ_BYTE *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i += 4U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
-        OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i + 1];
-        OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i + 2];
-        OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i + 3];
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 3U); i += 4U) {
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
+        OPJ_UINT32 src1 = (OPJ_UINT32) pSrc[i + 1];
+        OPJ_UINT32 src2 = (OPJ_UINT32) pSrc[i + 2];
+        OPJ_UINT32 src3 = (OPJ_UINT32) pSrc[i + 3];
 
-        *pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2) | src3);
+        *pDst++ = (OPJ_BYTE) ((src0 << 6) | (src1 << 4) | (src2 << 2) | src3);
     }
 
     if (length & 3U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
         OPJ_UINT32 src1 = 0U;
         OPJ_UINT32 src2 = 0U;
         length = length & 3U;
 
         if (length > 1U) {
-            src1 = (OPJ_UINT32)pSrc[i + 1];
+            src1 = (OPJ_UINT32) pSrc[i + 1];
             if (length > 2U) {
-                src2 = (OPJ_UINT32)pSrc[i + 2];
+                src2 = (OPJ_UINT32) pSrc[i + 2];
             }
         }
-        *pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2));
+        *pDst++ = (OPJ_BYTE) ((src0 << 6) | (src1 << 4) | (src2 << 2));
     }
 }
 
-static void convert_32s4u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst,
-                              OPJ_SIZE_T length)
-{
+static void convert_32s4u_C1R(const OPJ_INT32 *pSrc, OPJ_BYTE *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)1U); i += 2U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
-        OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i + 1];
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 1U); i += 2U) {
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
+        OPJ_UINT32 src1 = (OPJ_UINT32) pSrc[i + 1];
 
-        *pDst++ = (OPJ_BYTE)((src0 << 4) | src1);
+        *pDst++ = (OPJ_BYTE) ((src0 << 4) | src1);
     }
 
     if (length & 1U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
-        *pDst++ = (OPJ_BYTE)((src0 << 4));
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
+        *pDst++ = (OPJ_BYTE) ((src0 << 4));
     }
 }
 
-static void convert_32s6u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst,
-                              OPJ_SIZE_T length)
-{
+static void convert_32s6u_C1R(const OPJ_INT32 *pSrc, OPJ_BYTE *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
-    for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i += 4U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
-        OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i + 1];
-        OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i + 2];
-        OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i + 3];
+    for (i = 0; i < (length & ~(OPJ_SIZE_T) 3U); i += 4U) {
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
+        OPJ_UINT32 src1 = (OPJ_UINT32) pSrc[i + 1];
+        OPJ_UINT32 src2 = (OPJ_UINT32) pSrc[i + 2];
+        OPJ_UINT32 src3 = (OPJ_UINT32) pSrc[i + 3];
 
-        *pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
-        *pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
-        *pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6) | src3);
+        *pDst++ = (OPJ_BYTE) ((src0 << 2) | (src1 >> 4));
+        *pDst++ = (OPJ_BYTE) (((src1 & 0xFU) << 4) | (src2 >> 2));
+        *pDst++ = (OPJ_BYTE) (((src2 & 0x3U) << 6) | src3);
     }
 
     if (length & 3U) {
-        OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i + 0];
+        OPJ_UINT32 src0 = (OPJ_UINT32) pSrc[i + 0];
         OPJ_UINT32 src1 = 0U;
         OPJ_UINT32 src2 = 0U;
         length = length & 3U;
 
         if (length > 1U) {
-            src1 = (OPJ_UINT32)pSrc[i + 1];
+            src1 = (OPJ_UINT32) pSrc[i + 1];
             if (length > 2U) {
-                src2 = (OPJ_UINT32)pSrc[i + 2];
+                src2 = (OPJ_UINT32) pSrc[i + 2];
             }
         }
-        *pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
+        *pDst++ = (OPJ_BYTE) ((src0 << 2) | (src1 >> 4));
         if (length > 1U) {
-            *pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
+            *pDst++ = (OPJ_BYTE) (((src1 & 0xFU) << 4) | (src2 >> 2));
             if (length > 2U) {
-                *pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6));
+                *pDst++ = (OPJ_BYTE) (((src2 & 0x3U) << 6));
             }
         }
     }
 }
-static void convert_32s8u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst,
-                              OPJ_SIZE_T length)
-{
+
+static void convert_32s8u_C1R(const OPJ_INT32 *pSrc, OPJ_BYTE *pDst,
+                              OPJ_SIZE_T length) {
     OPJ_SIZE_T i;
     for (i = 0; i < length; ++i) {
-        pDst[i] = (OPJ_BYTE)pSrc[i];
+        pDst[i] = (OPJ_BYTE) pSrc[i];
     }
 }
+
 const convert_32sXXx_C1R convert_32sXXu_C1R_LUT[9] = {
-    NULL,
-    convert_32s1u_C1R,
-    convert_32s2u_C1R,
-    NULL,
-    convert_32s4u_C1R,
-    NULL,
-    convert_32s6u_C1R,
-    NULL,
-    convert_32s8u_C1R
+        NULL,
+        convert_32s1u_C1R,
+        convert_32s2u_C1R,
+        NULL,
+        convert_32s4u_C1R,
+        NULL,
+        convert_32s6u_C1R,
+        NULL,
+        convert_32s8u_C1R
 };
 
 /* -->> -->> -->> -->>
@@ -581,16 +575,14 @@ struct tga_header {
 #endif /* INFORMATION_ONLY */
 
 /* Returns a ushort from a little-endian serialized value */
-static unsigned short get_tga_ushort(const unsigned char *data)
-{
-    return (unsigned short)(data[0] | (data[1] << 8));
+static unsigned short get_tga_ushort(const unsigned char *data) {
+    return (unsigned short) (data[0] | (data[1] << 8));
 }
 
 #define TGA_HEADER_SIZE 18
 
 static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
-                          unsigned int *width, unsigned int *height, int *flip_image)
-{
+                          unsigned int *width, unsigned int *height, int *flip_image) {
     int palette_size;
     unsigned char tga[TGA_HEADER_SIZE];
     unsigned char id_len, /*cmap_type,*/ image_type;
@@ -605,7 +597,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     if (fread(tga, TGA_HEADER_SIZE, 1, fp) != 1) {
         fprintf(stderr,
                 "\nError: fread return a number of element different from the expected.\n");
-        return 0 ;
+        return 0;
     }
     id_len = tga[0];
     /*cmap_type = tga[1];*/
@@ -622,11 +614,11 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     image_w = get_tga_ushort(&tga[12]);
     image_h = get_tga_ushort(&tga[14]);
     pixel_depth = tga[16];
-    image_desc  = tga[17];
+    image_desc = tga[17];
 
-    *bits_per_pixel = (unsigned int)pixel_depth;
-    *width  = (unsigned int)image_w;
-    *height = (unsigned int)image_h;
+    *bits_per_pixel = (unsigned int) pixel_depth;
+    *width = (unsigned int) image_w;
+    *height = (unsigned int) image_h;
 
     /* Ignore tga identifier, if present ... */
     if (id_len) {
@@ -639,7 +631,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
             fprintf(stderr,
                     "\nError: fread return a number of element different from the expected.\n");
             free(id);
-            return 0 ;
+            return 0;
         }
         free(id);
     }
@@ -649,7 +641,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     //         10 - RLE encoded RGB. */
     if (image_type > 8) {
         fprintf(stderr, "Sorry, compressed tga files are not currently supported.\n");
-        return 0 ;
+        return 0;
     }
 
     *flip_image = !(image_desc & 32);
@@ -674,8 +666,7 @@ static INLINE OPJ_UINT16 swap16(OPJ_UINT16 x)
 #endif
 
 static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
-                           OPJ_BOOL flip_image)
-{
+                           OPJ_BOOL flip_image) {
     OPJ_UINT16 image_w, image_h, us0;
     unsigned char uc0, image_type;
     unsigned char pixel_depth, image_desc;
@@ -687,7 +678,7 @@ static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
     pixel_depth = 0;
 
     if (bits_per_pixel < 256) {
-        pixel_depth = (unsigned char)bits_per_pixel;
+        pixel_depth = (unsigned char) bits_per_pixel;
     } else {
         fprintf(stderr, "ERROR: Wrong bits per pixel inside tga_header");
         return 0;
@@ -724,7 +715,7 @@ static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
         goto fails;    /* y_origin */
     }
 
-    image_w = (unsigned short)width;
+    image_w = (unsigned short) width;
     image_h = (unsigned short) height;
 
 #ifndef OPJ_BIG_ENDIAN
@@ -760,13 +751,12 @@ static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
 
     return 1;
 
-fails:
+    fails:
     fputs("\nwrite_tgaheader: write ERROR\n", stderr);
     return 0;
 }
 
-opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
-{
+opj_image_t *tgatoimage(const char *filename, opj_cparameters_t *parameters) {
     FILE *f;
     opj_image_t *image;
     unsigned int image_width, image_height, pixel_bit_depth;
@@ -775,7 +765,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
     opj_image_cmptparm_t cmptparm[4];   /* maximum 4 components */
     int numcomps;
     OPJ_COLOR_SPACE color_space;
-    OPJ_BOOL mono ;
+    OPJ_BOOL mono;
     OPJ_BOOL save_alpha;
     int subsampling_dx, subsampling_dy;
     int i;
@@ -817,15 +807,15 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
     /* If the declared file size is > 10 MB, check that the file is big */
     /* enough to avoid excessive memory allocations */
     if (image_height != 0 &&
-            image_width > 10000000U / image_height / (OPJ_UINT32)numcomps) {
+        image_width > 10000000U / image_height / (OPJ_UINT32) numcomps) {
         char ch;
         OPJ_UINT64 expected_file_size =
-            (OPJ_UINT64)image_width * image_height * (OPJ_UINT32)numcomps;
+                (OPJ_UINT64) image_width * image_height * (OPJ_UINT32) numcomps;
         long curpos = ftell(f);
-        if (expected_file_size > (OPJ_UINT64)INT_MAX) {
-            expected_file_size = (OPJ_UINT64)INT_MAX;
+        if (expected_file_size > (OPJ_UINT64) INT_MAX) {
+            expected_file_size = (OPJ_UINT64) INT_MAX;
         }
-        fseek(f, (long)expected_file_size - 1, SEEK_SET);
+        fseek(f, (long) expected_file_size - 1, SEEK_SET);
         if (fread(&ch, 1, 1, f) != 1) {
             fclose(f);
             return NULL;
@@ -840,14 +830,14 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
         cmptparm[i].prec = 8;
         cmptparm[i].bpp = 8;
         cmptparm[i].sgnd = 0;
-        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
-        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
+        cmptparm[i].dx = (OPJ_UINT32) subsampling_dx;
+        cmptparm[i].dy = (OPJ_UINT32) subsampling_dy;
         cmptparm[i].w = image_width;
         cmptparm[i].h = image_height;
     }
 
     /* create the image */
-    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
+    image = opj_image_create((OPJ_UINT32) numcomps, &cmptparm[0], color_space);
 
     if (!image) {
         fclose(f);
@@ -856,23 +846,23 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
 
 
     /* set image offset and reference grid */
-    image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
-    image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
-    image->x1 = !image->x0 ? (OPJ_UINT32)(image_width - 1)  *
-                (OPJ_UINT32)subsampling_dx + 1 : image->x0 + (OPJ_UINT32)(image_width - 1)  *
-                (OPJ_UINT32)subsampling_dx + 1;
-    image->y1 = !image->y0 ? (OPJ_UINT32)(image_height - 1) *
-                (OPJ_UINT32)subsampling_dy + 1 : image->y0 + (OPJ_UINT32)(image_height - 1) *
-                (OPJ_UINT32)subsampling_dy + 1;
+    image->x0 = (OPJ_UINT32) parameters->image_offset_x0;
+    image->y0 = (OPJ_UINT32) parameters->image_offset_y0;
+    image->x1 = !image->x0 ? (OPJ_UINT32) (image_width - 1) *
+                             (OPJ_UINT32) subsampling_dx + 1 : image->x0 + (OPJ_UINT32) (image_width - 1) *
+                                                                           (OPJ_UINT32) subsampling_dx + 1;
+    image->y1 = !image->y0 ? (OPJ_UINT32) (image_height - 1) *
+                             (OPJ_UINT32) subsampling_dy + 1 : image->y0 + (OPJ_UINT32) (image_height - 1) *
+                                                                           (OPJ_UINT32) subsampling_dy + 1;
 
     /* set image data */
     for (y = 0; y < image_height; y++) {
         int index;
 
         if (flip_image) {
-            index = (int)((image_height - y - 1) * image_width);
+            index = (int) ((image_height - y - 1) * image_width);
         } else {
-            index = (int)(y * image_width);
+            index = (int) (y * image_width);
         }
 
         if (numcomps == 3) {
@@ -952,8 +942,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
     return image;
 }
 
-int imagetotga(opj_image_t * image, const char *outfile)
-{
+int imagetotga(opj_image_t *image, const char *outfile) {
     int width, height, bpp, x, y;
     OPJ_BOOL write_alpha;
     unsigned int i;
@@ -974,9 +963,9 @@ int imagetotga(opj_image_t * image, const char *outfile)
 
     for (i = 0; i < image->numcomps - 1; i++) {
         if ((image->comps[0].dx != image->comps[i + 1].dx)
-                || (image->comps[0].dy != image->comps[i + 1].dy)
-                || (image->comps[0].prec != image->comps[i + 1].prec)
-                || (image->comps[0].sgnd != image->comps[i + 1].sgnd)) {
+            || (image->comps[0].dy != image->comps[i + 1].dy)
+            || (image->comps[0].prec != image->comps[i + 1].prec)
+            || (image->comps[0].sgnd != image->comps[i + 1].sgnd)) {
             fclose(fdest);
             fprintf(stderr,
                     "Unable to create a tga file with such J2K image charateristics.\n");
@@ -984,8 +973,8 @@ int imagetotga(opj_image_t * image, const char *outfile)
         }
     }
 
-    width  = (int)image->comps[0].w;
-    height = (int)image->comps[0].h;
+    width = (int) image->comps[0].w;
+    height = (int) image->comps[0].h;
 
     /* Mono with alpha, or RGB with alpha. */
     write_alpha = (image->numcomps == 2) || (image->numcomps == 4);
@@ -999,7 +988,7 @@ int imagetotga(opj_image_t * image, const char *outfile)
 
     alpha_channel = image->numcomps - 1;
 
-    scale = 255.0f / (float)((1 << image->comps[0].prec) - 1);
+    scale = 255.0f / (float) ((1 << image->comps[0].prec) - 1);
 
     adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
     if (image->numcomps >= 3) {
@@ -1008,14 +997,14 @@ int imagetotga(opj_image_t * image, const char *outfile)
     }
 
     for (y = 0; y < height; y++) {
-        unsigned int index = (unsigned int)(y * width);
+        unsigned int index = (unsigned int) (y * width);
 
         for (x = 0; x < width; x++, index++) {
-            r = (float)(image->comps[0].data[index] + adjustR);
+            r = (float) (image->comps[0].data[index] + adjustR);
 
             if (image->numcomps > 2) {
-                g = (float)(image->comps[1].data[index] + adjustG);
-                b = (float)(image->comps[2].data[index] + adjustB);
+                g = (float) (image->comps[1].data[index] + adjustG);
+                b = (float) (image->comps[2].data[index] + adjustB);
             } else {
                 /* Greyscale ... */
                 g = r;
@@ -1028,7 +1017,7 @@ int imagetotga(opj_image_t * image, const char *outfile)
             } else if (b < 0.) {
                 b = 0.;
             }
-            value = (unsigned char)(b * scale);
+            value = (unsigned char) (b * scale);
             res = fwrite(&value, 1, 1, fdest);
 
             if (res < 1) {
@@ -1040,7 +1029,7 @@ int imagetotga(opj_image_t * image, const char *outfile)
             } else if (g < 0.) {
                 g = 0.;
             }
-            value = (unsigned char)(g * scale);
+            value = (unsigned char) (g * scale);
             res = fwrite(&value, 1, 1, fdest);
 
             if (res < 1) {
@@ -1052,7 +1041,7 @@ int imagetotga(opj_image_t * image, const char *outfile)
             } else if (r < 0.) {
                 r = 0.;
             }
-            value = (unsigned char)(r * scale);
+            value = (unsigned char) (r * scale);
             res = fwrite(&value, 1, 1, fdest);
 
             if (res < 1) {
@@ -1061,13 +1050,13 @@ int imagetotga(opj_image_t * image, const char *outfile)
             }
 
             if (write_alpha) {
-                a = (float)(image->comps[alpha_channel].data[index]);
+                a = (float) (image->comps[alpha_channel].data[index]);
                 if (a > 255.) {
                     a = 255.;
                 } else if (a < 0.) {
                     a = 0.;
                 }
-                value = (unsigned char)(a * scale);
+                value = (unsigned char) (a * scale);
                 res = fwrite(&value, 1, 1, fdest);
 
                 if (res < 1) {
@@ -1078,7 +1067,7 @@ int imagetotga(opj_image_t * image, const char *outfile)
         }
     }
     fails = 0;
-fin:
+    fin:
     fclose(fdest);
 
     return fails;
@@ -1091,8 +1080,7 @@ PGX IMAGE FORMAT
 <<-- <<-- <<-- <<-- */
 
 
-static unsigned char readuchar(FILE * f)
-{
+static unsigned char readuchar(FILE *f) {
     unsigned char c1;
     if (!fread(&c1, 1, 1, f)) {
         fprintf(stderr,
@@ -1102,8 +1090,7 @@ static unsigned char readuchar(FILE * f)
     return c1;
 }
 
-static unsigned short readushort(FILE * f, int bigendian)
-{
+static unsigned short readushort(FILE *f, int bigendian) {
     unsigned char c1, c2;
     if (!fread(&c1, 1, 1, f)) {
         fprintf(stderr,
@@ -1116,14 +1103,13 @@ static unsigned short readushort(FILE * f, int bigendian)
         return 0;
     }
     if (bigendian) {
-        return (unsigned short)((c1 << 8) + c2);
+        return (unsigned short) ((c1 << 8) + c2);
     } else {
-        return (unsigned short)((c2 << 8) + c1);
+        return (unsigned short) ((c2 << 8) + c1);
     }
 }
 
-static unsigned int readuint(FILE * f, int bigendian)
-{
+static unsigned int readuint(FILE *f, int bigendian) {
     unsigned char c1, c2, c3, c4;
     if (!fread(&c1, 1, 1, f)) {
         fprintf(stderr,
@@ -1146,22 +1132,21 @@ static unsigned int readuint(FILE * f, int bigendian)
         return 0;
     }
     if (bigendian) {
-        return (unsigned int)(c1 << 24) + (unsigned int)(c2 << 16) + (unsigned int)(
-                   c3 << 8) + c4;
+        return (unsigned int) (c1 << 24) + (unsigned int) (c2 << 16) + (unsigned int) (
+                c3 << 8) + c4;
     } else {
-        return (unsigned int)(c4 << 24) + (unsigned int)(c3 << 16) + (unsigned int)(
-                   c2 << 8) + c1;
+        return (unsigned int) (c4 << 24) + (unsigned int) (c3 << 16) + (unsigned int) (
+                c2 << 8) + c1;
     }
 }
 
-opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
-{
+opj_image_t *pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
     FILE *f = NULL;
     int w, h, prec;
     int i, numcomps, max;
     OPJ_COLOR_SPACE color_space;
     opj_image_cmptparm_t cmptparm;  /* maximum of 1 component  */
-    opj_image_t * image = NULL;
+    opj_image_t *image = NULL;
     int adjustS, ushift, dshift, force8;
     OPJ_UINT64 expected_file_size;
 
@@ -1221,14 +1206,14 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
     }
 
     expected_file_size =
-        (OPJ_UINT64)w * (OPJ_UINT64)h * (prec > 16 ? 4 : prec > 8 ? 2 : 1);
+            (OPJ_UINT64) w * (OPJ_UINT64) h * (prec > 16 ? 4 : prec > 8 ? 2 : 1);
     if (expected_file_size > 10000000U) {
         char ch;
         long curpos = ftell(f);
-        if (expected_file_size > (OPJ_UINT64)INT_MAX) {
-            expected_file_size = (OPJ_UINT64)INT_MAX;
+        if (expected_file_size > (OPJ_UINT64) INT_MAX) {
+            expected_file_size = (OPJ_UINT64) INT_MAX;
         }
-        fseek(f, (long)expected_file_size - 1, SEEK_SET);
+        fseek(f, (long) expected_file_size - 1, SEEK_SET);
         if (fread(&ch, 1, 1, f) != 1) {
             fprintf(stderr, "File too short\n");
             fclose(f);
@@ -1239,14 +1224,16 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
 
     /* initialize image component */
 
-    cmptparm.x0 = (OPJ_UINT32)parameters->image_offset_x0;
-    cmptparm.y0 = (OPJ_UINT32)parameters->image_offset_y0;
-    cmptparm.w = !cmptparm.x0 ? (OPJ_UINT32)((w - 1) * parameters->subsampling_dx +
-                 1) : cmptparm.x0 + (OPJ_UINT32)(w - 1) * (OPJ_UINT32)parameters->subsampling_dx
-                 + 1;
-    cmptparm.h = !cmptparm.y0 ? (OPJ_UINT32)((h - 1) * parameters->subsampling_dy +
-                 1) : cmptparm.y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)parameters->subsampling_dy
-                 + 1;
+    cmptparm.x0 = (OPJ_UINT32) parameters->image_offset_x0;
+    cmptparm.y0 = (OPJ_UINT32) parameters->image_offset_y0;
+    cmptparm.w = !cmptparm.x0 ? (OPJ_UINT32) ((w - 1) * parameters->subsampling_dx +
+                                              1) : cmptparm.x0 +
+                                                   (OPJ_UINT32) (w - 1) * (OPJ_UINT32) parameters->subsampling_dx
+                                                   + 1;
+    cmptparm.h = !cmptparm.y0 ? (OPJ_UINT32) ((h - 1) * parameters->subsampling_dy +
+                                              1) : cmptparm.y0 +
+                                                   (OPJ_UINT32) (h - 1) * (OPJ_UINT32) parameters->subsampling_dy
+                                                   + 1;
 
     if (sign == '-') {
         cmptparm.sgnd = 1;
@@ -1268,13 +1255,13 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
         ushift = dshift = force8 = adjustS = 0;
     }
 
-    cmptparm.prec = (OPJ_UINT32)prec;
-    cmptparm.bpp = (OPJ_UINT32)prec;
-    cmptparm.dx = (OPJ_UINT32)parameters->subsampling_dx;
-    cmptparm.dy = (OPJ_UINT32)parameters->subsampling_dy;
+    cmptparm.prec = (OPJ_UINT32) prec;
+    cmptparm.bpp = (OPJ_UINT32) prec;
+    cmptparm.dx = (OPJ_UINT32) parameters->subsampling_dx;
+    cmptparm.dy = (OPJ_UINT32) parameters->subsampling_dy;
 
     /* create the image */
-    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm, color_space);
+    image = opj_image_create((OPJ_UINT32) numcomps, &cmptparm, color_space);
     if (!image) {
         fclose(f);
         return NULL;
@@ -1294,7 +1281,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
         if (force8) {
             v = readuchar(f) + adjustS;
             v = (v << ushift) + (v >> dshift);
-            comp->data[i] = (unsigned char)v;
+            comp->data[i] = (unsigned char) v;
 
             if (v > max) {
                 max = v;
@@ -1316,7 +1303,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
             }
         } else {
             if (!comp->sgnd) {
-                v = (int)readuint(f, bigendian);
+                v = (int) readuint(f, bigendian);
             } else {
                 v = (int) readuint(f, bigendian);
             }
@@ -1327,15 +1314,14 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
         comp->data[i] = v;
     }
     fclose(f);
-    comp->bpp = (OPJ_UINT32)int_floorlog2(max) + 1;
+    comp->bpp = (OPJ_UINT32) int_floorlog2(max) + 1;
 
     return image;
 }
 
-#define CLAMP(x,a,b) ((x) < (a) ? (a) : ((x) > (b) ? (b) : (x)))
+#define CLAMP(x, a, b) ((x) < (a) ? (a) : ((x) > (b) ? (b) : (x)))
 
-static INLINE int clamp(const int value, const int prec, const int sgnd)
-{
+static INLINE int clamp(const int value, const int prec, const int sgnd) {
     if (sgnd) {
         if (prec <= 8) {
             return CLAMP(value, -128, 127);
@@ -1355,8 +1341,7 @@ static INLINE int clamp(const int value, const int prec, const int sgnd)
     }
 }
 
-int imagetopgx(opj_image_t * image, const char *outfile)
-{
+int imagetopgx(opj_image_t *image, const char *outfile) {
     int w, h;
     int i, j, fails = 1;
     unsigned int compno;
@@ -1378,7 +1363,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
             goto fin;
         }
         if (total > 256) {
-            name = (char*)malloc(total + 1);
+            name = (char *) malloc(total + 1);
             if (name == NULL) {
                 fprintf(stderr, "imagetopgx: memory out\n");
                 goto fin;
@@ -1398,8 +1383,8 @@ int imagetopgx(opj_image_t * image, const char *outfile)
             goto fin;
         }
 
-        w = (int)image->comps[compno].w;
-        h = (int)image->comps[compno].h;
+        w = (int) image->comps[compno].w;
+        h = (int) image->comps[compno].h;
 
         fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec,
                 w, h);
@@ -1413,7 +1398,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
         }
 
         if (nbytes == 1) {
-            unsigned char* line_buffer = malloc((size_t)w);
+            unsigned char *line_buffer = malloc((size_t) w);
             if (line_buffer == NULL) {
                 fprintf(stderr, "Out of memory");
                 if (total > 256) {
@@ -1424,18 +1409,18 @@ int imagetopgx(opj_image_t * image, const char *outfile)
             for (j = 0; j < h; j++) {
                 if (comp->prec == 8 && comp->sgnd == 0) {
                     for (i = 0; i < w; i++) {
-                        line_buffer[i] = (unsigned char)CLAMP(image->comps[compno].data[j * w + i], 0,
-                                                              255);
+                        line_buffer[i] = (unsigned char) CLAMP(image->comps[compno].data[j * w + i], 0,
+                                                               255);
                     }
                 } else {
                     for (i = 0; i < w; i++) {
                         line_buffer[i] = (unsigned char)
-                                         clamp(image->comps[compno].data[j * w + i],
-                                               (int)comp->prec, (int)comp->sgnd);
+                                clamp(image->comps[compno].data[j * w + i],
+                                      (int) comp->prec, (int) comp->sgnd);
                     }
                 }
-                res = fwrite(line_buffer, 1, (size_t)w, fdest);
-                if (res != (size_t)w) {
+                res = fwrite(line_buffer, 1, (size_t) w, fdest);
+                if (res != (size_t) w) {
                     fprintf(stderr, "failed to write %d bytes for %s\n", w, name);
                     if (total > 256) {
                         free(name);
@@ -1450,11 +1435,11 @@ int imagetopgx(opj_image_t * image, const char *outfile)
             for (i = 0; i < w * h; i++) {
                 /* FIXME: clamp func is being called within a loop */
                 const int val = clamp(image->comps[compno].data[i],
-                                      (int)comp->prec, (int)comp->sgnd);
+                                      (int) comp->prec, (int) comp->sgnd);
 
                 for (j = nbytes - 1; j >= 0; j--) {
-                    int v = (int)(val >> (j * 8));
-                    unsigned char byte = (unsigned char)v;
+                    int v = (int) (val >> (j * 8));
+                    unsigned char byte = (unsigned char) v;
                     res = fwrite(&byte, 1, 1, fdest);
 
                     if (res < 1) {
@@ -1475,7 +1460,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
         fdest = NULL;
     }
     fails = 0;
-fin:
+    fin:
     if (fdest) {
         fclose(fdest);
     }
@@ -1495,8 +1480,7 @@ struct pnm_header {
     char ok;
 };
 
-static char *skip_white(char *s)
-{
+static char *skip_white(char *s) {
     if (s != NULL) {
         while (*s) {
             if (*s == '\n' || *s == '\r') {
@@ -1512,8 +1496,7 @@ static char *skip_white(char *s)
     return NULL;
 }
 
-static char *skip_int(char *start, int *out_n)
-{
+static char *skip_int(char *start, int *out_n) {
     char *s;
     char c;
 
@@ -1538,8 +1521,7 @@ static char *skip_int(char *start, int *out_n)
     return s;
 }
 
-static char *skip_idf(char *start, char out_idf[256])
-{
+static char *skip_idf(char *start, char out_idf[256]) {
     char *s;
     char c;
 
@@ -1563,8 +1545,7 @@ static char *skip_idf(char *start, char out_idf[256])
     return s;
 }
 
-static void read_pnm_header(FILE *reader, struct pnm_header *ph)
-{
+static void read_pnm_header(FILE *reader, struct pnm_header *ph) {
     int format, end, ttype;
     char idf[256], type[256];
     char line[256];
@@ -1737,8 +1718,7 @@ static void read_pnm_header(FILE *reader, struct pnm_header *ph)
     }
 }
 
-static int has_prec(int val)
-{
+static int has_prec(int val) {
     if (val < 2) {
         return 1;
     }
@@ -1787,8 +1767,7 @@ static int has_prec(int val)
     return 16;
 }
 
-opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
-{
+opj_image_t *pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
     int subsampling_dx = parameters->subsampling_dx;
     int subsampling_dy = parameters->subsampling_dy;
 
@@ -1796,7 +1775,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     int i, compno, numcomps, w, h, prec, format;
     OPJ_COLOR_SPACE color_space;
     opj_image_cmptparm_t cmptparm[4]; /* RGBA: max. 4 components */
-    opj_image_t * image = NULL;
+    opj_image_t *image = NULL;
     struct pnm_header header_info;
 
     if ((fp = fopen(filename, "rb")) == NULL) {
@@ -1813,15 +1792,15 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     }
 
     if (header_info.width == 0
-            || header_info.height == 0
-            || (header_info.format == 7 && header_info.depth == 0)) {
+        || header_info.height == 0
+        || (header_info.format == 7 && header_info.depth == 0)) {
         fclose(fp);
         return NULL;
     }
 
     /* This limitation could be removed by making sure to use size_t below */
     if (header_info.height != 0 &&
-            header_info.width > INT_MAX / header_info.height) {
+        header_info.width > INT_MAX / header_info.height) {
         fprintf(stderr, "pnmtoimage:Image %dx%d too big!\n",
                 header_info.width, header_info.height);
         fclose(fp);
@@ -1831,28 +1810,28 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     format = header_info.format;
 
     switch (format) {
-    case 1: /* ascii bitmap */
-    case 4: /* raw bitmap */
-        numcomps = 1;
-        break;
+        case 1: /* ascii bitmap */
+        case 4: /* raw bitmap */
+            numcomps = 1;
+            break;
 
-    case 2: /* ascii greymap */
-    case 5: /* raw greymap */
-        numcomps = 1;
-        break;
+        case 2: /* ascii greymap */
+        case 5: /* raw greymap */
+            numcomps = 1;
+            break;
 
-    case 3: /* ascii pixmap */
-    case 6: /* raw pixmap */
-        numcomps = 3;
-        break;
+        case 3: /* ascii pixmap */
+        case 6: /* raw pixmap */
+            numcomps = 3;
+            break;
 
-    case 7: /* arbitrary map */
-        numcomps = header_info.depth;
-        break;
+        case 7: /* arbitrary map */
+            numcomps = header_info.depth;
+            break;
 
-    default:
-        fclose(fp);
-        return NULL;
+        default:
+            fclose(fp);
+            return NULL;
     }
     if (numcomps < 3) {
         color_space = OPJ_CLRSPC_GRAY;    /* GRAY, GRAYA */
@@ -1871,18 +1850,18 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     subsampling_dx = parameters->subsampling_dx;
     subsampling_dy = parameters->subsampling_dy;
 
-    memset(&cmptparm[0], 0, (size_t)numcomps * sizeof(opj_image_cmptparm_t));
+    memset(&cmptparm[0], 0, (size_t) numcomps * sizeof(opj_image_cmptparm_t));
 
     for (i = 0; i < numcomps; i++) {
-        cmptparm[i].prec = (OPJ_UINT32)prec;
-        cmptparm[i].bpp = (OPJ_UINT32)prec;
+        cmptparm[i].prec = (OPJ_UINT32) prec;
+        cmptparm[i].bpp = (OPJ_UINT32) prec;
         cmptparm[i].sgnd = 0;
-        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
-        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
-        cmptparm[i].w = (OPJ_UINT32)w;
-        cmptparm[i].h = (OPJ_UINT32)h;
+        cmptparm[i].dx = (OPJ_UINT32) subsampling_dx;
+        cmptparm[i].dy = (OPJ_UINT32) subsampling_dy;
+        cmptparm[i].w = (OPJ_UINT32) w;
+        cmptparm[i].h = (OPJ_UINT32) h;
     }
-    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
+    image = opj_image_create((OPJ_UINT32) numcomps, &cmptparm[0], color_space);
 
     if (!image) {
         fclose(fp);
@@ -1890,12 +1869,12 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     }
 
     /* set image offset and reference grid */
-    image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
-    image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
-    image->x1 = (OPJ_UINT32)(parameters->image_offset_x0 + (w - 1) * subsampling_dx
-                             + 1);
-    image->y1 = (OPJ_UINT32)(parameters->image_offset_y0 + (h - 1) * subsampling_dy
-                             + 1);
+    image->x0 = (OPJ_UINT32) parameters->image_offset_x0;
+    image->y0 = (OPJ_UINT32) parameters->image_offset_y0;
+    image->x1 = (OPJ_UINT32) (parameters->image_offset_x0 + (w - 1) * subsampling_dx
+                              + 1);
+    image->y1 = (OPJ_UINT32) (parameters->image_offset_y0 + (h - 1) * subsampling_dy
+                              + 1);
 
     if ((format == 2) || (format == 3)) { /* ascii pixmap */
         unsigned int index;
@@ -1910,7 +1889,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
                     return NULL;
                 }
 
-                image->comps[compno].data[i] = (OPJ_INT32)(index * 255) / header_info.maxval;
+                image->comps[compno].data[i] = (OPJ_INT32) (index * 255) / header_info.maxval;
             }
         }
     } else if ((format == 5)
@@ -1977,7 +1956,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
                         return NULL;
                     }
                 }
-                image->comps[0].data[i] = ((((unsigned char)uc >> bit) & 1) ? 0 : 255);
+                image->comps[0].data[i] = ((((unsigned char) uc >> bit) & 1) ? 0 : 255);
                 --bit;
                 ++i;
             }
@@ -2000,15 +1979,14 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
     return image;
 }/* pnmtoimage() */
 
-static int are_comps_similar(opj_image_t * image)
-{
+static int are_comps_similar(opj_image_t *image) {
     unsigned int i;
     for (i = 1; i < image->numcomps; i++) {
         if (image->comps[0].dx != image->comps[i].dx ||
-                image->comps[0].dy != image->comps[i].dy ||
-                (i <= 2 &&
-                 (image->comps[0].prec != image->comps[i].prec ||
-                  image->comps[0].sgnd != image->comps[i].sgnd))) {
+            image->comps[0].dy != image->comps[i].dy ||
+            (i <= 2 &&
+             (image->comps[0].prec != image->comps[i].prec ||
+              image->comps[0].sgnd != image->comps[i].sgnd))) {
             return OPJ_FALSE;
         }
     }
@@ -2016,8 +1994,7 @@ static int are_comps_similar(opj_image_t * image)
 }
 
 
-int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
-{
+int imagetopnm(opj_image_t *image, const char *outfile, int force_split) {
     int *red, *green, *blue, *alpha;
     int wr, hr, max;
     int i;
@@ -2031,9 +2008,9 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
 
     alpha = NULL;
 
-    if ((prec = (int)image->comps[0].prec) > 16) {
+    if ((prec = (int) image->comps[0].prec) > 16) {
         fprintf(stderr, "%s:%d:imagetopnm\n\tprecision %d is larger than 16"
-                "\n\t: refused.\n", __FILE__, __LINE__, prec);
+                        "\n\t: refused.\n", __FILE__, __LINE__, prec);
         return 1;
     }
     two = has_alpha = 0;
@@ -2052,7 +2029,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
     }
 
     if ((force_split == 0) && ncomp >= 2 &&
-            are_comps_similar(image)) {
+        are_comps_similar(image)) {
         fdest = fopen(outfile, "wb");
 
         if (!fdest) {
@@ -2061,8 +2038,8 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
         }
         two = (prec > 8);
         triple = (ncomp > 2);
-        wr = (int)image->comps[0].w;
-        hr = (int)image->comps[0].h;
+        wr = (int) image->comps[0].w;
+        hr = (int) image->comps[0].h;
         max = (1 << prec) - 1;
         has_alpha = (ncomp == 4 || ncomp == 2);
 
@@ -2095,7 +2072,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
             const char *tt = (triple ? "RGB_ALPHA" : "GRAYSCALE_ALPHA");
 
             fprintf(fdest, "P7\n# OpenJPEG-%s\nWIDTH %d\nHEIGHT %d\nDEPTH %u\n"
-                    "MAXVAL %d\nTUPLTYPE %s\nENDHDR\n", opj_version(),
+                           "MAXVAL %d\nTUPLTYPE %s\nENDHDR\n", opj_version(),
                     wr, hr, ncomp, max, tt);
             alpha = image->comps[ncomp - 1].data;
             adjustA = (image->comps[ncomp - 1].sgnd ?
@@ -2125,7 +2102,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                 }
 
                 /* netpbm: */
-                fprintf(fdest, "%c%c", (unsigned char)(v >> 8), (unsigned char)v);
+                fprintf(fdest, "%c%c", (unsigned char) (v >> 8), (unsigned char) v);
 
                 if (triple) {
                     v = *green + adjustG;
@@ -2137,9 +2114,9 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     }
 
                     /* netpbm: */
-                    fprintf(fdest, "%c%c", (unsigned char)(v >> 8), (unsigned char)v);
+                    fprintf(fdest, "%c%c", (unsigned char) (v >> 8), (unsigned char) v);
 
-                    v =  *blue + adjustB;
+                    v = *blue + adjustB;
                     ++blue;
                     if (v > 65535) {
                         v = 65535;
@@ -2148,7 +2125,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     }
 
                     /* netpbm: */
-                    fprintf(fdest, "%c%c", (unsigned char)(v >> 8), (unsigned char)v);
+                    fprintf(fdest, "%c%c", (unsigned char) (v >> 8), (unsigned char) v);
 
                 }/* if(triple) */
 
@@ -2162,7 +2139,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     }
 
                     /* netpbm: */
-                    fprintf(fdest, "%c%c", (unsigned char)(v >> 8), (unsigned char)v);
+                    fprintf(fdest, "%c%c", (unsigned char) (v >> 8), (unsigned char) v);
                 }
                 continue;
 
@@ -2176,7 +2153,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                 v = 0;
             }
 
-            fprintf(fdest, "%c", (unsigned char)v);
+            fprintf(fdest, "%c", (unsigned char) v);
             if (triple) {
                 v = *green++;
                 if (v > 255) {
@@ -2185,7 +2162,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     v = 0;
                 }
 
-                fprintf(fdest, "%c", (unsigned char)v);
+                fprintf(fdest, "%c", (unsigned char) v);
                 v = *blue++;
                 if (v > 255) {
                     v = 255;
@@ -2193,7 +2170,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     v = 0;
                 }
 
-                fprintf(fdest, "%c", (unsigned char)v);
+                fprintf(fdest, "%c", (unsigned char) v);
             }
             if (has_alpha) {
                 v = *alpha++;
@@ -2203,7 +2180,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     v = 0;
                 }
 
-                fprintf(fdest, "%c", (unsigned char)v);
+                fprintf(fdest, "%c", (unsigned char) v);
             }
         }   /* for(i */
 
@@ -2217,7 +2194,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
         fprintf(stderr, "WARNING -> [PGM file] Only the first component\n");
         fprintf(stderr, "           is written to the file\n");
     }
-    destname = (char*)malloc(strlen(outfile) + 8);
+    destname = (char *) malloc(strlen(outfile) + 8);
     if (destname == NULL) {
         fprintf(stderr, "imagetopnm: memory out\n");
         return 1;
@@ -2240,9 +2217,9 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
             free(destname);
             return 1;
         }
-        wr = (int)image->comps[compno].w;
-        hr = (int)image->comps[compno].h;
-        prec = (int)image->comps[compno].prec;
+        wr = (int) image->comps[compno].w;
+        hr = (int) image->comps[compno].h;
+        prec = (int) image->comps[compno].prec;
         max = (1 << prec) - 1;
 
         fprintf(fdest, "P5\n#OpenJPEG-%s\n%d %d\n%d\n",
@@ -2255,7 +2232,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
         }
 
         adjustR =
-            (image->comps[compno].sgnd ? 1 << (image->comps[compno].prec - 1) : 0);
+                (image->comps[compno].sgnd ? 1 << (image->comps[compno].prec - 1) : 0);
 
         if (prec > 8) {
             for (i = 0; i < wr * hr; i++) {
@@ -2268,7 +2245,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                 }
 
                 /* netpbm: */
-                fprintf(fdest, "%c%c", (unsigned char)(v >> 8), (unsigned char)v);
+                fprintf(fdest, "%c%c", (unsigned char) (v >> 8), (unsigned char) v);
 
                 if (has_alpha) {
                     v = *alpha++;
@@ -2279,7 +2256,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     }
 
                     /* netpbm: */
-                    fprintf(fdest, "%c%c", (unsigned char)(v >> 8), (unsigned char)v);
+                    fprintf(fdest, "%c%c", (unsigned char) (v >> 8), (unsigned char) v);
                 }
             }/* for(i */
         } else { /* prec <= 8 */
@@ -2292,7 +2269,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
                     v = 0;
                 }
 
-                fprintf(fdest, "%c", (unsigned char)v);
+                fprintf(fdest, "%c", (unsigned char) v);
             }
         }
         fclose(fdest);
@@ -2307,9 +2284,8 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
     RAW IMAGE FORMAT
 
  <<-- <<-- <<-- <<-- */
-static opj_image_t* rawtoimage_common(const char *filename,
-                                      opj_cparameters_t *parameters, raw_cparameters_t *raw_cp, OPJ_BOOL big_endian)
-{
+static opj_image_t *rawtoimage_common(const char *filename,
+                                      opj_cparameters_t *parameters, raw_cparameters_t *raw_cp, OPJ_BOOL big_endian) {
     int subsampling_dx = parameters->subsampling_dx;
     int subsampling_dy = parameters->subsampling_dy;
 
@@ -2317,11 +2293,11 @@ static opj_image_t* rawtoimage_common(const char *filename,
     int i, compno, numcomps, w, h;
     OPJ_COLOR_SPACE color_space;
     opj_image_cmptparm_t *cmptparm;
-    opj_image_t * image = NULL;
+    opj_image_t *image = NULL;
     unsigned short ch;
 
     if ((!(raw_cp->rawWidth & raw_cp->rawHeight & raw_cp->rawComp &
-            raw_cp->rawBitDepth)) == 0) {
+           raw_cp->rawBitDepth)) == 0) {
         fprintf(stderr, "\nError: invalid raw image parameters\n");
         fprintf(stderr, "Please use the Format option -F:\n");
         fprintf(stderr,
@@ -2355,8 +2331,8 @@ static opj_image_t* rawtoimage_common(const char *filename,
     }
     w = raw_cp->rawWidth;
     h = raw_cp->rawHeight;
-    cmptparm = (opj_image_cmptparm_t*) calloc((OPJ_UINT32)numcomps,
-               sizeof(opj_image_cmptparm_t));
+    cmptparm = (opj_image_cmptparm_t *) calloc((OPJ_UINT32) numcomps,
+                                               sizeof(opj_image_cmptparm_t));
     if (!cmptparm) {
         fprintf(stderr, "Failed to allocate image components parameters !!\n");
         fprintf(stderr, "Aborting\n");
@@ -2365,28 +2341,28 @@ static opj_image_t* rawtoimage_common(const char *filename,
     }
     /* initialize image components */
     for (i = 0; i < numcomps; i++) {
-        cmptparm[i].prec = (OPJ_UINT32)raw_cp->rawBitDepth;
-        cmptparm[i].bpp = (OPJ_UINT32)raw_cp->rawBitDepth;
-        cmptparm[i].sgnd = (OPJ_UINT32)raw_cp->rawSigned;
-        cmptparm[i].dx = (OPJ_UINT32)(subsampling_dx * raw_cp->rawComps[i].dx);
-        cmptparm[i].dy = (OPJ_UINT32)(subsampling_dy * raw_cp->rawComps[i].dy);
-        cmptparm[i].w = (OPJ_UINT32)w;
-        cmptparm[i].h = (OPJ_UINT32)h;
+        cmptparm[i].prec = (OPJ_UINT32) raw_cp->rawBitDepth;
+        cmptparm[i].bpp = (OPJ_UINT32) raw_cp->rawBitDepth;
+        cmptparm[i].sgnd = (OPJ_UINT32) raw_cp->rawSigned;
+        cmptparm[i].dx = (OPJ_UINT32) (subsampling_dx * raw_cp->rawComps[i].dx);
+        cmptparm[i].dy = (OPJ_UINT32) (subsampling_dy * raw_cp->rawComps[i].dy);
+        cmptparm[i].w = (OPJ_UINT32) w;
+        cmptparm[i].h = (OPJ_UINT32) h;
     }
     /* create the image */
-    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
+    image = opj_image_create((OPJ_UINT32) numcomps, &cmptparm[0], color_space);
     free(cmptparm);
     if (!image) {
         fclose(f);
         return NULL;
     }
     /* set image offset and reference grid */
-    image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
-    image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
-    image->x1 = (OPJ_UINT32)parameters->image_offset_x0 + (OPJ_UINT32)(w - 1) *
-                (OPJ_UINT32)subsampling_dx + 1;
-    image->y1 = (OPJ_UINT32)parameters->image_offset_y0 + (OPJ_UINT32)(h - 1) *
-                (OPJ_UINT32)subsampling_dy + 1;
+    image->x0 = (OPJ_UINT32) parameters->image_offset_x0;
+    image->y0 = (OPJ_UINT32) parameters->image_offset_y0;
+    image->x1 = (OPJ_UINT32) parameters->image_offset_x0 + (OPJ_UINT32) (w - 1) *
+                                                           (OPJ_UINT32) subsampling_dx + 1;
+    image->y1 = (OPJ_UINT32) parameters->image_offset_y0 + (OPJ_UINT32) (h - 1) *
+                                                           (OPJ_UINT32) subsampling_dy + 1;
 
     if (raw_cp->rawBitDepth <= 8) {
         unsigned char value = 0;
@@ -2400,7 +2376,7 @@ static opj_image_t* rawtoimage_common(const char *filename,
                     fclose(f);
                     return NULL;
                 }
-                image->comps[compno].data[i] = raw_cp->rawSigned ? (char)value : value;
+                image->comps[compno].data[i] = raw_cp->rawSigned ? (char) value : value;
             }
         }
     } else if (raw_cp->rawBitDepth <= 16) {
@@ -2424,11 +2400,11 @@ static opj_image_t* rawtoimage_common(const char *filename,
                     return NULL;
                 }
                 if (big_endian) {
-                    value = (unsigned short)((temp1 << 8) + temp2);
+                    value = (unsigned short) ((temp1 << 8) + temp2);
                 } else {
-                    value = (unsigned short)((temp2 << 8) + temp1);
+                    value = (unsigned short) ((temp2 << 8) + temp1);
                 }
-                image->comps[compno].data[i] = raw_cp->rawSigned ? (short)value : value;
+                image->comps[compno].data[i] = raw_cp->rawSigned ? (short) value : value;
             }
         }
     } else {
@@ -2447,21 +2423,18 @@ static opj_image_t* rawtoimage_common(const char *filename,
     return image;
 }
 
-opj_image_t* rawltoimage(const char *filename, opj_cparameters_t *parameters,
-                         raw_cparameters_t *raw_cp)
-{
+opj_image_t *rawltoimage(const char *filename, opj_cparameters_t *parameters,
+                         raw_cparameters_t *raw_cp) {
     return rawtoimage_common(filename, parameters, raw_cp, OPJ_FALSE);
 }
 
-opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters,
-                        raw_cparameters_t *raw_cp)
-{
+opj_image_t *rawtoimage(const char *filename, opj_cparameters_t *parameters,
+                        raw_cparameters_t *raw_cp) {
     return rawtoimage_common(filename, parameters, raw_cp, OPJ_TRUE);
 }
 
-static int imagetoraw_common(opj_image_t * image, const char *outfile,
-                             OPJ_BOOL big_endian)
-{
+static int imagetoraw_common(opj_image_t *image, const char *outfile,
+                             OPJ_BOOL big_endian) {
     FILE *rawFile = NULL;
     size_t res;
     unsigned int compno, numcomps;
@@ -2469,7 +2442,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
     int line, row, curr, mask;
     int *ptr;
     unsigned char uc;
-    (void)big_endian;
+    (void) big_endian;
 
     if ((image->numcomps * image->x1 * image->y1) == 0) {
         fprintf(stderr, "\nError: invalid raw image parameters\n");
@@ -2518,22 +2491,22 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
                 image->comps[compno].h, image->comps[compno].prec,
                 image->comps[compno].sgnd == 1 ? "signed" : "unsigned");
 
-        w = (int)image->comps[compno].w;
-        h = (int)image->comps[compno].h;
+        w = (int) image->comps[compno].w;
+        h = (int) image->comps[compno].h;
 
         if (image->comps[compno].prec <= 8) {
             if (image->comps[compno].sgnd == 1) {
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
-                    for (row = 0; row < w; row++)    {
+                    for (row = 0; row < w; row++) {
                         curr = *ptr;
                         if (curr > 127) {
                             curr = 127;
                         } else if (curr < -128) {
                             curr = -128;
                         }
-                        uc = (unsigned char)(curr & mask);
+                        uc = (unsigned char) (curr & mask);
                         res = fwrite(&uc, 1, 1, rawFile);
                         if (res < 1) {
                             fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
@@ -2546,14 +2519,14 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
-                    for (row = 0; row < w; row++)    {
+                    for (row = 0; row < w; row++) {
                         curr = *ptr;
                         if (curr > 255) {
                             curr = 255;
                         } else if (curr < 0) {
                             curr = 0;
                         }
-                        uc = (unsigned char)(curr & mask);
+                        uc = (unsigned char) (curr & mask);
                         res = fwrite(&uc, 1, 1, rawFile);
                         if (res < 1) {
                             fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
@@ -2572,14 +2545,14 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
-                    for (row = 0; row < w; row++)    {
+                    for (row = 0; row < w; row++) {
                         curr = *ptr;
                         if (curr > 32767) {
                             curr = 32767;
                         } else if (curr < -32768) {
                             curr = -32768;
                         }
-                        uc16.val = (signed short)(curr & mask);
+                        uc16.val = (signed short) (curr & mask);
                         res = fwrite(uc16.vals, 1, 2, rawFile);
                         if (res < 2) {
                             fprintf(stderr, "failed to write 2 byte for %s\n", outfile);
@@ -2596,14 +2569,14 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
-                    for (row = 0; row < w; row++)    {
+                    for (row = 0; row < w; row++) {
                         curr = *ptr;
                         if (curr > 65535) {
                             curr = 65535;
                         } else if (curr < 0) {
                             curr = 0;
                         }
-                        uc16.val = (unsigned short)(curr & mask);
+                        uc16.val = (unsigned short) (curr & mask);
                         res = fwrite(uc16.vals, 1, 2, rawFile);
                         if (res < 2) {
                             fprintf(stderr, "failed to write 2 byte for %s\n", outfile);
@@ -2622,18 +2595,180 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
         }
     }
     fails = 0;
-fin:
+    fin:
     fclose(rawFile);
     return fails;
 }
 
-int imagetoraw(opj_image_t * image, const char *outfile)
-{
+int imagetoraw_c_vector(opj_image_t *image, c_vector *outfile,
+                               OPJ_BOOL big_endian) {
+    size_t res;
+    unsigned int compno, numcomps;
+    int w, h, fails;
+    int line, row, curr, mask;
+    int *ptr;
+    unsigned char uc;
+    (void) big_endian;
+
+    if ((image->numcomps * image->x1 * image->y1) == 0) {
+        fprintf(stderr, "\nError: invalid raw image parameters\n");
+        return 1;
+    }
+
+    numcomps = image->numcomps;
+
+    if (numcomps > 4) {
+        numcomps = 4;
+    }
+
+    for (compno = 1; compno < numcomps; ++compno) {
+        if (image->comps[0].dx != image->comps[compno].dx) {
+            break;
+        }
+        if (image->comps[0].dy != image->comps[compno].dy) {
+            break;
+        }
+        if (image->comps[0].prec != image->comps[compno].prec) {
+            break;
+        }
+        if (image->comps[0].sgnd != image->comps[compno].sgnd) {
+            break;
+        }
+    }
+    if (compno != numcomps) {
+        fprintf(stderr,
+                "imagetoraw_common: All components shall have the same subsampling, same bit depth, same sign.\n");
+        fprintf(stderr, "\tAborting\n");
+        return 1;
+    }
+
+    if (!outfile) {
+        fprintf(stderr, "Failed to writing !!\n");
+        return 1;
+    }
+
+    fails = 1;
+    fprintf(stdout, "Raw image characteristics: %d components\n", image->numcomps);
+
+    for (compno = 0; compno < image->numcomps; compno++) {
+        fprintf(stdout, "Component %u characteristics: %dx%dx%d %s\n", compno,
+                image->comps[compno].w,
+                image->comps[compno].h, image->comps[compno].prec,
+                image->comps[compno].sgnd == 1 ? "signed" : "unsigned");
+
+        w = (int) image->comps[compno].w;
+        h = (int) image->comps[compno].h;
+
+        if (image->comps[compno].prec <= 8) {
+            if (image->comps[compno].sgnd == 1) {
+                mask = (1 << image->comps[compno].prec) - 1;
+                ptr = image->comps[compno].data;
+                for (line = 0; line < h; line++) {
+                    for (row = 0; row < w; row++) {
+                        curr = *ptr;
+                        if (curr > 127) {
+                            curr = 127;
+                        } else if (curr < -128) {
+                            curr = -128;
+                        }
+                        uc = (unsigned char) (curr & mask);
+                        res = c_vector_push_back(outfile, &uc, 0, 1)==0?0:1;
+                        if (res != 0) {
+                            fprintf(stderr, "failed to write 1 byte\n");
+                            goto fin;
+                        }
+                        ptr++;
+                    }
+                }
+            } else if (image->comps[compno].sgnd == 0) {
+                mask = (1 << image->comps[compno].prec) - 1;
+                ptr = image->comps[compno].data;
+                for (line = 0; line < h; line++) {
+                    for (row = 0; row < w; row++) {
+                        curr = *ptr;
+                        if (curr > 255) {
+                            curr = 255;
+                        } else if (curr < 0) {
+                            curr = 0;
+                        }
+                        uc = (unsigned char) (curr & mask);
+                        res = c_vector_push_back(outfile, &uc, 0, 1)==0?0:1;
+                        if (res != 0) {
+                            fprintf(stderr, "failed to write 1 byte\n");
+                            goto fin;
+                        }
+                        ptr++;
+                    }
+                }
+            }
+        } else if (image->comps[compno].prec <= 16) {
+            if (image->comps[compno].sgnd == 1) {
+                union {
+                    signed short val;
+                    signed char vals[2];
+                } uc16;
+                mask = (1 << image->comps[compno].prec) - 1;
+                ptr = image->comps[compno].data;
+                for (line = 0; line < h; line++) {
+                    for (row = 0; row < w; row++) {
+                        curr = *ptr;
+                        if (curr > 32767) {
+                            curr = 32767;
+                        } else if (curr < -32768) {
+                            curr = -32768;
+                        }
+                        uc16.val = (signed short) (curr & mask);
+                        res = c_vector_push_back(outfile, uc16.vals, 0, 2)==0?0:1;
+                        if (res != 0) {
+                            fprintf(stderr, "failed to write 2 byte\n");
+                            goto fin;
+                        }
+                        ptr++;
+                    }
+                }
+            } else if (image->comps[compno].sgnd == 0) {
+                union {
+                    unsigned short val;
+                    unsigned char vals[2];
+                } uc16;
+                mask = (1 << image->comps[compno].prec) - 1;
+                ptr = image->comps[compno].data;
+                for (line = 0; line < h; line++) {
+                    for (row = 0; row < w; row++) {
+                        curr = *ptr;
+                        if (curr > 65535) {
+                            curr = 65535;
+                        } else if (curr < 0) {
+                            curr = 0;
+                        }
+                        uc16.val = (unsigned short) (curr & mask);
+                        res = c_vector_push_back(outfile, uc16.vals, 0, 2)==0?0:1;
+                        if (res != 0) {
+                            fprintf(stderr, "failed to write 2 byte\n");
+                            goto fin;
+                        }
+                        ptr++;
+                    }
+                }
+            }
+        } else if (image->comps[compno].prec <= 32) {
+            fprintf(stderr, "More than 16 bits per component not handled yet\n");
+            goto fin;
+        } else {
+            fprintf(stderr, "Error: invalid precision: %d\n", image->comps[compno].prec);
+            goto fin;
+        }
+    }
+    fails = 0;
+    fin:
+    return fails;
+}
+
+int imagetoraw(opj_image_t *image, const char *outfile) {
     return imagetoraw_common(image, outfile, OPJ_TRUE);
 }
 
-int imagetorawl(opj_image_t * image, const char *outfile)
-{
+int imagetorawl(opj_image_t *image, const char *outfile) {
     return imagetoraw_common(image, outfile, OPJ_FALSE);
 }
 

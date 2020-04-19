@@ -130,6 +130,7 @@ typedef uint64_t OPJ_UINT64;
 typedef int64_t  OPJ_OFF_T; /* 64-bit file offset type */
 
 #include <stdio.h>
+#include "c_vector.h"
 typedef size_t   OPJ_SIZE_T;
 
 /* Avoid compile-time warning because parameter is not used */
@@ -1253,6 +1254,24 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream(
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream(
     const char *fname,
+    OPJ_SIZE_T p_buffer_size,
+    OPJ_BOOL p_is_read_stream);
+
+/**
+ *
+ * @param fname
+ * @param p_is_read_stream
+ * @return
+ */
+opj_stream_t *OPJ_CALLCONV opj_stream_create_default_c_vector(
+        c_vector *fname, OPJ_BOOL p_is_read_stream);
+/** Create a stream from a file identified with c_vector
+ * @param v                 c_vector
+ * @param p_buffer_size     size of the chunk used to stream
+ * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
+*/
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_c_vector(
+    c_vector *v,
     OPJ_SIZE_T p_buffer_size,
     OPJ_BOOL p_is_read_stream);
 

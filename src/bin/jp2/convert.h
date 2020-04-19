@@ -93,6 +93,7 @@ int imagetotga(opj_image_t * image, const char *outfile);
 /* BMP conversion */
 opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters);
 int imagetobmp(opj_image_t *image, const char *outfile);
+int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile);
 
 /* TIFF conversion*/
 opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters);
@@ -117,6 +118,8 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters,
 opj_image_t* rawltoimage(const char *filename, opj_cparameters_t *parameters,
                          raw_cparameters_t *raw_cp);
 
+extern int imagetoraw_c_vector(opj_image_t * image, c_vector *outfile,
+                               OPJ_BOOL big_endian);
 /* PNG conversion*/
 extern int imagetopng(opj_image_t *image, const char *write_idf);
 extern opj_image_t* pngtoimage(const char *filename,
