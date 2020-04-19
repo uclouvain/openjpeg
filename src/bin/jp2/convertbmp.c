@@ -70,7 +70,7 @@ typedef struct {
     OPJ_UINT32 biBlueMask;         /* Blue channel bit mask */
     OPJ_UINT32 biAlphaMask;        /* Alpha channel bit mask */
     OPJ_UINT32 biColorSpaceType;   /* Color space type */
-    OPJ_UINT8  biColorSpaceEP[36]; /* Color space end points */
+    OPJ_UINT8 biColorSpaceEP[36]; /* Color space end points */
     OPJ_UINT32 biRedGamma;         /* Red channel gamma */
     OPJ_UINT32 biGreenGamma;       /* Green channel gamma */
     OPJ_UINT32 biBlueGamma;        /* Blue channel gamma */
@@ -81,18 +81,17 @@ typedef struct {
 } OPJ_BITMAPINFOHEADER;
 
 static void opj_applyLUT8u_8u32s_C1R(
-    OPJ_UINT8 const* pSrc, OPJ_INT32 srcStride,
-    OPJ_INT32* pDst, OPJ_INT32 dstStride,
-    OPJ_UINT8 const* pLUT,
-    OPJ_UINT32 width, OPJ_UINT32 height)
-{
+        OPJ_UINT8 const *pSrc, OPJ_INT32 srcStride,
+        OPJ_INT32 *pDst, OPJ_INT32 dstStride,
+        OPJ_UINT8 const *pLUT,
+        OPJ_UINT32 width, OPJ_UINT32 height) {
     OPJ_UINT32 y;
 
     for (y = height; y != 0U; --y) {
         OPJ_UINT32 x;
 
         for (x = 0; x < width; x++) {
-            pDst[x] = (OPJ_INT32)pLUT[pSrc[x]];
+            pDst[x] = (OPJ_INT32) pLUT[pSrc[x]];
         }
         pSrc += srcStride;
         pDst += dstStride;
@@ -100,27 +99,26 @@ static void opj_applyLUT8u_8u32s_C1R(
 }
 
 static void opj_applyLUT8u_8u32s_C1P3R(
-    OPJ_UINT8 const* pSrc, OPJ_INT32 srcStride,
-    OPJ_INT32* const* pDst, OPJ_INT32 const* pDstStride,
-    OPJ_UINT8 const* const* pLUT,
-    OPJ_UINT32 width, OPJ_UINT32 height)
-{
+        OPJ_UINT8 const *pSrc, OPJ_INT32 srcStride,
+        OPJ_INT32 *const *pDst, OPJ_INT32 const *pDstStride,
+        OPJ_UINT8 const *const *pLUT,
+        OPJ_UINT32 width, OPJ_UINT32 height) {
     OPJ_UINT32 y;
-    OPJ_INT32* pR = pDst[0];
-    OPJ_INT32* pG = pDst[1];
-    OPJ_INT32* pB = pDst[2];
-    OPJ_UINT8 const* pLUT_R = pLUT[0];
-    OPJ_UINT8 const* pLUT_G = pLUT[1];
-    OPJ_UINT8 const* pLUT_B = pLUT[2];
+    OPJ_INT32 *pR = pDst[0];
+    OPJ_INT32 *pG = pDst[1];
+    OPJ_INT32 *pB = pDst[2];
+    OPJ_UINT8 const *pLUT_R = pLUT[0];
+    OPJ_UINT8 const *pLUT_G = pLUT[1];
+    OPJ_UINT8 const *pLUT_B = pLUT[2];
 
     for (y = height; y != 0U; --y) {
         OPJ_UINT32 x;
 
         for (x = 0; x < width; x++) {
             OPJ_UINT8 idx = pSrc[x];
-            pR[x] = (OPJ_INT32)pLUT_R[idx];
-            pG[x] = (OPJ_INT32)pLUT_G[idx];
-            pB[x] = (OPJ_INT32)pLUT_B[idx];
+            pR[x] = (OPJ_INT32) pLUT_R[idx];
+            pG[x] = (OPJ_INT32) pLUT_G[idx];
+            pB[x] = (OPJ_INT32) pLUT_B[idx];
         }
         pSrc += srcStride;
         pR += pDstStride[0];
@@ -129,33 +127,31 @@ static void opj_applyLUT8u_8u32s_C1P3R(
     }
 }
 
-static void bmp24toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
-                         opj_image_t* image)
-{
+static void bmp24toimage(const OPJ_UINT8 *pData, OPJ_UINT32 stride,
+                         opj_image_t *image) {
     int index;
     OPJ_UINT32 width, height;
     OPJ_UINT32 x, y;
     const OPJ_UINT8 *pSrc = NULL;
 
-    width  = image->comps[0].w;
+    width = image->comps[0].w;
     height = image->comps[0].h;
 
     index = 0;
     pSrc = pData + (height - 1U) * stride;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            image->comps[0].data[index] = (OPJ_INT32)pSrc[3 * x + 2]; /* R */
-            image->comps[1].data[index] = (OPJ_INT32)pSrc[3 * x + 1]; /* G */
-            image->comps[2].data[index] = (OPJ_INT32)pSrc[3 * x + 0]; /* B */
+            image->comps[0].data[index] = (OPJ_INT32) pSrc[3 * x + 2]; /* R */
+            image->comps[1].data[index] = (OPJ_INT32) pSrc[3 * x + 1]; /* G */
+            image->comps[2].data[index] = (OPJ_INT32) pSrc[3 * x + 0]; /* B */
             index++;
         }
         pSrc -= stride;
     }
 }
 
-static void bmp_mask_get_shift_and_prec(OPJ_UINT32 mask, OPJ_UINT32* shift,
-                                        OPJ_UINT32* prec)
-{
+static void bmp_mask_get_shift_and_prec(OPJ_UINT32 mask, OPJ_UINT32 *shift,
+                                        OPJ_UINT32 *prec) {
     OPJ_UINT32 l_shift, l_prec;
 
     l_shift = l_prec = 0U;
@@ -174,28 +170,27 @@ static void bmp_mask_get_shift_and_prec(OPJ_UINT32 mask, OPJ_UINT32* shift,
     *prec = l_prec;
 }
 
-static void bmpmask32toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
-                             opj_image_t* image, OPJ_UINT32 redMask, OPJ_UINT32 greenMask,
-                             OPJ_UINT32 blueMask, OPJ_UINT32 alphaMask)
-{
+static void bmpmask32toimage(const OPJ_UINT8 *pData, OPJ_UINT32 stride,
+                             opj_image_t *image, OPJ_UINT32 redMask, OPJ_UINT32 greenMask,
+                             OPJ_UINT32 blueMask, OPJ_UINT32 alphaMask) {
     int index;
     OPJ_UINT32 width, height;
     OPJ_UINT32 x, y;
     const OPJ_UINT8 *pSrc = NULL;
     OPJ_BOOL hasAlpha;
-    OPJ_UINT32 redShift,   redPrec;
+    OPJ_UINT32 redShift, redPrec;
     OPJ_UINT32 greenShift, greenPrec;
-    OPJ_UINT32 blueShift,  bluePrec;
+    OPJ_UINT32 blueShift, bluePrec;
     OPJ_UINT32 alphaShift, alphaPrec;
 
-    width  = image->comps[0].w;
+    width = image->comps[0].w;
     height = image->comps[0].h;
 
     hasAlpha = image->numcomps > 3U;
 
-    bmp_mask_get_shift_and_prec(redMask,   &redShift,   &redPrec);
+    bmp_mask_get_shift_and_prec(redMask, &redShift, &redPrec);
     bmp_mask_get_shift_and_prec(greenMask, &greenShift, &greenPrec);
-    bmp_mask_get_shift_and_prec(blueMask,  &blueShift,  &bluePrec);
+    bmp_mask_get_shift_and_prec(blueMask, &blueShift, &bluePrec);
     bmp_mask_get_shift_and_prec(alphaMask, &alphaShift, &alphaPrec);
 
     image->comps[0].bpp = redPrec;
@@ -215,20 +210,20 @@ static void bmpmask32toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
         for (x = 0; x < width; x++) {
             OPJ_UINT32 value = 0U;
 
-            value |= ((OPJ_UINT32)pSrc[4 * x + 0]) <<  0;
-            value |= ((OPJ_UINT32)pSrc[4 * x + 1]) <<  8;
-            value |= ((OPJ_UINT32)pSrc[4 * x + 2]) << 16;
-            value |= ((OPJ_UINT32)pSrc[4 * x + 3]) << 24;
+            value |= ((OPJ_UINT32) pSrc[4 * x + 0]) << 0;
+            value |= ((OPJ_UINT32) pSrc[4 * x + 1]) << 8;
+            value |= ((OPJ_UINT32) pSrc[4 * x + 2]) << 16;
+            value |= ((OPJ_UINT32) pSrc[4 * x + 3]) << 24;
 
-            image->comps[0].data[index] = (OPJ_INT32)((value & redMask)   >>
-                                          redShift);   /* R */
-            image->comps[1].data[index] = (OPJ_INT32)((value & greenMask) >>
-                                          greenShift); /* G */
-            image->comps[2].data[index] = (OPJ_INT32)((value & blueMask)  >>
-                                          blueShift);  /* B */
+            image->comps[0].data[index] = (OPJ_INT32) ((value & redMask) >>
+                                                                         redShift);   /* R */
+            image->comps[1].data[index] = (OPJ_INT32) ((value & greenMask) >>
+                                                                           greenShift); /* G */
+            image->comps[2].data[index] = (OPJ_INT32) ((value & blueMask) >>
+                                                                          blueShift);  /* B */
             if (hasAlpha) {
-                image->comps[3].data[index] = (OPJ_INT32)((value & alphaMask)  >>
-                                              alphaShift);  /* A */
+                image->comps[3].data[index] = (OPJ_INT32) ((value & alphaMask) >>
+                                                                               alphaShift);  /* A */
             }
             index++;
         }
@@ -236,28 +231,27 @@ static void bmpmask32toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
     }
 }
 
-static void bmpmask16toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
-                             opj_image_t* image, OPJ_UINT32 redMask, OPJ_UINT32 greenMask,
-                             OPJ_UINT32 blueMask, OPJ_UINT32 alphaMask)
-{
+static void bmpmask16toimage(const OPJ_UINT8 *pData, OPJ_UINT32 stride,
+                             opj_image_t *image, OPJ_UINT32 redMask, OPJ_UINT32 greenMask,
+                             OPJ_UINT32 blueMask, OPJ_UINT32 alphaMask) {
     int index;
     OPJ_UINT32 width, height;
     OPJ_UINT32 x, y;
     const OPJ_UINT8 *pSrc = NULL;
     OPJ_BOOL hasAlpha;
-    OPJ_UINT32 redShift,   redPrec;
+    OPJ_UINT32 redShift, redPrec;
     OPJ_UINT32 greenShift, greenPrec;
-    OPJ_UINT32 blueShift,  bluePrec;
+    OPJ_UINT32 blueShift, bluePrec;
     OPJ_UINT32 alphaShift, alphaPrec;
 
-    width  = image->comps[0].w;
+    width = image->comps[0].w;
     height = image->comps[0].h;
 
     hasAlpha = image->numcomps > 3U;
 
-    bmp_mask_get_shift_and_prec(redMask,   &redShift,   &redPrec);
+    bmp_mask_get_shift_and_prec(redMask, &redShift, &redPrec);
     bmp_mask_get_shift_and_prec(greenMask, &greenShift, &greenPrec);
-    bmp_mask_get_shift_and_prec(blueMask,  &blueShift,  &bluePrec);
+    bmp_mask_get_shift_and_prec(blueMask, &blueShift, &bluePrec);
     bmp_mask_get_shift_and_prec(alphaMask, &alphaShift, &alphaPrec);
 
     image->comps[0].bpp = redPrec;
@@ -277,18 +271,18 @@ static void bmpmask16toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
         for (x = 0; x < width; x++) {
             OPJ_UINT32 value = 0U;
 
-            value |= ((OPJ_UINT32)pSrc[2 * x + 0]) <<  0;
-            value |= ((OPJ_UINT32)pSrc[2 * x + 1]) <<  8;
+            value |= ((OPJ_UINT32) pSrc[2 * x + 0]) << 0;
+            value |= ((OPJ_UINT32) pSrc[2 * x + 1]) << 8;
 
-            image->comps[0].data[index] = (OPJ_INT32)((value & redMask)   >>
-                                          redShift);   /* R */
-            image->comps[1].data[index] = (OPJ_INT32)((value & greenMask) >>
-                                          greenShift); /* G */
-            image->comps[2].data[index] = (OPJ_INT32)((value & blueMask)  >>
-                                          blueShift);  /* B */
+            image->comps[0].data[index] = (OPJ_INT32) ((value & redMask) >>
+                                                                         redShift);   /* R */
+            image->comps[1].data[index] = (OPJ_INT32) ((value & greenMask) >>
+                                                                           greenShift); /* G */
+            image->comps[2].data[index] = (OPJ_INT32) ((value & blueMask) >>
+                                                                          blueShift);  /* B */
             if (hasAlpha) {
-                image->comps[3].data[index] = (OPJ_INT32)((value & alphaMask)  >>
-                                              alphaShift);  /* A */
+                image->comps[3].data[index] = (OPJ_INT32) ((value & alphaMask) >>
+                                                                               alphaShift);  /* A */
             }
             index++;
         }
@@ -296,39 +290,37 @@ static void bmpmask16toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
     }
 }
 
-static opj_image_t* bmp8toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride,
-                                opj_image_t* image, OPJ_UINT8 const* const* pLUT)
-{
+static opj_image_t *bmp8toimage(const OPJ_UINT8 *pData, OPJ_UINT32 stride,
+                                opj_image_t *image, OPJ_UINT8 const *const *pLUT) {
     OPJ_UINT32 width, height;
     const OPJ_UINT8 *pSrc = NULL;
 
-    width  = image->comps[0].w;
+    width = image->comps[0].w;
     height = image->comps[0].h;
 
     pSrc = pData + (height - 1U) * stride;
     if (image->numcomps == 1U) {
-        opj_applyLUT8u_8u32s_C1R(pSrc, -(OPJ_INT32)stride, image->comps[0].data,
-                                 (OPJ_INT32)width, pLUT[0], width, height);
+        opj_applyLUT8u_8u32s_C1R(pSrc, -(OPJ_INT32) stride, image->comps[0].data,
+                                 (OPJ_INT32) width, pLUT[0], width, height);
     } else {
-        OPJ_INT32* pDst[3];
-        OPJ_INT32  pDstStride[3];
+        OPJ_INT32 *pDst[3];
+        OPJ_INT32 pDstStride[3];
 
         pDst[0] = image->comps[0].data;
         pDst[1] = image->comps[1].data;
         pDst[2] = image->comps[2].data;
-        pDstStride[0] = (OPJ_INT32)width;
-        pDstStride[1] = (OPJ_INT32)width;
-        pDstStride[2] = (OPJ_INT32)width;
-        opj_applyLUT8u_8u32s_C1P3R(pSrc, -(OPJ_INT32)stride, pDst, pDstStride, pLUT,
+        pDstStride[0] = (OPJ_INT32) width;
+        pDstStride[1] = (OPJ_INT32) width;
+        pDstStride[2] = (OPJ_INT32) width;
+        opj_applyLUT8u_8u32s_C1P3R(pSrc, -(OPJ_INT32) stride, pDst, pDstStride, pLUT,
                                    width, height);
     }
     return image;
 }
 
-static OPJ_BOOL bmp_read_file_header(FILE* IN, OPJ_BITMAPFILEHEADER* header)
-{
-    header->bfType  = (OPJ_UINT16)getc(IN);
-    header->bfType |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
+static OPJ_BOOL bmp_read_file_header(FILE *IN, OPJ_BITMAPFILEHEADER *header) {
+    header->bfType = (OPJ_UINT16) getc(IN);
+    header->bfType |= (OPJ_UINT16) ((OPJ_UINT32) getc(IN) << 8);
 
     if (header->bfType != 19778) {
         fprintf(stderr, "Error, not a BMP file!\n");
@@ -337,140 +329,140 @@ static OPJ_BOOL bmp_read_file_header(FILE* IN, OPJ_BITMAPFILEHEADER* header)
 
     /* FILE HEADER */
     /* ------------- */
-    header->bfSize  = (OPJ_UINT32)getc(IN);
-    header->bfSize |= (OPJ_UINT32)getc(IN) << 8;
-    header->bfSize |= (OPJ_UINT32)getc(IN) << 16;
-    header->bfSize |= (OPJ_UINT32)getc(IN) << 24;
+    header->bfSize = (OPJ_UINT32) getc(IN);
+    header->bfSize |= (OPJ_UINT32) getc(IN) << 8;
+    header->bfSize |= (OPJ_UINT32) getc(IN) << 16;
+    header->bfSize |= (OPJ_UINT32) getc(IN) << 24;
 
-    header->bfReserved1  = (OPJ_UINT16)getc(IN);
-    header->bfReserved1 |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
+    header->bfReserved1 = (OPJ_UINT16) getc(IN);
+    header->bfReserved1 |= (OPJ_UINT16) ((OPJ_UINT32) getc(IN) << 8);
 
-    header->bfReserved2  = (OPJ_UINT16)getc(IN);
-    header->bfReserved2 |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
+    header->bfReserved2 = (OPJ_UINT16) getc(IN);
+    header->bfReserved2 |= (OPJ_UINT16) ((OPJ_UINT32) getc(IN) << 8);
 
-    header->bfOffBits  = (OPJ_UINT32)getc(IN);
-    header->bfOffBits |= (OPJ_UINT32)getc(IN) << 8;
-    header->bfOffBits |= (OPJ_UINT32)getc(IN) << 16;
-    header->bfOffBits |= (OPJ_UINT32)getc(IN) << 24;
+    header->bfOffBits = (OPJ_UINT32) getc(IN);
+    header->bfOffBits |= (OPJ_UINT32) getc(IN) << 8;
+    header->bfOffBits |= (OPJ_UINT32) getc(IN) << 16;
+    header->bfOffBits |= (OPJ_UINT32) getc(IN) << 24;
     return OPJ_TRUE;
 }
-static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
-{
+
+static OPJ_BOOL bmp_read_info_header(FILE *IN, OPJ_BITMAPINFOHEADER *header) {
     memset(header, 0, sizeof(*header));
     /* INFO HEADER */
     /* ------------- */
-    header->biSize  = (OPJ_UINT32)getc(IN);
-    header->biSize |= (OPJ_UINT32)getc(IN) << 8;
-    header->biSize |= (OPJ_UINT32)getc(IN) << 16;
-    header->biSize |= (OPJ_UINT32)getc(IN) << 24;
+    header->biSize = (OPJ_UINT32) getc(IN);
+    header->biSize |= (OPJ_UINT32) getc(IN) << 8;
+    header->biSize |= (OPJ_UINT32) getc(IN) << 16;
+    header->biSize |= (OPJ_UINT32) getc(IN) << 24;
 
     switch (header->biSize) {
-    case 12U:  /* BITMAPCOREHEADER */
-    case 40U:  /* BITMAPINFOHEADER */
-    case 52U:  /* BITMAPV2INFOHEADER */
-    case 56U:  /* BITMAPV3INFOHEADER */
-    case 108U: /* BITMAPV4HEADER */
-    case 124U: /* BITMAPV5HEADER */
-        break;
-    default:
-        fprintf(stderr, "Error, unknown BMP header size %d\n", header->biSize);
-        return OPJ_FALSE;
+        case 12U:  /* BITMAPCOREHEADER */
+        case 40U:  /* BITMAPINFOHEADER */
+        case 52U:  /* BITMAPV2INFOHEADER */
+        case 56U:  /* BITMAPV3INFOHEADER */
+        case 108U: /* BITMAPV4HEADER */
+        case 124U: /* BITMAPV5HEADER */
+            break;
+        default:
+            fprintf(stderr, "Error, unknown BMP header size %d\n", header->biSize);
+            return OPJ_FALSE;
     }
 
-    header->biWidth  = (OPJ_UINT32)getc(IN);
-    header->biWidth |= (OPJ_UINT32)getc(IN) << 8;
-    header->biWidth |= (OPJ_UINT32)getc(IN) << 16;
-    header->biWidth |= (OPJ_UINT32)getc(IN) << 24;
+    header->biWidth = (OPJ_UINT32) getc(IN);
+    header->biWidth |= (OPJ_UINT32) getc(IN) << 8;
+    header->biWidth |= (OPJ_UINT32) getc(IN) << 16;
+    header->biWidth |= (OPJ_UINT32) getc(IN) << 24;
 
-    header->biHeight  = (OPJ_UINT32)getc(IN);
-    header->biHeight |= (OPJ_UINT32)getc(IN) << 8;
-    header->biHeight |= (OPJ_UINT32)getc(IN) << 16;
-    header->biHeight |= (OPJ_UINT32)getc(IN) << 24;
+    header->biHeight = (OPJ_UINT32) getc(IN);
+    header->biHeight |= (OPJ_UINT32) getc(IN) << 8;
+    header->biHeight |= (OPJ_UINT32) getc(IN) << 16;
+    header->biHeight |= (OPJ_UINT32) getc(IN) << 24;
 
-    header->biPlanes  = (OPJ_UINT16)getc(IN);
-    header->biPlanes |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
+    header->biPlanes = (OPJ_UINT16) getc(IN);
+    header->biPlanes |= (OPJ_UINT16) ((OPJ_UINT32) getc(IN) << 8);
 
-    header->biBitCount  = (OPJ_UINT16)getc(IN);
-    header->biBitCount |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
+    header->biBitCount = (OPJ_UINT16) getc(IN);
+    header->biBitCount |= (OPJ_UINT16) ((OPJ_UINT32) getc(IN) << 8);
     if (header->biBitCount == 0) {
         fprintf(stderr, "Error, invalid biBitCount %d\n", 0);
         return OPJ_FALSE;
     }
 
     if (header->biSize >= 40U) {
-        header->biCompression  = (OPJ_UINT32)getc(IN);
-        header->biCompression |= (OPJ_UINT32)getc(IN) << 8;
-        header->biCompression |= (OPJ_UINT32)getc(IN) << 16;
-        header->biCompression |= (OPJ_UINT32)getc(IN) << 24;
+        header->biCompression = (OPJ_UINT32) getc(IN);
+        header->biCompression |= (OPJ_UINT32) getc(IN) << 8;
+        header->biCompression |= (OPJ_UINT32) getc(IN) << 16;
+        header->biCompression |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biSizeImage  = (OPJ_UINT32)getc(IN);
-        header->biSizeImage |= (OPJ_UINT32)getc(IN) << 8;
-        header->biSizeImage |= (OPJ_UINT32)getc(IN) << 16;
-        header->biSizeImage |= (OPJ_UINT32)getc(IN) << 24;
+        header->biSizeImage = (OPJ_UINT32) getc(IN);
+        header->biSizeImage |= (OPJ_UINT32) getc(IN) << 8;
+        header->biSizeImage |= (OPJ_UINT32) getc(IN) << 16;
+        header->biSizeImage |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biXpelsPerMeter  = (OPJ_UINT32)getc(IN);
-        header->biXpelsPerMeter |= (OPJ_UINT32)getc(IN) << 8;
-        header->biXpelsPerMeter |= (OPJ_UINT32)getc(IN) << 16;
-        header->biXpelsPerMeter |= (OPJ_UINT32)getc(IN) << 24;
+        header->biXpelsPerMeter = (OPJ_UINT32) getc(IN);
+        header->biXpelsPerMeter |= (OPJ_UINT32) getc(IN) << 8;
+        header->biXpelsPerMeter |= (OPJ_UINT32) getc(IN) << 16;
+        header->biXpelsPerMeter |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biYpelsPerMeter  = (OPJ_UINT32)getc(IN);
-        header->biYpelsPerMeter |= (OPJ_UINT32)getc(IN) << 8;
-        header->biYpelsPerMeter |= (OPJ_UINT32)getc(IN) << 16;
-        header->biYpelsPerMeter |= (OPJ_UINT32)getc(IN) << 24;
+        header->biYpelsPerMeter = (OPJ_UINT32) getc(IN);
+        header->biYpelsPerMeter |= (OPJ_UINT32) getc(IN) << 8;
+        header->biYpelsPerMeter |= (OPJ_UINT32) getc(IN) << 16;
+        header->biYpelsPerMeter |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biClrUsed  = (OPJ_UINT32)getc(IN);
-        header->biClrUsed |= (OPJ_UINT32)getc(IN) << 8;
-        header->biClrUsed |= (OPJ_UINT32)getc(IN) << 16;
-        header->biClrUsed |= (OPJ_UINT32)getc(IN) << 24;
+        header->biClrUsed = (OPJ_UINT32) getc(IN);
+        header->biClrUsed |= (OPJ_UINT32) getc(IN) << 8;
+        header->biClrUsed |= (OPJ_UINT32) getc(IN) << 16;
+        header->biClrUsed |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biClrImportant  = (OPJ_UINT32)getc(IN);
-        header->biClrImportant |= (OPJ_UINT32)getc(IN) << 8;
-        header->biClrImportant |= (OPJ_UINT32)getc(IN) << 16;
-        header->biClrImportant |= (OPJ_UINT32)getc(IN) << 24;
+        header->biClrImportant = (OPJ_UINT32) getc(IN);
+        header->biClrImportant |= (OPJ_UINT32) getc(IN) << 8;
+        header->biClrImportant |= (OPJ_UINT32) getc(IN) << 16;
+        header->biClrImportant |= (OPJ_UINT32) getc(IN) << 24;
     }
 
     if (header->biSize >= 56U) {
-        header->biRedMask  = (OPJ_UINT32)getc(IN);
-        header->biRedMask |= (OPJ_UINT32)getc(IN) << 8;
-        header->biRedMask |= (OPJ_UINT32)getc(IN) << 16;
-        header->biRedMask |= (OPJ_UINT32)getc(IN) << 24;
+        header->biRedMask = (OPJ_UINT32) getc(IN);
+        header->biRedMask |= (OPJ_UINT32) getc(IN) << 8;
+        header->biRedMask |= (OPJ_UINT32) getc(IN) << 16;
+        header->biRedMask |= (OPJ_UINT32) getc(IN) << 24;
 
         if (!header->biRedMask) {
             fprintf(stderr, "Error, invalid red mask value %d\n", header->biRedMask);
             return OPJ_FALSE;
         }
 
-        header->biGreenMask  = (OPJ_UINT32)getc(IN);
-        header->biGreenMask |= (OPJ_UINT32)getc(IN) << 8;
-        header->biGreenMask |= (OPJ_UINT32)getc(IN) << 16;
-        header->biGreenMask |= (OPJ_UINT32)getc(IN) << 24;
+        header->biGreenMask = (OPJ_UINT32) getc(IN);
+        header->biGreenMask |= (OPJ_UINT32) getc(IN) << 8;
+        header->biGreenMask |= (OPJ_UINT32) getc(IN) << 16;
+        header->biGreenMask |= (OPJ_UINT32) getc(IN) << 24;
 
         if (!header->biGreenMask) {
             fprintf(stderr, "Error, invalid green mask value %d\n", header->biGreenMask);
             return OPJ_FALSE;
         }
 
-        header->biBlueMask  = (OPJ_UINT32)getc(IN);
-        header->biBlueMask |= (OPJ_UINT32)getc(IN) << 8;
-        header->biBlueMask |= (OPJ_UINT32)getc(IN) << 16;
-        header->biBlueMask |= (OPJ_UINT32)getc(IN) << 24;
+        header->biBlueMask = (OPJ_UINT32) getc(IN);
+        header->biBlueMask |= (OPJ_UINT32) getc(IN) << 8;
+        header->biBlueMask |= (OPJ_UINT32) getc(IN) << 16;
+        header->biBlueMask |= (OPJ_UINT32) getc(IN) << 24;
 
         if (!header->biBlueMask) {
             fprintf(stderr, "Error, invalid blue mask value %d\n", header->biBlueMask);
             return OPJ_FALSE;
         }
 
-        header->biAlphaMask  = (OPJ_UINT32)getc(IN);
-        header->biAlphaMask |= (OPJ_UINT32)getc(IN) << 8;
-        header->biAlphaMask |= (OPJ_UINT32)getc(IN) << 16;
-        header->biAlphaMask |= (OPJ_UINT32)getc(IN) << 24;
+        header->biAlphaMask = (OPJ_UINT32) getc(IN);
+        header->biAlphaMask |= (OPJ_UINT32) getc(IN) << 8;
+        header->biAlphaMask |= (OPJ_UINT32) getc(IN) << 16;
+        header->biAlphaMask |= (OPJ_UINT32) getc(IN) << 24;
     }
 
     if (header->biSize >= 108U) {
-        header->biColorSpaceType  = (OPJ_UINT32)getc(IN);
-        header->biColorSpaceType |= (OPJ_UINT32)getc(IN) << 8;
-        header->biColorSpaceType |= (OPJ_UINT32)getc(IN) << 16;
-        header->biColorSpaceType |= (OPJ_UINT32)getc(IN) << 24;
+        header->biColorSpaceType = (OPJ_UINT32) getc(IN);
+        header->biColorSpaceType |= (OPJ_UINT32) getc(IN) << 8;
+        header->biColorSpaceType |= (OPJ_UINT32) getc(IN) << 16;
+        header->biColorSpaceType |= (OPJ_UINT32) getc(IN) << 24;
 
         if (fread(&(header->biColorSpaceEP), 1U, sizeof(header->biColorSpaceEP),
                   IN) != sizeof(header->biColorSpaceEP)) {
@@ -478,49 +470,48 @@ static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
             return OPJ_FALSE;
         }
 
-        header->biRedGamma  = (OPJ_UINT32)getc(IN);
-        header->biRedGamma |= (OPJ_UINT32)getc(IN) << 8;
-        header->biRedGamma |= (OPJ_UINT32)getc(IN) << 16;
-        header->biRedGamma |= (OPJ_UINT32)getc(IN) << 24;
+        header->biRedGamma = (OPJ_UINT32) getc(IN);
+        header->biRedGamma |= (OPJ_UINT32) getc(IN) << 8;
+        header->biRedGamma |= (OPJ_UINT32) getc(IN) << 16;
+        header->biRedGamma |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biGreenGamma  = (OPJ_UINT32)getc(IN);
-        header->biGreenGamma |= (OPJ_UINT32)getc(IN) << 8;
-        header->biGreenGamma |= (OPJ_UINT32)getc(IN) << 16;
-        header->biGreenGamma |= (OPJ_UINT32)getc(IN) << 24;
+        header->biGreenGamma = (OPJ_UINT32) getc(IN);
+        header->biGreenGamma |= (OPJ_UINT32) getc(IN) << 8;
+        header->biGreenGamma |= (OPJ_UINT32) getc(IN) << 16;
+        header->biGreenGamma |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biBlueGamma  = (OPJ_UINT32)getc(IN);
-        header->biBlueGamma |= (OPJ_UINT32)getc(IN) << 8;
-        header->biBlueGamma |= (OPJ_UINT32)getc(IN) << 16;
-        header->biBlueGamma |= (OPJ_UINT32)getc(IN) << 24;
+        header->biBlueGamma = (OPJ_UINT32) getc(IN);
+        header->biBlueGamma |= (OPJ_UINT32) getc(IN) << 8;
+        header->biBlueGamma |= (OPJ_UINT32) getc(IN) << 16;
+        header->biBlueGamma |= (OPJ_UINT32) getc(IN) << 24;
     }
 
     if (header->biSize >= 124U) {
-        header->biIntent  = (OPJ_UINT32)getc(IN);
-        header->biIntent |= (OPJ_UINT32)getc(IN) << 8;
-        header->biIntent |= (OPJ_UINT32)getc(IN) << 16;
-        header->biIntent |= (OPJ_UINT32)getc(IN) << 24;
+        header->biIntent = (OPJ_UINT32) getc(IN);
+        header->biIntent |= (OPJ_UINT32) getc(IN) << 8;
+        header->biIntent |= (OPJ_UINT32) getc(IN) << 16;
+        header->biIntent |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biIccProfileData  = (OPJ_UINT32)getc(IN);
-        header->biIccProfileData |= (OPJ_UINT32)getc(IN) << 8;
-        header->biIccProfileData |= (OPJ_UINT32)getc(IN) << 16;
-        header->biIccProfileData |= (OPJ_UINT32)getc(IN) << 24;
+        header->biIccProfileData = (OPJ_UINT32) getc(IN);
+        header->biIccProfileData |= (OPJ_UINT32) getc(IN) << 8;
+        header->biIccProfileData |= (OPJ_UINT32) getc(IN) << 16;
+        header->biIccProfileData |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biIccProfileSize  = (OPJ_UINT32)getc(IN);
-        header->biIccProfileSize |= (OPJ_UINT32)getc(IN) << 8;
-        header->biIccProfileSize |= (OPJ_UINT32)getc(IN) << 16;
-        header->biIccProfileSize |= (OPJ_UINT32)getc(IN) << 24;
+        header->biIccProfileSize = (OPJ_UINT32) getc(IN);
+        header->biIccProfileSize |= (OPJ_UINT32) getc(IN) << 8;
+        header->biIccProfileSize |= (OPJ_UINT32) getc(IN) << 16;
+        header->biIccProfileSize |= (OPJ_UINT32) getc(IN) << 24;
 
-        header->biReserved  = (OPJ_UINT32)getc(IN);
-        header->biReserved |= (OPJ_UINT32)getc(IN) << 8;
-        header->biReserved |= (OPJ_UINT32)getc(IN) << 16;
-        header->biReserved |= (OPJ_UINT32)getc(IN) << 24;
+        header->biReserved = (OPJ_UINT32) getc(IN);
+        header->biReserved |= (OPJ_UINT32) getc(IN) << 8;
+        header->biReserved |= (OPJ_UINT32) getc(IN) << 16;
+        header->biReserved |= (OPJ_UINT32) getc(IN) << 24;
     }
     return OPJ_TRUE;
 }
 
-static OPJ_BOOL bmp_read_raw_data(FILE* IN, OPJ_UINT8* pData, OPJ_UINT32 stride,
-                                  OPJ_UINT32 width, OPJ_UINT32 height)
-{
+static OPJ_BOOL bmp_read_raw_data(FILE *IN, OPJ_UINT8 *pData, OPJ_UINT32 stride,
+                                  OPJ_UINT32 width, OPJ_UINT32 height) {
     OPJ_ARG_NOT_USED(width);
 
     if (fread(pData, sizeof(OPJ_UINT8), stride * height, IN) != (stride * height)) {
@@ -531,9 +522,8 @@ static OPJ_BOOL bmp_read_raw_data(FILE* IN, OPJ_UINT8* pData, OPJ_UINT32 stride,
     return OPJ_TRUE;
 }
 
-static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
-                                   OPJ_UINT32 stride, OPJ_UINT32 width, OPJ_UINT32 height)
-{
+static OPJ_BOOL bmp_read_rle8_data(FILE *IN, OPJ_UINT8 *pData,
+                                   OPJ_UINT32 stride, OPJ_UINT32 width, OPJ_UINT32 height) {
     OPJ_UINT32 x, y, written;
     OPJ_UINT8 *pix;
     const OPJ_UINT8 *beyond;
@@ -556,10 +546,10 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
             if (c1_int == EOF) {
                 return OPJ_FALSE;
             }
-            c1 = (OPJ_UINT8)c1_int;
+            c1 = (OPJ_UINT8) c1_int;
 
             for (j = 0; (j < c) && (x < width) &&
-                    ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
+                        ((OPJ_SIZE_T) pix < (OPJ_SIZE_T) beyond); j++, x++, pix++) {
                 *pix = c1;
                 written++;
             }
@@ -580,28 +570,28 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
                 if (c == EOF) {
                     return OPJ_FALSE;
                 }
-                x += (OPJ_UINT32)c;
+                x += (OPJ_UINT32) c;
                 c = getc(IN);
                 if (c == EOF) {
                     return OPJ_FALSE;
                 }
-                y += (OPJ_UINT32)c;
+                y += (OPJ_UINT32) c;
                 pix = pData + y * stride + x;
             } else { /* 03 .. 255 */
                 int j;
                 for (j = 0; (j < c) && (x < width) &&
-                        ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
+                            ((OPJ_SIZE_T) pix < (OPJ_SIZE_T) beyond); j++, x++, pix++) {
                     int c1_int;
                     OPJ_UINT8 c1;
                     c1_int = getc(IN);
                     if (c1_int == EOF) {
                         return OPJ_FALSE;
                     }
-                    c1 = (OPJ_UINT8)c1_int;
+                    c1 = (OPJ_UINT8) c1_int;
                     *pix = c1;
                     written++;
                 }
-                if ((OPJ_UINT32)c & 1U) { /* skip padding byte */
+                if ((OPJ_UINT32) c & 1U) { /* skip padding byte */
                     c = getc(IN);
                     if (c == EOF) {
                         return OPJ_FALSE;
@@ -619,9 +609,8 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
     return OPJ_TRUE;
 }
 
-static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
-                                   OPJ_UINT32 stride, OPJ_UINT32 width, OPJ_UINT32 height)
-{
+static OPJ_BOOL bmp_read_rle4_data(FILE *IN, OPJ_UINT8 *pData,
+                                   OPJ_UINT32 stride, OPJ_UINT32 width, OPJ_UINT32 height) {
     OPJ_UINT32 x, y, written;
     OPJ_UINT8 *pix;
     const OPJ_UINT8 *beyond;
@@ -643,11 +632,11 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
             if (c1_int == EOF) {
                 return OPJ_FALSE;
             }
-            c1 = (OPJ_UINT8)c1_int;
+            c1 = (OPJ_UINT8) c1_int;
 
             for (j = 0; (j < c) && (x < width) &&
-                    ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
-                *pix = (OPJ_UINT8)((j & 1) ? (c1 & 0x0fU) : ((c1 >> 4) & 0x0fU));
+                        ((OPJ_SIZE_T) pix < (OPJ_SIZE_T) beyond); j++, x++, pix++) {
+                *pix = (OPJ_UINT8) ((j & 1) ? (c1 & 0x0fU) : ((c1 >> 4) & 0x0fU));
                 written++;
             }
         } else { /* absolute mode */
@@ -667,28 +656,28 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
                 if (c == EOF) {
                     return OPJ_FALSE;
                 }
-                x += (OPJ_UINT32)c;
+                x += (OPJ_UINT32) c;
                 c = getc(IN);
                 if (c == EOF) {
                     return OPJ_FALSE;
                 }
-                y += (OPJ_UINT32)c;
+                y += (OPJ_UINT32) c;
                 pix = pData + y * stride + x;
             } else { /* 03 .. 255 : absolute mode */
                 int j;
                 OPJ_UINT8 c1 = 0U;
 
                 for (j = 0; (j < c) && (x < width) &&
-                        ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
+                            ((OPJ_SIZE_T) pix < (OPJ_SIZE_T) beyond); j++, x++, pix++) {
                     if ((j & 1) == 0) {
                         int c1_int;
                         c1_int = getc(IN);
                         if (c1_int == EOF) {
                             return OPJ_FALSE;
                         }
-                        c1 = (OPJ_UINT8)c1_int;
+                        c1 = (OPJ_UINT8) c1_int;
                     }
-                    *pix = (OPJ_UINT8)((j & 1) ? (c1 & 0x0fU) : ((c1 >> 4) & 0x0fU));
+                    *pix = (OPJ_UINT8) ((j & 1) ? (c1 & 0x0fU) : ((c1 >> 4) & 0x0fU));
                     written++;
                 }
                 if (((c & 3) == 1) || ((c & 3) == 2)) { /* skip padding byte */
@@ -707,18 +696,17 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
     return OPJ_TRUE;
 }
 
-opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
-{
+opj_image_t *bmptoimage(const char *filename, opj_cparameters_t *parameters) {
     opj_image_cmptparm_t cmptparm[4];   /* maximum of 4 components */
     OPJ_UINT8 lut_R[256], lut_G[256], lut_B[256];
-    OPJ_UINT8 const* pLUT[3];
-    opj_image_t * image = NULL;
+    OPJ_UINT8 const *pLUT[3];
+    opj_image_t *image = NULL;
     FILE *IN;
     OPJ_BITMAPFILEHEADER File_h;
     OPJ_BITMAPINFOHEADER Info_h;
     OPJ_UINT32 i, palette_len, numcmpts = 1U;
     OPJ_BOOL l_result = OPJ_FALSE;
-    OPJ_UINT8* pData = NULL;
+    OPJ_UINT8 *pData = NULL;
     OPJ_UINT32 stride;
 
     pLUT[0] = lut_R;
@@ -756,10 +744,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         if (palette_len > 0U) {
             OPJ_UINT8 has_color = 0U;
             for (i = 0U; i < palette_len; i++) {
-                lut_B[i] = (OPJ_UINT8)getc(IN);
-                lut_G[i] = (OPJ_UINT8)getc(IN);
-                lut_R[i] = (OPJ_UINT8)getc(IN);
-                (void)getc(IN); /* padding */
+                lut_B[i] = (OPJ_UINT8) getc(IN);
+                lut_G[i] = (OPJ_UINT8) getc(IN);
+                lut_R[i] = (OPJ_UINT8) getc(IN);
+                (void) getc(IN); /* padding */
                 has_color |= (lut_B[i] ^ lut_G[i]) | (lut_G[i] ^ lut_R[i]);
             }
             if (has_color) {
@@ -778,22 +766,22 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         return NULL;
     }
 
-    if (Info_h.biBitCount > (((OPJ_UINT32) - 1) - 31) / Info_h.biWidth) {
+    if (Info_h.biBitCount > (((OPJ_UINT32) -1) - 31) / Info_h.biWidth) {
         fclose(IN);
         return NULL;
     }
     stride = ((Info_h.biWidth * Info_h.biBitCount + 31U) / 32U) *
              4U; /* rows are aligned on 32bits */
     if (Info_h.biBitCount == 4 &&
-            Info_h.biCompression == 2) { /* RLE 4 gets decoded as 8 bits data for now... */
-        if (8 > (((OPJ_UINT32) - 1) - 31) / Info_h.biWidth) {
+        Info_h.biCompression == 2) { /* RLE 4 gets decoded as 8 bits data for now... */
+        if (8 > (((OPJ_UINT32) -1) - 31) / Info_h.biWidth) {
             fclose(IN);
             return NULL;
         }
         stride = ((Info_h.biWidth * 8U + 31U) / 32U) * 4U;
     }
 
-    if (stride > ((OPJ_UINT32) - 1) / sizeof(OPJ_UINT8) / Info_h.biHeight) {
+    if (stride > ((OPJ_UINT32) -1) / sizeof(OPJ_UINT8) / Info_h.biHeight) {
         fclose(IN);
         return NULL;
     }
@@ -804,29 +792,29 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     }
     /* Place the cursor at the beginning of the image information */
     fseek(IN, 0, SEEK_SET);
-    fseek(IN, (long)File_h.bfOffBits, SEEK_SET);
+    fseek(IN, (long) File_h.bfOffBits, SEEK_SET);
 
     switch (Info_h.biCompression) {
-    case 0:
-    case 3:
-        /* read raw data */
-        l_result = bmp_read_raw_data(IN, pData, stride, Info_h.biWidth,
-                                     Info_h.biHeight);
-        break;
-    case 1:
-        /* read rle8 data */
-        l_result = bmp_read_rle8_data(IN, pData, stride, Info_h.biWidth,
-                                      Info_h.biHeight);
-        break;
-    case 2:
-        /* read rle4 data */
-        l_result = bmp_read_rle4_data(IN, pData, stride, Info_h.biWidth,
-                                      Info_h.biHeight);
-        break;
-    default:
-        fprintf(stderr, "Unsupported BMP compression\n");
-        l_result = OPJ_FALSE;
-        break;
+        case 0:
+        case 3:
+            /* read raw data */
+            l_result = bmp_read_raw_data(IN, pData, stride, Info_h.biWidth,
+                                         Info_h.biHeight);
+            break;
+        case 1:
+            /* read rle8 data */
+            l_result = bmp_read_rle8_data(IN, pData, stride, Info_h.biWidth,
+                                          Info_h.biHeight);
+            break;
+        case 2:
+            /* read rle4 data */
+            l_result = bmp_read_rle4_data(IN, pData, stride, Info_h.biWidth,
+                                          Info_h.biHeight);
+            break;
+        default:
+            fprintf(stderr, "Unsupported BMP compression\n");
+            l_result = OPJ_FALSE;
+            break;
     }
     if (!l_result) {
         free(pData);
@@ -838,12 +826,12 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     memset(&cmptparm[0], 0, sizeof(cmptparm));
     for (i = 0; i < 4U; i++) {
         cmptparm[i].prec = 8;
-        cmptparm[i].bpp  = 8;
+        cmptparm[i].bpp = 8;
         cmptparm[i].sgnd = 0;
-        cmptparm[i].dx   = (OPJ_UINT32)parameters->subsampling_dx;
-        cmptparm[i].dy   = (OPJ_UINT32)parameters->subsampling_dy;
-        cmptparm[i].w    = Info_h.biWidth;
-        cmptparm[i].h    = Info_h.biHeight;
+        cmptparm[i].dx = (OPJ_UINT32) parameters->subsampling_dx;
+        cmptparm[i].dy = (OPJ_UINT32) parameters->subsampling_dy;
+        cmptparm[i].w = Info_h.biWidth;
+        cmptparm[i].h = Info_h.biHeight;
     }
 
     image = opj_image_create(numcmpts, &cmptparm[0],
@@ -858,12 +846,12 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     }
 
     /* set image offset and reference grid */
-    image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
-    image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
-    image->x1 = image->x0 + (Info_h.biWidth  - 1U) * (OPJ_UINT32)
-                parameters->subsampling_dx + 1U;
+    image->x0 = (OPJ_UINT32) parameters->image_offset_x0;
+    image->y0 = (OPJ_UINT32) parameters->image_offset_y0;
+    image->x1 = image->x0 + (Info_h.biWidth - 1U) * (OPJ_UINT32)
+            parameters->subsampling_dx + 1U;
     image->y1 = image->y0 + (Info_h.biHeight - 1U) * (OPJ_UINT32)
-                parameters->subsampling_dy + 1U;
+            parameters->subsampling_dy + 1U;
 
     /* Read the data */
     if (Info_h.biBitCount == 24 && Info_h.biCompression == 0) { /*RGB */
@@ -881,10 +869,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
                          0x00000000U);
     } else if (Info_h.biBitCount == 32 && Info_h.biCompression == 3) { /* bitmask */
         if ((Info_h.biRedMask == 0U) && (Info_h.biGreenMask == 0U) &&
-                (Info_h.biBlueMask == 0U)) {
-            Info_h.biRedMask   = 0x00FF0000U;
+            (Info_h.biBlueMask == 0U)) {
+            Info_h.biRedMask = 0x00FF0000U;
             Info_h.biGreenMask = 0x0000FF00U;
-            Info_h.biBlueMask  = 0x000000FFU;
+            Info_h.biBlueMask = 0x000000FFU;
         }
         bmpmask32toimage(pData, stride, image, Info_h.biRedMask, Info_h.biGreenMask,
                          Info_h.biBlueMask, Info_h.biAlphaMask);
@@ -892,10 +880,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         bmpmask16toimage(pData, stride, image, 0x7C00U, 0x03E0U, 0x001FU, 0x0000U);
     } else if (Info_h.biBitCount == 16 && Info_h.biCompression == 3) { /* bitmask */
         if ((Info_h.biRedMask == 0U) && (Info_h.biGreenMask == 0U) &&
-                (Info_h.biBlueMask == 0U)) {
-            Info_h.biRedMask   = 0xF800U;
+            (Info_h.biBlueMask == 0U)) {
+            Info_h.biRedMask = 0xF800U;
             Info_h.biGreenMask = 0x07E0U;
-            Info_h.biBlueMask  = 0x001FU;
+            Info_h.biBlueMask = 0x001FU;
         }
         bmpmask16toimage(pData, stride, image, Info_h.biRedMask, Info_h.biGreenMask,
                          Info_h.biBlueMask, Info_h.biAlphaMask);
@@ -911,8 +899,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     return image;
 }
 
-int imagetobmp(opj_image_t * image, const char *outfile)
-{
+int imagetobmp(opj_image_t *image, const char *outfile) {
     int w, h;
     int i, pad;
     FILE *fdest = NULL;
@@ -924,13 +911,13 @@ int imagetobmp(opj_image_t * image, const char *outfile)
         return 1;
     }
     if (image->numcomps >= 3 && image->comps[0].dx == image->comps[1].dx
-            && image->comps[1].dx == image->comps[2].dx
-            && image->comps[0].dy == image->comps[1].dy
-            && image->comps[1].dy == image->comps[2].dy
-            && image->comps[0].prec == image->comps[1].prec
-            && image->comps[1].prec == image->comps[2].prec
-            && image->comps[0].sgnd == image->comps[1].sgnd
-            && image->comps[1].sgnd == image->comps[2].sgnd) {
+        && image->comps[1].dx == image->comps[2].dx
+        && image->comps[0].dy == image->comps[1].dy
+        && image->comps[1].dy == image->comps[2].dy
+        && image->comps[0].prec == image->comps[1].prec
+        && image->comps[1].prec == image->comps[2].prec
+        && image->comps[0].sgnd == image->comps[1].sgnd
+        && image->comps[1].sgnd == image->comps[2].sgnd) {
 
         /* -->> -->> -->> -->>
         24 bits color
@@ -942,18 +929,18 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             return 1;
         }
 
-        w = (int)image->comps[0].w;
-        h = (int)image->comps[0].h;
+        w = (int) image->comps[0].w;
+        h = (int) image->comps[0].h;
 
         fprintf(fdest, "BM");
 
         /* FILE HEADER */
         /* ------------- */
         fprintf(fdest, "%c%c%c%c",
-                (OPJ_UINT8)(h * w * 3 + 3 * h * (w % 2) + 54) & 0xff,
-                (OPJ_UINT8)((h * w * 3 + 3 * h * (w % 2) + 54) >> 8) & 0xff,
-                (OPJ_UINT8)((h * w * 3 + 3 * h * (w % 2) + 54) >> 16) & 0xff,
-                (OPJ_UINT8)((h * w * 3 + 3 * h * (w % 2) + 54) >> 24) & 0xff);
+                (OPJ_UINT8) (h * w * 3 + 3 * h * (w % 2) + 54) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 8) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 16) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
                 ((0) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (54) & 0xff, ((54) >> 8) & 0xff, ((54) >> 16) & 0xff,
@@ -963,22 +950,22 @@ int imagetobmp(opj_image_t * image, const char *outfile)
         /* ------------- */
         fprintf(fdest, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff,
                 ((40) >> 24) & 0xff);
-        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8)((w) & 0xff),
-                (OPJ_UINT8)((w) >> 8) & 0xff,
-                (OPJ_UINT8)((w) >> 16) & 0xff,
-                (OPJ_UINT8)((w) >> 24) & 0xff);
-        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8)((h) & 0xff),
-                (OPJ_UINT8)((h) >> 8) & 0xff,
-                (OPJ_UINT8)((h) >> 16) & 0xff,
-                (OPJ_UINT8)((h) >> 24) & 0xff);
+        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8) ((w) & 0xff),
+                (OPJ_UINT8) ((w) >> 8) & 0xff,
+                (OPJ_UINT8) ((w) >> 16) & 0xff,
+                (OPJ_UINT8) ((w) >> 24) & 0xff);
+        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8) ((h) & 0xff),
+                (OPJ_UINT8) ((h) >> 8) & 0xff,
+                (OPJ_UINT8) ((h) >> 16) & 0xff,
+                (OPJ_UINT8) ((h) >> 24) & 0xff);
         fprintf(fdest, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
         fprintf(fdest, "%c%c", (24) & 0xff, ((24) >> 8) & 0xff);
         fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
                 ((0) >> 24) & 0xff);
-        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8)(3 * h * w + 3 * h * (w % 2)) & 0xff,
-                (OPJ_UINT8)((h * w * 3 + 3 * h * (w % 2)) >> 8) & 0xff,
-                (OPJ_UINT8)((h * w * 3 + 3 * h * (w % 2)) >> 16) & 0xff,
-                (OPJ_UINT8)((h * w * 3 + 3 * h * (w % 2)) >> 24) & 0xff);
+        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8) (3 * h * w + 3 * h * (w % 2)) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 8) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 16) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
                 ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
@@ -989,21 +976,21 @@ int imagetobmp(opj_image_t * image, const char *outfile)
                 ((0) >> 24) & 0xff);
 
         if (image->comps[0].prec > 8) {
-            adjustR = (int)image->comps[0].prec - 8;
+            adjustR = (int) image->comps[0].prec - 8;
             printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n",
                    image->comps[0].prec);
         } else {
             adjustR = 0;
         }
         if (image->comps[1].prec > 8) {
-            adjustG = (int)image->comps[1].prec - 8;
+            adjustG = (int) image->comps[1].prec - 8;
             printf("BMP CONVERSION: Truncating component 1 from %d bits to 8 bits\n",
                    image->comps[1].prec);
         } else {
             adjustG = 0;
         }
         if (image->comps[2].prec > 8) {
-            adjustB = (int)image->comps[2].prec - 8;
+            adjustB = (int) image->comps[2].prec - 8;
             printf("BMP CONVERSION: Truncating component 2 from %d bits to 8 bits\n",
                    image->comps[2].prec);
         } else {
@@ -1024,7 +1011,7 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             } else if (r < 0) {
                 r = 0;
             }
-            rc = (OPJ_UINT8)r;
+            rc = (OPJ_UINT8) r;
 
             g = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
@@ -1036,7 +1023,7 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             } else if (g < 0) {
                 g = 0;
             }
-            gc = (OPJ_UINT8)g;
+            gc = (OPJ_UINT8) g;
 
             b = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
@@ -1048,7 +1035,7 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             } else if (b < 0) {
                 b = 0;
             }
-            bc = (OPJ_UINT8)b;
+            bc = (OPJ_UINT8) b;
 
             fprintf(fdest, "%c%c%c", bc, gc, rc);
 
@@ -1074,17 +1061,17 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             fprintf(stderr, "imagetobmp: only first component of %d is used.\n",
                     image->numcomps);
         }
-        w = (int)image->comps[0].w;
-        h = (int)image->comps[0].h;
+        w = (int) image->comps[0].w;
+        h = (int) image->comps[0].h;
 
         fprintf(fdest, "BM");
 
         /* FILE HEADER */
         /* ------------- */
-        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8)(h * w + 54 + 1024 + h * (w % 2)) & 0xff,
-                (OPJ_UINT8)((h * w + 54 + 1024 + h * (w % 2)) >> 8) & 0xff,
-                (OPJ_UINT8)((h * w + 54 + 1024 + h * (w % 2)) >> 16) & 0xff,
-                (OPJ_UINT8)((h * w + 54 + 1024 + w * (w % 2)) >> 24) & 0xff);
+        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8) (h * w + 54 + 1024 + h * (w % 2)) & 0xff,
+                (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 8) & 0xff,
+                (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 16) & 0xff,
+                (OPJ_UINT8) ((h * w + 54 + 1024 + w * (w % 2)) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
                 ((0) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (54 + 1024) & 0xff, ((54 + 1024) >> 8) & 0xff,
@@ -1095,22 +1082,22 @@ int imagetobmp(opj_image_t * image, const char *outfile)
         /* ------------- */
         fprintf(fdest, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff,
                 ((40) >> 24) & 0xff);
-        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8)((w) & 0xff),
-                (OPJ_UINT8)((w) >> 8) & 0xff,
-                (OPJ_UINT8)((w) >> 16) & 0xff,
-                (OPJ_UINT8)((w) >> 24) & 0xff);
-        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8)((h) & 0xff),
-                (OPJ_UINT8)((h) >> 8) & 0xff,
-                (OPJ_UINT8)((h) >> 16) & 0xff,
-                (OPJ_UINT8)((h) >> 24) & 0xff);
+        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8) ((w) & 0xff),
+                (OPJ_UINT8) ((w) >> 8) & 0xff,
+                (OPJ_UINT8) ((w) >> 16) & 0xff,
+                (OPJ_UINT8) ((w) >> 24) & 0xff);
+        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8) ((h) & 0xff),
+                (OPJ_UINT8) ((h) >> 8) & 0xff,
+                (OPJ_UINT8) ((h) >> 16) & 0xff,
+                (OPJ_UINT8) ((h) >> 24) & 0xff);
         fprintf(fdest, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
         fprintf(fdest, "%c%c", (8) & 0xff, ((8) >> 8) & 0xff);
         fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
                 ((0) >> 24) & 0xff);
-        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8)(h * w + h * (w % 2)) & 0xff,
-                (OPJ_UINT8)((h * w + h * (w % 2)) >> 8) &  0xff,
-                (OPJ_UINT8)((h * w + h * (w % 2)) >> 16) & 0xff,
-                (OPJ_UINT8)((h * w + h * (w % 2)) >> 24) & 0xff);
+        fprintf(fdest, "%c%c%c%c", (OPJ_UINT8) (h * w + h * (w % 2)) & 0xff,
+                (OPJ_UINT8) ((h * w + h * (w % 2)) >> 8) & 0xff,
+                (OPJ_UINT8) ((h * w + h * (w % 2)) >> 16) & 0xff,
+                (OPJ_UINT8) ((h * w + h * (w % 2)) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
                 ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
         fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
@@ -1121,7 +1108,7 @@ int imagetobmp(opj_image_t * image, const char *outfile)
                 ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
 
         if (image->comps[0].prec > 8) {
-            adjustR = (int)image->comps[0].prec - 8;
+            adjustR = (int) image->comps[0].prec - 8;
             printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n",
                    image->comps[0].prec);
         } else {
@@ -1146,7 +1133,7 @@ int imagetobmp(opj_image_t * image, const char *outfile)
                 r = 0;
             }
 
-            fprintf(fdest, "%c", (OPJ_UINT8)r);
+            fprintf(fdest, "%c", (OPJ_UINT8) r);
 
             if ((i + 1) % w == 0) {
                 for (pad = (w % 4) ? (4 - w % 4) : 0; pad > 0; pad--) { /* ADD */
@@ -1155,6 +1142,280 @@ int imagetobmp(opj_image_t * image, const char *outfile)
             }
         }
         fclose(fdest);
+    }
+
+    return 0;
+}
+
+int imagetobmp_c_vector(opj_image_t *image, c_vector *outfile) {
+    int w, h;
+    int i, pad;
+    int adjustR, adjustG, adjustB;
+
+    if (image->comps[0].prec < 8) {
+        fprintf(stderr, "imagetobmp: Unsupported precision: %d\n",
+                image->comps[0].prec);
+        return 1;
+    }
+    if (image->numcomps >= 3 && image->comps[0].dx == image->comps[1].dx
+        && image->comps[1].dx == image->comps[2].dx
+        && image->comps[0].dy == image->comps[1].dy
+        && image->comps[1].dy == image->comps[2].dy
+        && image->comps[0].prec == image->comps[1].prec
+        && image->comps[1].prec == image->comps[2].prec
+        && image->comps[0].sgnd == image->comps[1].sgnd
+        && image->comps[1].sgnd == image->comps[2].sgnd) {
+
+        /* -->> -->> -->> -->>
+        24 bits color
+        <<-- <<-- <<-- <<-- */
+
+        if (!outfile) {
+            fprintf(stderr, "ERROR -> failed for writing\n");
+            return 1;
+        }
+
+        w = (int) image->comps[0].w;
+        h = (int) image->comps[0].h;
+
+        c_vector_push_back(outfile, "BM", 0, 2);
+
+        /* FILE HEADER */
+        /* ------------- */
+        OPJ_UINT8 _1185[4] = {
+                (OPJ_UINT8) (h * w * 3 + 3 * h * (w % 2) + 54) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 8) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 16) & 0xff,
+                (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1185, 0, 4);
+        OPJ_UINT8 _1191[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
+                              ((0) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1191, 0, 4);
+
+        OPJ_UINT8 _1195[4] = {(54) & 0xff, ((54) >> 8) & 0xff, ((54) >> 16) & 0xff,
+                              ((54) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1195, 0, 4);
+
+        /* INFO HEADER   */
+        /* ------------- */
+        OPJ_UINT8 _1201[4] = {(40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff,
+                              ((40) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1201, 0, 4);
+
+        OPJ_UINT8 _1205[4] = {(OPJ_UINT8) ((w) & 0xff),
+                              (OPJ_UINT8) ((w) >> 8) & 0xff,
+                              (OPJ_UINT8) ((w) >> 16) & 0xff,
+                              (OPJ_UINT8) ((w) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1205, 0, 4);
+        OPJ_UINT8 _1210[4] = {(OPJ_UINT8) ((h) & 0xff),
+                              (OPJ_UINT8) ((h) >> 8) & 0xff,
+                              (OPJ_UINT8) ((h) >> 16) & 0xff,
+                              (OPJ_UINT8) ((h) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1210, 0, 4);
+        OPJ_UINT8 _1215[4] = {(1) & 0xff, ((1) >> 8) & 0xff, (24) & 0xff, ((24) >> 8) & 0xff};
+        c_vector_push_back(outfile, _1215, 0, 4);
+        OPJ_UINT8 _1218[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
+                              ((0) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1218, 0, 4);
+        OPJ_UINT8 _1220[4] = {(OPJ_UINT8) (3 * h * w + 3 * h * (w % 2)) & 0xff,
+                              (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 8) & 0xff,
+                              (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 16) & 0xff,
+                              (OPJ_UINT8) ((h * w * 3 + 3 * h * (w % 2)) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1220, 0, 4);
+        OPJ_UINT8 _1225[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
+                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1225, 0, 4);
+        OPJ_UINT8 _1228[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
+                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1228, 0, 4);
+        OPJ_UINT8 _1231[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
+                              ((0) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1231, 0, 4);
+        OPJ_UINT8 _1234[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
+                              ((0) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1234, 0, 4);
+
+        if (image->comps[0].prec > 8) {
+            adjustR = (int) image->comps[0].prec - 8;
+            printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n",
+                   image->comps[0].prec);
+        } else {
+            adjustR = 0;
+        }
+        if (image->comps[1].prec > 8) {
+            adjustG = (int) image->comps[1].prec - 8;
+            printf("BMP CONVERSION: Truncating component 1 from %d bits to 8 bits\n",
+                   image->comps[1].prec);
+        } else {
+            adjustG = 0;
+        }
+        if (image->comps[2].prec > 8) {
+            adjustB = (int) image->comps[2].prec - 8;
+            printf("BMP CONVERSION: Truncating component 2 from %d bits to 8 bits\n",
+                   image->comps[2].prec);
+        } else {
+            adjustB = 0;
+        }
+
+        for (i = 0; i < w * h; i++) {
+            OPJ_UINT8 rc, gc, bc;
+            int r, g, b;
+
+            r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+            r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+            if (adjustR > 0) {
+                r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            }
+            if (r > 255) {
+                r = 255;
+            } else if (r < 0) {
+                r = 0;
+            }
+            rc = (OPJ_UINT8) r;
+
+            g = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+            g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+            if (adjustG > 0) {
+                g = ((g >> adjustG) + ((g >> (adjustG - 1)) % 2));
+            }
+            if (g > 255) {
+                g = 255;
+            } else if (g < 0) {
+                g = 0;
+            }
+            gc = (OPJ_UINT8) g;
+
+            b = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+            b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+            if (adjustB > 0) {
+                b = ((b >> adjustB) + ((b >> (adjustB - 1)) % 2));
+            }
+            if (b > 255) {
+                b = 255;
+            } else if (b < 0) {
+                b = 0;
+            }
+            bc = (OPJ_UINT8) b;
+
+            OPJ_UINT8 _1300[3] = {bc, gc, rc};
+            c_vector_push_back(outfile, _1300, 0, 3);
+
+            if ((i + 1) % w == 0) {
+                for (pad = ((3 * w) % 4) ? (4 - (3 * w) % 4) : 0; pad > 0; pad--) { /* ADD */
+                    c_vector_push_back(outfile, "0", 0, 1);
+                }
+            }
+        }
+    } else {            /* Gray-scale */
+
+        /* -->> -->> -->> -->>
+        8 bits non code (Gray scale)
+        <<-- <<-- <<-- <<-- */
+
+        if (!outfile) {
+            fprintf(stderr, "ERROR -> failed to writing\n");
+            return 1;
+        }
+        if (image->numcomps > 1) {
+            fprintf(stderr, "imagetobmp: only first component of %d is used.\n",
+                    image->numcomps);
+        }
+        w = (int) image->comps[0].w;
+        h = (int) image->comps[0].h;
+
+
+        c_vector_push_back(outfile, "BM", 0, 2);
+
+        /* FILE HEADER */
+        /* ------------- */
+        OPJ_UINT8 _1331[4] = {(OPJ_UINT8) (h * w + 54 + 1024 + h * (w % 2)) & 0xff,
+                              (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 8) & 0xff,
+                              (OPJ_UINT8) ((h * w + 54 + 1024 + h * (w % 2)) >> 16) & 0xff,
+                              (OPJ_UINT8) ((h * w + 54 + 1024 + w * (w % 2)) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1331, 0, 4);
+        OPJ_UINT8 _1336[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
+                              ((0) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1336, 0, 4);
+
+        OPJ_UINT8 _1340[4] = {(54 + 1024) & 0xff, ((54 + 1024) >> 8) & 0xff,
+                              ((54 + 1024) >> 16) & 0xff,
+                              ((54 + 1024) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1340, 0, 4);
+
+        /* INFO HEADER */
+        /* ------------- */
+        OPJ_UINT8 _1347[4] = {(40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff,
+                              ((40) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1347, 0, 4);
+        OPJ_UINT8 _1350[4] = {(OPJ_UINT8) ((w) & 0xff),
+                              (OPJ_UINT8) ((w) >> 8) & 0xff,
+                              (OPJ_UINT8) ((w) >> 16) & 0xff,
+                              (OPJ_UINT8) ((w) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1350, 0, 4);
+        OPJ_UINT8 _1355[4] = {(OPJ_UINT8) ((h) & 0xff),
+                              (OPJ_UINT8) ((h) >> 8) & 0xff,
+                              (OPJ_UINT8) ((h) >> 16) & 0xff,
+                              (OPJ_UINT8) ((h) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1355, 0, 4);
+        OPJ_UINT8 _1360[4] = {(1) & 0xff, ((1) >> 8) & 0xff, (8) & 0xff, ((8) >> 8) & 0xff};
+        c_vector_push_back(outfile, _1360, 0, 4);
+        OPJ_UINT8 _1363[4] = {(0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
+                              ((0) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1363, 0, 4);
+        OPJ_UINT8 _1366[4] = {(OPJ_UINT8) (h * w + h * (w % 2)) & 0xff,
+                              (OPJ_UINT8) ((h * w + h * (w % 2)) >> 8) & 0xff,
+                              (OPJ_UINT8) ((h * w + h * (w % 2)) >> 16) & 0xff,
+                              (OPJ_UINT8) ((h * w + h * (w % 2)) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1366, 0, 4);
+        OPJ_UINT8 _1371[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
+                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1371, 0, 4);
+        OPJ_UINT8 _1374[4] = {(7834) & 0xff, ((7834) >> 8) & 0xff,
+                              ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1374, 0, 4);
+        OPJ_UINT8 _1377[4] = {(256) & 0xff, ((256) >> 8) & 0xff,
+                              ((256) >> 16) & 0xff, ((256) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1377, 0, 4);
+        OPJ_UINT8 _1380[4] = {(256) & 0xff, ((256) >> 8) & 0xff,
+                              ((256) >> 16) & 0xff, ((256) >> 24) & 0xff};
+        c_vector_push_back(outfile, _1380, 0, 4);
+
+        if (image->comps[0].prec > 8) {
+            adjustR = (int) image->comps[0].prec - 8;
+            printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n",
+                   image->comps[0].prec);
+        } else {
+            adjustR = 0;
+        }
+
+        for (i = 0; i < 256; i++) {
+            OPJ_UINT8 _1392[4] = {i, i, i, 0};
+            c_vector_push_back(outfile, _1392, 0, 4);
+        }
+
+        for (i = 0; i < w * h; i++) {
+            int r;
+
+            r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+            r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+            if (adjustR > 0) {
+                r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            }
+            if (r > 255) {
+                r = 255;
+            } else if (r < 0) {
+                r = 0;
+            }
+
+            OPJ_UINT8 _1410[1] = {(OPJ_UINT8) r};
+            c_vector_push_back(outfile, _1410, 0, 1);
+
+            if ((i + 1) % w == 0) {
+                for (pad = (w % 4) ? (4 - w % 4) : 0; pad > 0; pad--) { /* ADD */
+                    c_vector_push_back(outfile, "0", 0, 1);
+                }
+            }
+        }
     }
 
     return 0;
