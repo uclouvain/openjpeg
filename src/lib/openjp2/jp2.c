@@ -1584,9 +1584,7 @@ static OPJ_BOOL opj_jp2_read_colr(opj_jp2_t *jp2,
                       "COLR BOX meth value is not a regular value (%d), "
                       "so we will ignore the entire Colour Specification box. \n", jp2->meth);
     }
-    if (jp2->color.jp2_has_colr) {
-        jp2->j2k->enumcs = jp2->enumcs;
-    }
+
     return OPJ_TRUE;
 }
 

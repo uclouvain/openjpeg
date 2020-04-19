@@ -415,9 +415,11 @@ OPJ_BOOL opj_tcd_update_tile_data(opj_tcd_t *p_tcd,
                                   OPJ_UINT32 p_dest_length);
 
 /**
- *
+ * Get the size in bytes of the input buffer provided before encoded.
+ * This must be the size provided to the p_src_length argument of
+ * opj_tcd_copy_tile_data()
  */
-OPJ_SIZE_T opj_tcd_get_encoded_tile_size(opj_tcd_t *p_tcd);
+OPJ_SIZE_T opj_tcd_get_encoder_input_buffer_size(opj_tcd_t *p_tcd);
 
 /**
  * Initialize the tile coder and may reuse some meory.
@@ -433,6 +435,8 @@ OPJ_BOOL opj_tcd_init_encode_tile(opj_tcd_t *p_tcd,
 
 /**
  * Copies tile data from the given memory block onto the system.
+ *
+ * p_src_length must be equal to opj_tcd_get_encoder_input_buffer_size()
  */
 OPJ_BOOL opj_tcd_copy_tile_data(opj_tcd_t *p_tcd,
                                 OPJ_BYTE * p_src,

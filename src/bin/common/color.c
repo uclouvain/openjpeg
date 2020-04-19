@@ -488,6 +488,10 @@ void color_apply_icc_profile(opj_image_t *image)
     if (out_space == cmsSigRgbData) { /* enumCS 16 */
         unsigned int i, nr_comp = image->numcomps;
 
+        if (nr_comp < 3) { /* GRAY or GRAYA, not RGB or RGBA */
+            cmsCloseProfile(in_prof);
+            return;
+        }
         if (nr_comp > 4) {
             nr_comp = 4;
         }
@@ -529,6 +533,10 @@ void color_apply_icc_profile(opj_image_t *image)
         out_prof = cmsCreate_sRGBProfile();
         new_space = OPJ_CLRSPC_SRGB;
     } else if (out_space == cmsSigYCbCrData) { /* enumCS 18 */
+        if (image->numcomps < 3) {
+            cmsCloseProfile(in_prof);
+            return;
+        }
         in_type = TYPE_YCbCr_16;
         out_type = TYPE_RGB_16;
         out_prof = cmsCreate_sRGBProfile();

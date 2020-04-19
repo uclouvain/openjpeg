@@ -1681,8 +1681,15 @@ int main(int argc, char **argv)
         if (dirptr) {
             dirptr->filename_buf = (char*)malloc(num_images * OPJ_PATH_LEN * sizeof(
                     char)); /* Stores at max 10 image file names*/
-            dirptr->filename = (char**) malloc(num_images * sizeof(char*));
             if (!dirptr->filename_buf) {
+                free(parameters.cp_comment);
+                free(dirptr);
+                return 0;
+            }
+            dirptr->filename = (char**) malloc(num_images * sizeof(char*));
+            if (!dirptr->filename) {
+                free(parameters.cp_comment);
+                free(dirptr);
                 return 0;
             }
             for (i = 0; i < num_images; i++) {
@@ -1690,9 +1697,13 @@ int main(int argc, char **argv)
             }
         }
         if (load_images(dirptr, img_fol.imgdirpath) == 1) {
+            free(parameters.cp_comment);
+            free(dirptr);
             return 0;
         }
         if (num_images == 0) {
+            free(parameters.cp_comment);
+            free(dirptr);
             fprintf(stdout, "Folder is empty\n");
             return 0;
         }
@@ -1850,6 +1861,7 @@ int main(int argc, char **argv)
             if (res < (size_t)codestream_length) {  /* FIXME */
                 fprintf(stderr, "failed to write %d (%s)\n", codestream_length,
                         parameters.outfile);
+                fclose(f);
                 return 1;
             }
             fclose(f);
@@ -1914,6 +1926,7 @@ int main(int argc, char **argv)
             if (res < (size_t)codestream_length) {  /* FIXME */
                 fprintf(stderr, "failed to write %d (%s)\n", codestream_length,
                         parameters.outfile);
+                fclose(f);
                 return 1;
             }
             fclose(f);

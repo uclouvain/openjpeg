@@ -597,11 +597,16 @@ int main(int argc, char **argv)
         if (dirptr) {
             dirptr->filename_buf = (char*)malloc(num_images * OPJ_PATH_LEN * sizeof(
                     char)); /* Stores at max 10 image file names*/
-            dirptr->filename = (char**) malloc(num_images * sizeof(char*));
-
             if (!dirptr->filename_buf) {
+                free(dirptr);
                 return 1;
             }
+            dirptr->filename = (char**) malloc(num_images * sizeof(char*));
+            if (!dirptr->filename) {
+                free(dirptr);
+                return 1;
+            }
+
             for (i = 0; i < num_images; i++) {
                 dirptr->filename[i] = dirptr->filename_buf + i * OPJ_PATH_LEN;
             }

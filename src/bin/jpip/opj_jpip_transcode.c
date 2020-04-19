@@ -49,12 +49,14 @@ static int jpip_to_jp2(char *argv[])
     dec = init_jpipdecoder(OPJ_TRUE);
 
     if (!(fread_jpip(argv[1], dec))) {
+        destroy_jpipdecoder(&dec);
         return 1;
     }
 
     decode_jpip(dec);
 
     if (!(fwrite_jp2k(argv[2], dec))) {
+        destroy_jpipdecoder(&dec);
         return 1;
     }
 
@@ -83,12 +85,14 @@ static int jpip_to_j2k(char *argv[])
     dec = init_jpipdecoder(OPJ_FALSE);
 
     if (!(fread_jpip(argv[1], dec))) {
+        destroy_jpipdecoder(&dec);
         return 1;
     }
 
     decode_jpip(dec);
 
     if (!(fwrite_jp2k(argv[2], dec))) {
+        destroy_jpipdecoder(&dec);
         return 1;
     }
 
