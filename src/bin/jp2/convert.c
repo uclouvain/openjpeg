@@ -2672,7 +2672,7 @@ int imagetoraw_c_vector(opj_image_t *image, c_vector *outfile,
                             curr = -128;
                         }
                         uc = (unsigned char) (curr & mask);
-                        res = c_vector_push_back(outfile, &uc, 0, 1);
+                        res = c_vector_push_back(outfile, &uc, 0, 1)==0?0:1;
                         if (res != 0) {
                             fprintf(stderr, "failed to write 1 byte\n");
                             goto fin;
@@ -2692,7 +2692,7 @@ int imagetoraw_c_vector(opj_image_t *image, c_vector *outfile,
                             curr = 0;
                         }
                         uc = (unsigned char) (curr & mask);
-                        res = c_vector_push_back(outfile, &uc, 0, 1);
+                        res = c_vector_push_back(outfile, &uc, 0, 1)==0?0:1;
                         if (res != 0) {
                             fprintf(stderr, "failed to write 1 byte\n");
                             goto fin;
@@ -2718,7 +2718,7 @@ int imagetoraw_c_vector(opj_image_t *image, c_vector *outfile,
                             curr = -32768;
                         }
                         uc16.val = (signed short) (curr & mask);
-                        res = c_vector_push_back(outfile, uc16.vals, 0, 2);
+                        res = c_vector_push_back(outfile, uc16.vals, 0, 2)==0?0:1;
                         if (res != 0) {
                             fprintf(stderr, "failed to write 2 byte\n");
                             goto fin;
@@ -2742,7 +2742,7 @@ int imagetoraw_c_vector(opj_image_t *image, c_vector *outfile,
                             curr = 0;
                         }
                         uc16.val = (unsigned short) (curr & mask);
-                        res = c_vector_push_back(outfile, uc16.vals, 0, 2);
+                        res = c_vector_push_back(outfile, uc16.vals, 0, 2)==0?0:1;
                         if (res != 0) {
                             fprintf(stderr, "failed to write 2 byte\n");
                             goto fin;

@@ -16,3 +16,6 @@ scripts/opjstyle*
 
 # Ignore directories made by `make`.
 /bin/
+/DG02File.j2k
+/cmake-build-*
+/.idea
