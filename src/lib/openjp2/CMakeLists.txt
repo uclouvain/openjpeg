@@ -122,7 +122,7 @@ install(TARGETS ${INSTALL_LIBS}
 )
 
 # Install includes files
-install(FILES openjpeg.h opj_stdint.h
+install(FILES openjpeg.h opj_stdint.h c_vector.h
   DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers
 )
 
