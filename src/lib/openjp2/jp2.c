@@ -3234,6 +3234,18 @@ OPJ_BOOL opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
     return opj_j2k_set_decoded_resolution_factor(p_jp2->j2k, res_factor, p_manager);
 }
 
+/* ----------------------------------------------------------------------- */
+
+OPJ_BOOL opj_jp2_encoder_set_extra_options(
+    opj_jp2_t *p_jp2,
+    const char* const* p_options,
+    opj_event_mgr_t * p_manager)
+{
+    return opj_j2k_encoder_set_extra_options(p_jp2->j2k, p_options, p_manager);
+}
+
+/* ----------------------------------------------------------------------- */
+
 /* JPIP specific */
 
 #ifdef USE_JPIP

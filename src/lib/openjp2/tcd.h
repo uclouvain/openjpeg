@@ -284,6 +284,22 @@ typedef struct opj_tcd {
     OPJ_BOOL* used_component;
 } opj_tcd_t;
 
+/**
+ * Structure to hold information needed to generate some markers.
+ * Used by encoder.
+ */
+typedef struct opj_tcd_marker_info {
+    /** In: Whether information to generate PLT markers in needed */
+    OPJ_BOOL    need_PLT;
+
+    /** OUT: Number of elements in p_packet_size[] array */
+    OPJ_UINT32  packet_count;
+
+    /** OUT: Array of size packet_count, such that p_packet_size[i] is
+     *       the size in bytes of the ith packet */
+    OPJ_UINT32* p_packet_size;
+} opj_tcd_marker_info_t;
+
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
@@ -305,6 +321,21 @@ Destroy a previously created TCD handle
 @param tcd TCD handle to destroy
 */
 void opj_tcd_destroy(opj_tcd_t *tcd);
+
+
+/**
+ * Create a new opj_tcd_marker_info_t* structure
+ * @param need_PLT Whether information is needed to generate PLT markers.
+ */
+opj_tcd_marker_info_t* opj_tcd_marker_info_create(OPJ_BOOL need_PLT);
+
+
+/**
+Destroy a previously created opj_tcd_marker_info_t* structure
+@param p_tcd_marker_info Structure to destroy
+*/
+void opj_tcd_marker_info_destroy(opj_tcd_marker_info_t *p_tcd_marker_info);
+
 
 /**
  * Initialize the tile coder and may reuse some memory.
@@ -364,6 +395,7 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size(opj_tcd_t *p_tcd,
  * @param   p_data_written  pointer to an int that is incremented by the number of bytes really written on p_dest
  * @param   p_len           Maximum length of the destination buffer
  * @param   p_cstr_info     Codestream information structure
+ * @param   p_marker_info   Marker information structure
  * @param   p_manager       the user event manager
  * @return  true if the coding is successful.
 */
@@ -373,6 +405,7 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
                              OPJ_UINT32 * p_data_written,
                              OPJ_UINT32 p_len,
                              struct opj_codestream_info *p_cstr_info,
+                             opj_tcd_marker_info_t* p_marker_info,
                              opj_event_mgr_t *p_manager);
 
 

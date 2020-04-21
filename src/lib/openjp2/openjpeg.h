@@ -1580,6 +1580,33 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
         opj_cparameters_t *parameters,
         opj_image_t *image);
 
+
+/**
+ * Specify extra options for the encoder.
+ *
+ * This may be called after opj_setup_encoder() and before opj_start_compress()
+ *
+ * This is the way to add new options in a fully ABI compatible way, without
+ * extending the opj_cparameters_t structure.
+ *
+ * Currently supported options are:
+ * <ul>
+ * <li>PLT=YES/NO. Defaults to NO. If set to YES, PLT marker segments,
+ *     indicating the length of each packet in the tile-part header, will be
+ *     written. Since 2.3.2</li>
+ * </ul>
+ *
+ * @param p_codec       Compressor handle
+ * @param p_options     Compression options. This should be a NULL terminated
+ *                      array of strings. Each string is of the form KEY=VALUE.
+ *
+ * @return OPJ_TRUE in case of success.
+ * @since 2.3.2
+ */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_encoder_set_extra_options(
+    opj_codec_t *p_codec,
+    const char* const* p_options);
+
 /**
  * Start to compress the current image.
  * @param p_codec       Compressor handle
