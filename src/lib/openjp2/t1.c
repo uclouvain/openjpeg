@@ -177,18 +177,18 @@ static OPJ_FLOAT64 opj_t1_getwmsedec(
     const OPJ_FLOAT64 * mct_norms,
     OPJ_UINT32 mct_numcomps);
 
-static void opj_t1_encode_cblk(opj_t1_t *t1,
-                               opj_tcd_cblk_enc_t* cblk,
-                               OPJ_UINT32 orient,
-                               OPJ_UINT32 compno,
-                               OPJ_UINT32 level,
-                               OPJ_UINT32 qmfbid,
-                               OPJ_FLOAT64 stepsize,
-                               OPJ_UINT32 cblksty,
-                               OPJ_UINT32 numcomps,
-                               opj_tcd_tile_t * tile,
-                               const OPJ_FLOAT64 * mct_norms,
-                               OPJ_UINT32 mct_numcomps);
+/** Return "cumwmsedec" that should be used to increase tile->distotile */
+static double opj_t1_encode_cblk(opj_t1_t *t1,
+                                 opj_tcd_cblk_enc_t* cblk,
+                                 OPJ_UINT32 orient,
+                                 OPJ_UINT32 compno,
+                                 OPJ_UINT32 level,
+                                 OPJ_UINT32 qmfbid,
+                                 OPJ_FLOAT64 stepsize,
+                                 OPJ_UINT32 cblksty,
+                                 OPJ_UINT32 numcomps,
+                                 const OPJ_FLOAT64 * mct_norms,
+                                 OPJ_UINT32 mct_numcomps);
 
 /**
 Decode 1 code-block
@@ -2100,124 +2100,210 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 }
 
 
+typedef struct {
+    OPJ_UINT32 compno;
+    OPJ_UINT32 resno;
+    opj_tcd_cblk_enc_t* cblk;
+    opj_tcd_tile_t *tile;
+    opj_tcd_band_t* band;
+    opj_tcd_tilecomp_t* tilec;
+    opj_tccp_t* tccp;
+    const OPJ_FLOAT64 * mct_norms;
+    OPJ_UINT32 mct_numcomps;
+    volatile OPJ_BOOL* pret;
+    opj_mutex_t* mutex;
+} opj_t1_cblk_encode_processing_job_t;
+
+/** Procedure to deal with a asynchronous code-block encoding job.
+ *
+ * @param user_data Pointer to a opj_t1_cblk_encode_processing_job_t* structure
+ * @param tls       TLS handle.
+ */
+static void opj_t1_clbl_encode_processor(void* user_data, opj_tls_t* tls)
+{
+    opj_t1_cblk_encode_processing_job_t* job =
+        (opj_t1_cblk_encode_processing_job_t*)user_data;
+    opj_tcd_cblk_enc_t* cblk = job->cblk;
+    const opj_tcd_band_t* band = job->band;
+    const opj_tcd_tilecomp_t* tilec = job->tilec;
+    const opj_tccp_t* tccp = job->tccp;
+    const OPJ_UINT32 resno = job->resno;
+    opj_t1_t* t1;
+    const OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+
+    OPJ_INT32* OPJ_RESTRICT tiledp;
+    OPJ_UINT32 cblk_w;
+    OPJ_UINT32 cblk_h;
+    OPJ_UINT32 i, j, tileLineAdvance;
+    OPJ_SIZE_T tileIndex = 0;
+
+    OPJ_INT32 x = cblk->x0 - band->x0;
+    OPJ_INT32 y = cblk->y0 - band->y0;
+
+    if (!*(job->pret)) {
+        opj_free(job);
+        return;
+    }
+
+    t1 = (opj_t1_t*) opj_tls_get(tls, OPJ_TLS_KEY_T1);
+    if (t1 == NULL) {
+        t1 = opj_t1_create(OPJ_TRUE); /* OPJ_TRUE == T1 for encoding */
+        opj_tls_set(tls, OPJ_TLS_KEY_T1, t1, opj_t1_destroy_wrapper);
+    }
+
+    if (band->bandno & 1) {
+        opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+        x += pres->x1 - pres->x0;
+    }
+    if (band->bandno & 2) {
+        opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+        y += pres->y1 - pres->y0;
+    }
+
+    if (!opj_t1_allocate_buffers(
+                t1,
+                (OPJ_UINT32)(cblk->x1 - cblk->x0),
+                (OPJ_UINT32)(cblk->y1 - cblk->y0))) {
+        *(job->pret) = OPJ_FALSE;
+        opj_free(job);
+        return;
+    }
+
+    cblk_w = t1->w;
+    cblk_h = t1->h;
+    tileLineAdvance = tile_w - cblk_w;
+
+    tiledp = &tilec->data[(OPJ_SIZE_T)y * tile_w + (OPJ_SIZE_T)x];
+    t1->data = tiledp;
+    t1->data_stride = tile_w;
+    if (tccp->qmfbid == 1) {
+        /* Do multiplication on unsigned type, even if the
+            * underlying type is signed, to avoid potential
+            * int overflow on large value (the output will be
+            * incorrect in such situation, but whatever...)
+            * This assumes complement-to-2 signed integer
+            * representation
+            * Fixes https://github.com/uclouvain/openjpeg/issues/1053
+            */
+        OPJ_UINT32* OPJ_RESTRICT tiledp_u = (OPJ_UINT32*) tiledp;
+        for (j = 0; j < cblk_h; ++j) {
+            for (i = 0; i < cblk_w; ++i) {
+                tiledp_u[tileIndex] <<= T1_NMSEDEC_FRACBITS;
+                tileIndex++;
+            }
+            tileIndex += tileLineAdvance;
+        }
+    } else {        /* if (tccp->qmfbid == 0) */
+        const OPJ_INT32 bandconst = 8192 * 8192 / ((OPJ_INT32) floor(
+                                        band->stepsize * 8192));
+
+        for (j = 0; j < cblk_h; ++j) {
+            for (i = 0; i < cblk_w; ++i) {
+                OPJ_INT32 tmp = tiledp[tileIndex];
+                tiledp[tileIndex] =
+                    opj_int_fix_mul_t1(
+                        tmp,
+                        bandconst);
+                tileIndex++;
+            }
+            tileIndex += tileLineAdvance;
+        }
+    }
+
+    {
+        OPJ_FLOAT64 cumwmsedec =
+            opj_t1_encode_cblk(
+                t1,
+                cblk,
+                band->bandno,
+                job->compno,
+                tilec->numresolutions - 1 - resno,
+                tccp->qmfbid,
+                band->stepsize,
+                tccp->cblksty,
+                job->tile->numcomps,
+                job->mct_norms,
+                job->mct_numcomps);
+        if (job->mutex) {
+            opj_mutex_lock(job->mutex);
+        }
+        job->tile->distotile += cumwmsedec;
+        if (job->mutex) {
+            opj_mutex_unlock(job->mutex);
+        }
+    }
+
+    opj_free(job);
+}
 
 
-OPJ_BOOL opj_t1_encode_cblks(opj_t1_t *t1,
+OPJ_BOOL opj_t1_encode_cblks(opj_tcd_t* tcd,
                              opj_tcd_tile_t *tile,
                              opj_tcp_t *tcp,
                              const OPJ_FLOAT64 * mct_norms,
                              OPJ_UINT32 mct_numcomps
                             )
 {
+    volatile OPJ_BOOL ret = OPJ_TRUE;
+    opj_thread_pool_t* tp = tcd->thread_pool;
     OPJ_UINT32 compno, resno, bandno, precno, cblkno;
+    opj_mutex_t* mutex = opj_mutex_create();
 
     tile->distotile = 0;        /* fixed_quality */
 
     for (compno = 0; compno < tile->numcomps; ++compno) {
         opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
         opj_tccp_t* tccp = &tcp->tccps[compno];
-        OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
         for (resno = 0; resno < tilec->numresolutions; ++resno) {
             opj_tcd_resolution_t *res = &tilec->resolutions[resno];
 
             for (bandno = 0; bandno < res->numbands; ++bandno) {
                 opj_tcd_band_t* OPJ_RESTRICT band = &res->bands[bandno];
-                OPJ_INT32 bandconst;
 
                 /* Skip empty bands */
                 if (opj_tcd_is_band_empty(band)) {
                     continue;
                 }
-
-                bandconst = 8192 * 8192 / ((OPJ_INT32) floor(band->stepsize * 8192));
                 for (precno = 0; precno < res->pw * res->ph; ++precno) {
                     opj_tcd_precinct_t *prc = &band->precincts[precno];
 
                     for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
                         opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
-                        OPJ_INT32* OPJ_RESTRICT tiledp;
-                        OPJ_UINT32 cblk_w;
-                        OPJ_UINT32 cblk_h;
-                        OPJ_UINT32 i, j, tileLineAdvance;
-                        OPJ_SIZE_T tileIndex = 0;
 
-                        OPJ_INT32 x = cblk->x0 - band->x0;
-                        OPJ_INT32 y = cblk->y0 - band->y0;
-                        if (band->bandno & 1) {
-                            opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-                            x += pres->x1 - pres->x0;
+                        opj_t1_cblk_encode_processing_job_t* job =
+                            (opj_t1_cblk_encode_processing_job_t*) opj_calloc(1,
+                                    sizeof(opj_t1_cblk_encode_processing_job_t));
+                        if (!job) {
+                            ret = OPJ_FALSE;
+                            goto end;
                         }
-                        if (band->bandno & 2) {
-                            opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-                            y += pres->y1 - pres->y0;
-                        }
-
-                        if (!opj_t1_allocate_buffers(
-                                    t1,
-                                    (OPJ_UINT32)(cblk->x1 - cblk->x0),
-                                    (OPJ_UINT32)(cblk->y1 - cblk->y0))) {
-                            return OPJ_FALSE;
-                        }
-
-                        cblk_w = t1->w;
-                        cblk_h = t1->h;
-                        tileLineAdvance = tile_w - cblk_w;
-
-                        tiledp = &tilec->data[(OPJ_SIZE_T)y * tile_w + (OPJ_SIZE_T)x];
-                        t1->data = tiledp;
-                        t1->data_stride = tile_w;
-                        if (tccp->qmfbid == 1) {
-                            /* Do multiplication on unsigned type, even if the
-                             * underlying type is signed, to avoid potential
-                             * int overflow on large value (the output will be
-                             * incorrect in such situation, but whatever...)
-                             * This assumes complement-to-2 signed integer
-                             * representation
-                             * Fixes https://github.com/uclouvain/openjpeg/issues/1053
-                             */
-                            OPJ_UINT32* OPJ_RESTRICT tiledp_u = (OPJ_UINT32*) tiledp;
-                            for (j = 0; j < cblk_h; ++j) {
-                                for (i = 0; i < cblk_w; ++i) {
-                                    tiledp_u[tileIndex] <<= T1_NMSEDEC_FRACBITS;
-                                    tileIndex++;
-                                }
-                                tileIndex += tileLineAdvance;
-                            }
-                        } else {        /* if (tccp->qmfbid == 0) */
-                            for (j = 0; j < cblk_h; ++j) {
-                                for (i = 0; i < cblk_w; ++i) {
-                                    OPJ_INT32 tmp = tiledp[tileIndex];
-                                    tiledp[tileIndex] =
-                                        opj_int_fix_mul_t1(
-                                            tmp,
-                                            bandconst);
-                                    tileIndex++;
-                                }
-                                tileIndex += tileLineAdvance;
-                            }
-                        }
-
-                        opj_t1_encode_cblk(
-                            t1,
-                            cblk,
-                            band->bandno,
-                            compno,
-                            tilec->numresolutions - 1 - resno,
-                            tccp->qmfbid,
-                            band->stepsize,
-                            tccp->cblksty,
-                            tile->numcomps,
-                            tile,
-                            mct_norms,
-                            mct_numcomps);
+                        job->compno = compno;
+                        job->tile = tile;
+                        job->resno = resno;
+                        job->cblk = cblk;
+                        job->band = band;
+                        job->tilec = tilec;
+                        job->tccp = tccp;
+                        job->mct_norms = mct_norms;
+                        job->mct_numcomps = mct_numcomps;
+                        job->pret = &ret;
+                        job->mutex = mutex;
+                        opj_thread_pool_submit_job(tp, opj_t1_clbl_encode_processor, job);
 
                     } /* cblkno */
                 } /* precno */
             } /* bandno */
         } /* resno  */
     } /* compno  */
-    return OPJ_TRUE;
+
+end:
+    opj_thread_pool_wait_completion(tcd->thread_pool, 0);
+    if (mutex) {
+        opj_mutex_destroy(mutex);
+    }
+
+    return ret;
 }
 
 /* Returns whether the pass (bpno, passtype) is terminated */
@@ -2252,18 +2338,17 @@ static int opj_t1_enc_is_term_pass(opj_tcd_cblk_enc_t* cblk,
 
 
 /** mod fixed_quality */
-static void opj_t1_encode_cblk(opj_t1_t *t1,
-                               opj_tcd_cblk_enc_t* cblk,
-                               OPJ_UINT32 orient,
-                               OPJ_UINT32 compno,
-                               OPJ_UINT32 level,
-                               OPJ_UINT32 qmfbid,
-                               OPJ_FLOAT64 stepsize,
-                               OPJ_UINT32 cblksty,
-                               OPJ_UINT32 numcomps,
-                               opj_tcd_tile_t * tile,
-                               const OPJ_FLOAT64 * mct_norms,
-                               OPJ_UINT32 mct_numcomps)
+static OPJ_FLOAT64 opj_t1_encode_cblk(opj_t1_t *t1,
+                                      opj_tcd_cblk_enc_t* cblk,
+                                      OPJ_UINT32 orient,
+                                      OPJ_UINT32 compno,
+                                      OPJ_UINT32 level,
+                                      OPJ_UINT32 qmfbid,
+                                      OPJ_FLOAT64 stepsize,
+                                      OPJ_UINT32 cblksty,
+                                      OPJ_UINT32 numcomps,
+                                      const OPJ_FLOAT64 * mct_norms,
+                                      OPJ_UINT32 mct_numcomps)
 {
     OPJ_FLOAT64 cumwmsedec = 0.0;
 
@@ -2297,7 +2382,7 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
                                       T1_NMSEDEC_FRACBITS) : 0;
     if (cblk->numbps == 0) {
         cblk->totalpasses = 0;
-        return;
+        return cumwmsedec;
     }
 
     bpno = (OPJ_INT32)(cblk->numbps - 1);
@@ -2343,7 +2428,6 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
         tempwmsedec = opj_t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid,
                                         stepsize, numcomps, mct_norms, mct_numcomps) ;
         cumwmsedec += tempwmsedec;
-        tile->distotile += tempwmsedec;
         pass->distortiondec = cumwmsedec;
 
         if (opj_t1_enc_is_term_pass(cblk, cblksty, bpno, passtype)) {
@@ -2425,4 +2509,6 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
         }
     }
 #endif
+
+    return cumwmsedec;
 }
