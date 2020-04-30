@@ -2488,11 +2488,11 @@ static OPJ_BOOL opj_tcd_dwt_encode(opj_tcd_t *p_tcd)
 
     for (compno = 0; compno < l_tile->numcomps; ++compno) {
         if (l_tccp->qmfbid == 1) {
-            if (! opj_dwt_encode(l_tile_comp)) {
+            if (! opj_dwt_encode(p_tcd, l_tile_comp)) {
                 return OPJ_FALSE;
             }
         } else if (l_tccp->qmfbid == 0) {
-            if (! opj_dwt_encode_real(l_tile_comp)) {
+            if (! opj_dwt_encode_real(p_tcd, l_tile_comp)) {
                 return OPJ_FALSE;
             }
         }

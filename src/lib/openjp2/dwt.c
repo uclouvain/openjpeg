@@ -129,7 +129,7 @@ static void opj_dwt_deinterleave_h(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
 Forward lazy transform (vertical)
 */
 static void opj_dwt_deinterleave_v(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
-                                   OPJ_INT32 sn, OPJ_INT32 x, OPJ_INT32 cas);
+                                   OPJ_INT32 sn, OPJ_UINT32 x, OPJ_INT32 cas);
 /**
 Forward 5-3 wavelet transform in 1-D
 */
@@ -155,7 +155,8 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
     opj_tcd_tilecomp_t* tilec,
     OPJ_UINT32 numres);
 
-static OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,
+static OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
+        opj_tcd_tilecomp_t * tilec,
         void (*p_function)(OPJ_INT32 *, OPJ_INT32, OPJ_INT32, OPJ_INT32));
 
 static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* OPJ_RESTRICT r,
@@ -271,7 +272,7 @@ static void opj_dwt_deinterleave_h(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
 /* Forward lazy transform (vertical).    */
 /* </summary>                            */
 static void opj_dwt_deinterleave_v(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
-                                   OPJ_INT32 sn, OPJ_INT32 x, OPJ_INT32 cas)
+                                   OPJ_INT32 sn, OPJ_UINT32 x, OPJ_INT32 cas)
 {
     OPJ_INT32 i = sn;
     OPJ_INT32 * l_dest = b;
@@ -1103,28 +1104,92 @@ static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps,
 */
 
 
+typedef struct {
+    opj_dwt_t h;
+    OPJ_UINT32 rw;
+    OPJ_UINT32 w;
+    OPJ_INT32 * OPJ_RESTRICT tiledp;
+    OPJ_UINT32 min_j;
+    OPJ_UINT32 max_j;
+    void (*p_function)(OPJ_INT32 *, OPJ_INT32, OPJ_INT32, OPJ_INT32);
+} opj_dwt_encode_h_job_t;
+
+static void opj_dwt_encode_h_func(void* user_data, opj_tls_t* tls)
+{
+    OPJ_UINT32 j;
+    opj_dwt_encode_h_job_t* job;
+    (void)tls;
+
+    job = (opj_dwt_encode_h_job_t*)user_data;
+    for (j = job->min_j; j < job->max_j; j++) {
+        OPJ_INT32* OPJ_RESTRICT aj = job->tiledp + j * job->w;
+        OPJ_UINT32 k;
+        for (k = 0; k < job->rw; k++) {
+            job->h.mem[k] = aj[k];
+        }
+        (*job->p_function)(job->h.mem, job->h.dn, job->h.sn, job->h.cas);
+        opj_dwt_deinterleave_h(job->h.mem, aj, job->h.dn, job->h.sn, job->h.cas);
+    }
+
+    opj_aligned_free(job->h.mem);
+    opj_free(job);
+}
+
+typedef struct {
+    opj_dwt_t v;
+    OPJ_UINT32 rh;
+    OPJ_UINT32 w;
+    OPJ_INT32 * OPJ_RESTRICT tiledp;
+    OPJ_UINT32 min_j;
+    OPJ_UINT32 max_j;
+    void (*p_function)(OPJ_INT32 *, OPJ_INT32, OPJ_INT32, OPJ_INT32);
+} opj_dwt_encode_v_job_t;
+
+static void opj_dwt_encode_v_func(void* user_data, opj_tls_t* tls)
+{
+    OPJ_UINT32 j;
+    opj_dwt_encode_v_job_t* job;
+    (void)tls;
+
+    job = (opj_dwt_encode_v_job_t*)user_data;
+    for (j = job->min_j; j < job->max_j; j++) {
+        OPJ_INT32* OPJ_RESTRICT aj = job->tiledp + j;
+        OPJ_UINT32 k;
+        for (k = 0; k < job->rh; ++k) {
+            job->v.mem[k] = aj[k * job->w];
+        }
+
+        (*job->p_function)(job->v.mem, job->v.dn, job->v.sn, job->v.cas);
+
+        opj_dwt_deinterleave_v(job->v.mem, aj, job->v.dn, job->v.sn, job->w,
+                               job->v.cas);
+    }
+
+    opj_aligned_free(job->v.mem);
+    opj_free(job);
+}
+
 /* <summary>                            */
 /* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,
+static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
+        opj_tcd_tilecomp_t * tilec,
         void (*p_function)(OPJ_INT32 *, OPJ_INT32, OPJ_INT32, OPJ_INT32))
 {
-    OPJ_INT32 i, j, k;
-    OPJ_INT32 *a = 00;
-    OPJ_INT32 *aj = 00;
+    OPJ_INT32 i;
     OPJ_INT32 *bj = 00;
-    OPJ_INT32 w, l;
+    OPJ_UINT32 w;
+    OPJ_INT32 l;
 
-    OPJ_INT32 rw;           /* width of the resolution level computed   */
-    OPJ_INT32 rh;           /* height of the resolution level computed  */
     OPJ_SIZE_T l_data_size;
 
     opj_tcd_resolution_t * l_cur_res = 0;
     opj_tcd_resolution_t * l_last_res = 0;
+    const int num_threads = opj_thread_pool_get_thread_count(tp);
+    OPJ_INT32 * OPJ_RESTRICT tiledp = tilec->data;
 
-    w = tilec->x1 - tilec->x0;
+    w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
     l = (OPJ_INT32)tilec->numresolutions - 1;
-    a = tilec->data;
 
     l_cur_res = tilec->resolutions + l;
     l_last_res = l_cur_res - 1;
@@ -1136,7 +1201,7 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,
         return OPJ_FALSE;
     }
     l_data_size *= sizeof(OPJ_INT32);
-    bj = (OPJ_INT32*)opj_malloc(l_data_size);
+    bj = (OPJ_INT32*)opj_aligned_32_malloc(l_data_size);
     /* l_data_size is equal to 0 when numresolutions == 1 but bj is not used */
     /* in that case, so do not error out */
     if (l_data_size != 0 && ! bj) {
@@ -1145,43 +1210,137 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,
     i = l;
 
     while (i--) {
-        OPJ_INT32 rw1;      /* width of the resolution level once lower than computed one                                       */
-        OPJ_INT32 rh1;      /* height of the resolution level once lower than computed one                                      */
+        OPJ_UINT32 j;
+        OPJ_UINT32 rw;           /* width of the resolution level computed   */
+        OPJ_UINT32 rh;           /* height of the resolution level computed  */
+        OPJ_UINT32
+        rw1;      /* width of the resolution level once lower than computed one                                       */
+        OPJ_UINT32
+        rh1;      /* height of the resolution level once lower than computed one                                      */
         OPJ_INT32 cas_col;  /* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
         OPJ_INT32 cas_row;  /* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
         OPJ_INT32 dn, sn;
 
-        rw  = l_cur_res->x1 - l_cur_res->x0;
-        rh  = l_cur_res->y1 - l_cur_res->y0;
-        rw1 = l_last_res->x1 - l_last_res->x0;
-        rh1 = l_last_res->y1 - l_last_res->y0;
+        rw  = (OPJ_UINT32)(l_cur_res->x1 - l_cur_res->x0);
+        rh  = (OPJ_UINT32)(l_cur_res->y1 - l_cur_res->y0);
+        rw1 = (OPJ_UINT32)(l_last_res->x1 - l_last_res->x0);
+        rh1 = (OPJ_UINT32)(l_last_res->y1 - l_last_res->y0);
 
         cas_row = l_cur_res->x0 & 1;
         cas_col = l_cur_res->y0 & 1;
 
-        sn = rh1;
-        dn = rh - rh1;
-        for (j = 0; j < rw; ++j) {
-            aj = a + j;
-            for (k = 0; k < rh; ++k) {
-                bj[k] = aj[k * w];
+        sn = (OPJ_INT32)rh1;
+        dn = (OPJ_INT32)(rh - rh1);
+
+        /* Perform vertical pass */
+        if (num_threads <= 1 || rw <= 1) {
+            for (j = 0; j < rw; ++j) {
+                OPJ_INT32* OPJ_RESTRICT aj = tiledp + j;
+                OPJ_UINT32 k;
+                for (k = 0; k < rh; ++k) {
+                    bj[k] = aj[k * w];
+                }
+
+                (*p_function)(bj, dn, sn, cas_col);
+
+                opj_dwt_deinterleave_v(bj, aj, dn, sn, w, cas_col);
             }
+        }  else {
+            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+            OPJ_UINT32 step_j;
 
-            (*p_function)(bj, dn, sn, cas_col);
+            if (rw < num_jobs) {
+                num_jobs = rw;
+            }
+            step_j = (rw / num_jobs);
 
-            opj_dwt_deinterleave_v(bj, aj, dn, sn, w, cas_col);
+            for (j = 0; j < num_jobs; j++) {
+                opj_dwt_encode_v_job_t* job;
+
+                job = (opj_dwt_encode_v_job_t*) opj_malloc(sizeof(opj_dwt_encode_v_job_t));
+                if (!job) {
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_aligned_free(bj);
+                    return OPJ_FALSE;
+                }
+                job->v.mem = (OPJ_INT32*)opj_aligned_32_malloc(l_data_size);
+                if (!job->v.mem) {
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_free(job);
+                    opj_aligned_free(bj);
+                    return OPJ_FALSE;
+                }
+                job->v.dn = dn;
+                job->v.sn = sn;
+                job->v.cas = cas_col;
+                job->rh = rh;
+                job->w = w;
+                job->tiledp = tiledp;
+                job->min_j = j * step_j;
+                job->max_j = (j + 1U) * step_j; /* this can overflow */
+                if (j == (num_jobs - 1U)) {  /* this will take care of the overflow */
+                    job->max_j = rw;
+                }
+                job->p_function = p_function;
+                opj_thread_pool_submit_job(tp, opj_dwt_encode_v_func, job);
+            }
+            opj_thread_pool_wait_completion(tp, 0);
         }
 
-        sn = rw1;
-        dn = rw - rw1;
+        sn = (OPJ_INT32)rw1;
+        dn = (OPJ_INT32)(rw - rw1);
 
-        for (j = 0; j < rh; j++) {
-            aj = a + j * w;
-            for (k = 0; k < rw; k++) {
-                bj[k] = aj[k];
+        /* Perform horizontal pass */
+        if (num_threads <= 1 || rh <= 1) {
+            for (j = 0; j < rh; j++) {
+                OPJ_INT32* OPJ_RESTRICT aj = tiledp + j * w;
+                OPJ_UINT32 k;
+                for (k = 0; k < rw; k++) {
+                    bj[k] = aj[k];
+                }
+                (*p_function)(bj, dn, sn, cas_row);
+                opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
             }
-            (*p_function)(bj, dn, sn, cas_row);
-            opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
+        }  else {
+            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+            OPJ_UINT32 step_j;
+
+            if (rh < num_jobs) {
+                num_jobs = rh;
+            }
+            step_j = (rh / num_jobs);
+
+            for (j = 0; j < num_jobs; j++) {
+                opj_dwt_encode_h_job_t* job;
+
+                job = (opj_dwt_encode_h_job_t*) opj_malloc(sizeof(opj_dwt_encode_h_job_t));
+                if (!job) {
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_aligned_free(bj);
+                    return OPJ_FALSE;
+                }
+                job->h.mem = (OPJ_INT32*)opj_aligned_32_malloc(l_data_size);
+                if (!job->h.mem) {
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_free(job);
+                    opj_aligned_free(bj);
+                    return OPJ_FALSE;
+                }
+                job->h.dn = dn;
+                job->h.sn = sn;
+                job->h.cas = cas_row;
+                job->rw = rw;
+                job->w = w;
+                job->tiledp = tiledp;
+                job->min_j = j * step_j;
+                job->max_j = (j + 1U) * step_j; /* this can overflow */
+                if (j == (num_jobs - 1U)) {  /* this will take care of the overflow */
+                    job->max_j = rh;
+                }
+                job->p_function = p_function;
+                opj_thread_pool_submit_job(tp, opj_dwt_encode_h_func, job);
+            }
+            opj_thread_pool_wait_completion(tp, 0);
         }
 
         l_cur_res = l_last_res;
@@ -1189,15 +1348,16 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,
         --l_last_res;
     }
 
-    opj_free(bj);
+    opj_aligned_free(bj);
     return OPJ_TRUE;
 }
 
 /* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
+OPJ_BOOL opj_dwt_encode(opj_tcd_t *p_tcd,
+                        opj_tcd_tilecomp_t * tilec)
 {
-    return opj_dwt_encode_procedure(tilec, opj_dwt_encode_1);
+    return opj_dwt_encode_procedure(p_tcd->thread_pool, tilec, opj_dwt_encode_1);
 }
 
 /* <summary>                            */
@@ -1247,9 +1407,11 @@ OPJ_FLOAT64 opj_dwt_getnorm(OPJ_UINT32 level, OPJ_UINT32 orient)
 /* <summary>                             */
 /* Forward 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-OPJ_BOOL opj_dwt_encode_real(opj_tcd_tilecomp_t * tilec)
+OPJ_BOOL opj_dwt_encode_real(opj_tcd_t *p_tcd,
+                             opj_tcd_tilecomp_t * tilec)
 {
-    return opj_dwt_encode_procedure(tilec, opj_dwt_encode_1_real);
+    return opj_dwt_encode_procedure(p_tcd->thread_pool, tilec,
+                                    opj_dwt_encode_1_real);
 }
 
 /* <summary>                          */
@@ -1328,15 +1490,15 @@ typedef struct {
     OPJ_INT32 * OPJ_RESTRICT tiledp;
     OPJ_UINT32 min_j;
     OPJ_UINT32 max_j;
-} opj_dwd_decode_h_job_t;
+} opj_dwt_decode_h_job_t;
 
 static void opj_dwt_decode_h_func(void* user_data, opj_tls_t* tls)
 {
     OPJ_UINT32 j;
-    opj_dwd_decode_h_job_t* job;
+    opj_dwt_decode_h_job_t* job;
     (void)tls;
 
-    job = (opj_dwd_decode_h_job_t*)user_data;
+    job = (opj_dwt_decode_h_job_t*)user_data;
     for (j = job->min_j; j < job->max_j; j++) {
         opj_idwt53_h(&job->h, &job->tiledp[j * job->w]);
     }
@@ -1352,15 +1514,15 @@ typedef struct {
     OPJ_INT32 * OPJ_RESTRICT tiledp;
     OPJ_UINT32 min_j;
     OPJ_UINT32 max_j;
-} opj_dwd_decode_v_job_t;
+} opj_dwt_decode_v_job_t;
 
 static void opj_dwt_decode_v_func(void* user_data, opj_tls_t* tls)
 {
     OPJ_UINT32 j;
-    opj_dwd_decode_v_job_t* job;
+    opj_dwt_decode_v_job_t* job;
     (void)tls;
 
-    job = (opj_dwd_decode_v_job_t*)user_data;
+    job = (opj_dwt_decode_v_job_t*)user_data;
     for (j = job->min_j; j + PARALLEL_COLS_53 <= job->max_j;
             j += PARALLEL_COLS_53) {
         opj_idwt53_v(&job->v, &job->tiledp[j], (OPJ_SIZE_T)job->w,
@@ -1447,9 +1609,9 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
             step_j = (rh / num_jobs);
 
             for (j = 0; j < num_jobs; j++) {
-                opj_dwd_decode_h_job_t* job;
+                opj_dwt_decode_h_job_t* job;
 
-                job = (opj_dwd_decode_h_job_t*) opj_malloc(sizeof(opj_dwd_decode_h_job_t));
+                job = (opj_dwt_decode_h_job_t*) opj_malloc(sizeof(opj_dwt_decode_h_job_t));
                 if (!job) {
                     /* It would be nice to fallback to single thread case, but */
                     /* unfortunately some jobs may be launched and have modified */
@@ -1502,9 +1664,9 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
             step_j = (rw / num_jobs);
 
             for (j = 0; j < num_jobs; j++) {
-                opj_dwd_decode_v_job_t* job;
+                opj_dwt_decode_v_job_t* job;
 
-                job = (opj_dwd_decode_v_job_t*) opj_malloc(sizeof(opj_dwd_decode_v_job_t));
+                job = (opj_dwt_decode_v_job_t*) opj_malloc(sizeof(opj_dwt_decode_v_job_t));
                 if (!job) {
                     /* It would be nice to fallback to single thread case, but */
                     /* unfortunately some jobs may be launched and have modified */

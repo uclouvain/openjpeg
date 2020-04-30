@@ -67,6 +67,7 @@ void init_tilec(opj_tcd_tilecomp_t * l_tilec,
         l_tilec->data[i] = getValue((OPJ_UINT32)i);
     }
     l_tilec->numresolutions = numresolutions;
+    l_tilec->minimum_num_resolutions = numresolutions;
     l_tilec->resolutions = (opj_tcd_resolution_t*) opj_calloc(
                                l_tilec->numresolutions,
                                sizeof(opj_tcd_resolution_t));
@@ -98,9 +99,9 @@ void free_tilec(opj_tcd_tilecomp_t * l_tilec)
 void usage(void)
 {
     printf(
-        "bench_dwt [-size value] [-check] [-display] [-num_resolutions val]\n");
+        "bench_dwt [-decode|encode] [-size value] [-check] [-display]\n");
     printf(
-        "          [-offset x y] [-num_threads val]\n");
+        "          [-num_resolutions val] [-offset x y] [-num_threads val]\n");
     exit(1);
 }
 
@@ -131,6 +132,17 @@ OPJ_FLOAT64 opj_clock(void)
 #endif
 }
 
+static OPJ_FLOAT64 opj_wallclock(void)
+{
+#ifdef _WIN32
+    return opj_clock();
+#else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (OPJ_FLOAT64)tv.tv_sec + 1e-6 * (OPJ_FLOAT64)tv.tv_usec;
+#endif
+}
+
 int main(int argc, char** argv)
 {
     int num_threads = 0;
@@ -146,12 +158,18 @@ int main(int argc, char** argv)
     OPJ_BOOL check = OPJ_FALSE;
     OPJ_INT32 size = 16384 - 1;
     OPJ_FLOAT64 start, stop;
+    OPJ_FLOAT64 start_wc, stop_wc;
     OPJ_UINT32 offset_x = ((OPJ_UINT32)size + 1) / 2 - 1;
     OPJ_UINT32 offset_y = ((OPJ_UINT32)size + 1) / 2 - 1;
     OPJ_UINT32 num_resolutions = 6;
+    OPJ_BOOL bench_decode = OPJ_TRUE;
 
     for (i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-display") == 0) {
+        if (strcmp(argv[i], "-encode") == 0) {
+            bench_decode = OPJ_FALSE;
+        } else if (strcmp(argv[i], "-decode") == 0) {
+            bench_decode = OPJ_TRUE;
+        } else if (strcmp(argv[i], "-display") == 0) {
             display = OPJ_TRUE;
             check = OPJ_TRUE;
         } else if (strcmp(argv[i], "-check") == 0) {
@@ -223,13 +241,26 @@ int main(int argc, char** argv)
     image_comp.dy = 1;
 
     start = opj_clock();
-    opj_dwt_decode(&tcd, &tilec, tilec.numresolutions);
+    start_wc = opj_wallclock();
+    if (bench_decode) {
+        opj_dwt_decode(&tcd, &tilec, tilec.numresolutions);
+    } else {
+        opj_dwt_encode(&tcd, &tilec);
+    }
     stop = opj_clock();
-    printf("time for dwt_decode: %.03f s\n", stop - start);
+    stop_wc = opj_wallclock();
+    printf("time for %s: total = %.03f s, wallclock = %.03f s\n",
+           bench_decode ? "dwt_decode" : "dwt_encode",
+           stop - start,
+           stop_wc - start_wc);
 
     if (display || check) {
         if (display) {
-            printf("After IDWT\n");
+            if (bench_decode) {
+                printf("After IDWT\n");
+            } else {
+                printf("After FDWT\n");
+            }
             k = 0;
             for (j = 0; j < tilec.y1 - tilec.y0; j++) {
                 for (i = 0; i < tilec.x1 - tilec.x0; i++) {
@@ -240,9 +271,18 @@ int main(int argc, char** argv)
             }
         }
 
-        opj_dwt_encode(&tilec);
+        if (bench_decode) {
+            opj_dwt_encode(&tcd, &tilec);
+        } else {
+            opj_dwt_decode(&tcd, &tilec, tilec.numresolutions);
+        }
+
         if (display) {
-            printf("After FDWT\n");
+            if (bench_decode) {
+                printf("After FDWT\n");
+            } else {
+                printf("After IDWT\n");
+            }
             k = 0;
             for (j = 0; j < tilec.y1 - tilec.y0; j++) {
                 for (i = 0; i < tilec.x1 - tilec.x0; i++) {
