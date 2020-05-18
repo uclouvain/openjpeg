@@ -2194,16 +2194,11 @@ static void opj_t1_clbl_encode_processor(void* user_data, opj_tls_t* tls)
             tileIndex += tileLineAdvance;
         }
     } else {        /* if (tccp->qmfbid == 0) */
-        const OPJ_INT32 bandconst = 8192 * 8192 / ((OPJ_INT32) floor(
-                                        band->stepsize * 8192));
-
         for (j = 0; j < cblk_h; ++j) {
             for (i = 0; i < cblk_w; ++i) {
-                OPJ_INT32 tmp = tiledp[tileIndex];
-                tiledp[tileIndex] =
-                    opj_int_fix_mul_t1(
-                        tmp,
-                        bandconst);
+                OPJ_FLOAT32 tmp = ((OPJ_FLOAT32*)tiledp)[tileIndex];
+                tiledp[tileIndex] = (OPJ_INT32)opj_lrintf((tmp / band->stepsize) *
+                                    (1 << T1_NMSEDEC_FRACBITS));
                 tileIndex++;
             }
             tileIndex += tileLineAdvance;

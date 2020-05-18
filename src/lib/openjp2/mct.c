@@ -209,175 +209,25 @@ OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno)
 /* <summary> */
 /* Forward irreversible MCT. */
 /* </summary> */
-#ifdef __SSE4_1__
 void opj_mct_encode_real(
-    OPJ_INT32* OPJ_RESTRICT c0,
-    OPJ_INT32* OPJ_RESTRICT c1,
-    OPJ_INT32* OPJ_RESTRICT c2,
-    OPJ_SIZE_T n)
-{
-    OPJ_SIZE_T i;
-    const OPJ_SIZE_T len = n;
-
-    const __m128i ry = _mm_set1_epi32(2449);
-    const __m128i gy = _mm_set1_epi32(4809);
-    const __m128i by = _mm_set1_epi32(934);
-    const __m128i ru = _mm_set1_epi32(1382);
-    const __m128i gu = _mm_set1_epi32(2714);
-    /* const __m128i bu = _mm_set1_epi32(4096); */
-    /* const __m128i rv = _mm_set1_epi32(4096); */
-    const __m128i gv = _mm_set1_epi32(3430);
-    const __m128i bv = _mm_set1_epi32(666);
-    const __m128i mulround = _mm_shuffle_epi32(_mm_cvtsi32_si128(4096),
-                             _MM_SHUFFLE(1, 0, 1, 0));
-
-    for (i = 0; i < (len & ~3U); i += 4) {
-        __m128i lo, hi;
-        __m128i y, u, v;
-        __m128i r = _mm_load_si128((const __m128i *) & (c0[i]));
-        __m128i g = _mm_load_si128((const __m128i *) & (c1[i]));
-        __m128i b = _mm_load_si128((const __m128i *) & (c2[i]));
-
-        lo = r;
-        hi = _mm_shuffle_epi32(r, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, ry);
-        hi = _mm_mul_epi32(hi, ry);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        y = _mm_blend_epi16(lo, hi, 0xCC);
-
-        lo = g;
-        hi = _mm_shuffle_epi32(g, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, gy);
-        hi = _mm_mul_epi32(hi, gy);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        y = _mm_add_epi32(y, _mm_blend_epi16(lo, hi, 0xCC));
-
-        lo = b;
-        hi = _mm_shuffle_epi32(b, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, by);
-        hi = _mm_mul_epi32(hi, by);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        y = _mm_add_epi32(y, _mm_blend_epi16(lo, hi, 0xCC));
-        _mm_store_si128((__m128i *) & (c0[i]), y);
-
-        /*lo = b;
-        hi = _mm_shuffle_epi32(b, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, mulround);
-        hi = _mm_mul_epi32(hi, mulround);*/
-        lo = _mm_cvtepi32_epi64(_mm_shuffle_epi32(b, _MM_SHUFFLE(3, 2, 2, 0)));
-        hi = _mm_cvtepi32_epi64(_mm_shuffle_epi32(b, _MM_SHUFFLE(3, 2, 3, 1)));
-        lo = _mm_slli_epi64(lo, 12);
-        hi = _mm_slli_epi64(hi, 12);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        u = _mm_blend_epi16(lo, hi, 0xCC);
-
-        lo = r;
-        hi = _mm_shuffle_epi32(r, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, ru);
-        hi = _mm_mul_epi32(hi, ru);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        u = _mm_sub_epi32(u, _mm_blend_epi16(lo, hi, 0xCC));
-
-        lo = g;
-        hi = _mm_shuffle_epi32(g, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, gu);
-        hi = _mm_mul_epi32(hi, gu);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        u = _mm_sub_epi32(u, _mm_blend_epi16(lo, hi, 0xCC));
-        _mm_store_si128((__m128i *) & (c1[i]), u);
-
-        /*lo = r;
-        hi = _mm_shuffle_epi32(r, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, mulround);
-        hi = _mm_mul_epi32(hi, mulround);*/
-        lo = _mm_cvtepi32_epi64(_mm_shuffle_epi32(r, _MM_SHUFFLE(3, 2, 2, 0)));
-        hi = _mm_cvtepi32_epi64(_mm_shuffle_epi32(r, _MM_SHUFFLE(3, 2, 3, 1)));
-        lo = _mm_slli_epi64(lo, 12);
-        hi = _mm_slli_epi64(hi, 12);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        v = _mm_blend_epi16(lo, hi, 0xCC);
-
-        lo = g;
-        hi = _mm_shuffle_epi32(g, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, gv);
-        hi = _mm_mul_epi32(hi, gv);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        v = _mm_sub_epi32(v, _mm_blend_epi16(lo, hi, 0xCC));
-
-        lo = b;
-        hi = _mm_shuffle_epi32(b, _MM_SHUFFLE(3, 3, 1, 1));
-        lo = _mm_mul_epi32(lo, bv);
-        hi = _mm_mul_epi32(hi, bv);
-        lo = _mm_add_epi64(lo, mulround);
-        hi = _mm_add_epi64(hi, mulround);
-        lo = _mm_srli_epi64(lo, 13);
-        hi = _mm_slli_epi64(hi, 32 - 13);
-        v = _mm_sub_epi32(v, _mm_blend_epi16(lo, hi, 0xCC));
-        _mm_store_si128((__m128i *) & (c2[i]), v);
-    }
-    for (; i < len; ++i) {
-        OPJ_INT32 r = c0[i];
-        OPJ_INT32 g = c1[i];
-        OPJ_INT32 b = c2[i];
-        OPJ_INT32 y =  opj_int_fix_mul(r, 2449) + opj_int_fix_mul(g,
-                       4809) + opj_int_fix_mul(b, 934);
-        OPJ_INT32 u = -opj_int_fix_mul(r, 1382) - opj_int_fix_mul(g,
-                      2714) + opj_int_fix_mul(b, 4096);
-        OPJ_INT32 v =  opj_int_fix_mul(r, 4096) - opj_int_fix_mul(g,
-                       3430) - opj_int_fix_mul(b, 666);
-        c0[i] = y;
-        c1[i] = u;
-        c2[i] = v;
-    }
-}
-#else
-void opj_mct_encode_real(
-    OPJ_INT32* OPJ_RESTRICT c0,
-    OPJ_INT32* OPJ_RESTRICT c1,
-    OPJ_INT32* OPJ_RESTRICT c2,
+    OPJ_FLOAT32* OPJ_RESTRICT c0,
+    OPJ_FLOAT32* OPJ_RESTRICT c1,
+    OPJ_FLOAT32* OPJ_RESTRICT c2,
     OPJ_SIZE_T n)
 {
     OPJ_SIZE_T i;
     for (i = 0; i < n; ++i) {
-        OPJ_INT32 r = c0[i];
-        OPJ_INT32 g = c1[i];
-        OPJ_INT32 b = c2[i];
-        OPJ_INT32 y =  opj_int_fix_mul(r, 2449) + opj_int_fix_mul(g,
-                       4809) + opj_int_fix_mul(b, 934);
-        OPJ_INT32 u = -opj_int_fix_mul(r, 1382) - opj_int_fix_mul(g,
-                      2714) + opj_int_fix_mul(b, 4096);
-        OPJ_INT32 v =  opj_int_fix_mul(r, 4096) - opj_int_fix_mul(g,
-                       3430) - opj_int_fix_mul(b, 666);
+        OPJ_FLOAT32 r = c0[i];
+        OPJ_FLOAT32 g = c1[i];
+        OPJ_FLOAT32 b = c2[i];
+        OPJ_FLOAT32 y = 0.299f * r + 0.587f * g + 0.114f * b;
+        OPJ_FLOAT32 u = -0.16875f * r - 0.331260f * g + 0.5f * b;
+        OPJ_FLOAT32 v = 0.5f * r - 0.41869f * g - 0.08131f * b;
         c0[i] = y;
         c1[i] = u;
         c2[i] = v;
     }
 }
-#endif
 
 /* <summary> */
 /* Inverse irreversible MCT. */

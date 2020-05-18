@@ -2411,7 +2411,8 @@ static OPJ_BOOL opj_tcd_dc_level_shift_encode(opj_tcd_t *p_tcd)
             }
         } else {
             for (i = 0; i < l_nb_elem; ++i) {
-                *l_current_ptr = (*l_current_ptr - l_tccp->m_dc_level_shift) * (1 << 11);
+                *((OPJ_FLOAT32 *) l_current_ptr) = (OPJ_FLOAT32)(*l_current_ptr -
+                                                   l_tccp->m_dc_level_shift);
                 ++l_current_ptr;
             }
         }
@@ -2469,8 +2470,11 @@ static OPJ_BOOL opj_tcd_mct_encode(opj_tcd_t *p_tcd)
 
         opj_free(l_data);
     } else if (l_tcp->tccps->qmfbid == 0) {
-        opj_mct_encode_real(l_tile->comps[0].data, l_tile->comps[1].data,
-                            l_tile->comps[2].data, samples);
+        opj_mct_encode_real(
+            (OPJ_FLOAT32*)l_tile->comps[0].data,
+            (OPJ_FLOAT32*)l_tile->comps[1].data,
+            (OPJ_FLOAT32*)l_tile->comps[2].data,
+            samples);
     } else {
         opj_mct_encode(l_tile->comps[0].data, l_tile->comps[1].data,
                        l_tile->comps[2].data, samples);
