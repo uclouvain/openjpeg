@@ -102,10 +102,11 @@ typedef struct v4dwt_local {
     OPJ_UINT32      win_h_x1; /* end coord in high pass band */
 } opj_v4dwt_t ;
 
-static const OPJ_FLOAT32 opj_dwt_alpha =  1.586134342f; /*  12994 */
-static const OPJ_FLOAT32 opj_dwt_beta  =  0.052980118f; /*    434 */
-static const OPJ_FLOAT32 opj_dwt_gamma = -0.882911075f; /*  -7233 */
-static const OPJ_FLOAT32 opj_dwt_delta = -0.443506852f; /*  -3633 */
+/* From table F.4 from the standard */
+static const OPJ_FLOAT32 opj_dwt_alpha =  -1.586134342f; /*  12994 */
+static const OPJ_FLOAT32 opj_dwt_beta  =  -0.052980118f; /*    434 */
+static const OPJ_FLOAT32 opj_dwt_gamma = 0.882911075f; /*  -7233 */
+static const OPJ_FLOAT32 opj_dwt_delta = 0.443506852f; /*  -3633 */
 
 static const OPJ_FLOAT32 opj_K      = 1.230174105f; /*  10078 */
 static const OPJ_FLOAT32 opj_c13318 = 1.625732422f;
@@ -2627,19 +2628,19 @@ static void opj_v4dwt_decode(opj_v4dwt_t* OPJ_RESTRICT dwt)
     opj_v4dwt_decode_step2_sse(dwt->wavelet + b, dwt->wavelet + a + 1,
                                dwt->win_l_x0, dwt->win_l_x1,
                                (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
-                               _mm_set1_ps(opj_dwt_delta));
+                               _mm_set1_ps(-opj_dwt_delta));
     opj_v4dwt_decode_step2_sse(dwt->wavelet + a, dwt->wavelet + b + 1,
                                dwt->win_h_x0, dwt->win_h_x1,
                                (OPJ_UINT32)opj_int_min(dwt->dn, dwt->sn - b),
-                               _mm_set1_ps(opj_dwt_gamma));
+                               _mm_set1_ps(-opj_dwt_gamma));
     opj_v4dwt_decode_step2_sse(dwt->wavelet + b, dwt->wavelet + a + 1,
                                dwt->win_l_x0, dwt->win_l_x1,
                                (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
-                               _mm_set1_ps(opj_dwt_beta));
+                               _mm_set1_ps(-opj_dwt_beta));
     opj_v4dwt_decode_step2_sse(dwt->wavelet + a, dwt->wavelet + b + 1,
                                dwt->win_h_x0, dwt->win_h_x1,
                                (OPJ_UINT32)opj_int_min(dwt->dn, dwt->sn - b),
-                               _mm_set1_ps(opj_dwt_alpha));
+                               _mm_set1_ps(-opj_dwt_alpha));
 #else
     opj_v4dwt_decode_step1(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
                            opj_K);
@@ -2648,19 +2649,19 @@ static void opj_v4dwt_decode(opj_v4dwt_t* OPJ_RESTRICT dwt)
     opj_v4dwt_decode_step2(dwt->wavelet + b, dwt->wavelet + a + 1,
                            dwt->win_l_x0, dwt->win_l_x1,
                            (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
-                           opj_dwt_delta);
+                           -opj_dwt_delta);
     opj_v4dwt_decode_step2(dwt->wavelet + a, dwt->wavelet + b + 1,
                            dwt->win_h_x0, dwt->win_h_x1,
                            (OPJ_UINT32)opj_int_min(dwt->dn, dwt->sn - b),
-                           opj_dwt_gamma);
+                           -opj_dwt_gamma);
     opj_v4dwt_decode_step2(dwt->wavelet + b, dwt->wavelet + a + 1,
                            dwt->win_l_x0, dwt->win_l_x1,
                            (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
-                           opj_dwt_beta);
+                           -opj_dwt_beta);
     opj_v4dwt_decode_step2(dwt->wavelet + a, dwt->wavelet + b + 1,
                            dwt->win_h_x0, dwt->win_h_x1,
                            (OPJ_UINT32)opj_int_min(dwt->dn, dwt->sn - b),
-                           opj_dwt_alpha);
+                           -opj_dwt_alpha);
 #endif
 }
 
