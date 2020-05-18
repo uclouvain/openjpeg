@@ -1009,6 +1009,9 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                 /** avoid an if with storing function pointer */
                 l_gain = (*l_gain_ptr)(l_band->bandno);
                 numbps = (OPJ_INT32)(l_image_comp->prec + l_gain);
+
+                /* Delta_b value of Equation E-3 in "E.1 Inverse quantization
+                 * procedure" of the standard */
                 l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0,
                                                   (OPJ_INT32)(numbps - l_step_size->expn)))) * fraction;
                 /* Mb value of Equation E-2 in "E.1 Inverse quantization
