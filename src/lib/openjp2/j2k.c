@@ -4966,7 +4966,7 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
                 opj_stream_get_number_byte_left(p_stream)) {
             opj_event_msg(p_manager, EVT_ERROR,
                           "Tile part length size inconsistent with stream length\n");
-            return OPJ_FALSE;
+            //return OPJ_FALSE;
         }
         if (p_j2k->m_specific_param.m_decoder.m_sot_length >
                 UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA) {
