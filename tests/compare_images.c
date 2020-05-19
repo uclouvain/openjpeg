@@ -96,6 +96,8 @@ static void compare_images_help_display(void)
             "for ref/base file and for test file.  \n");
     fprintf(stdout,
             "  -d \t OPTIONAL \t indicate if you want to run this function as conformance test or as non regression test\n");
+    fprintf(stdout,
+            "  -i \t OPTIONAL \t list of features to ignore. Currently 'prec' only supported\n");
     fprintf(stdout, "\n");
 }
 
@@ -434,6 +436,8 @@ typedef struct test_cmp_parameters {
     char separator_base[2];
     /**  */
     char separator_test[2];
+    /** whether to ignore prec differences */
+    int ignore_prec;
 
 } test_cmp_parameters;
 
@@ -459,7 +463,8 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
     char *separatorList = NULL;
     size_t sizemembasefile, sizememtestfile;
     int index, flagM = 0, flagP = 0;
-    const char optlist[] = "b:t:n:m:p:s:d";
+    const char optlist[] = "b:t:n:m:p:s:di:";
+    char* ignoreList = NULL;
     int c;
 
     /* Init parameters*/
@@ -471,6 +476,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
     param->nr_flag = 0;
     param->separator_base[0] = 0;
     param->separator_test[0] = 0;
+    param->ignore_prec = 0;
 
     opj_opterr = 0;
 
@@ -504,6 +510,9 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
             break;
         case 's':
             separatorList = opj_optarg;
+            break;
+        case 'i':
+            ignoreList = opj_optarg;
             break;
         case '?':
             if ((opj_optopt == 'b') || (opj_optopt == 't') || (opj_optopt == 'n') ||
@@ -618,6 +627,14 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
         }
     }
 
+    if (ignoreList != NULL) {
+        if (strcmp(ignoreList, "prec") == 0) {
+            param->ignore_prec = 1;
+        } else {
+            fprintf(stderr, "Unsupported value for -i\n");
+            return 1;
+        }
+    }
 
     if ((param->nr_flag) && (flagP || flagM)) {
         fprintf(stderr,
@@ -645,7 +662,7 @@ int main(int argc, char **argv)
     char *filenamePNGtest = NULL, *filenamePNGbase = NULL, *filenamePNGdiff = NULL;
     size_t memsizebasefilename, memsizetestfilename;
     size_t memsizedifffilename;
-    int valueDiff = 0, nbPixelDiff = 0;
+    int nbPixelDiff = 0;
     double sumDiff = 0.0;
     /* Structures to store image parameters and data*/
     opj_image_t *imageBase = NULL, *imageTest = NULL, *imageDiff = NULL;
@@ -790,14 +807,16 @@ int main(int argc, char **argv)
             goto cleanup;
         }
 
-        if (((imageBase->comps)[it_comp]).prec != ((imageTest->comps)[it_comp]).prec) {
+        if (((imageBase->comps)[it_comp]).prec != ((imageTest->comps)[it_comp]).prec &&
+                !inParam.ignore_prec) {
             printf("ERROR: prec mismatch [comp %d] (%d><%d)\n", it_comp,
                    ((imageBase->comps)[it_comp]).prec, ((imageTest->comps)[it_comp]).prec);
             goto cleanup;
         }
 
-        if (((imageBase->comps)[it_comp]).bpp != ((imageTest->comps)[it_comp]).bpp) {
-            printf("ERROR: byte per pixel mismatch [comp %d] (%d><%d)\n", it_comp,
+        if (((imageBase->comps)[it_comp]).bpp != ((imageTest->comps)[it_comp]).bpp &&
+                !inParam.ignore_prec) {
+            printf("ERROR: bit per pixel mismatch [comp %d] (%d><%d)\n", it_comp,
                    ((imageBase->comps)[it_comp]).bpp, ((imageTest->comps)[it_comp]).bpp);
             goto cleanup;
         }
@@ -831,16 +850,25 @@ int main(int argc, char **argv)
     /*printf("filenamePNGdiff = %s [%d / %d octets]\n",filenamePNGdiff, strlen(filenamePNGdiff),memsizedifffilename );*/
 
     /* Compute pixel diff*/
+    failed = 0;
     for (it_comp = 0; it_comp < imageDiff->numcomps; it_comp++) {
         double SE = 0, PEAK = 0;
         double MSE = 0;
+        unsigned right_shift_input = 0;
+        unsigned right_shift_output = 0;
+        if (((imageBase->comps)[it_comp]).bpp > ((imageTest->comps)[it_comp]).bpp) {
+            right_shift_input = ((imageBase->comps)[it_comp]).bpp - ((
+                                    imageTest->comps)[it_comp]).bpp;
+        } else {
+            right_shift_output = ((imageTest->comps)[it_comp]).bpp - ((
+                                     imageBase->comps)[it_comp]).bpp;
+        }
         for (itpxl = 0;
                 itpxl < ((imageDiff->comps)[it_comp]).w * ((imageDiff->comps)[it_comp]).h;
                 itpxl++) {
-            if (abs(((imageBase->comps)[it_comp]).data[itpxl] - ((
-                        imageTest->comps)[it_comp]).data[itpxl]) > 0) {
-                valueDiff = ((imageBase->comps)[it_comp]).data[itpxl] - ((
-                                imageTest->comps)[it_comp]).data[itpxl];
+            int valueDiff = (((imageBase->comps)[it_comp]).data[itpxl] >> right_shift_input)
+                            - (((imageTest->comps)[it_comp]).data[itpxl] >> right_shift_output);
+            if (valueDiff != 0) {
                 ((imageDiff->comps)[it_comp]).data[itpxl] = abs(valueDiff);
                 sumDiff += valueDiff;
                 nbPixelDiff++;
@@ -867,7 +895,7 @@ int main(int argc, char **argv)
                 printf("ERROR: MSE (%f) or PEAK (%f) values produced by the decoded file are greater "
                        "than the allowable error (respectively %f and %f) \n",
                        MSE, PEAK, inParam.tabMSEvalues[it_comp], inParam.tabPEAKvalues[it_comp]);
-                goto cleanup;
+                failed = 1;
             }
         } else { /* Non regression-test */
             if (nbPixelDiff > 0) {
@@ -928,13 +956,15 @@ int main(int argc, char **argv)
                     free(filenamePNGdiff_it_comp);
                 }
 #endif
+                failed = 1;
                 goto cleanup;
             }
         }
     } /* it_comp loop */
 
-    printf("---- TEST SUCCEED ----\n");
-    failed = 0;
+    if (!failed) {
+        printf("---- TEST SUCCEED ----\n");
+    }
 cleanup:
     /*-----------------------------*/
     free(param_image_diff);
