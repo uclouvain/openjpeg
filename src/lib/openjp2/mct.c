@@ -216,6 +216,53 @@ void opj_mct_encode_real(
     OPJ_SIZE_T n)
 {
     OPJ_SIZE_T i;
+#ifdef __SSE__
+    const __m128 YR = _mm_set1_ps(0.299f);
+    const __m128 YG = _mm_set1_ps(0.587f);
+    const __m128 YB = _mm_set1_ps(0.114f);
+    const __m128 UR = _mm_set1_ps(-0.16875f);
+    const __m128 UG = _mm_set1_ps(-0.331260f);
+    const __m128 UB = _mm_set1_ps(0.5f);
+    const __m128 VR = _mm_set1_ps(0.5f);
+    const __m128 VG = _mm_set1_ps(-0.41869f);
+    const __m128 VB = _mm_set1_ps(-0.08131f);
+    for (i = 0; i < (n >> 3); i ++) {
+        __m128 r, g, b, y, u, v;
+
+        r = _mm_load_ps(c0);
+        g = _mm_load_ps(c1);
+        b = _mm_load_ps(c2);
+        y = _mm_add_ps(_mm_add_ps(_mm_mul_ps(r, YR), _mm_mul_ps(g, YG)),
+                       _mm_mul_ps(b, YB));
+        u = _mm_add_ps(_mm_add_ps(_mm_mul_ps(r, UR), _mm_mul_ps(g, UG)),
+                       _mm_mul_ps(b, UB));
+        v = _mm_add_ps(_mm_add_ps(_mm_mul_ps(r, VR), _mm_mul_ps(g, VG)),
+                       _mm_mul_ps(b, VB));
+        _mm_store_ps(c0, y);
+        _mm_store_ps(c1, u);
+        _mm_store_ps(c2, v);
+        c0 += 4;
+        c1 += 4;
+        c2 += 4;
+
+        r = _mm_load_ps(c0);
+        g = _mm_load_ps(c1);
+        b = _mm_load_ps(c2);
+        y = _mm_add_ps(_mm_add_ps(_mm_mul_ps(r, YR), _mm_mul_ps(g, YG)),
+                       _mm_mul_ps(b, YB));
+        u = _mm_add_ps(_mm_add_ps(_mm_mul_ps(r, UR), _mm_mul_ps(g, UG)),
+                       _mm_mul_ps(b, UB));
+        v = _mm_add_ps(_mm_add_ps(_mm_mul_ps(r, VR), _mm_mul_ps(g, VG)),
+                       _mm_mul_ps(b, VB));
+        _mm_store_ps(c0, y);
+        _mm_store_ps(c1, u);
+        _mm_store_ps(c2, v);
+        c0 += 4;
+        c1 += 4;
+        c2 += 4;
+    }
+    n &= 7;
+#endif
     for (i = 0; i < n; ++i) {
         OPJ_FLOAT32 r = c0[i];
         OPJ_FLOAT32 g = c1[i];
