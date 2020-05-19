@@ -502,7 +502,6 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
                                     l_current_pi->precno, l_current_pi->layno, skip_packet ? "skipped" : "kept");
                 */
             }
-
             if (!skip_packet) {
                 l_nb_bytes_read = 0;
 
@@ -1348,6 +1347,7 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
     opj_tcd_cblk_dec_t* l_cblk = 00;
     opj_tcd_resolution_t* l_res =
         &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
+    OPJ_UINT32 partial_buffer = 0;
 
     OPJ_ARG_NOT_USED(p_t2);
     OPJ_ARG_NOT_USED(pack_info);
@@ -1366,6 +1366,12 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
 
         for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
             opj_tcd_seg_t *l_seg = 00;
+
+            // if we have a partial data stream, set numchunks to zero
+            // since we have no data to actually decode.
+            if(partial_buffer) {
+                l_cblk->numchunks = 0;
+            } 
 
             if (!l_cblk->numnewpasses) {
                 /* nothing to do */
@@ -1389,12 +1395,29 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                 /* Check possible overflow (on l_current_data only, assumes input args already checked) then size */
                 if ((((OPJ_SIZE_T)l_current_data + (OPJ_SIZE_T)l_seg->newlen) <
                         (OPJ_SIZE_T)l_current_data) ||
-                        (l_current_data + l_seg->newlen > p_src_data + p_max_length)) {
+                        (l_current_data + l_seg->newlen > p_src_data + p_max_length) || 
+                        (partial_buffer)) {
                     opj_event_msg(p_manager, EVT_ERROR,
                                   "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                   l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
                                   p_pi->compno);
-                    return OPJ_FALSE;
+                    // NOTE - originall we would return OPJ_FALSE here when we encountered partial bitstream
+                    //return OPJ_FALSE;
+
+                    // skip this codeblock since it is a partial read
+                    partial_buffer = 1;
+                    l_cblk->numchunks = 0;
+
+                    l_seg->numpasses += l_seg->numnewpasses;
+                    l_cblk->numnewpasses -= l_seg->numnewpasses;
+                    if (l_cblk->numnewpasses > 0) {
+                        ++l_seg;
+                        ++l_cblk->numsegs;
+                    }
+                    if(l_cblk->numnewpasses > 0) {
+                        break;
+                    }
+                    continue;
                 }
 
 #ifdef USE_JPWL
@@ -1456,8 +1479,12 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
         ++l_band;
     }
 
-    *(p_data_read) = (OPJ_UINT32)(l_current_data - p_src_data);
-
+    // return the number of bytes read
+    if(partial_buffer) {
+        *(p_data_read) = p_max_length;
+    } else {
+        *(p_data_read) = (OPJ_UINT32)(l_current_data - p_src_data);
+    }
 
     return OPJ_TRUE;
 }
