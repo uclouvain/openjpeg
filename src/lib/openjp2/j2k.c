@@ -7823,6 +7823,14 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
     */
 
     if (parameters->tile_size_on) {
+        if (cp->tdx == 0) {
+            opj_event_msg(p_manager, EVT_ERROR, "Invalid tile width\n");
+            return OPJ_FALSE;
+        }
+        if (cp->tdy == 0) {
+            opj_event_msg(p_manager, EVT_ERROR, "Invalid tile height\n");
+            return OPJ_FALSE;
+        }
         cp->tw = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->x1 - cp->tx0),
                                              (OPJ_INT32)cp->tdx);
         cp->th = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->y1 - cp->ty0),
