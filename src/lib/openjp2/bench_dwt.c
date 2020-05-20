@@ -49,7 +49,8 @@ void init_tilec(opj_tcd_tilecomp_t * l_tilec,
                 OPJ_INT32 y0,
                 OPJ_INT32 x1,
                 OPJ_INT32 y1,
-                OPJ_UINT32 numresolutions)
+                OPJ_UINT32 numresolutions,
+                OPJ_BOOL irreversible)
 {
     opj_tcd_resolution_t* l_res;
     OPJ_UINT32 resno, l_level_no;
@@ -64,7 +65,13 @@ void init_tilec(opj_tcd_tilecomp_t * l_tilec,
               (size_t)(l_tilec->y1 - l_tilec->y0);
     l_tilec->data = (OPJ_INT32*) opj_malloc(sizeof(OPJ_INT32) * nValues);
     for (i = 0; i < nValues; i++) {
-        l_tilec->data[i] = getValue((OPJ_UINT32)i);
+        OPJ_INT32 val = getValue((OPJ_UINT32)i);
+        if (irreversible) {
+            OPJ_FLOAT32 fVal = (OPJ_FLOAT32)val;
+            memcpy(&l_tilec->data[i], &fVal, sizeof(OPJ_FLOAT32));
+        } else {
+            l_tilec->data[i] = val;
+        }
     }
     l_tilec->numresolutions = numresolutions;
     l_tilec->minimum_num_resolutions = numresolutions;
@@ -99,7 +106,7 @@ void free_tilec(opj_tcd_tilecomp_t * l_tilec)
 void usage(void)
 {
     printf(
-        "bench_dwt [-decode|encode] [-size value] [-check] [-display]\n");
+        "bench_dwt [-decode|encode] [-I] [-size value] [-check] [-display]\n");
     printf(
         "          [-num_resolutions val] [-offset x y] [-num_threads val]\n");
     exit(1);
@@ -163,6 +170,7 @@ int main(int argc, char** argv)
     OPJ_UINT32 offset_y = ((OPJ_UINT32)size + 1) / 2 - 1;
     OPJ_UINT32 num_resolutions = 6;
     OPJ_BOOL bench_decode = OPJ_TRUE;
+    OPJ_BOOL irreversible = OPJ_FALSE;
 
     for (i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-encode") == 0) {
@@ -171,9 +179,10 @@ int main(int argc, char** argv)
             bench_decode = OPJ_TRUE;
         } else if (strcmp(argv[i], "-display") == 0) {
             display = OPJ_TRUE;
-            check = OPJ_TRUE;
         } else if (strcmp(argv[i], "-check") == 0) {
             check = OPJ_TRUE;
+        } else if (strcmp(argv[i], "-I") == 0) {
+            irreversible = OPJ_TRUE;
         } else if (strcmp(argv[i], "-size") == 0 && i + 1 < argc) {
             size = atoi(argv[i + 1]);
             i ++;
@@ -197,18 +206,29 @@ int main(int argc, char** argv)
         }
     }
 
+    if (irreversible && check) {
+        /* Due to irreversible inverse DWT not being symetric of forward */
+        /* See BUG_WEIRD_TWO_INVK in dwt.c */
+        printf("-I and -check aren't compatible\n");
+        exit(1);
+    }
+
     tp = opj_thread_pool_create(num_threads);
 
     init_tilec(&tilec, (OPJ_INT32)offset_x, (OPJ_INT32)offset_y,
                (OPJ_INT32)offset_x + size, (OPJ_INT32)offset_y + size,
-               num_resolutions);
+               num_resolutions, irreversible);
 
     if (display) {
         printf("Before\n");
         k = 0;
         for (j = 0; j < tilec.y1 - tilec.y0; j++) {
             for (i = 0; i < tilec.x1 - tilec.x0; i++) {
-                printf("%d ", tilec.data[k]);
+                if (irreversible) {
+                    printf("%f ", ((OPJ_FLOAT32*)tilec.data)[k]);
+                } else {
+                    printf("%d ", tilec.data[k]);
+                }
                 k ++;
             }
             printf("\n");
@@ -243,9 +263,17 @@ int main(int argc, char** argv)
     start = opj_clock();
     start_wc = opj_wallclock();
     if (bench_decode) {
-        opj_dwt_decode(&tcd, &tilec, tilec.numresolutions);
+        if (irreversible)  {
+            opj_dwt_decode_real(&tcd, &tilec, tilec.numresolutions);
+        } else {
+            opj_dwt_decode(&tcd, &tilec, tilec.numresolutions);
+        }
     } else {
-        opj_dwt_encode(&tcd, &tilec);
+        if (irreversible)  {
+            opj_dwt_encode_real(&tcd, &tilec);
+        } else {
+            opj_dwt_encode(&tcd, &tilec);
+        }
     }
     stop = opj_clock();
     stop_wc = opj_wallclock();
@@ -254,22 +282,27 @@ int main(int argc, char** argv)
            stop - start,
            stop_wc - start_wc);
 
-    if (display || check) {
-        if (display) {
-            if (bench_decode) {
-                printf("After IDWT\n");
-            } else {
-                printf("After FDWT\n");
-            }
-            k = 0;
-            for (j = 0; j < tilec.y1 - tilec.y0; j++) {
-                for (i = 0; i < tilec.x1 - tilec.x0; i++) {
-                    printf("%d ", tilec.data[k]);
-                    k ++;
-                }
-                printf("\n");
-            }
+    if (display) {
+        if (bench_decode) {
+            printf("After IDWT\n");
+        } else {
+            printf("After FDWT\n");
         }
+        k = 0;
+        for (j = 0; j < tilec.y1 - tilec.y0; j++) {
+            for (i = 0; i < tilec.x1 - tilec.x0; i++) {
+                if (irreversible) {
+                    printf("%f ", ((OPJ_FLOAT32*)tilec.data)[k]);
+                } else {
+                    printf("%d ", tilec.data[k]);
+                }
+                k ++;
+            }
+            printf("\n");
+        }
+    }
+
+    if ((display || check) && !irreversible) {
 
         if (bench_decode) {
             opj_dwt_encode(&tcd, &tilec);
@@ -277,7 +310,8 @@ int main(int argc, char** argv)
             opj_dwt_decode(&tcd, &tilec, tilec.numresolutions);
         }
 
-        if (display) {
+
+        if (display && !irreversible) {
             if (bench_decode) {
                 printf("After FDWT\n");
             } else {
@@ -286,22 +320,28 @@ int main(int argc, char** argv)
             k = 0;
             for (j = 0; j < tilec.y1 - tilec.y0; j++) {
                 for (i = 0; i < tilec.x1 - tilec.x0; i++) {
-                    printf("%d ", tilec.data[k]);
+                    if (irreversible) {
+                        printf("%f ", ((OPJ_FLOAT32*)tilec.data)[k]);
+                    } else {
+                        printf("%d ", tilec.data[k]);
+                    }
                     k ++;
                 }
                 printf("\n");
             }
         }
 
-        if (check) {
-            size_t idx;
-            size_t nValues = (size_t)(tilec.x1 - tilec.x0) *
-                             (size_t)(tilec.y1 - tilec.y0);
-            for (idx = 0; idx < nValues; idx++) {
-                if (tilec.data[idx] != getValue((OPJ_UINT32)idx)) {
-                    printf("Difference found at idx = %u\n", (OPJ_UINT32)idx);
-                    exit(1);
-                }
+    }
+
+    if (check) {
+
+        size_t idx;
+        size_t nValues = (size_t)(tilec.x1 - tilec.x0) *
+                         (size_t)(tilec.y1 - tilec.y0);
+        for (idx = 0; idx < nValues; idx++) {
+            if (tilec.data[idx] != getValue((OPJ_UINT32)idx)) {
+                printf("Difference found at idx = %u\n", (OPJ_UINT32)idx);
+                exit(1);
             }
         }
     }
