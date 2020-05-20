@@ -215,10 +215,66 @@ itialise_encode*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 lay_t, res_t, comp_t, prc_t, tx0_t, ty0_t;</td><td> </td><td class="right">    OPJ_UINT32 lay_t, res_t, comp_t, prc_t, tx0_t, ty0_t;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">} opj_poc_t;</td><td> </td><td class="right">} opj_poc_t;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr id="part-3" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-3"><em> line 1539<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-3"><em> line 1573<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * Setup the encoder parameters using the current image and using user para
+meters.</td><td> </td><td class="right"> * Setup the encoder parameters using the current image and using user para
+meters.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param p_codec       Compressor handle</td><td> </td><td class="right"> * @param p_codec       Compressor handle</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param parameters    Compression parameters</td><td> </td><td class="right"> * @param parameters    Compression parameters</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param image         Input filled image</td><td> </td><td class="right"> * @param image         Input filled image</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">        opj_cparameters_t *parameters,</td><td> </td><td class="right">        opj_cparameters_t *parameters,</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">        opj_image_t *image);</td><td> </td><td class="right">        opj_image_t *image);</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
+      <tr id="diff0007"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* Specify extra options for the encoder.</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * This may be called after opj_setup_encoder() and before opj_start_compre</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ss()</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * This is the way to add new options in a fully ABI compatible way, withou</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">t</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * extending the opj_cparameters_t structure.</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * Currently supported options are:</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * &lt;ul&gt;</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * &lt;li&gt;PLT=YES/NO. Defaults to NO. If set to YES, PLT marker segments,</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *     indicating the length of each packet in the tile-part header, will b</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">e</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *     written. Since 2.3.2&lt;/li&gt;</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * &lt;/ul&gt;</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @param p_codec       Compressor handle</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @param p_options     Compression options. This should be a NULL terminat</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">ed</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *                      array of strings. Each string is of the form KEY=VA</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">LUE.</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @return OPJ_TRUE in case of success.</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * @since 2.3.2</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> */</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_encoder_set_extra_options(</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    opj_codec_t *p_codec,</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">    const char* const* p_options);</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/**</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * Start to compress the current image.</td><td> </td><td class="right"> * Start to compress the current image.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param p_codec       Compressor handle</td><td> </td><td class="right"> * @param p_codec       Compressor handle</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param p_image       Input filled image</td><td> </td><td class="right"> * @param p_image       Input filled image</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param p_stream      Input stgream</td><td> </td><td class="right"> * @param p_stream      Input stgream</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_start_compress(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_start_compress(opj_codec_t *p_codec,</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">        opj_image_t * p_image,</td><td> </td><td class="right">        opj_image_t * p_image,</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">        opj_stream_t *p_stream);</td><td> </td><td class="right">        opj_stream_t *p_stream);</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
-     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 6 change blocks.&nbsp;</th></tr>
-     <tr class="stats"><td></td><th><i>9 lines changed or deleted</i></th><th><i> </i></th><th><i>66 lines changed or added</i></th><td></td></tr>
+     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 7 change blocks.&nbsp;</th></tr>
+     <tr class="stats"><td></td><th><i>9 lines changed or deleted</i></th><th><i> </i></th><th><i>97 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"></td></tr>
    </table>
    <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>

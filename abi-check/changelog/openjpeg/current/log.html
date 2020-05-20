@@ -20,7 +20,74 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 64689d05dfaaf52105581d93fb1eb173b20829a4
+<pre class='wrap'>commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
+Merge: 64689d0 4edb8c8
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-20 20:29:31 +0200
+
+    Merge pull request #1246 from rouault/write_plt
+    
+    Add support for generation of PLT markers in encoder
+
+commit 4edb8c83374f52cd6a8f2c7c875e8ffacccb5fa5
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-04-21 15:55:44 +0200
+
+    Add support for generation of PLT markers in encoder
+    
+    * -PLT switch added to opj_compress
+    * Add a opj_encoder_set_extra_options() function that
+      accepts a PLT=YES option, and could be expanded later
+      for other uses.
+    
+    -------
+    
+    Testing with a Sentinel2 10m band, T36JTT_20160914T074612_B02.jp2,
+    coming from S2A_MSIL1C_20160914T074612_N0204_R135_T36JTT_20160914T081456.SAFE
+    
+    Decompress it to TIFF:
+    ```
+    opj_uncompress -i T36JTT_20160914T074612_B02.jp2 -o T36JTT_20160914T074612_B02.tif
+    ```
+    
+    Recompress it with similar parameters as original:
+    ```
+    opj_compress -n 5 -c [256,256],[256,256],[256,256],[256,256],[256,256] -t 1024,1024 -PLT -i T36JTT_20160914T074612_B02.tif -o T36JTT_20160914T074612_B02_PLT.jp2
+    ```
+    
+    Dump codestream detail with GDAL dump_jp2.py utility (https://github.com/OSGeo/gdal/blob/master/gdal/swig/python/samples/dump_jp2.py)
+    ```
+    python dump_jp2.py T36JTT_20160914T074612_B02.jp2 &gt; /tmp/dump_sentinel2_ori.txt
+    python dump_jp2.py T36JTT_20160914T074612_B02_PLT.jp2 &gt; /tmp/dump_sentinel2_openjpeg_plt.txt
+    ```
+    
+    The diff between both show very similar structure, and identical number of packets in PLT markers
+    
+    Now testing with Kakadu (KDU803_Demo_Apps_for_Linux-x86-64_200210)
+    
+    Full file decompression:
+    ```
+    kdu_expand -i T36JTT_20160914T074612_B02_PLT.jp2 -o tmp.tif
+    
+    Consumed 121 tile-part(s) from a total of 121 tile(s).
+    Consumed 80,318,806 codestream bytes (excluding any file format) = 5.329697
+    bits/pel.
+    Processed using the multi-threaded environment, with
+        8 parallel threads of execution
+    ```
+    
+    Partial decompresson (presumably using PLT markers):
+    ```
+    kdu_expand -i T36JTT_20160914T074612_B02.jp2 -o tmp.pgm -region "{0.5,0.5},{0.01,0.01}"
+    kdu_expand -i T36JTT_20160914T074612_B02_PLT.jp2 -o tmp2.pgm  -region "{0.5,0.5},{0.01,0.01}"
+    diff tmp.pgm tmp2.pgm &amp;& echo "same !"
+    ```
+    
+    -------
+    
+    Funded by ESA for S2-MPC project
+
+commit 64689d05dfaaf52105581d93fb1eb173b20829a4
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-04-18 18:25:44 +0200
 
@@ -874,21 +941,6 @@ Date:   2018-08-11 16:59:30 -0400
     Add -DBUILD_PKGCONFIG_FILES to install instructions
     
     Building under msys/mingw doesn't automatically install the pkg config files needed to build GDAL and other libraries
-
-commit d2205ba2ee78faeea659263383446c4472b1f9df
-Merge: fd205f4 4170681
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-06-20 16:26:24 +0200
-
-    Merge pull request #1121 from rouault/fix_tnsot_zero
-    
-    Fix regression in reading files with TNsot == 0 (refs #1120)
-
-commit 4170681661126bc9c1348a0183633dc2f4fc8b05
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-06-20 15:06:16 +0200
-
-    Add test cases for https://github.com/uclouvain/openjpeg/issues/1120 and https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2785
 
 ...</pre></div>
 
