@@ -1725,10 +1725,11 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
                 datap[i] /= 2;
             }
         } else {        /* if (tccp->qmfbid == 0) */
+            const float stepsize = 0.5f * band->stepsize;
             i = 0;
 #ifdef __SSE2__
             {
-                const __m128 xmm_stepsize = _mm_set1_ps(band->stepsize);
+                const __m128 xmm_stepsize = _mm_set1_ps(stepsize);
                 for (; i < (cblk_size & ~15U); i += 16) {
                     __m128 xmm0_data = _mm_cvtepi32_ps(_mm_load_si128((__m128i * const)(
                                                            datap + 0)));
@@ -1747,7 +1748,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
             }
 #endif
             for (; i < cblk_size; ++i) {
-                OPJ_FLOAT32 tmp = ((OPJ_FLOAT32)(*datap)) * band->stepsize;
+                OPJ_FLOAT32 tmp = ((OPJ_FLOAT32)(*datap)) * stepsize;
                 memcpy(datap, &tmp, sizeof(tmp));
                 datap++;
             }
@@ -1773,12 +1774,13 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
             }
         }
     } else {        /* if (tccp->qmfbid == 0) */
+        const float stepsize = 0.5f * band->stepsize;
         OPJ_FLOAT32* OPJ_RESTRICT tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_SIZE_T)y *
                                                          tile_w + (OPJ_SIZE_T)x];
         for (j = 0; j < cblk_h; ++j) {
             OPJ_FLOAT32* OPJ_RESTRICT tiledp2 = tiledp;
             for (i = 0; i < cblk_w; ++i) {
-                OPJ_FLOAT32 tmp = (OPJ_FLOAT32) * datap * band->stepsize;
+                OPJ_FLOAT32 tmp = (OPJ_FLOAT32) * datap * stepsize;
                 *tiledp2 = tmp;
                 datap++;
                 tiledp2++;

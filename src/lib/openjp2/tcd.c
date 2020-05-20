@@ -112,7 +112,7 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img)
  * Initializes tile coding/decoding
  */
 static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
-        OPJ_BOOL isEncoder, OPJ_FLOAT32 fraction, OPJ_SIZE_T sizeof_block,
+        OPJ_BOOL isEncoder, OPJ_SIZE_T sizeof_block,
         opj_event_mgr_t* manager);
 
 /**
@@ -721,7 +721,7 @@ OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec)
 /* ----------------------------------------------------------------------- */
 
 static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
-        OPJ_BOOL isEncoder, OPJ_FLOAT32 fraction, OPJ_SIZE_T sizeof_block,
+        OPJ_BOOL isEncoder, OPJ_SIZE_T sizeof_block,
         opj_event_mgr_t* manager)
 {
     OPJ_UINT32(*l_gain_ptr)(OPJ_UINT32) = 00;
@@ -1013,7 +1013,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                 /* Delta_b value of Equation E-3 in "E.1 Inverse quantization
                  * procedure" of the standard */
                 l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0,
-                                                  (OPJ_INT32)(numbps - l_step_size->expn)))) * fraction;
+                                                  (OPJ_INT32)(numbps - l_step_size->expn))));
                 /* Mb value of Equation E-2 in "E.1 Inverse quantization
                  * procedure" of the standard */
                 l_band->numbps = l_step_size->expn + (OPJ_INT32)l_tccp->numgbits -
@@ -1196,14 +1196,14 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 OPJ_BOOL opj_tcd_init_encode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                                   opj_event_mgr_t* p_manager)
 {
-    return opj_tcd_init_tile(p_tcd, p_tile_no, OPJ_TRUE, 1.0F,
+    return opj_tcd_init_tile(p_tcd, p_tile_no, OPJ_TRUE,
                              sizeof(opj_tcd_cblk_enc_t), p_manager);
 }
 
 OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                                   opj_event_mgr_t* p_manager)
 {
-    return opj_tcd_init_tile(p_tcd, p_tile_no, OPJ_FALSE, 0.5F,
+    return opj_tcd_init_tile(p_tcd, p_tile_no, OPJ_FALSE,
                              sizeof(opj_tcd_cblk_dec_t), p_manager);
 }
 
