@@ -1427,13 +1427,10 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                         (OPJ_SIZE_T)l_current_data) ||
                         (l_current_data + l_seg->newlen > p_src_data + p_max_length) || 
                         (partial_buffer)) {
-                    opj_event_msg(p_manager, EVT_ERROR,
+                    opj_event_msg(p_manager, EVT_WARNING,
                                   "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                   l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
                                   p_pi->compno);
-                    // NOTE - originall we would return OPJ_FALSE here when we encountered partial bitstream
-                    //return OPJ_FALSE;
-
                     // skip this codeblock since it is a partial read
                     partial_buffer = 1;
                     l_cblk->numchunks = 0;
