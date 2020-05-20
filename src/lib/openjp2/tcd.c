@@ -1000,7 +1000,11 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 
                 {
                     /* Table E-1 - Sub-band gains */
-                    const OPJ_INT32 log2_gain = (l_band->bandno == 0) ? 0 :
+                    /* BUG_WEIRD_TWO_INVK (look for this identifier in dwt.c): */
+                    /* the test (!isEncoder && l_tccp->qmfbid == 0) is strongly */
+                    /* linked to the use of two_invK instead of invK */
+                    const OPJ_INT32 log2_gain = (!isEncoder &&
+                                                 l_tccp->qmfbid == 0) ? 0 : (l_band->bandno == 0) ? 0 :
                                                 (l_band->bandno == 3) ? 2 : 1;
 
                     /* Nominal dynamic range. Equation E-4 */

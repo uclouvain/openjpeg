@@ -2608,6 +2608,14 @@ static void opj_v4dwt_decode_step2(opj_v4_t* l, opj_v4_t* w,
 static void opj_v4dwt_decode(opj_v4dwt_t* OPJ_RESTRICT dwt)
 {
     OPJ_INT32 a, b;
+    /* BUG_WEIRD_TWO_INVK (look for this identifier in tcd.c) */
+    /* Historic value for 2 / opj_invK */
+    /* Normally, we should use invK, but if we do so, we have failures in the */
+    /* conformance test, due to MSE and peak errors significantly higher than */
+    /* accepted value */
+    /* Due to using two_invK instead of invK, we have to compensate in tcd.c */
+    /* the computation of the stepsize for the non LL subbands */
+    const float two_invK = 1.625732422f;
     if (dwt->cas == 0) {
         if (!((dwt->dn > 0) || (dwt->sn > 1))) {
             return;
@@ -2625,7 +2633,7 @@ static void opj_v4dwt_decode(opj_v4dwt_t* OPJ_RESTRICT dwt)
     opj_v4dwt_decode_step1_sse(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
                                _mm_set1_ps(opj_K));
     opj_v4dwt_decode_step1_sse(dwt->wavelet + b, dwt->win_h_x0, dwt->win_h_x1,
-                               _mm_set1_ps(opj_invK));
+                               _mm_set1_ps(two_invK));
     opj_v4dwt_decode_step2_sse(dwt->wavelet + b, dwt->wavelet + a + 1,
                                dwt->win_l_x0, dwt->win_l_x1,
                                (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
@@ -2646,7 +2654,7 @@ static void opj_v4dwt_decode(opj_v4dwt_t* OPJ_RESTRICT dwt)
     opj_v4dwt_decode_step1(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
                            opj_K);
     opj_v4dwt_decode_step1(dwt->wavelet + b, dwt->win_h_x0, dwt->win_h_x1,
-                           opj_invK);
+                           two_invK);
     opj_v4dwt_decode_step2(dwt->wavelet + b, dwt->wavelet + a + 1,
                            dwt->win_l_x0, dwt->win_l_x1,
                            (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
