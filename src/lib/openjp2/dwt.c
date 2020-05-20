@@ -103,13 +103,13 @@ typedef struct v4dwt_local {
 } opj_v4dwt_t ;
 
 /* From table F.4 from the standard */
-static const OPJ_FLOAT32 opj_dwt_alpha =  -1.586134342f; /*  12994 */
-static const OPJ_FLOAT32 opj_dwt_beta  =  -0.052980118f; /*    434 */
-static const OPJ_FLOAT32 opj_dwt_gamma = 0.882911075f; /*  -7233 */
-static const OPJ_FLOAT32 opj_dwt_delta = 0.443506852f; /*  -3633 */
+static const OPJ_FLOAT32 opj_dwt_alpha =  -1.586134342f;
+static const OPJ_FLOAT32 opj_dwt_beta  =  -0.052980118f;
+static const OPJ_FLOAT32 opj_dwt_gamma = 0.882911075f;
+static const OPJ_FLOAT32 opj_dwt_delta = 0.443506852f;
 
-static const OPJ_FLOAT32 opj_K      = 1.230174105f; /*  10078 */
-static const OPJ_FLOAT32 opj_c13318 = 1.625732422f;
+static const OPJ_FLOAT32 opj_K      = 1.230174105f;
+static const OPJ_FLOAT32 opj_invK   = (OPJ_FLOAT32)(1.0 / 1.230174105);
 
 /*@}*/
 
@@ -1108,9 +1108,9 @@ static void opj_dwt_encode_1_real(void *aIn, OPJ_INT32 dn, OPJ_INT32 sn,
                          (OPJ_UINT32)opj_int_min(sn, dn - a),
                          opj_dwt_delta);
     opj_dwt_encode_step1(w + b, 0, (OPJ_UINT32)dn,
-                         opj_K / 2);
+                         opj_K);
     opj_dwt_encode_step1(w + a, 0, (OPJ_UINT32)sn,
-                         opj_c13318 / 2);
+                         opj_invK);
 }
 
 static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps,
@@ -1399,21 +1399,6 @@ OPJ_BOOL opj_dwt_decode(opj_tcd_t *p_tcd, opj_tcd_tilecomp_t* tilec,
     }
 }
 
-
-/* <summary>                          */
-/* Get gain of 5-3 wavelet transform. */
-/* </summary>                         */
-OPJ_UINT32 opj_dwt_getgain(OPJ_UINT32 orient)
-{
-    if (orient == 0) {
-        return 0;
-    }
-    if (orient == 1 || orient == 2) {
-        return 1;
-    }
-    return 2;
-}
-
 /* <summary>                */
 /* Get norm of 5-3 wavelet. */
 /* </summary>               */
@@ -1438,15 +1423,6 @@ OPJ_BOOL opj_dwt_encode_real(opj_tcd_t *p_tcd,
 {
     return opj_dwt_encode_procedure(p_tcd->thread_pool, tilec,
                                     opj_dwt_encode_1_real);
-}
-
-/* <summary>                          */
-/* Get gain of 9-7 wavelet transform. */
-/* </summary>                         */
-OPJ_UINT32 opj_dwt_getgain_real(OPJ_UINT32 orient)
-{
-    (void)orient;
-    return 0;
 }
 
 /* <summary>                */
@@ -2649,7 +2625,7 @@ static void opj_v4dwt_decode(opj_v4dwt_t* OPJ_RESTRICT dwt)
     opj_v4dwt_decode_step1_sse(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
                                _mm_set1_ps(opj_K));
     opj_v4dwt_decode_step1_sse(dwt->wavelet + b, dwt->win_h_x0, dwt->win_h_x1,
-                               _mm_set1_ps(opj_c13318));
+                               _mm_set1_ps(opj_invK));
     opj_v4dwt_decode_step2_sse(dwt->wavelet + b, dwt->wavelet + a + 1,
                                dwt->win_l_x0, dwt->win_l_x1,
                                (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
@@ -2670,7 +2646,7 @@ static void opj_v4dwt_decode(opj_v4dwt_t* OPJ_RESTRICT dwt)
     opj_v4dwt_decode_step1(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
                            opj_K);
     opj_v4dwt_decode_step1(dwt->wavelet + b, dwt->win_h_x0, dwt->win_h_x1,
-                           opj_c13318);
+                           opj_invK);
     opj_v4dwt_decode_step2(dwt->wavelet + b, dwt->wavelet + a + 1,
                            dwt->win_l_x0, dwt->win_l_x1,
                            (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),

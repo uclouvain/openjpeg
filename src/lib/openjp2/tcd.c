@@ -724,7 +724,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
         OPJ_BOOL isEncoder, OPJ_SIZE_T sizeof_block,
         opj_event_mgr_t* manager)
 {
-    OPJ_UINT32(*l_gain_ptr)(OPJ_UINT32) = 00;
     OPJ_UINT32 compno, resno, bandno, precno, cblkno;
     opj_tcp_t * l_tcp = 00;
     opj_cp_t * l_cp = 00;
@@ -740,7 +739,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
     OPJ_UINT32 p, q;
     OPJ_UINT32 l_level_no;
     OPJ_UINT32 l_pdx, l_pdy;
-    OPJ_UINT32 l_gain;
     OPJ_INT32 l_x0b, l_y0b;
     OPJ_UINT32 l_tx0, l_ty0;
     /* extent of precincts , top left, bottom right**/
@@ -879,11 +877,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
         l_level_no = l_tilec->numresolutions;
         l_res = l_tilec->resolutions;
         l_step_size = l_tccp->stepsizes;
-        if (l_tccp->qmfbid == 0) {
-            l_gain_ptr = &opj_dwt_getgain_real;
-        } else {
-            l_gain_ptr  = &opj_dwt_getgain;
-        }
         /*fprintf(stderr, "\tlevel_no=%d\n",l_level_no);*/
 
         for (resno = 0; resno < l_tilec->numresolutions; ++resno) {
@@ -970,7 +963,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
             l_band = l_res->bands;
 
             for (bandno = 0; bandno < l_res->numbands; ++bandno, ++l_band, ++l_step_size) {
-                OPJ_INT32 numbps;
                 /*fprintf(stderr, "\t\t\tband_no=%d/%d\n", bandno, l_res->numbands );*/
 
                 if (resno == 0) {
@@ -1006,14 +998,20 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                     }
                 }
 
-                /** avoid an if with storing function pointer */
-                l_gain = (*l_gain_ptr)(l_band->bandno);
-                numbps = (OPJ_INT32)(l_image_comp->prec + l_gain);
+                {
+                    /* Table E-1 - Sub-band gains */
+                    const OPJ_INT32 log2_gain = (l_band->bandno == 0) ? 0 :
+                                                (l_band->bandno == 3) ? 2 : 1;
 
-                /* Delta_b value of Equation E-3 in "E.1 Inverse quantization
-                 * procedure" of the standard */
-                l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0,
-                                                  (OPJ_INT32)(numbps - l_step_size->expn))));
+                    /* Nominal dynamic range. Equation E-4 */
+                    const OPJ_INT32 Rb = (OPJ_INT32)l_image_comp->prec + log2_gain;
+
+                    /* Delta_b value of Equation E-3 in "E.1 Inverse quantization
+                    * procedure" of the standard */
+                    l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0,
+                                                      (OPJ_INT32)(Rb - l_step_size->expn))));
+                }
+
                 /* Mb value of Equation E-2 in "E.1 Inverse quantization
                  * procedure" of the standard */
                 l_band->numbps = l_step_size->expn + (OPJ_INT32)l_tccp->numgbits -

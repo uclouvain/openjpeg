@@ -1426,7 +1426,11 @@ static OPJ_FLOAT64 opj_t1_getwmsedec(
     if (qmfbid == 1) {
         w2 = opj_dwt_getnorm(level, orient);
     } else {    /* if (qmfbid == 0) */
+        const OPJ_INT32 log2_gain = (orient == 0) ? 0 :
+                                                (orient == 3) ? 2 : 1;
         w2 = opj_dwt_getnorm_real(level, orient);
+        /* Not sure this is right. But preserves past behaviour */
+        stepsize /= (1 << log2_gain);
     }
 
     wmsedec = w1 * w2 * stepsize * (1 << bpno);
