@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
+<pre class='wrap'>commit 19ef7f26c43f689b627aad642da7f6150893b863
+Merge: 1d358f2 f3ee448
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-20 21:10:55 +0200
+
+    Merge pull request #1211 from sebras/master
+    
+    Add check to validate SGcod/SPcoc/SPcod parameter values.
+
+commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-05-20 20:29:31 +0200
@@ -292,6 +301,42 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-10-03 11:04:30 +0200
 
     opj_tcd_mct_decode()/opj_mct_decode()/opj_mct_encode_real()/opj_mct_decode_real(): proper deal with a number of samples larger than 4 billion (refs #1151)
+
+commit f3ee448815eb992b8d4746e32c05e8289f30415f
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2018-10-31 15:56:11 +0100
+
+    openjp2/j2k: Validate all SGcod/SPcod/SPcoc parameter values.
+    
+    Previously the multiple component transformation SGcod(C)
+    and wavelet transformation SPcod(H)/SPcoc(E) parameter
+    values were never checked, allowing for out of range values.
+    
+    The lack of validation allowed the bit stream provided in
+    issue #1158 through. After this commit an error message
+    points to the marker segments' parameters as being out of
+    range.
+    
+    input/nonregression/edf_c2_20.jp2 contains an SPcod(H) value
+    of 17, but according to Table A-20 of the specification only
+    values 0 and 1 are valid. input/nonregression/issue826.jp2
+    contains a SGcod(B) value of 2, but according to Table A-17
+    of the specification only values 0 and 1 are valid.
+    input/nonregression/oss-fuzz2785.jp2 contains a SGcod(B)
+    value of 32, but it is likewise limited to 0 or 1. These test
+    cases have been updated to consistently fail to parse the
+    headers since they contain out of bounds values.
+    
+    This fixes issue #1210.
+
+commit d801bd4e6287d13b65a48775ebd43fca350b21d9
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2019-09-04 01:18:37 +0200
+
+    openjp2/j2k: Make comments adhere to specification.
+    
+    The function is used to read both SPcod and SPcoc, so all
+    comments should refer to both marker segments' parameter names.
 
 commit e66125fe260deee49fdf6e9978d9bd29871dd5bb
 Merge: 8db9d25 b275196
@@ -918,29 +963,6 @@ Date:   2018-08-31 12:57:40 +0200
     The change makes a relative path to header files
     always correct regardless of the number of sub-
     directories in OPENJPEG_INSTALL_PACKAGE_DIR variable.
-
-commit 0fa7ebe2540990f590c2247b3505ac1dc84b6eec
-Author: Robert Everson &lt;robert@reverson.net&gt;
-Date:   2018-08-27 15:28:53 -0700
-
-    Cast on uint ceildiv
-
-commit 9d1a9dc20dd5155bab977a4f53d05c4bbd66533a
-Merge: d2205ba 56f23b2
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-08-11 23:35:35 +0200
-
-    Merge pull request #1133 from robe2/robe2-pkgconfig-instructions
-    
-    Add -DBUILD_PKGCONFIG_FILES to install instructions
-
-commit 56f23b29a075467fc2377ba086c0263a3eb70fe6
-Author: Regina Obe &lt;lr@pcorp.us&gt;
-Date:   2018-08-11 16:59:30 -0400
-
-    Add -DBUILD_PKGCONFIG_FILES to install instructions
-    
-    Building under msys/mingw doesn't automatically install the pkg config files needed to build GDAL and other libraries
 
 ...</pre></div>
 
