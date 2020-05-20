@@ -183,6 +183,9 @@ opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o 
 opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_4K_R.j2k -IMF 4K_R
 opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_IMF_8K_R.j2k -IMF 8K_R
 
+opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_PLT.j2k -n 1 -PLT
+opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_PLT.jp2 -n 1 -PLT
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx

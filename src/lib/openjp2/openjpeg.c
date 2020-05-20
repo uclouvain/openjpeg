@@ -652,6 +652,11 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
                 struct opj_image *,
                 struct opj_event_mgr *)) opj_j2k_setup_encoder;
 
+        l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options = (OPJ_BOOL(
+                    *)(void *,
+                       const char* const*,
+                       struct opj_event_mgr *)) opj_j2k_encoder_set_extra_options;
+
         l_codec->m_codec = opj_j2k_create_compress();
         if (! l_codec->m_codec) {
             opj_free(l_codec);
@@ -689,6 +694,11 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
                 opj_cparameters_t *,
                 struct opj_image *,
                 struct opj_event_mgr *)) opj_jp2_setup_encoder;
+
+        l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options = (OPJ_BOOL(
+                    *)(void *,
+                       const char* const*,
+                       struct opj_event_mgr *)) opj_jp2_encoder_set_extra_options;
 
         l_codec->m_codec = opj_jp2_create(OPJ_FALSE);
         if (! l_codec->m_codec) {
@@ -787,6 +797,27 @@ OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
 
     return OPJ_FALSE;
 }
+
+/* ----------------------------------------------------------------------- */
+
+OPJ_BOOL OPJ_CALLCONV opj_encoder_set_extra_options(opj_codec_t *p_codec,
+        const char* const* options)
+{
+    if (p_codec) {
+        opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+
+        if (! l_codec->is_decompressor) {
+            return l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options(
+                       l_codec->m_codec,
+                       options,
+                       &(l_codec->m_event_mgr));
+        }
+    }
+
+    return OPJ_FALSE;
+}
+
+/* ----------------------------------------------------------------------- */
 
 OPJ_BOOL OPJ_CALLCONV opj_start_compress(opj_codec_t *p_codec,
         opj_image_t * p_image,

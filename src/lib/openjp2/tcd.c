@@ -182,6 +182,7 @@ static OPJ_BOOL opj_tcd_t2_encode(opj_tcd_t *p_tcd,
                                   OPJ_UINT32 * p_data_written,
                                   OPJ_UINT32 p_max_dest_size,
                                   opj_codestream_info_t *p_cstr_info,
+                                  opj_tcd_marker_info_t* p_marker_info,
                                   opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_tcd_rate_allocate_encode(opj_tcd_t *p_tcd,
@@ -575,7 +576,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                 if (cp->m_specific_param.m_enc.m_fixed_quality) {       /* fixed_quality */
                     if (OPJ_IS_CINEMA(cp->rsiz) || OPJ_IS_IMF(cp->rsiz)) {
                         if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,
-                                                    p_data_written, maxlen, cstr_info, tcd->cur_tp_num, tcd->tp_pos, tcd->cur_pino,
+                                                    p_data_written, maxlen, cstr_info, NULL, tcd->cur_tp_num, tcd->tp_pos,
+                                                    tcd->cur_pino,
                                                     THRESH_CALC, p_manager)) {
 
                             lo = thresh;
@@ -605,7 +607,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                     }
                 } else {
                     if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,
-                                                p_data_written, maxlen, cstr_info, tcd->cur_tp_num, tcd->tp_pos, tcd->cur_pino,
+                                                p_data_written, maxlen, cstr_info, NULL, tcd->cur_tp_num, tcd->tp_pos,
+                                                tcd->cur_pino,
                                                 THRESH_CALC, p_manager)) {
                         /* TODO: what to do with l ??? seek / tell ??? */
                         /* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
@@ -1370,6 +1373,7 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
                              OPJ_UINT32 * p_data_written,
                              OPJ_UINT32 p_max_length,
                              opj_codestream_info_t *p_cstr_info,
+                             opj_tcd_marker_info_t* p_marker_info,
                              opj_event_mgr_t *p_manager)
 {
 
@@ -1449,7 +1453,7 @@ OPJ_BOOL opj_tcd_encode_tile(opj_tcd_t *p_tcd,
     /* FIXME _ProfStart(PGROUP_T2); */
 
     if (! opj_tcd_t2_encode(p_tcd, p_dest, p_data_written, p_max_length,
-                            p_cstr_info, p_manager)) {
+                            p_cstr_info, p_marker_info, p_manager)) {
         return OPJ_FALSE;
     }
     /* FIXME _ProfStop(PGROUP_T2); */
@@ -2541,6 +2545,7 @@ static OPJ_BOOL opj_tcd_t2_encode(opj_tcd_t *p_tcd,
                                   OPJ_UINT32 * p_data_written,
                                   OPJ_UINT32 p_max_dest_size,
                                   opj_codestream_info_t *p_cstr_info,
+                                  opj_tcd_marker_info_t* p_marker_info,
                                   opj_event_mgr_t *p_manager)
 {
     opj_t2_t * l_t2;
@@ -2559,6 +2564,7 @@ static OPJ_BOOL opj_tcd_t2_encode(opj_tcd_t *p_tcd,
                 p_data_written,
                 p_max_dest_size,
                 p_cstr_info,
+                p_marker_info,
                 p_tcd->tp_num,
                 p_tcd->tp_pos,
                 p_tcd->cur_pino,
@@ -2819,3 +2825,29 @@ static OPJ_BOOL opj_tcd_is_whole_tilecomp_decoding(opj_tcd_t *p_tcd,
               (((OPJ_UINT32)tilec->x1 - tcx1) >> shift) == 0 &&
               (((OPJ_UINT32)tilec->y1 - tcy1) >> shift) == 0)));
 }
+
+/* ----------------------------------------------------------------------- */
+
+opj_tcd_marker_info_t* opj_tcd_marker_info_create(OPJ_BOOL need_PLT)
+{
+    opj_tcd_marker_info_t *l_tcd_marker_info =
+        (opj_tcd_marker_info_t*) opj_calloc(1, sizeof(opj_tcd_marker_info_t));
+    if (!l_tcd_marker_info) {
+        return NULL;
+    }
+
+    l_tcd_marker_info->need_PLT = need_PLT;
+
+    return l_tcd_marker_info;
+}
+
+/* ----------------------------------------------------------------------- */
+
+void opj_tcd_marker_info_destroy(opj_tcd_marker_info_t *p_tcd_marker_info)
+{
+    if (p_tcd_marker_info) {
+        opj_free(p_tcd_marker_info->p_packet_size);
+    }
+}
+
+/* ----------------------------------------------------------------------- */

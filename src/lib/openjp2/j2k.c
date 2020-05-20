@@ -879,6 +879,8 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
 /**
  * Writes the SOD marker (Start of data)
  *
+ * This also writes optional PLT markers (before SOD)
+ *
  * @param       p_j2k               J2K codec.
  * @param       p_tile_coder        FIXME DOC
  * @param       p_data              FIXME DOC
@@ -3443,6 +3445,28 @@ static OPJ_UINT32 opj_j2k_get_specific_header_sizes(opj_j2k_t *p_j2k)
 
     l_nb_bytes += opj_j2k_get_max_poc_size(p_j2k);
 
+    if (p_j2k->m_specific_param.m_encoder.m_PLT) {
+        /* Reserve space for PLT markers */
+
+        OPJ_UINT32 i;
+        const opj_cp_t * l_cp = &(p_j2k->m_cp);
+        OPJ_UINT32 l_max_packet_count = 0;
+        for (i = 0; i < l_cp->th * l_cp->tw; ++i) {
+            l_max_packet_count = opj_uint_max(l_max_packet_count,
+                                              opj_get_encoding_packet_count(p_j2k->m_private_image, l_cp, i));
+        }
+        /* Minimum 6 bytes per PLT marker, and at a minimum (taking a pessimistic */
+        /* estimate of 4 bytes for a packet size), one can write */
+        /* (65536-6) / 4 = 16382 paquet sizes per PLT marker */
+        p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT =
+            6 * opj_uint_ceildiv(l_max_packet_count, 16382);
+        /* Maximum 5 bytes per packet to encode a full UINT32 */
+        p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT +=
+            l_nb_bytes += 5 * l_max_packet_count;
+        p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT += 1;
+        l_nb_bytes += p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT;
+    }
+
     /*** DEVELOPER CORNER, Add room for your headers ***/
 
     return l_nb_bytes;
@@ -4602,6 +4626,93 @@ static OPJ_BOOL opj_j2k_read_sot(opj_j2k_t *p_j2k,
     return OPJ_TRUE;
 }
 
+/**
+ * Write one or more PLT markers in the provided buffer
+ */
+static OPJ_BOOL opj_j2k_write_plt_in_memory(opj_j2k_t *p_j2k,
+        opj_tcd_marker_info_t* marker_info,
+        OPJ_BYTE * p_data,
+        OPJ_UINT32 * p_data_written,
+        opj_event_mgr_t * p_manager)
+{
+    OPJ_BYTE Zplt = 0;
+    OPJ_UINT16 Lplt;
+    OPJ_BYTE* p_data_start = p_data;
+    OPJ_BYTE* p_data_Lplt = p_data + 2;
+    OPJ_UINT32 i;
+
+    OPJ_UNUSED(p_j2k);
+
+    opj_write_bytes(p_data, J2K_MS_PLT, 2);
+    p_data += 2;
+
+    /* Reserve space for Lplt */
+    p_data += 2;
+
+    opj_write_bytes(p_data, Zplt, 1);
+    p_data += 1;
+
+    Lplt = 3;
+
+    for (i = 0; i < marker_info->packet_count; i++) {
+        OPJ_BYTE var_bytes[5];
+        OPJ_UINT8 var_bytes_size = 0;
+        OPJ_UINT32 packet_size = marker_info->p_packet_size[i];
+
+        /* Packet size written in variable-length way, starting with LSB */
+        var_bytes[var_bytes_size] = (OPJ_BYTE)(packet_size & 0x7f);
+        var_bytes_size ++;
+        packet_size >>= 7;
+        while (packet_size > 0) {
+            var_bytes[var_bytes_size] = (OPJ_BYTE)((packet_size & 0x7f) | 0x80);
+            var_bytes_size ++;
+            packet_size >>= 7;
+        }
+
+        /* Check if that can fit in the current PLT marker. If not, finish */
+        /* current one, and start a new one */
+        if (Lplt + var_bytes_size > 65535) {
+            if (Zplt == 255) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "More than 255 PLT markers would be needed for current tile-part !\n");
+                return OPJ_FALSE;
+            }
+
+            /* Patch Lplt */
+            opj_write_bytes(p_data_Lplt, Lplt, 2);
+
+            /* Start new segment */
+            opj_write_bytes(p_data, J2K_MS_PLT, 2);
+            p_data += 2;
+
+            /* Reserve space for Lplt */
+            p_data_Lplt = p_data;
+            p_data += 2;
+
+            Zplt ++;
+            opj_write_bytes(p_data, Zplt, 1);
+            p_data += 1;
+
+            Lplt = 3;
+        }
+
+        Lplt = (OPJ_UINT16)(Lplt + var_bytes_size);
+
+        /* Serialize variable-length packet size, starting with MSB */
+        for (; var_bytes_size > 0; --var_bytes_size) {
+            opj_write_bytes(p_data, var_bytes[var_bytes_size - 1], 1);
+            p_data += 1;
+        }
+    }
+
+    *p_data_written = (OPJ_UINT32)(p_data - p_data_start);
+
+    /* Patch Lplt */
+    opj_write_bytes(p_data_Lplt, Lplt, 2);
+
+    return OPJ_TRUE;
+}
+
 static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
                                   opj_tcd_t * p_tile_coder,
                                   OPJ_BYTE * p_data,
@@ -4613,6 +4724,7 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
 {
     opj_codestream_info_t *l_cstr_info = 00;
     OPJ_UINT32 l_remaining_data;
+    opj_tcd_marker_info_t* marker_info = NULL;
 
     /* preconditions */
     assert(p_j2k != 00);
@@ -4629,7 +4741,6 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
 
     opj_write_bytes(p_data, J2K_MS_SOD,
                     2);                                 /* SOD */
-    p_data += 2;
 
     /* make room for the EOF marker */
     l_remaining_data =  total_data_size - 4;
@@ -4679,14 +4790,63 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
 
     *p_data_written = 0;
 
-    if (! opj_tcd_encode_tile(p_tile_coder, p_j2k->m_current_tile_number, p_data,
+    if (p_j2k->m_specific_param.m_encoder.m_PLT) {
+        marker_info = opj_tcd_marker_info_create(
+                          p_j2k->m_specific_param.m_encoder.m_PLT);
+        if (marker_info == NULL) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Cannot encode tile: opj_tcd_marker_info_create() failed\n");
+            return OPJ_FALSE;
+        }
+    }
+
+    assert(l_remaining_data >
+           p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT);
+    l_remaining_data -= p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT;
+
+    if (! opj_tcd_encode_tile(p_tile_coder, p_j2k->m_current_tile_number,
+                              p_data + 2,
                               p_data_written, l_remaining_data, l_cstr_info,
+                              marker_info,
                               p_manager)) {
         opj_event_msg(p_manager, EVT_ERROR, "Cannot encode tile\n");
+        opj_tcd_marker_info_destroy(marker_info);
         return OPJ_FALSE;
     }
 
+    /* For SOD */
     *p_data_written += 2;
+
+    if (p_j2k->m_specific_param.m_encoder.m_PLT) {
+        OPJ_UINT32 l_data_written_PLT = 0;
+        OPJ_BYTE* p_PLT_buffer = (OPJ_BYTE*)opj_malloc(
+                                     p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT);
+        if (!p_PLT_buffer) {
+            opj_event_msg(p_manager, EVT_ERROR, "Cannot allocate memory\n");
+            opj_tcd_marker_info_destroy(marker_info);
+            return OPJ_FALSE;
+        }
+        if (!opj_j2k_write_plt_in_memory(p_j2k,
+                                         marker_info,
+                                         p_PLT_buffer,
+                                         &l_data_written_PLT,
+                                         p_manager)) {
+            opj_tcd_marker_info_destroy(marker_info);
+            opj_free(p_PLT_buffer);
+            return OPJ_FALSE;
+        }
+
+        assert(l_data_written_PLT <=
+               p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT);
+
+        /* Move PLT marker(s) before SOD */
+        memmove(p_data + l_data_written_PLT, p_data, *p_data_written);
+        memcpy(p_data, p_PLT_buffer, l_data_written_PLT);
+        opj_free(p_PLT_buffer);
+        *p_data_written += l_data_written_PLT;
+    }
+
+    opj_tcd_marker_info_destroy(marker_info);
 
     return OPJ_TRUE;
 }
@@ -11818,6 +11978,42 @@ OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k,
 
     return OPJ_FALSE;
 }
+
+/* ----------------------------------------------------------------------- */
+
+OPJ_BOOL opj_j2k_encoder_set_extra_options(
+    opj_j2k_t *p_j2k,
+    const char* const* p_options,
+    opj_event_mgr_t * p_manager)
+{
+    const char* const* p_option_iter;
+
+    if (p_options == NULL) {
+        return OPJ_TRUE;
+    }
+
+    for (p_option_iter = p_options; *p_option_iter != NULL; ++p_option_iter) {
+        if (strncmp(*p_option_iter, "PLT=", 4) == 0) {
+            if (strcmp(*p_option_iter, "PLT=YES") == 0) {
+                p_j2k->m_specific_param.m_encoder.m_PLT = OPJ_TRUE;
+            } else if (strcmp(*p_option_iter, "PLT=NO") == 0) {
+                p_j2k->m_specific_param.m_encoder.m_PLT = OPJ_FALSE;
+            } else {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Invalid value for option: %s.\n", *p_option_iter);
+                return OPJ_FALSE;
+            }
+        } else {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Invalid option: %s.\n", *p_option_iter);
+            return OPJ_FALSE;
+        }
+    }
+
+    return OPJ_TRUE;
+}
+
+/* ----------------------------------------------------------------------- */
 
 OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                         opj_stream_private_t *p_stream,
