@@ -2667,13 +2667,11 @@ OPJ_BOOL opj_dwt_decode_tile_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
 
     OPJ_SIZE_T l_data_size;
 
-    l_data_size = opj_dwt_max_resolution(res, numres);
-    /* overflow check */
-    if (l_data_size > (SIZE_MAX - 5U)) {
-        /* FIXME event manager error callback */
-        return OPJ_FALSE;
+    if (numres == 1) {
+        return OPJ_TRUE;
     }
-    l_data_size += 5U;
+
+    l_data_size = opj_dwt_max_resolution(res, numres);
     /* overflow check */
     if (l_data_size > (SIZE_MAX / sizeof(opj_v8_t))) {
         /* FIXME event manager error callback */
@@ -2835,13 +2833,6 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
     }
 
     l_data_size = opj_dwt_max_resolution(tr, numres);
-    /* overflow check */
-    if (l_data_size > (SIZE_MAX - 5U)) {
-        /* FIXME event manager error callback */
-        opj_sparse_array_int32_free(sa);
-        return OPJ_FALSE;
-    }
-    l_data_size += 5U;
     /* overflow check */
     if (l_data_size > (SIZE_MAX / sizeof(opj_v8_t))) {
         /* FIXME event manager error callback */
