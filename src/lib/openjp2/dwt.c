@@ -126,12 +126,16 @@ typedef void (*DWT1DFN)(const opj_dwt_t* v);
 /**
 Forward lazy transform (horizontal)
 */
-static void opj_dwt_deinterleave_h(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
+static void opj_dwt_deinterleave_h(const OPJ_INT32 * OPJ_RESTRICT a,
+                                   OPJ_INT32 * OPJ_RESTRICT b,
+                                   OPJ_INT32 dn,
                                    OPJ_INT32 sn, OPJ_INT32 cas);
 /**
 Forward lazy transform (vertical)
 */
-static void opj_dwt_deinterleave_v(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
+static void opj_dwt_deinterleave_v(const OPJ_INT32 * OPJ_RESTRICT a,
+                                   OPJ_INT32 * OPJ_RESTRICT b,
+                                   OPJ_INT32 dn,
                                    OPJ_INT32 sn, OPJ_UINT32 x, OPJ_INT32 cas);
 /**
 Forward 5-3 wavelet transform in 1-D
@@ -162,9 +166,17 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
 typedef void (*opj_encode_one_row_fnptr_type)(void *, OPJ_INT32, OPJ_INT32,
         OPJ_INT32);
 
+typedef void (*opj_encode_and_deinterleave_h_one_row_fnptr_type)(
+    void *row,
+    void *tmp,
+    OPJ_UINT32 width,
+    OPJ_BOOL even);
+
 static OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
         opj_tcd_tilecomp_t * tilec,
-        opj_encode_one_row_fnptr_type p_function);
+        opj_encode_one_row_fnptr_type p_function,
+        opj_encode_and_deinterleave_h_one_row_fnptr_type
+        p_encode_and_deinterleave_h_one_row);
 
 static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* OPJ_RESTRICT r,
         OPJ_UINT32 i);
@@ -218,12 +230,14 @@ static const OPJ_FLOAT64 opj_dwt_norms_real[4][10] = {
 /* <summary>                             */
 /* Forward lazy transform (horizontal).  */
 /* </summary>                            */
-static void opj_dwt_deinterleave_h(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
+static void opj_dwt_deinterleave_h(const OPJ_INT32 * OPJ_RESTRICT a,
+                                   OPJ_INT32 * OPJ_RESTRICT b,
+                                   OPJ_INT32 dn,
                                    OPJ_INT32 sn, OPJ_INT32 cas)
 {
     OPJ_INT32 i;
-    OPJ_INT32 * l_dest = b;
-    OPJ_INT32 * l_src = a + cas;
+    OPJ_INT32 * OPJ_RESTRICT l_dest = b;
+    const OPJ_INT32 * OPJ_RESTRICT l_src = a + cas;
 
     for (i = 0; i < sn; ++i) {
         *l_dest++ = *l_src;
@@ -242,12 +256,14 @@ static void opj_dwt_deinterleave_h(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
 /* <summary>                             */
 /* Forward lazy transform (vertical).    */
 /* </summary>                            */
-static void opj_dwt_deinterleave_v(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
+static void opj_dwt_deinterleave_v(const OPJ_INT32 * OPJ_RESTRICT a,
+                                   OPJ_INT32 * OPJ_RESTRICT b,
+                                   OPJ_INT32 dn,
                                    OPJ_INT32 sn, OPJ_UINT32 x, OPJ_INT32 cas)
 {
     OPJ_INT32 i = sn;
-    OPJ_INT32 * l_dest = b;
-    OPJ_INT32 * l_src = a + cas;
+    OPJ_INT32 * OPJ_RESTRICT l_dest = b;
+    const OPJ_INT32 * OPJ_RESTRICT l_src = a + cas;
 
     while (i--) {
         *l_dest = *l_src;
@@ -272,7 +288,7 @@ static void opj_dwt_deinterleave_v(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn,
 /* </summary>                            */
 static void opj_dwt_interleave_h(const opj_dwt_t* h, OPJ_INT32 *a)
 {
-    OPJ_INT32 *ai = a;
+    const OPJ_INT32 *ai = a;
     OPJ_INT32 *bi = h->mem + h->cas;
     OPJ_INT32  i    = h->sn;
     while (i--) {
@@ -293,7 +309,7 @@ static void opj_dwt_interleave_h(const opj_dwt_t* h, OPJ_INT32 *a)
 /* </summary>                            */
 static void opj_dwt_interleave_v(const opj_dwt_t* v, OPJ_INT32 *a, OPJ_INT32 x)
 {
-    OPJ_INT32 *ai = a;
+    const OPJ_INT32 *ai = a;
     OPJ_INT32 *bi = v->mem + v->cas;
     OPJ_INT32  i = v->sn;
     while (i--) {
@@ -1095,15 +1111,48 @@ static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps,
 ==========================================================
 */
 
+/** Process one line for the horizontal pass of the 5x3 forward transform */
+static
+void opj_dwt_encode_and_deinterleave_h_one_row(void* rowIn,
+        void* tmpIn,
+        OPJ_UINT32 width,
+        OPJ_BOOL even)
+{
+    OPJ_INT32* OPJ_RESTRICT row = (OPJ_INT32*)rowIn;
+    OPJ_INT32* OPJ_RESTRICT tmp = (OPJ_INT32*)tmpIn;
+    const OPJ_INT32 sn = (OPJ_INT32)((width + (even ? 1 : 0)) >> 1);
+    const OPJ_INT32 dn = (OPJ_INT32)(width - (OPJ_UINT32)sn);
+    memcpy(tmp, row, width * sizeof(OPJ_INT32));
+    opj_dwt_encode_1(tmp, dn, sn, even ? 0 : 1);
+    opj_dwt_deinterleave_h(tmp, row, dn, sn, even ? 0 : 1);
+}
+
+/** Process one line for the horizontal pass of the 9x7 forward transform */
+static
+void opj_dwt_encode_and_deinterleave_h_one_row_real(void* rowIn,
+        void* tmpIn,
+        OPJ_UINT32 width,
+        OPJ_BOOL even)
+{
+    OPJ_FLOAT32* OPJ_RESTRICT row = (OPJ_FLOAT32*)rowIn;
+    OPJ_FLOAT32* OPJ_RESTRICT tmp = (OPJ_FLOAT32*)tmpIn;
+    const OPJ_INT32 sn = (OPJ_INT32)((width + (even ? 1 : 0)) >> 1);
+    const OPJ_INT32 dn = (OPJ_INT32)(width - (OPJ_UINT32)sn);
+    memcpy(tmp, row, width * sizeof(OPJ_FLOAT32));
+    opj_dwt_encode_1_real(tmp, dn, sn, even ? 0 : 1);
+    opj_dwt_deinterleave_h((OPJ_INT32 * OPJ_RESTRICT)tmp,
+                           (OPJ_INT32 * OPJ_RESTRICT)row,
+                           dn, sn, even ? 0 : 1);
+}
 
 typedef struct {
     opj_dwt_t h;
-    OPJ_UINT32 rw;
-    OPJ_UINT32 w;
+    OPJ_UINT32 rw; /* Width of the resolution to process */
+    OPJ_UINT32 w; /* Width of tiledp */
     OPJ_INT32 * OPJ_RESTRICT tiledp;
     OPJ_UINT32 min_j;
     OPJ_UINT32 max_j;
-    opj_encode_one_row_fnptr_type p_function;
+    opj_encode_and_deinterleave_h_one_row_fnptr_type p_function;
 } opj_dwt_encode_h_job_t;
 
 static void opj_dwt_encode_h_func(void* user_data, opj_tls_t* tls)
@@ -1115,12 +1164,8 @@ static void opj_dwt_encode_h_func(void* user_data, opj_tls_t* tls)
     job = (opj_dwt_encode_h_job_t*)user_data;
     for (j = job->min_j; j < job->max_j; j++) {
         OPJ_INT32* OPJ_RESTRICT aj = job->tiledp + j * job->w;
-        OPJ_UINT32 k;
-        for (k = 0; k < job->rw; k++) {
-            job->h.mem[k] = aj[k];
-        }
-        (*job->p_function)(job->h.mem, job->h.dn, job->h.sn, job->h.cas);
-        opj_dwt_deinterleave_h(job->h.mem, aj, job->h.dn, job->h.sn, job->h.cas);
+        (*job->p_function)(aj, job->h.mem, job->rw,
+                           job->h.cas == 0 ? OPJ_TRUE : OPJ_FALSE);
     }
 
     opj_aligned_free(job->h.mem);
@@ -1166,7 +1211,9 @@ static void opj_dwt_encode_v_func(void* user_data, opj_tls_t* tls)
 /* </summary>                           */
 static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
         opj_tcd_tilecomp_t * tilec,
-        opj_encode_one_row_fnptr_type p_function)
+        opj_encode_one_row_fnptr_type p_function,
+        opj_encode_and_deinterleave_h_one_row_fnptr_type
+        p_encode_and_deinterleave_h_one_row)
 {
     OPJ_INT32 i;
     OPJ_INT32 *bj = 00;
@@ -1286,12 +1333,8 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
         if (num_threads <= 1 || rh <= 1) {
             for (j = 0; j < rh; j++) {
                 OPJ_INT32* OPJ_RESTRICT aj = tiledp + j * w;
-                OPJ_UINT32 k;
-                for (k = 0; k < rw; k++) {
-                    bj[k] = aj[k];
-                }
-                (*p_function)(bj, dn, sn, cas_row);
-                opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
+                (*p_encode_and_deinterleave_h_one_row)(aj, bj, rw,
+                                                       cas_row == 0 ? OPJ_TRUE : OPJ_FALSE);
             }
         }  else {
             OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
@@ -1329,7 +1372,7 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
                 if (j == (num_jobs - 1U)) {  /* this will take care of the overflow */
                     job->max_j = rh;
                 }
-                job->p_function = p_function;
+                job->p_function = p_encode_and_deinterleave_h_one_row;
                 opj_thread_pool_submit_job(tp, opj_dwt_encode_h_func, job);
             }
             opj_thread_pool_wait_completion(tp, 0);
@@ -1349,7 +1392,9 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
 OPJ_BOOL opj_dwt_encode(opj_tcd_t *p_tcd,
                         opj_tcd_tilecomp_t * tilec)
 {
-    return opj_dwt_encode_procedure(p_tcd->thread_pool, tilec, opj_dwt_encode_1);
+    return opj_dwt_encode_procedure(p_tcd->thread_pool, tilec,
+                                    opj_dwt_encode_1,
+                                    opj_dwt_encode_and_deinterleave_h_one_row);
 }
 
 /* <summary>                            */
@@ -1388,7 +1433,8 @@ OPJ_BOOL opj_dwt_encode_real(opj_tcd_t *p_tcd,
                              opj_tcd_tilecomp_t * tilec)
 {
     return opj_dwt_encode_procedure(p_tcd->thread_pool, tilec,
-                                    opj_dwt_encode_1_real);
+                                    opj_dwt_encode_1_real,
+                                    opj_dwt_encode_and_deinterleave_h_one_row_real);
 }
 
 /* <summary>                */
