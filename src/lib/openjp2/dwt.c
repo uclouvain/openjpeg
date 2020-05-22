@@ -339,23 +339,37 @@ static void opj_dwt_encode_1(void *aIn, OPJ_INT32 dn, OPJ_INT32 sn,
     OPJ_INT32* a = (OPJ_INT32*)aIn;
 
     if (!cas) {
-        if ((dn > 0) || (sn > 1)) { /* NEW :  CASE ONE ELEMENT */
-            for (i = 0; i < dn; i++) {
-                OPJ_D(i) -= (OPJ_S_(i) + OPJ_S_(i + 1)) >> 1;
+        if (sn + dn > 1) {
+            for (i = 0; i < sn - 1; i++) {
+                OPJ_D(i) -= (OPJ_S(i) + OPJ_S(i + 1)) >> 1;
             }
-            for (i = 0; i < sn; i++) {
-                OPJ_S(i) += (OPJ_D_(i - 1) + OPJ_D_(i) + 2) >> 2;
+            if (((sn + dn) % 2) == 0) {
+                OPJ_D(i) -= OPJ_S(i);
+            }
+            OPJ_S(0) += (OPJ_D(0) + OPJ_D(0) + 2) >> 2;
+            for (i = 1; i < dn; i++) {
+                OPJ_S(i) += (OPJ_D(i - 1) + OPJ_D(i) + 2) >> 2;
+            }
+            if (((sn + dn) % 2) == 1) {
+                OPJ_S(i) += (OPJ_D(i - 1) + OPJ_D(i - 1) + 2) >> 2;
             }
         }
     } else {
-        if (!sn && dn == 1) {       /* NEW :  CASE ONE ELEMENT */
-            OPJ_S(0) *= 2;
+        if (sn + dn == 1) {
+            a[0] *= 2;
         } else {
-            for (i = 0; i < dn; i++) {
-                OPJ_S(i) -= (OPJ_DD_(i) + OPJ_DD_(i - 1)) >> 1;
+            OPJ_S(0) -= OPJ_D(0);
+            for (i = 1; i < sn; i++) {
+                OPJ_S(i) -= (OPJ_D(i) + OPJ_D(i - 1)) >> 1;
             }
-            for (i = 0; i < sn; i++) {
-                OPJ_D(i) += (OPJ_SS_(i) + OPJ_SS_(i + 1) + 2) >> 2;
+            if (((sn + dn) % 2) == 1) {
+                OPJ_S(i) -= OPJ_D(i - 1);
+            }
+            for (i = 0; i < dn - 1; i++) {
+                OPJ_D(i) += (OPJ_S(i) + OPJ_S(i + 1) + 2) >> 2;
+            }
+            if (((sn + dn) % 2) == 0) {
+                OPJ_D(i) += (OPJ_S(i) + OPJ_S(i) + 2) >> 2;
             }
         }
     }
@@ -1122,9 +1136,47 @@ void opj_dwt_encode_and_deinterleave_h_one_row(void* rowIn,
     OPJ_INT32* OPJ_RESTRICT tmp = (OPJ_INT32*)tmpIn;
     const OPJ_INT32 sn = (OPJ_INT32)((width + (even ? 1 : 0)) >> 1);
     const OPJ_INT32 dn = (OPJ_INT32)(width - (OPJ_UINT32)sn);
-    memcpy(tmp, row, width * sizeof(OPJ_INT32));
-    opj_dwt_encode_1(tmp, dn, sn, even ? 0 : 1);
-    opj_dwt_deinterleave_h(tmp, row, dn, sn, even ? 0 : 1);
+
+    if (even) {
+        if (width > 1) {
+            OPJ_INT32 i;
+            for (i = 0; i < sn - 1; i++) {
+                tmp[sn + i] = row[2 * i + 1] - ((row[(i) * 2] + row[(i + 1) * 2]) >> 1);
+            }
+            if ((width % 2) == 0) {
+                tmp[sn + i] = row[2 * i + 1] - row[(i) * 2];
+            }
+            row[0] += (tmp[sn] + tmp[sn] + 2) >> 2;
+            for (i = 1; i < dn; i++) {
+                row[i] = row[2 * i] + ((tmp[sn + (i - 1)] + tmp[sn + i] + 2) >> 2);
+            }
+            if ((width % 2) == 1) {
+                row[i] = row[2 * i] + ((tmp[sn + (i - 1)] + tmp[sn + (i - 1)] + 2) >> 2);
+            }
+            memcpy(row + sn, tmp + sn, (OPJ_SIZE_T)dn * sizeof(OPJ_INT32));
+        }
+    } else {
+        if (width == 1) {
+            row[0] *= 2;
+        } else {
+            OPJ_INT32 i;
+            tmp[sn + 0] = row[0] - row[1];
+            for (i = 1; i < sn; i++) {
+                tmp[sn + i] = row[2 * i] - ((row[2 * i + 1] + row[2 * (i - 1) + 1]) >> 1);
+            }
+            if ((width % 2) == 1) {
+                tmp[sn + i] = row[2 * i] - row[2 * (i - 1) + 1];
+            }
+
+            for (i = 0; i < dn - 1; i++) {
+                row[i] = row[2 * i + 1] + ((tmp[sn + i] + tmp[sn + i + 1] + 2) >> 2);
+            }
+            if ((width % 2) == 0) {
+                row[i] = row[2 * i + 1] + ((tmp[sn + i] + tmp[sn + i] + 2) >> 2);
+            }
+            memcpy(row + sn, tmp + sn, (OPJ_SIZE_T)dn * sizeof(OPJ_INT32));
+        }
+    }
 }
 
 /** Process one line for the horizontal pass of the 9x7 forward transform */
