@@ -115,11 +115,6 @@ static const OPJ_FLOAT32 opj_invK   = (OPJ_FLOAT32)(1.0 / 1.230174105);
 
 /*@}*/
 
-/**
-Virtual function type for wavelet transform in 1-D
-*/
-typedef void (*DWT1DFN)(const opj_dwt_t* v);
-
 /** @name Local static functions */
 /*@{*/
 
