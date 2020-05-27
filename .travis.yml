@@ -153,6 +153,6 @@ deploy:
   file: "${OPJ_RELEASE_PKG_FILE}"
   skip_cleanup: true
   on:
-    repo: uclouvain/openjpeg
+    repo: thinkoid/openjpeg
     tags: true
     condition: "$OPJ_CI_INCLUDE_IF_DEPLOY = 1"
