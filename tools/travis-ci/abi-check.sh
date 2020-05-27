@@ -31,7 +31,7 @@ if [ "${OPJ_PREVIOUS_VERSION:-}" != "" ]; then
 else
 	OPJ_LIMIT_ABI_BUILDS="-limit 2"
 fi
-OPJ_REPO="https://github.com/uclouvain/openjpeg.git"
+OPJ_REPO="https://github.com/thinkoid/openjpeg.git"
 OPJ_SSH_REPO=${OPJ_REPO/https:\/\/github.com\//git@github.com:}
 OPJ_UPLOAD_BRANCH="gh-pages"
 OPJ_UPLOAD_DIR="abi-check"
