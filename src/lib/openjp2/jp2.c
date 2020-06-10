@@ -586,6 +586,12 @@ static OPJ_BOOL opj_jp2_read_ihdr(opj_jp2_t *jp2,
     opj_read_bytes(p_image_header_data, &(jp2->numcomps), 2);   /* NC */
     p_image_header_data += 2;
 
+    if (jp2->h < 1 || jp2->w < 1 || jp2->numcomps < 1) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Wrong values for: w(%d) h(%d) numcomps(%d) (ihdr)\n",
+                      jp2->w, jp2->h, jp2->numcomps);
+        return OPJ_FALSE;
+    }
     if ((jp2->numcomps - 1U) >=
             16384U) { /* unsigned underflow is well defined: 1U <= jp2->numcomps <= 16384U */
         opj_event_msg(p_manager, EVT_ERROR, "Invalid number of components (ihdr)\n");
