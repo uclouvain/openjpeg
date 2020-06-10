@@ -588,7 +588,7 @@ static OPJ_BOOL opj_jp2_read_ihdr(opj_jp2_t *jp2,
 
     if (jp2->h < 1 || jp2->w < 1 || jp2->numcomps < 1) {
         opj_event_msg(p_manager, EVT_ERROR,
-                      "Wrong values for: w(%d) h(%d) numcomps(%d)\n",
+                      "Wrong values for: w(%d) h(%d) numcomps(%d) (ihdr)\n",
                       jp2->w, jp2->h, jp2->numcomps);
         return OPJ_FALSE;
     }
