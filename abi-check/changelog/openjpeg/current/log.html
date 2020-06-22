@@ -20,7 +20,30 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 25fb144c42f97489594302e1e6ff886791e0a5b3
+<pre class='wrap'>commit 98150d09422149305c9c8648337a744df5786fbe
+Merge: 25fb144 93b9f72
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-06-22 21:03:23 +0200
+
+    Merge pull request #1256 from sebras/master
+    
+    openjp2: Error out if failing to create Tier 1 handle.
+
+commit 93b9f7236ce09614ea5edcb0f616f1b4095c4830
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2020-06-23 02:18:19 +0800
+
+    openjp2: Error out if failing to create Tier 1 handle.
+    
+    Previously when the handle failed to be created (e.g. when
+    opj_calloc returned NULL due to low memory), the code still
+    assumed that the t1 handle pointer was valid and dereferenced
+    NULL, causing a crash. After this commit OpenJPEG will instead
+    error out under this condition.
+    
+    This fixes issue #1255.
+
+commit 25fb144c42f97489594302e1e6ff886791e0a5b3
 Author: szukw000 &lt;szukw000@arcor.de&gt;
 Date:   2020-06-10 17:40:50 +0200
 
@@ -945,22 +968,6 @@ Date:   2018-09-05 21:51:30 +0200
      format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘OPJ_OFF_T {aka long int}’ [-Wformat=]
     
     Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 3d6ffaf3f3463b62830f88f50a8c1b510f555eb5
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2018-07-30 21:04:28 +0200
-
-    Fix some typos in code comments and documentation
-    
-    All typos were found by Codespell.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 98363e244e027c731f73ee8239d3c19451a9153b
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2018-08-31 16:24:41 +0200
-
-    Changes in pnmtoimage if image data are missing
 
 ...</pre></div>
 
