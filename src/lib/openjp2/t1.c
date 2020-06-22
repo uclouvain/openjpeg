@@ -1665,7 +1665,14 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
             opj_free(job);
             return;
         }
-        opj_tls_set(tls, OPJ_TLS_KEY_T1, t1, opj_t1_destroy_wrapper);
+        if (!opj_tls_set(tls, OPJ_TLS_KEY_T1, t1, opj_t1_destroy_wrapper)) {
+            opj_event_msg(job->p_manager, EVT_ERROR,
+                          "Unable to set t1 handle as TLS\n");
+            opj_t1_destroy(t1);
+            *(job->pret) = OPJ_FALSE;
+            opj_free(job);
+            return;
+        }
     }
     t1->mustuse_cblkdatabuffer = job->mustuse_cblkdatabuffer;
 
