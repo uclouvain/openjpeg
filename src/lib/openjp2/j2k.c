@@ -8293,6 +8293,8 @@ OPJ_BOOL opj_j2k_read_header(opj_stream_private_t *p_stream,
 
     /*Allocate and initialize some elements of codestrem index*/
     if (!opj_j2k_allocate_tile_element_cstr_index(p_j2k)) {
+        opj_image_destroy(*p_image);
+        *p_image = NULL;
         return OPJ_FALSE;
     }
 
