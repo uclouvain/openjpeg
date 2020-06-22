@@ -20,7 +20,27 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 98150d09422149305c9c8648337a744df5786fbe
+<pre class='wrap'>commit e252438d5e23e6ba9561e73a5a4754713bfd626a
+Merge: 98150d0 79b199a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-06-22 22:12:08 +0200
+
+    Merge pull request #1258 from sebras/fix-issue-1257
+    
+    openjp2: Plug memory leak when setting data as TLS fails.
+
+commit 79b199a8fee2a0d51d4389fcde3f5f4dd01971eb
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2020-06-23 02:18:19 +0800
+
+    openjp2: Plug memory leak when setting data as TLS fails.
+    
+    Previously the Tier 1 handle was not freed when setting it as
+    TLS failed.
+    
+    This fixes issue #1257.
+
+commit 98150d09422149305c9c8648337a744df5786fbe
 Merge: 25fb144 93b9f72
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-06-22 21:03:23 +0200
@@ -925,49 +945,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2018-09-22 21:56:50 +0200
 
     Update knownfailures- files given current configurations
-
-commit ca16fe55014c57090dd97369256c7657aeb25975
-Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
-Date:   2018-09-22 14:33:19 -0400
-
-    convertbmp: fix issues with zero bitmasks
-    
-    In the case where a BMP file declares compression 3 (BI_BITFIELDS)
-    with header size &lt;= 56, all bitmask values keep their initialization
-    value 0. This may lead to various undefined behavior later e.g. when
-    doing 1 &lt;&lt; (l_comp-&gt;prec - 1).
-    
-    This issue does not affect files with bit count 16 because of a check
-    added in 16240e2 which sets default values to the color masks if they
-    are all 0.
-    
-    This commit adds similar checks for the 32 bit case.
-    
-    Also, if a BMP file declares compression 3 with header size &gt;= 56 and
-    intentional 0 bitmasks, the same issue will be triggered in both the
-    16 and 32 bit count case.
-    
-    This commit adds checks to bmp_read_info_header() rejecting BMP files
-    with "intentional" 0 bitmasks. These checks might be removed in the
-    future when proper handling of zero bitmasks will be available in
-    openjpeg2.
-    
-    fixes #1057 (CVE-2018-5785)
-
-commit 31a03b390a77bfbe4b0f140121d1296acb611f76
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2018-09-05 21:51:30 +0200
-
-    openjp2/jp2: Fix two format strings
-    
-    Compiler warnings:
-    
-    src/lib/openjp2/jp2.c:1008:35: warning:
-     too many arguments for format [-Wformat-extra-args]
-    src/lib/openjp2/j2k.c:1928:73: warning:
-     format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘OPJ_OFF_T {aka long int}’ [-Wformat=]
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
 
 ...</pre></div>
 
