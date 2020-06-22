@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit e252438d5e23e6ba9561e73a5a4754713bfd626a
+<pre class='wrap'>commit 172c8ae5cf230ff74b5814daf29e5b577aa30a9b
+Merge: e252438 b028e8d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-06-22 22:35:44 +0200
+
+    Merge pull request #1260 from sebras/fix-issue-1259
+    
+    openjp2: Plug image leak when failing to allocate codestream index.
+
+commit e252438d5e23e6ba9561e73a5a4754713bfd626a
 Merge: 98150d0 79b199a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-06-22 22:12:08 +0200
@@ -28,6 +37,14 @@ Date:   2020-06-22 22:12:08 +0200
     Merge pull request #1258 from sebras/fix-issue-1257
     
     openjp2: Plug memory leak when setting data as TLS fails.
+
+commit b028e8d1ce7798f61c35b1b20d836f80d78a35d0
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2020-06-23 02:18:19 +0800
+
+    openjp2: Plug image leak when failing to allocate codestream index.
+    
+    This fixes issue #1259.
 
 commit 79b199a8fee2a0d51d4389fcde3f5f4dd01971eb
 Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
@@ -930,21 +947,6 @@ Date:   2018-09-22 22:28:04 +0200
     Merge pull request #1143 from stweil/format
     
     openjp2/jp2: Fix two format strings
-
-commit 1b9a81dff7c22ed0cb22bf1033e6dfee1292da31
-Merge: 9d1a9dc c28ed52
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-09-22 22:27:14 +0200
-
-    Merge pull request #1149 from rouault/fix_knownfailures
-    
-    Update knownfailures- files given current configurations
-
-commit c28ed521633c074f1e4891208028fe97f7602a14
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-09-22 21:56:50 +0200
-
-    Update knownfailures- files given current configurations
 
 ...</pre></div>
 
