@@ -1316,10 +1316,6 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 int main(int argc, char **argv)
 {
     opj_decompress_parameters parameters;           /* decompression parameters */
-    opj_image_t* image = NULL;
-    opj_stream_t *l_stream = NULL;              /* Stream */
-    opj_codec_t* l_codec = NULL;                /* Handle to a decompressor */
-    opj_codestream_index_t* cstr_index = NULL;
 
     OPJ_INT32 num_images, imageno;
     img_fol_t img_fol;
@@ -1393,6 +1389,10 @@ int main(int argc, char **argv)
 
     /*Decoding image one by one*/
     for (imageno = 0; imageno < num_images ; imageno++)  {
+        opj_image_t* image = NULL;
+        opj_stream_t *l_stream = NULL;              /* Stream */
+        opj_codec_t* l_codec = NULL;                /* Handle to a decompressor */
+        opj_codestream_index_t* cstr_index = NULL;
 
         if (!parameters.quiet) {
             fprintf(stderr, "\n");
