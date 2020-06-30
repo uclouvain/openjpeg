@@ -20,7 +20,26 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 172c8ae5cf230ff74b5814daf29e5b577aa30a9b
+<pre class='wrap'>commit cbee7891a0ee664dd83ca09553d2e30da716a883
+Merge: 172c8ae e8e258a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-06-30 22:05:13 +0200
+
+    Merge pull request #1262 from rouault/fix_1261
+    
+    opj_decompress: fix double-free on input directory with mix of valid and invalid images
+
+commit e8e258ab049240c2dd1f1051b4e773b21e2d3dc0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-06-28 14:19:59 +0200
+
+    opj_decompress: fix double-free on input directory with mix of valid and invalid images (CVE-2020-15389)
+    
+    Fixes #1261
+    
+    Credits to @Ruia-ruia for reporting and analysis.
+
+commit 172c8ae5cf230ff74b5814daf29e5b577aa30a9b
 Merge: e252438 b028e8d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-06-22 22:35:44 +0200
@@ -929,24 +948,6 @@ Date:   2018-09-22 22:54:51 +0200
     Merge pull request #1140 from bukatlib/fix_relpath
     
     Relative path to header files is hardcoded in OpenJPEGConfig.cmake.in file
-
-commit c6ee006250b093f443e226288c6c866c5ebe12f5
-Merge: 2d28610 98363e2
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-09-22 22:47:27 +0200
-
-    Merge pull request #1141 from szukw000/changes-in-pnmtoimage
-    
-    Changes in pnmtoimage if image data are missing
-
-commit 2d2861036cfb68560e0cf21340760781ea78595d
-Merge: 1b9a81d 31a03b3
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-09-22 22:28:04 +0200
-
-    Merge pull request #1143 from stweil/format
-    
-    openjp2/jp2: Fix two format strings
 
 ...</pre></div>
 
