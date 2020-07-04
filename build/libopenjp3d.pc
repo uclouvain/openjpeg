@@ -1,0 +1,14 @@
+prefix=/usr/local
+bindir=${prefix}/bin
+mandir=${prefix}/share/man/
+docdir=${prefix}/share/doc/openjpeg-2.3
+libdir=${prefix}/lib
+includedir=${prefix}/include/openjpeg-2.3
+
+Name: openjp3d
+Description: JPEG2000 Extensions for three-dimensional data (Part 10)
+URL: http://www.openjpeg.org/
+Version: 2.3.1
+Libs: -L${libdir} -lopenjp3d
+Libs.private: -lm
+Cflags: -I${includedir}

@@ -1,0 +1,15 @@
+prefix=/usr/local
+bindir=${prefix}/bin
+mandir=${prefix}/share/man/
+docdir=${prefix}/share/doc/openjpeg-2.3
+libdir=${prefix}/lib
+includedir=${prefix}/include/openjpeg-2.3
+
+Name: openjpwl
+Description: JPEG2000 Wireless library (Part 11)
+URL: http://www.openjpeg.org/
+Version: 2.3.1
+Requires: libopenjp2
+Libs: -L${libdir} -lopenjpwl
+Libs.private: -lm
+Cflags: -I${includedir}
