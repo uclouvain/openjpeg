@@ -5203,7 +5203,7 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
     OPJ_FLOAT32 * l_rates = 0;
     OPJ_FLOAT32 l_sot_remove;
     OPJ_UINT32 l_bits_empty, l_size_pixel;
-    OPJ_UINT32 l_tile_size = 0;
+    OPJ_UINT64 l_tile_size = 0;
     OPJ_UINT32 l_last_res;
     OPJ_FLOAT32(* l_tp_stride_func)(opj_tcp_t *) = 00;
 
@@ -5247,25 +5247,12 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
             l_rates = l_tcp->rates;
 
             /* Modification of the RATE >> */
-            if (*l_rates > 0.0f) {
-                *l_rates = (((OPJ_FLOAT32)(l_size_pixel * (OPJ_UINT32)(l_x1 - l_x0) *
-                                           (OPJ_UINT32)(l_y1 - l_y0)))
-                            /
-                            ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
-                           )
-                           -
-                           l_offset;
-            }
-
-            ++l_rates;
-
-            for (k = 1; k < l_tcp->numlayers; ++k) {
+            for (k = 0; k < l_tcp->numlayers; ++k) {
                 if (*l_rates > 0.0f) {
-                    *l_rates = (((OPJ_FLOAT32)(l_size_pixel * (OPJ_UINT32)(l_x1 - l_x0) *
-                                               (OPJ_UINT32)(l_y1 - l_y0)))
-                                /
-                                ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
-                               )
+                    *l_rates = (OPJ_FLOAT32)(((OPJ_FLOAT64)l_size_pixel * (OPJ_UINT32)(
+                                                  l_x1 - l_x0) *
+                                              (OPJ_UINT32)(l_y1 - l_y0))
+                                             / ((*l_rates) * (OPJ_FLOAT32)l_bits_empty))
                                -
                                l_offset;
                 }
@@ -5325,12 +5312,11 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
     l_tile_size = 0;
 
     for (i = 0; i < l_image->numcomps; ++i) {
-        l_tile_size += (opj_uint_ceildiv(l_cp->tdx, l_img_comp->dx)
-                        *
-                        opj_uint_ceildiv(l_cp->tdy, l_img_comp->dy)
-                        *
-                        l_img_comp->prec
-                       );
+        l_tile_size += (OPJ_UINT64)opj_uint_ceildiv(l_cp->tdx, l_img_comp->dx)
+                       *
+                       opj_uint_ceildiv(l_cp->tdy, l_img_comp->dy)
+                       *
+                       l_img_comp->prec;
 
         ++l_img_comp;
     }
@@ -5341,7 +5327,7 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
     /* bin/test_tile_encoder 1 256 256 32 32 8 0 reversible_with_precinct.j2k 4 4 3 0 0 1 16 16 */
     /* TODO revise this to take into account the overhead linked to the */
     /* number of packets and number of code blocks in packets */
-    l_tile_size = (OPJ_UINT32)(l_tile_size * 1.4 / 8);
+    l_tile_size = (OPJ_UINT64)((double)l_tile_size * 1.4 / 8);
 
     /* Arbitrary amount to make the following work: */
     /* bin/test_tile_encoder 1 256 256 17 16 8 0 reversible_no_precinct.j2k 4 4 3 0 0 1 */
@@ -5349,10 +5335,17 @@ static OPJ_BOOL opj_j2k_update_rates(opj_j2k_t *p_j2k,
 
     l_tile_size += opj_j2k_get_specific_header_sizes(p_j2k);
 
-    p_j2k->m_specific_param.m_encoder.m_encoded_tile_size = l_tile_size;
+    if (l_tile_size > UINT_MAX) {
+        l_tile_size = UINT_MAX;
+    }
+
+    p_j2k->m_specific_param.m_encoder.m_encoded_tile_size = (OPJ_UINT32)l_tile_size;
     p_j2k->m_specific_param.m_encoder.m_encoded_tile_data =
         (OPJ_BYTE *) opj_malloc(p_j2k->m_specific_param.m_encoder.m_encoded_tile_size);
     if (p_j2k->m_specific_param.m_encoder.m_encoded_tile_data == 00) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Not enough memory to allocate m_encoded_tile_data. %u MB required\n",
+                      (OPJ_UINT32)(l_tile_size / 1024 / 1024));
         return OPJ_FALSE;
     }
 
