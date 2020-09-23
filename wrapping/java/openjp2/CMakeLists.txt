@@ -44,7 +44,7 @@ install(TARGETS openjpegjni
 )
 
 # build jar:
-find_package(Java 1.5 REQUIRED) # javac, jar
+find_package(Java 1.6 REQUIRED) # javac, jar
 
 # build dep list:
 file(GLOB java_srcs "java-sources/org/openJpeg/*.java")
