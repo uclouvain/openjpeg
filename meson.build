@@ -32,7 +32,7 @@ else
   rt_dep = []
 endif
 
-wxwidgets_dep = dependency('wxWidgets')
+wxwidgets_dep = dependency('wxWidgets', required: get_option('build_viewer'))
 
 subdir('thirdparty')
 
