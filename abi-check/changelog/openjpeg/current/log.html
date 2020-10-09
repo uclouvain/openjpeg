@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 65c8f577d2f057e80040e98958eae80ca76c6b94
+<pre class='wrap'>commit 491299eb073c80602ca8ee333303a31a581d3fa8
+Merge: 65c8f57 1c5627e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-10-09 13:25:27 +0200
+
+    Merge pull request #1253 from rouault/floating_point_irreversible_encoding
+    
+    Single-threaded performance improvements in forward DWT for 5-3 and 9-7 (and other improvements)
+
+commit 65c8f577d2f057e80040e98958eae80ca76c6b94
 Author: Pei JIA &lt;jiapei@longervision.com&gt;
 Date:   2020-09-23 02:34:31 -0700
 
@@ -126,6 +135,88 @@ Date:   2020-06-10 17:40:50 +0200
 
     Testing for invalid values of width, height, numcomps (#1254)
 
+commit 1c5627ee7406f84cfb40809b7ac31c63342427df
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-24 15:38:21 +0200
+
+    T1 encoder: speed-up by aggressive inlining and more cache friendly data organization
+    
+    ~ 9% speed improvement seen on 10980x10980 uint16 image, T36JTT_20160914T074612_B02.tif
+    opj_compress time from 17.2s to 15.8s
+
+commit 1e931fdb3655c64ab60ea5657f79309331a86485
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-22 23:57:51 +0200
+
+    Forward DWT 9-7: major speed up by vectorizing vertical pass
+    
+    `bench_dwt -I -encode` times goes from 8.6s to 2.1s
+
+commit a38e970fa59abd796c703ec469e578b09f7ffa33
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-22 17:50:15 +0200
+
+    Forward DWT 5-3: major speed up by vectorizing vertical pass
+    
+    `bench_dwt -encode` times goes from 7.9s to 1.7s
+
+commit e69fa09f604bc472f9fbff5c2b2db65e8dbe2418
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-22 15:58:47 +0200
+
+    Forward DWT: small code refactoring to allow future improvements for the vertical pass
+
+commit 33d3d0de07be710f53940c7548b9f2bd58ff3210
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-22 15:06:29 +0200
+
+    dwt.c: remove unused typedef
+
+commit 97b384aecdeea0c286213f5caf6244ec08ea32d7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-22 15:03:40 +0200
+
+    Forward DWT 5x3: performance improvements in horizontal pass, and modest in vertical pass
+
+commit bd5f5ee7dea851aedae630fee094ef3b0ff0c888
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-21 21:20:19 +0200
+
+    Forward DWT: small code refactoring to allow future improvements for the horizontal pass
+
+commit 45a35223b79dee65a0059f999b690072e829669f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-21 16:54:48 +0200
+
+    Speed-up 9x7 IDWD by ~30% with OPJ_NUM_THREADS=2
+    
+    "bench_dwt -I" time goes from 2.2s to 1.5s
+
+commit 272b3e0fb2530ca8bffdc8c64f1505a8ff5f6ecc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-21 11:24:29 +0200
+
+    Remove useless + 5U margin in opj_dwt_decode_tile_97()
+    
+    Nothing in code analysis nor test suite shows that this margin is
+    needed.
+    It dates back to commit dbeebe72b9d35f6ff807c21c7f217b569fa894f6
+    where vector 9x7 decoding was introduced.
+
+commit 47943daa15983d20ab1ffd0a237125f1493c5658
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-21 11:23:00 +0200
+
+    Speed-up 9x7 IDWD by ~20%
+    
+    "bench_dwt -I" time goes from 2.8s to 2.2s
+
+commit 0c09062464fe74f62fb9a4da829992c6a8bd7920
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-20 23:20:48 +0200
+
+    bench_dwt.c: add a -I switch to test irreversible FWDT/IDWT
+
 commit 19ef7f26c43f689b627aad642da7f6150893b863
 Merge: 1d358f2 f3ee448
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -134,6 +225,120 @@ Date:   2020-05-20 21:10:55 +0200
     Merge pull request #1211 from sebras/master
     
     Add check to validate SGcod/SPcoc/SPcod parameter values.
+
+commit adccbc8336ce5c46ca7de85ac364d9c992d337c7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-20 19:24:09 +0200
+
+    Irreversible decoding: partially revert previous commit, to fix failures in test suite
+
+commit 3cd1305596f191a01afdc11f9355f9c6590065dd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-20 18:00:45 +0200
+
+    Irreversible compression/decompression DWT: use 1/K constant as per standard
+    
+    The previous constant opj_c13318 was mysteriously equal to 2/K , and in
+    the DWT, we had to divide K and opj_c13318 by 2... The issue was that the
+    band-&gt;stepsize computation in tcd.c didn't take into account the log2gain of
+    the band.
+    
+    The effect of this change is expected to be mostly equivalent to the previous
+    situation, except some difference in rounding. But it leads to a dramatic
+    reduction of the mean square error and peak error in the irreversible encoding
+    of issue141.tif !
+
+commit f38c069547f1c41dc94ec4a273efb07997685c21
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-20 13:14:16 +0200
+
+    Irreversible decoding: align code more closely to the standard by avoid messing up with stepsize (no functional change)
+
+commit e46e300de55aa35279935ef9e8572949d725d833
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-20 11:36:05 +0200
+
+    opj_dwt_encode_1_real(): avoid many bound comparisons, similarly to decoding side
+
+commit 4ab2ed090747ad2f22e78d45a1db5640d40e6a34
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-19 22:26:22 +0200
+
+    opj_j2k_setup_encoder(): add validation of tile width and height to avoid potential division by zero
+
+commit c6a413a42394836b956846cc037dd8297b732f44
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-19 19:45:00 +0200
+
+    opj_mct_encode_real(): add SSE optimization
+
+commit fe4c15f12c562a42a6b0c4b0a0c5e42a25797235
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-19 18:03:58 +0200
+
+    Testing: revise testing of lossy encoding by comparing PEAK and MSE with original image
+
+commit c2b9d09c65ec5db4a94de961b0470923aec74e2e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-19 18:03:29 +0200
+
+    compare_images.c: code reformatting
+
+commit 3d35d0f3af46ee206a3ea147298aad3d83a7775c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-18 20:17:07 +0200
+
+    tcd.c: add comment
+
+commit 00cff6f5c02deabb64ccb15f15c13fcb773968fe
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-18 20:15:07 +0200
+
+    Encoder: use floating-point operations for irreversible transformation
+
+commit 99107d5e468beef3cf2f7db24633ba8b40732405
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-05-18 18:09:10 +0200
+
+    dwt.c: change sign of constants to match standard and compensate (no functional change)
+
+commit 07d1f775a1ef95496b0c78b18f671dac41983320
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-04-30 11:52:42 +0200
+
+    Add multithreaded support in the DWT encoder.
+    
+    Update the bench_dwt utility to have a -decode/-encode switch
+    
+    Measured performance gains for DWT encoder on a
+    Intel(R) Core(TM) i7-6700HQ CPU @ 2.60GHz (4 cores, hyper threaded)
+    
+    Encoding time:
+    $ ./bin/bench_dwt -encode -num_threads 1
+    time for dwt_encode: total = 8.348 s, wallclock = 8.352 s
+    
+    $ ./bin/bench_dwt -encode -num_threads 2
+    time for dwt_encode: total = 9.776 s, wallclock = 4.904 s
+    
+    $ ./bin/bench_dwt -encode -num_threads 4
+    time for dwt_encode: total = 13.188 s, wallclock = 3.310 s
+    
+    $ ./bin/bench_dwt -encode -num_threads 8
+    time for dwt_encode: total = 30.024 s, wallclock = 4.064 s
+    
+    Scaling is probably limited by memory access patterns causing
+    memory access to be the bottleneck.
+    The slightly worse results with threads==8 than with thread==4
+    is due to hyperthreading being not appropriate here.
+
+commit 97eb7e0bf17b476d516262e0af462ec7eeb8f505
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-04-29 11:50:17 +0200
+
+    Add multithreading support in the T1 (entropy phase) encoder
+    
+    - API wise, opj_codec_set_threads() can be used on the encoding side
+    - opj_compress has a -threads switch similar to opj_uncompress
 
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
@@ -712,236 +917,6 @@ Date:   2018-12-07 21:27:38 +0100
     Merge pull request #1168 from Young-X/fix_dev
     
     Fix multiple potential vulnerabilities and bugs
-
-commit 05be3084460e46282ee63f04c72c451f3271fd28
-Author: Young Xiao &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-28 14:44:06 +0800
-
-    [JPWL] tgatoimage(): avoid excessive memory allocation attempt,
-    and fixes unaligned load
-    
-    Signed-off-by: Young Xiao &lt;YangX92@hotmail.com&gt;
-
-commit bd88611ed9ad7144ec4f3de54790cd848175891b
-Author: Young_X &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-23 17:15:05 +0800
-
-     [JP3D] To avoid divisions by zero / undefined behaviour on shift (CVE-2018-14423
-    
-    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
-
-commit ce9583d1d7627e007a34a31ae4e22a00d78bd153
-Author: Young_X &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-23 17:12:06 +0800
-
-     [JPWL] opj_compress: reorder checks related to code block dimensions to avoid potential int overflow
-    
-    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
-
-commit c58df149900df862806d0e892859b41115875845
-Author: Young_X &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-23 16:24:19 +0800
-
-    [OPENJP2] change the way to compute *p_tx0, *p_tx1, *p_ty0, *p_ty1 in function
-    opj_get_encoding_parameters
-    
-    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
-
-commit c277159986c80142180fbe5efb256bbf3bdf3edc
-Author: Young_X &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-23 16:12:53 +0800
-
-    [MJ2] Avoid index out of bounds access to pi-&gt;include[]
-    
-    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
-
-commit e0f5212888c0c1abc5e060a75a3a4a5ff99afd1a
-Merge: 92023cd 2e5ab1d
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-11-28 00:04:30 +0100
-
-    Merge pull request #1170 from rouault/fix_color_apply_icc_profile
-    
-    color_apply_icc_profile: avoid potential heap buffer overflow
-
-commit 2e5ab1d9987831c981ff05862e8ccf1381ed58ea
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-11-27 23:31:30 +0100
-
-    color_apply_icc_profile: avoid potential heap buffer overflow
-    
-    Derived from a patch by Thuan Pham
-
-commit 46822d0eddc3324b2a056bc60ffa997027bebd66
-Author: Young_X &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-23 15:58:23 +0800
-
-    [JPWL] imagetotga(): fix read heap buffer overflow if numcomps &lt; 3 (#987)
-    
-    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
-
-commit 619e1b086eaa21ebd9b23eb67deee543b07bf06f
-Author: Young_X &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-23 15:02:26 +0800
-
-    [JPWL] fix CVE-2018-16375
-    
-    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
-
-commit c5bd64ea146162967c29bd2af0cbb845ba3eaaaf
-Author: Young_X &lt;YangX92@hotmail.com&gt;
-Date:   2018-11-23 14:47:36 +0800
-
-    [MJ2] To avoid divisions by zero / undefined behaviour on shift
-    
-    Signed-off-by: Young_X &lt;YangX92@hotmail.com&gt;
-
-commit 92023cd6c377e0384a7725949b25655d4d94dced
-Merge: c196b23 cab352e
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-11-16 09:42:19 +0100
-
-    Merge pull request #1160 from hlef/master
-    
-    jp3d/jpwl convert: fix write stack buffer overflow
-
-commit c196b23b90321b5c7e3238294607a2e8626c503f
-Author: ichlubna &lt;43234438+ichlubna@users.noreply.github.com&gt;
-Date:   2018-11-16 09:40:31 +0100
-
-    openjp3d: Int overflow fixed (#1159)
-    
-    When compressing a lot of slices (starting from 44 FullHD slices with 3 8bit components in our experiments) the rate values are high enough to cause an int overflow that leads to negative lengths and wrong results. The cast happens too late.
-
-commit cab352e249ed3372dd9355c85e837613fff98fa2
-Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
-Date:   2018-11-07 18:48:29 +0100
-
-    jp2: convert: fix null pointer dereference
-    
-    Tile components in a JP2 image might have null data pointer by defining a
-    zero component size (for example using large horizontal or vertical
-    sampling periods). This null data pointer leads to null image component
-    data pointer, causing crash when dereferenced without != null check in
-    imagetopnm.
-    
-    Add != null check.
-    
-    This commit addresses #1152 (CVE-2018-18088).
-
-commit 0bc90e4062a5f9258c91eca018c019b179066c62
-Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
-Date:   2018-10-22 16:59:41 +0200
-
-    jp3d/jpwl convert: fix write stack buffer overflow
-    
-    Missing buffer length formatter in fscanf call might lead to write
-    stack buffer overflow.
-    
-    fixes #1044 (CVE-2017-17480)
-
-commit 948332e6ed17565100d1df5f6fdbf66865218e36
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2018-10-31 20:44:30 +0100
-
-    Fix some potential overflow issues (#1161)
-    
-    * Fix some potential overflow issues
-    
-    Put sizeof to the beginning of the multiplication to enforce that
-    size_t instead of smaller integer types is used for the calculation.
-    
-    This fixes warnings from LGTM:
-    
-        Multiplication result may overflow 'unsigned int'
-        before it is converted to 'unsigned long'.
-    
-    It also allows removing some type casts.
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-    
-    * Fix code indentation
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit e52909f4c7896c5efff3340d707c12d0df55d3f9
-Merge: cd900d9 943db0f
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-10-31 20:41:52 +0100
-
-    Merge pull request #1163 from nforro/memory-and-resource-leaks
-    
-    Fix several memory and resource leaks
-
-commit 943db0f1c28ca6a7df6d18483f97166a03be9bf7
-Author: Nikola Forró &lt;nforro@redhat.com&gt;
-Date:   2018-10-31 13:39:05 +0100
-
-    Fix several memory and resource leaks
-    
-    Signed-off-by: Nikola Forró &lt;nforro@redhat.com&gt;
-
-commit cd900d96618ab77e79812db654731dd6b5fc7bd8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-10-18 11:45:45 +0200
-
-    opj_thread_pool_setup(): fix infinite waiting if a thread creation failed
-
-commit 0e6a5553cfef21b764d289585af2c6934a95456b
-Merge: 8fc09e5 ca16fe5
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-09-22 23:54:12 +0200
-
-    Merge pull request #1148 from hlef/master
-    
-    CVE-2018-5785: fix issues with zero bitmasks
-
-commit 8fc09e50e557fa6af4c099b9c6d36bb1071ee1ed
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-09-22 23:47:56 +0200
-
-    opj_jp2_apply_pclr(): remove useless assert that can trigger on some files (fixes #1125)
-
-commit aaf48ee6bae91032f025f9ac11592c4085a0d96b
-Merge: ee827ad cc38247
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-09-22 23:12:50 +0200
-
-    Merge branch 'pr1095'
-
-commit cc3824767bde397fedb8a1ae4786a222ba860c8d
-Author: Karol Babioch &lt;kbabioch@suse.de&gt;
-Date:   2018-03-02 14:40:58 +0100
-
-    opj_mj2_extract: Check provided output prefix for length
-    
-    This uses snprintf() with correct buffer length instead of sprintf(), which
-    prevents a buffer overflow when providing a long output prefix. Furthermore
-    the program exits with an error when the provided output prefix is too long.
-    
-    Fixes #1088.
-
-commit ee827ad3f32469d4854b2da71c9703a2af359f9f
-Merge: 5d94bcd 1eb9a57
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2018-09-22 23:05:54 +0200
-
-    Merge branch 'pr1107'
-
-commit 1eb9a57ac1216209a4d9adf87bc47ba19810d3b3
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2018-03-13 18:11:54 +0100
-
-    opj_mj2_extract: Avoid segfault for long filenames
-
-commit 5d94bcd89c6e281614955c56cbfebb11b866a9dd
-Merge: b54c06f 0fa7ebe
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-09-22 22:59:36 +0200
-
-    Merge pull request #1136 from reverson/master
-    
-    Cast on uint ceildiv
 
 ...</pre></div>
 

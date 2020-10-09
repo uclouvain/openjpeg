@@ -216,7 +216,47 @@ itialise_encode*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">} opj_poc_t;</td><td> </td><td class="right">} opj_poc_t;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="part-3" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-3"><em> line 1539<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-3"><em> line 1573<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr id="part-3" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-3"><em> line 1307<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-3"><em> line 1341<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * Allocates worker threads for the compressor/decompressor.</td><td> </td><td class="right"> * Allocates worker threads for the compressor/decompressor.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * By default, only the main thread is used. If this function is not used,</td><td> </td><td class="right"> * By default, only the main thread is used. If this function is not used,</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * but the OPJ_NUM_THREADS environment variable is set, its value will be</td><td> </td><td class="right"> * but the OPJ_NUM_THREADS environment variable is set, its value will be</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * used to initialize the number of threads. The value can be either an int
+eger</td><td> </td><td class="right"> * used to initialize the number of threads. The value can be either an int
+eger</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is ca
+lled,</td><td> </td><td class="right"> * number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is ca
+lled,</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * this function will override the behaviour of the environment variable.</td><td> </td><td class="right"> * this function will override the behaviour of the environment variable.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
+      <tr id="diff0007"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"> * <span class="delete">Currently this</span> function must be called after opj_setup_decoder() and</td><td> </td><td class="rblock"> * <span class="insert">This</span> function must be called after opj_setup_decoder() and</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"> * before <span class="delete">opj_read_header().</span></td><td> </td><td class="rblock"> * before <span class="insert">opj_read_header() for the decoding side, or after opj_setup_encod</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"><span class="delete"> *</span></td><td> </td><td class="rblock"><span class="insert">er()</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"> * <span class="delete">Note: currently only has effect on</span> the <span class="delete">decompressor.</span></td><td> </td><td class="rblock"> * <span class="insert">and before opj_start_compress() for</span> the <span class="insert">encoding side.</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
+      <tr id="diff0008"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"> * @param p_codec       decompressor handler</td><td> </td><td class="rblock"> * @param p_codec       decompressor <span class="insert">or compressor </span>handler</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param num_threads   number of threads.</td><td> </td><td class="right"> * @param num_threads   number of threads.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
+      <tr id="diff0009"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock"> * @return OPJ_TRUE     if the <span class="delete">decoder is correctly set</span></td><td> </td><td class="rblock"> * @return OPJ_TRUE     if the <span class="insert">function is successful.</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">        int num_threads);</td><td> </td><td class="right">        int num_threads);</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * Decodes an image header.</td><td> </td><td class="right"> * Decodes an image header.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param   p_stream        the jpeg2000 stream.</td><td> </td><td class="right"> * @param   p_stream        the jpeg2000 stream.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param   p_codec         the jpeg2000 codec to read.</td><td> </td><td class="right"> * @param   p_codec         the jpeg2000 codec to read.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"> * @param   p_image         the image structure initialized with the charac
+teristics of encoded image.</td><td> </td><td class="right"> * @param   p_image         the image structure initialized with the charac
+teristics of encoded image.</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr id="part-4" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-4"><em> line 1539<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-4"><em> line 1572<span class="hide"> &para;</span></em></a></th><td></td></tr>
       <tr><td class="lineno"></td><td class="left"> * Setup the encoder parameters using the current image and using user para
 meters.</td><td> </td><td class="right"> * Setup the encoder parameters using the current image and using user para
 meters.</td><td class="lineno"></td></tr>
@@ -229,7 +269,7 @@ meters.</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">        opj_image_t *image);</td><td> </td><td class="right">        opj_image_t *image);</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
-      <tr id="diff0007"><td></td></tr>
+      <tr id="diff0010"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* Specify extra options for the encoder.</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * This may be called after opj_setup_encoder() and before opj_start_compre</span></td><td class="lineno"></td></tr>
@@ -273,8 +313,8 @@ meters.</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
-     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 7 change blocks.&nbsp;</th></tr>
-     <tr class="stats"><td></td><th><i>9 lines changed or deleted</i></th><th><i> </i></th><th><i>97 lines changed or added</i></th><td></td></tr>
+     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 10 change blocks.&nbsp;</th></tr>
+     <tr class="stats"><td></td><th><i>15 lines changed or deleted</i></th><th><i> </i></th><th><i>103 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"></td></tr>
    </table>
    <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
