@@ -250,6 +250,32 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
       list(REMOVE_AT CMD_ARG_LIST 0)
 
+      if(ENC_TEST_FOUND)
+
+        # Parse lines like opj_compress lossy-check { -n 3 -m 0:0:0 -p 0:0:0 } ...
+        set(LOSSY_CHECK_ARG_LIST "")
+        list(GET CMD_ARG_LIST 0 NEXT_ARG)
+        string(REGEX MATCH "^lossy-check$" LOSSY_CHECK ${NEXT_ARG})
+        if(LOSSY_CHECK)
+            list(REMOVE_AT CMD_ARG_LIST 0)
+            list(GET CMD_ARG_LIST 0 NEXT_ARG)
+            string(REGEX MATCH "^{$" FOUND_OPEN_CURL ${NEXT_ARG})
+            if(NOT FOUND_OPEN_CURL)
+                message( FATAL_ERROR "'{' expected after lossy-check")
+            endif()
+            list(REMOVE_AT CMD_ARG_LIST 0)
+            while(TRUE)
+                list(GET CMD_ARG_LIST 0 NEXT_ARG)
+                list(REMOVE_AT CMD_ARG_LIST 0)
+                string(REGEX MATCH "^}$" FOUND_CLOSE_CURL ${NEXT_ARG})
+                if(FOUND_CLOSE_CURL)
+                    break()
+                endif()
+                list (APPEND LOSSY_CHECK_ARG_LIST ${NEXT_ARG})
+            endwhile()
+        endif()
+      endif()
+
     endif ()
 
     # Parse the argument list to find the input filename and output filename
@@ -322,8 +348,32 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                PROPERTIES DEPENDS
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump)
 
+          if(LOSSY_CHECK)
+            add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+            COMMAND opj_decompress
+            -i ${OUTPUT_FILENAME}
+            -o ${OUTPUT_FILENAME}.tif
+            )
+
+            set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+                                PROPERTIES DEPENDS
+                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode)
+
+            # Compare the decoding file with original one, using tolerance
+            add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+            COMMAND compare_images
+            -b ${INPUT_FILENAME}
+            -t ${OUTPUT_FILENAME}.tif
+            -s bXtY
+            ${LOSSY_CHECK_ARG_LIST}
+            )
+
+            set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+                                PROPERTIES DEPENDS
+                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
+
           # Decode the encoding file with kakadu expand command
-          if (KDU_EXPAND_EXECUTABLE)
+          elseif (KDU_EXPAND_EXECUTABLE)
             add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
               COMMAND ${KDU_EXPAND_EXECUTABLE}
               -i ${OUTPUT_FILENAME}
@@ -346,7 +396,6 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                     PROPERTIES DEPENDS
                                     NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
             endif()
-
           endif()
 
           # Test the encoded file is a valid JP2 file

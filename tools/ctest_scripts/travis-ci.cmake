@@ -121,6 +121,9 @@ BUILD_TESTING:BOOL=${BUILD_TESTING}
 # Build Thirdparty, useful but not required for test suite
 BUILD_THIRDPARTY:BOOL=TRUE
 
+# Build unit tests that test subcomponents of libopenjp2 (e.g. DWT)
+BUILD_UNIT_TESTS:BOOL=TRUE
+
 # JPEG2000 test files are available with git clone https://github.com/uclouvain/openjpeg-data.git
 OPJ_DATA_ROOT:PATH=$ENV{PWD}/data
 
