@@ -2124,7 +2124,7 @@ typedef struct {
  * @param user_data Pointer to a opj_t1_cblk_encode_processing_job_t* structure
  * @param tls       TLS handle.
  */
-static void opj_t1_clbl_encode_processor(void* user_data, opj_tls_t* tls)
+static void opj_t1_cblk_encode_processor(void* user_data, opj_tls_t* tls)
 {
     opj_t1_cblk_encode_processing_job_t* job =
         (opj_t1_cblk_encode_processing_job_t*)user_data;
@@ -2316,7 +2316,7 @@ OPJ_BOOL opj_t1_encode_cblks(opj_tcd_t* tcd,
                         job->mct_numcomps = mct_numcomps;
                         job->pret = &ret;
                         job->mutex = mutex;
-                        opj_thread_pool_submit_job(tp, opj_t1_clbl_encode_processor, job);
+                        opj_thread_pool_submit_job(tp, opj_t1_cblk_encode_processor, job);
 
                     } /* cblkno */
                 } /* precno */
