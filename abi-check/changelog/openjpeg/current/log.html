@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit eaa098b59b346cb88e4d10d505061f669d7134fc
+<pre class='wrap'>commit 15cf3d95814dc931ca0ecb132f81cb152e051bae
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-11-23 18:14:02 +0100
+
+    Encoder: grow again buffer size in opj_tcd_code_block_enc_allocate_data() (fixes #1283)
+
+commit eaa098b59b346cb88e4d10d505061f669d7134fc
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-11-23 13:49:05 +0100
 
@@ -894,15 +900,6 @@ Date:   2018-10-31 20:22:11 +0100
     out if it was unable to do so.
     
     Fixes #1158.
-
-commit 51f097e6d5754ddae93e716276fe8176b44ec548
-Merge: e7640f5 8ee3352
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2018-12-21 16:41:00 +0100
-
-    Merge pull request #1172 from hlef/master
-    
-    convertbmp: detect invalid file dimensions early (CVE-2018-6616)
 
 ...</pre></div>
 
