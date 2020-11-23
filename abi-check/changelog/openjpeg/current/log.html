@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 67ec360f48aeded95d06578e717bdf40a8e6d16f
+<pre class='wrap'>commit eaa098b59b346cb88e4d10d505061f669d7134fc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-11-23 13:49:05 +0100
+
+    Encoder: grow buffer size in opj_tcd_code_block_enc_allocate_data() to avoid write heap buffer overflow in opj_mqc_flush (fixes #1283)
+
+commit 67ec360f48aeded95d06578e717bdf40a8e6d16f
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-11-23 13:38:27 +0100
 
@@ -897,23 +903,6 @@ Date:   2018-12-21 16:41:00 +0100
     Merge pull request #1172 from hlef/master
     
     convertbmp: detect invalid file dimensions early (CVE-2018-6616)
-
-commit 8ee335227bbcaf1614124046aa25e53d67b11ec3
-Author: Hugo Lefeuvre &lt;hle@debian.org&gt;
-Date:   2018-12-14 04:58:40 +0100
-
-    convertbmp: detect invalid file dimensions early
-    
-    width/length dimensions read from bmp headers are not necessarily
-    valid. For instance they may have been maliciously set to very large
-    values with the intention to cause DoS (large memory allocation, stack
-    overflow). In these cases we want to detect the invalid size as early
-    as possible.
-    
-    This commit introduces a counter which verifies that the number of
-    written bytes corresponds to the advertized width/length.
-    
-    Fixes #1059 (CVE-2018-6616).
 
 ...</pre></div>
 
