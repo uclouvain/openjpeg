@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 15cf3d95814dc931ca0ecb132f81cb152e051bae
+<pre class='wrap'>commit 0c0f27f17d431d98d190f30bec3879f434512158
+Merge: 15cf3d9 649298d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-11-25 16:59:46 +0100
+
+    Merge pull request #1287 from zodf0055980/master
+    
+    Encoder: grow again buffer size
+
+commit 649298dcf84b2f20cfe458d887c1591db47372a6
+Author: yuan &lt;zodf0055980@gmail.com&gt;
+Date:   2020-11-25 20:41:39 +0800
+
+    Encoder: grow again buffer size in opj_tcd_code_block_enc_allocate_data() (fixes #1283)
+
+commit 15cf3d95814dc931ca0ecb132f81cb152e051bae
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-11-23 18:14:02 +0100
 
@@ -876,30 +891,6 @@ Date:   2019-03-29 10:44:35 +0100
     This reverts commit 05be3084460e46282ee63f04c72c451f3271fd28.
     
     This commit doesn't compile due to missing OPJ_UINT64 type
-
-commit e1740e7ce79d0a1676db4da0f4189b64e85f52cb
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-03-29 10:40:58 +0100
-
-    Revert "[MJ2] Avoid index out of bounds access to pi-&gt;include[]"
-    
-    This reverts commit c277159986c80142180fbe5efb256bbf3bdf3edc.
-    
-    The commit didn't compile. include_size is not defined in openmj2
-
-commit b2751967ecabf8d8856e85ab91e25d4f235e2eb3
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2018-10-31 20:22:11 +0100
-
-    openjp2/j2k: Report error if all wanted components are not decoded.
-    
-    Previously the caller had to check whether each component data had
-    been decoded. This means duplicating the checking in every user of
-    openjpeg which is unnecessary. If the caller wantes to decode all
-    or a set of, or a specific component then openjpeg ought to error
-    out if it was unable to do so.
-    
-    Fixes #1158.
 
 ...</pre></div>
 
