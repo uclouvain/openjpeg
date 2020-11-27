@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 0c0f27f17d431d98d190f30bec3879f434512158
+<pre class='wrap'>commit a2b2980a4bcb4d3903375de31495f99dde0e98a8
+Merge: 0c0f27f 4f48779
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-11-27 14:25:11 +0100
+
+    Merge pull request #1288 from zodf0055980/master
+    
+    Free p_tcd_marker_info to avoid memory leak
+
+commit 4f487798bac3eea5ffa07d3cc542f675c4b4d9ae
+Author: yuan &lt;zodf0055980@gmail.com&gt;
+Date:   2020-11-26 00:22:49 +0800
+
+    Free p_tcd_marker_info to avoid memory leak
+
+commit 0c0f27f17d431d98d190f30bec3879f434512158
 Merge: 15cf3d9 649298d
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-11-25 16:59:46 +0100
@@ -868,29 +883,6 @@ Date:   2019-03-29 11:52:38 +0100
     Merge pull request #1187 from rouault/fix_ubsan_in_opj_t1_encode_cblks
     
     opj_t1_encode_cblks: fix UBSAN signed integer overflow
-
-commit a1d32a596a94280178c44a55d7e7f1acd992ed5d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-03-29 11:17:39 +0100
-
-    opj_t1_encode_cblks: fix UBSAN signed integer overflow
-    
-    Fixes #1053 / CVE-2018-5727
-    
-    Note: I don't consider this issue to be a security vulnerability, in
-    practice.
-    At least with gcc or clang compilers on x86_64 which generate the same
-    assembly code with or without that fix.
-
-commit 25b815dc460dbf9def7e6b822c8998727094f85a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-03-29 10:44:35 +0100
-
-    Revert "[JPWL] tgatoimage(): avoid excessive memory allocation attempt,"
-    
-    This reverts commit 05be3084460e46282ee63f04c72c451f3271fd28.
-    
-    This commit doesn't compile due to missing OPJ_UINT64 type
 
 ...</pre></div>
 
