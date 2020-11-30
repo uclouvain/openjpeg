@@ -7730,6 +7730,7 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
         opj_j2k_set_imf_parameters(parameters, image, p_manager);
         if (!opj_j2k_is_imf_compliant(parameters, image, p_manager)) {
             parameters->rsiz = OPJ_PROFILE_NONE;
+            parameters->irreversible = 0;
         }
     } else if (OPJ_IS_PART2(parameters->rsiz)) {
         if (parameters->rsiz == ((OPJ_PROFILE_PART2) | (OPJ_EXTENSION_NONE))) {
