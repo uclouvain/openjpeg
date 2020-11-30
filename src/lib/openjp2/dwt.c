@@ -1976,7 +1976,7 @@ void opj_dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, OPJ_UINT32 prec)
         if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
             stepsize = 1.0;
         } else {
-            OPJ_FLOAT64 norm = opj_dwt_norms_real[orient][level];
+            OPJ_FLOAT64 norm = opj_dwt_getnorm_real(level, orient);
             stepsize = (1 << (gain)) / norm;
         }
         opj_dwt_encode_stepsize((OPJ_INT32) floor(stepsize * 8192.0),
