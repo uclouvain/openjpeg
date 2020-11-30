@@ -223,9 +223,9 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
     image->x0 = (OPJ_UINT32)params->image_offset_x0;
     image->y0 = (OPJ_UINT32)params->image_offset_y0;
     image->x1 = (OPJ_UINT32)(image->x0 + (width  - 1) * (OPJ_UINT32)
-                             params->subsampling_dx + 1 + image->x0);
+                             params->subsampling_dx + 1);
     image->y1 = (OPJ_UINT32)(image->y0 + (height - 1) * (OPJ_UINT32)
-                             params->subsampling_dy + 1 + image->y0);
+                             params->subsampling_dy + 1);
 
     row32s = (OPJ_INT32 *)malloc((size_t)width * nr_comp * sizeof(OPJ_INT32));
     if (row32s == NULL) {
