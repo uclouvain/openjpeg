@@ -392,3 +392,4 @@ b704ad4c0cfefffd78c20a54f5541265  dwt_interleave_h.gsr105.jp2_d_1_1_33_33_0.pgx
 1150acbee2c1e33c57592c05c76e565a  file1.jp2-c0-t0-r1.png
 f31bcb01c771f829054cdb013575e86a  issue1043.png
 62bc654c830efddf1b23d6e208447dab  tnsot_zero.png
+c34637a0f218e4074936e0c89534c5b5  tnsot_zero_missing_eoc.png
