@@ -9382,6 +9382,7 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
     OPJ_UINT32 l_marker_size;
     const opj_dec_memory_marker_handler_t * l_marker_handler = 00;
     opj_tcp_t * l_tcp = NULL;
+    const OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th;
 
     /* preconditions */
     assert(p_stream != 00);
@@ -9557,7 +9558,6 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
                     return OPJ_FALSE;
                 }
                 if (l_correction_needed) {
-                    OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th;
                     OPJ_UINT32 l_tile_no;
 
                     p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
@@ -9572,27 +9572,42 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
                                   "Non conformant codestream TPsot==TNsot.\n");
                 }
             }
-            if (! p_j2k->m_specific_param.m_decoder.m_can_decode) {
-                /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
-                if (opj_stream_read_data(p_stream,
-                                         p_j2k->m_specific_param.m_decoder.m_header_data, 2, p_manager) != 2) {
-                    opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
-                    return OPJ_FALSE;
-                }
-
-                /* Read 2 bytes from buffer as the new marker ID */
-                opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,
-                               &l_current_marker, 2);
-            }
         } else {
             /* Indicate we will try to read a new tile-part header*/
             p_j2k->m_specific_param.m_decoder.m_skip_data = 0;
             p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
             p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
+        }
 
+        if (! p_j2k->m_specific_param.m_decoder.m_can_decode) {
             /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
             if (opj_stream_read_data(p_stream,
                                      p_j2k->m_specific_param.m_decoder.m_header_data, 2, p_manager) != 2) {
+
+                /* Deal with likely non conformant SPOT6 files, where the last */
+                /* row of tiles have TPsot == 0 and TNsot == 0, and missing EOC, */
+                /* but no other tile-parts were found. */
+                if (p_j2k->m_current_tile_number + 1 == l_nb_tiles) {
+                    OPJ_UINT32 l_tile_no;
+                    for (l_tile_no = 0U; l_tile_no < l_nb_tiles; ++l_tile_no) {
+                        if (p_j2k->m_cp.tcps[l_tile_no].m_current_tile_part_number == 0 &&
+                                p_j2k->m_cp.tcps[l_tile_no].m_nb_tile_parts == 0) {
+                            break;
+                        }
+                    }
+                    if (l_tile_no < l_nb_tiles) {
+                        opj_event_msg(p_manager, EVT_INFO,
+                                      "Tile %u has TPsot == 0 and TNsot == 0, "
+                                      "but no other tile-parts were found. "
+                                      "EOC is also missing.\n",
+                                      l_tile_no);
+                        p_j2k->m_current_tile_number = l_tile_no;
+                        l_current_marker = J2K_MS_EOC;
+                        p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_EOC;
+                        break;
+                    }
+                }
+
                 opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
                 return OPJ_FALSE;
             }
@@ -9611,9 +9626,8 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
         }
     }
 
-    /* FIXME DOC ???*/
+    /* Deal with tiles that have a single tile-part with TPsot == 0 and TNsot == 0 */
     if (! p_j2k->m_specific_param.m_decoder.m_can_decode) {
-        OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
         l_tcp = p_j2k->m_cp.tcps + p_j2k->m_current_tile_number;
 
         while ((p_j2k->m_current_tile_number < l_nb_tiles) && (l_tcp->m_data == 00)) {
