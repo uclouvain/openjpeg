@@ -20,7 +20,28 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit a2b2980a4bcb4d3903375de31495f99dde0e98a8
+<pre class='wrap'>commit 2d119d03a0c9f5e3b6c2a70c30cbdcea4857b40a
+Merge: b207240 1aa3c60
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-11-30 23:28:31 +0100
+
+    Merge pull request #1291 from rouault/tnsot_zero_missing_eoc
+    
+    Decoding: deal with some SPOT6 images that have tiles with a single tile-part with TPsot == 0 and TNsot == 0, and with missing EOC
+
+commit b2072402b7e14d22bba6fb8cde2a1e9996e9a919
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-11-30 22:31:51 +0100
+
+    pngtoimage(): fix wrong computation of x1,y1 if -d option is used, that would result in a heap buffer overflow (fixes #1284)
+
+commit 1aa3c60859ab2a3edb7a68682f131c6b3a91da72
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-11-30 17:36:27 +0100
+
+    Decoding: deal with some SPOT6 images that have tiles with a single tile-part with TPsot == 0 and TNsot == 0, and with missing EOC
+
+commit a2b2980a4bcb4d3903375de31495f99dde0e98a8
 Merge: 0c0f27f 4f48779
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-11-27 14:25:11 +0100
@@ -859,30 +880,6 @@ Author: Antonin Descampe &lt;info@openjpeg.org&gt;
 Date:   2019-04-02 11:00:58 +0200
 
     Update BUILD version for release 2.3.1
-
-commit 69a7a312dccebc8b5f28f8a5e4a703cb8d447d44
-Merge: d6b8aed 5151426
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2019-03-29 12:25:39 +0100
-
-    Merge pull request #1188 from rouault/fix_abi_check
-    
-    abi-check.sh: fix broken download URL
-
-commit 5151426d6e6f7f0e1ae6f050aaa7cec6bc4ffd08
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-03-29 11:53:23 +0100
-
-    abi-check.sh: fix broken download URL
-
-commit d6b8aed5612e6be6d3a4053867fbd2ae0cb7c8af
-Merge: 25b815d a1d32a5
-Author: Even Rouault &lt;even.rouault@mines-paris.org&gt;
-Date:   2019-03-29 11:52:38 +0100
-
-    Merge pull request #1187 from rouault/fix_ubsan_in_opj_t1_encode_cblks
-    
-    opj_t1_encode_cblks: fix UBSAN signed integer overflow
 
 ...</pre></div>
 
