@@ -7945,11 +7945,18 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
                 if (tileno + 1 == parameters->POC[i].tile)  {
                     opj_poc_t *tcp_poc = &tcp->pocs[numpocs_tile];
 
+                    if (parameters->POC[numpocs_tile].compno0 >= image->numcomps) {
+                        opj_event_msg(p_manager, EVT_ERROR,
+                                      "Invalid compno0 for POC %d\n", i);
+                        return OPJ_FALSE;
+                    }
+
                     tcp_poc->resno0         = parameters->POC[numpocs_tile].resno0;
                     tcp_poc->compno0        = parameters->POC[numpocs_tile].compno0;
                     tcp_poc->layno1         = parameters->POC[numpocs_tile].layno1;
                     tcp_poc->resno1         = parameters->POC[numpocs_tile].resno1;
-                    tcp_poc->compno1        = parameters->POC[numpocs_tile].compno1;
+                    tcp_poc->compno1        = opj_uint_min(parameters->POC[numpocs_tile].compno1,
+                                                           image->numcomps);
                     tcp_poc->prg1           = parameters->POC[numpocs_tile].prg1;
                     tcp_poc->tile           = parameters->POC[numpocs_tile].tile;
 
