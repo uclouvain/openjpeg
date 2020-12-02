@@ -245,7 +245,7 @@ OPJ_BOOL opj_t2_encode_packets(opj_t2_t* p_t2,
                             l_image->numcomps : 1;
     OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
 
-    l_pi = opj_pi_initialise_encode(l_image, l_cp, p_tile_no, p_t2_mode);
+    l_pi = opj_pi_initialise_encode(l_image, l_cp, p_tile_no, p_t2_mode, p_manager);
     if (!l_pi) {
         return OPJ_FALSE;
     }
@@ -425,7 +425,7 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
 #endif
 
     /* create a packet iterator */
-    l_pi = opj_pi_create_decode(l_image, l_cp, p_tile_no);
+    l_pi = opj_pi_create_decode(l_image, l_cp, p_tile_no, p_manager);
     if (!l_pi) {
         return OPJ_FALSE;
     }
