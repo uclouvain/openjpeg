@@ -4806,8 +4806,13 @@ static OPJ_BOOL opj_j2k_write_sod(opj_j2k_t *p_j2k,
         }
     }
 
-    assert(l_remaining_data >
-           p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT);
+    if (l_remaining_data <
+            p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Not enough bytes in output buffer to write SOD marker\n");
+        opj_tcd_marker_info_destroy(marker_info);
+        return OPJ_FALSE;
+    }
     l_remaining_data -= p_j2k->m_specific_param.m_encoder.m_reserved_bytes_for_PLT;
 
     if (! opj_tcd_encode_tile(p_tile_coder, p_j2k->m_current_tile_number,
