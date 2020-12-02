@@ -20,7 +20,37 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 61ff143ad63b9bbe12b6da266f8619b2cb2c3559
+<pre class='wrap'>commit 18b1138fbe3bb0ae4aa2bf1369f9430a8ec6fa00
+Merge: 630b485 c9380ed
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 10:05:39 +0100
+
+    Merge pull request #1295 from rouault/fix_1293
+    
+    opj_j2k_setup_encoder(): validate POC compno0 and compno1 (fixes #1293)
+
+commit 630b485f86a6b0bb6fa03b698b8c5358df88d055
+Merge: 61ff143 fbd30b0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 10:05:31 +0100
+
+    Merge pull request #1296 from rouault/workaround_1294
+    
+    opj_t2_encode_packet(): avoid out of bound access of #1294, but likely not the proper fix
+
+commit c9380ed0f8cc4794fc71d556ea23ae61e32247af
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-01 19:39:09 +0100
+
+    opj_j2k_setup_encoder(): validate POC compno0 (fixes #1293)
+
+commit fbd30b064f8f9607d500437b6fedc41431fd6cdc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-01 19:51:35 +0100
+
+    opj_t2_encode_packet(): avoid out of bound access of #1294, but likely not the proper fix
+
+commit 61ff143ad63b9bbe12b6da266f8619b2cb2c3559
 Merge: 2d119d0 6daf5f3
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-01 11:35:59 +0100
@@ -859,30 +889,6 @@ Author: Antonin Descampe &lt;antonin@gmail.com&gt;
 Date:   2019-04-02 15:12:59 +0200
 
     Update version number for automatic abi check
-
-commit 57096325457f96d8cd07bd3af04fe81d7a2ba788
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2019-04-02 14:45:15 +0200
-
-    update token for appveyor auto release
-
-commit 8b9a89bc2e61652d30bbc56673f8f03ef464430f
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2019-04-02 14:25:09 +0200
-
-    update token for automatic release
-
-commit d1d422c126cbc2a5435340bd85f4b52ff0477101
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2019-04-02 12:08:52 +0200
-
-    Update for release 2.3.1
-
-commit d3b0b8927acf2e050a6379320d36fc3bb3751fe3
-Author: Antonin Descampe &lt;info@openjpeg.org&gt;
-Date:   2019-04-02 11:03:16 +0200
-
-    Update for release 2.3.1
 
 ...</pre></div>
 
