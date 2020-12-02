@@ -739,6 +739,15 @@ static OPJ_BOOL opj_t2_encode_packet(OPJ_UINT32 tileno,
                 continue;
             }
 
+            /* Avoid out of bounds access of https://github.com/uclouvain/openjpeg/issues/1294 */
+            /* but likely not a proper fix. */
+            if (precno >= res->pw * res->ph) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "opj_t2_encode_packet(): accessing precno=%u >= %u\n",
+                              precno, res->pw * res->ph);
+                return OPJ_FALSE;
+            }
+
             prc = &band->precincts[precno];
             opj_tgt_reset(prc->incltree);
             opj_tgt_reset(prc->imsbtree);
