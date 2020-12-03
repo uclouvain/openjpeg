@@ -20,7 +20,52 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 18b1138fbe3bb0ae4aa2bf1369f9430a8ec6fa00
+<pre class='wrap'>commit aaff099b49365cfecfc475ada48b9244c6eefc9c
+Merge: fb9eae5 73fdf28
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 23:56:57 +0100
+
+    Merge pull request #1301 from rouault/fix_1299
+    
+    opj_j2k_write_sod(): avoid potential heap buffer overflow (fixes #1299) (probably master only)
+
+commit fb9eae5d637d06209a6cb9ca57960ac72179ee14
+Merge: fc6abdb 00383e1
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 23:56:39 +0100
+
+    Merge pull request #1300 from rouault/complement_1293
+    
+    pi.c: avoid out of bounds access with POC (refs https://github.com/uclouvain/openjpeg/issues/1293#issuecomment-737122836)
+
+commit fc6abdbeb7aa427685c28a9ebfd2e653c10999b3
+Merge: 18b1138 38d661a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 23:56:30 +0100
+
+    Merge pull request #1298 from rouault/fix_1297
+    
+    opj_t2_encode_packet(): avoid out of bound access of #1297, but likely not the proper fix
+
+commit 73fdf28342e4594019af26eb6a347a34eceb6296
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 14:10:16 +0100
+
+    opj_j2k_write_sod(): avoid potential heap buffer overflow (fixes #1299) (probably master only)
+
+commit 00383e162ae2f8fc951f5745bf1011771acb8dce
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 14:02:17 +0100
+
+    pi.c: avoid out of bounds access with POC (refs https://github.com/uclouvain/openjpeg/issues/1293#issuecomment-737122836)
+
+commit 38d661a3897052c7ff0b39b30c29cb067e130121
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-02 13:13:26 +0100
+
+    opj_t2_encode_packet(): avoid out of bound access of #1297, but likely not the proper fix
+
+commit 18b1138fbe3bb0ae4aa2bf1369f9430a8ec6fa00
 Merge: 630b485 c9380ed
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-02 10:05:39 +0100
@@ -840,55 +885,6 @@ Date:   2019-04-25 00:28:05 +0200
     
     The standard mandates that the layer index always starts at zero for every
     progression.
-
-commit 1e3a57563defb6aa7cf24ffd2394d4a820e13bda
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 00:17:13 +0200
-
-    compression: emit POC marker when only one single POC is requested (fixes #1191)
-
-commit 5dd75f62e20efff9f094fd1dbd0d4d00e8b37689
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-23 16:52:21 +0200
-
-    j2k.c: use correct naming convention for total_data_size variable
-
-commit 3aef207f90e937d4931daf6d411e092f76d82e66
-Author: Young Xiao &lt;YangX92@hotmail.com&gt;
-Date:   2019-03-16 20:09:59 +0800
-
-    bmp_read_rle4_data(): avoid potential infinite loop
-
-commit 21399f6b7d318fcdf4406d5e88723c4922202aa3
-Author: Young Xiao &lt;YangX92@hotmail.com&gt;
-Date:   2019-03-16 19:57:27 +0800
-
-    convertbmp: detect invalid file dimensions early
-    
-    width/length dimensions read from bmp headers are not necessarily
-    valid. For instance they may have been maliciously set to very large
-    values with the intention to cause DoS (large memory allocation, stack
-    overflow). In these cases we want to detect the invalid size as early
-    as possible.
-    
-    This commit introduces a counter which verifies that the number of
-    written bytes corresponds to the advertized width/length.
-    
-    See commit 8ee335227bbc for details.
-    
-    Signed-off-by: Young Xiao &lt;YangX92@hotmail.com&gt;
-
-commit d0dd894ae24d0f2f09072adf1b966033dd64672d
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2019-04-02 15:37:38 +0200
-
-    Comment back opj_previous_version in abi_check.sh
-
-commit 291e45bb045e63334729ad9a894595f8e1e2b2c7
-Author: Antonin Descampe &lt;antonin@gmail.com&gt;
-Date:   2019-04-02 15:12:59 +0200
-
-    Update version number for automatic abi check
 
 ...</pre></div>
 
