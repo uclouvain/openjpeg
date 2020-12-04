@@ -1248,9 +1248,10 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data(opj_tcd_cblk_enc_t *
     /* and +28 for https://github.com/uclouvain/openjpeg/issues/1283 (-M 44) */
     /* and +33 for https://github.com/uclouvain/openjpeg/issues/1283 (-M 4) */
     /* and +63 for https://github.com/uclouvain/openjpeg/issues/1283 (-M 4 -IMF 2K) */
+    /* and +74 for https://github.com/uclouvain/openjpeg/issues/1283 (-M 4 -n 8 -s 7,7 -I) */
     /* TODO: is there a theoretical upper-bound for the compressed code */
     /* block size ? */
-    l_data_size = 63 + (OPJ_UINT32)((p_code_block->x1 - p_code_block->x0) *
+    l_data_size = 74 + (OPJ_UINT32)((p_code_block->x1 - p_code_block->x0) *
                                     (p_code_block->y1 - p_code_block->y0) * (OPJ_INT32)sizeof(OPJ_UINT32));
 
     if (l_data_size > p_code_block->data_size) {
