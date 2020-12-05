@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 43dd9ee17894a22fa3df88b1e561274632d9ab43
+<pre class='wrap'>commit 5d0a8b08dcd3bcdf532c54702b5a88ec61b17918
+Merge: 43dd9ee 8f5aff1
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-05 11:39:23 +0100
+
+    Merge pull request #1304 from rouault/fix_1302
+    
+    pi.c: avoid out of bounds access with POC (fixes #1302)
+
+commit 8f5aff1dff510a964d3901d0fba281abec98ab63
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-04 20:45:25 +0100
+
+    pi.c: avoid out of bounds access with POC (fixes #1302)
+
+commit 43dd9ee17894a22fa3df88b1e561274632d9ab43
 Merge: aaff099 4ce7d28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-04 20:37:43 +0100
@@ -871,18 +886,6 @@ Date:   2019-04-25 14:07:46 +0200
 commit bdec5ae2723369be5abba7aaae398aa4ae3225cc
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-04-25 01:29:38 +0200
-
-    Add test for previous commit
-
-commit 6423163141412cb93364de4e33d90bcffefa0885
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 01:27:02 +0200
-
-    Fix POC in multi-tile scenarios: avoid almost endless loop when a tile has no POC settings
-
-commit b86717fdd36b628ea7ecb5c24f7a086bf5bcd3a7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 00:40:04 +0200
 
     Add test for previous commit
 
