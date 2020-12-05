@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit aaff099b49365cfecfc475ada48b9244c6eefc9c
+<pre class='wrap'>commit 43dd9ee17894a22fa3df88b1e561274632d9ab43
+Merge: aaff099 4ce7d28
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-04 20:37:43 +0100
+
+    Merge pull request #1303 from zodf0055980/fix#1283
+    
+    Encoder: grow again buffer size
+
+commit 4ce7d285a55d29b79880d0566d4b010fe1907aa9
+Author: yuan &lt;zodf0055980@gmail.com&gt;
+Date:   2020-12-04 19:00:22 +0800
+
+    Encoder: grow again buffer size in opj_tcd_code_block_enc_allocate_data() (fixes #1283)
+
+commit aaff099b49365cfecfc475ada48b9244c6eefc9c
 Merge: fb9eae5 73fdf28
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-02 23:56:57 +0100
@@ -870,21 +885,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-04-25 00:40:04 +0200
 
     Add test for previous commit
-
-commit 23883458b9de2c57fc1890b42efbd0832c8fbe3b
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 00:34:44 +0200
-
-    opj_j2k_check_poc_val(): prevent potential write outside of allocated array
-
-commit 6589c609f6d6b3743715fceefbdac6e4ecb76aee
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 00:28:05 +0200
-
-    opj_j2k_check_poc_val(): fix starting index for checking layer dimension
-    
-    The standard mandates that the layer index always starts at zero for every
-    progression.
 
 ...</pre></div>
 
