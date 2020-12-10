@@ -20,7 +20,23 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 5d0a8b08dcd3bcdf532c54702b5a88ec61b17918
+<pre class='wrap'>commit 98a4c5c3709e0cc43b0a1c151ed5bd85a2d607fa
+Merge: 5d0a8b0 6558637
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-10 15:55:41 +0100
+
+    Merge pull request #1306 from matthew-sharp/master
+    
+    Use INC_DIR for OPENJPEG_INCLUDE_DIRS (fixes uclouvain#1174)
+
+commit 65586374d639cfc0104419992f9022174b412594
+Author: Matthew Sharp &lt;sharpshopter@gmail.com&gt;
+Date:   2020-12-10 10:17:46 +1100
+
+    Use INC_DIR for OPENJPEG_INCLUDE_DIRS (fixes uclouvain#1174)
+    This fixes the case where the cmake file is accessed via a symlink.
+
+commit 5d0a8b08dcd3bcdf532c54702b5a88ec61b17918
 Merge: 43dd9ee 8f5aff1
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-05 11:39:23 +0100
@@ -876,18 +892,6 @@ Date:   2019-04-25 15:32:22 +0200
     Merge pull request #1192 from rouault/poc_fixes
     
     compression: emit POC marker when only one single POC is requested (f…
-
-commit a94cfbd5334922ca5b63cfac9d2e5e0ec98155be
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 14:07:46 +0200
-
-    Change opj_j2k_check_poc_val() to take into account tile number
-
-commit bdec5ae2723369be5abba7aaae398aa4ae3225cc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 01:29:38 +0200
-
-    Add test for previous commit
 
 ...</pre></div>
 
