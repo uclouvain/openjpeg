@@ -36,7 +36,7 @@
 #include <sys/resource.h>
 #include <sys/times.h>
 #endif /* _WIN32 */
-#include "opj_includes.h"
+#include "mj2_includes.h"
 
 double OPJ_CALLCONV opj_clock(void)
 {

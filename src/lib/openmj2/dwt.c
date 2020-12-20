@@ -41,7 +41,7 @@
 #include <xmmintrin.h>
 #endif
 
-#include "opj_includes.h"
+#include "mj2_includes.h"
 
 /** @defgroup DWT DWT - Implementation of a discrete wavelet transform */
 /*@{*/

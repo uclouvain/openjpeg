@@ -199,7 +199,9 @@ if(CMAKE_COMPILER_IS_GNUCC)
   set(OPENJPEG_LIBRARY_COMPILE_OPTIONS ${OPENJPEG_LIBRARY_COMPILE_OPTIONS} "$<$<CONFIG:Release>:-ffast-math>")
   set(OPENJP2_COMPILE_OPTIONS ${OPENJP2_COMPILE_OPTIONS} "$<$<CONFIG:Release>:-ffast-math>" -Wall -Wextra -Wconversion -Wunused-parameter -Wdeclaration-after-statement -Werror=declaration-after-statement)
 endif()
-
+if(UNIX)
+  set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+endif()
 #-----------------------------------------------------------------------------
 # opj_config.h generation (1/2)
 

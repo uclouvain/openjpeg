@@ -1,6 +1,17 @@
 # openmj2:
 set(OPENMJ2_LIBRARY_NAME openmj2)
 
+configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/mj2_apps_config.h.cmake.in
+ ${CMAKE_CURRENT_SOURCE_DIR}/mj2_apps_config.h
+ @ONLY
+ )
+configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/mj2_config_private.h.cmake.in
+ ${CMAKE_CURRENT_SOURCE_DIR}/mj2_config_private.h
+ @ONLY
+ )
+
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
   )

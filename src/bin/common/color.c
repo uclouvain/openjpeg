@@ -41,8 +41,15 @@
 #include <math.h>
 #include <assert.h>
 
+#ifdef OPJ_USE_LEGACY
+#include "mj2_apps_config.h"
+#include "mj2_openjpeg.h"
+#define OPJ_CLRSPC_GRAY CLRSPC_GRAY
+#define OPJ_CLRSPC_SRGB CLRSPC_SRGB
+#else
 #include "opj_apps_config.h"
 #include "openjpeg.h"
+#endif
 #include "color.h"
 
 #ifdef OPJ_HAVE_LIBLCMS2

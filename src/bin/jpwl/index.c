@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "openjpeg.h"
+#include "mj2_openjpeg.h"
 #include "index.h"
 
 /* ------------------------------------------------------------------------------------ */

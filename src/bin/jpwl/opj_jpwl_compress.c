@@ -55,8 +55,8 @@
 #include <strings.h>
 #endif /* _WIN32 */
 
-#include "opj_apps_config.h"
-#include "openjpeg.h"
+#include "mj2_apps_config.h"
+#include "mj2_openjpeg.h"
 #include "opj_getopt.h"
 #include "convert.h"
 #include "index.h"

@@ -39,7 +39,7 @@
 #include <xmmintrin.h>
 #endif
 
-#include "opj_includes.h"
+#include "mj2_includes.h"
 
 /* <summary> */
 /* This table contains the norms of the basis function of the reversible MCT. */

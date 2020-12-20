@@ -37,7 +37,7 @@
  */
 
 #define _ISOC99_SOURCE /* lrintf is C99 */
-#include "opj_includes.h"
+#include "mj2_includes.h"
 
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img)
 {
