@@ -638,7 +638,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
             default:
                 fprintf(stderr,
                         "[ERROR] Unknown input file format: %s \n"
-                        "        Known file formats are *.pnm, *.pgm, *.ppm, *.pgx, *png, *.bmp, *.tif(f), *.raw, *yuv or *.tga\n",
+                        "        Known file formats are *.pnm, *.pgm, *.ppm, *.pgx, *png, *.bmp, *.tif(f), *.raw, *.yuv or *.tga\n",
                         infile);
                 return 1;
             }
@@ -1732,8 +1732,8 @@ static int parse_cmdline_encoder(int argc, char **argv,
         }
     }
 
-    if ((parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0)
-            || (parameters->decod_format == RAWL_DFMT && raw_cp->rawWidth == 0)) {
+    if ((parameters->decod_format == RAW_DFMT || parameters->decod_format == RAWL_DFMT)
+            && (raw_cp->rawWidth == 0)) {
         fprintf(stderr, "[ERROR] invalid raw/yuv image parameters\n");
         fprintf(stderr, "Please use the Format option -F:\n");
         fprintf(stderr,
@@ -1947,18 +1947,12 @@ int main(int argc, char **argv)
 
         switch (parameters.decod_format) {
         case PGX_DFMT:
-            break;
         case PXM_DFMT:
-            break;
         case BMP_DFMT:
-            break;
         case TIF_DFMT:
-            break;
         case RAW_DFMT:
         case RAWL_DFMT:
-            break;
         case TGA_DFMT:
-            break;
         case PNG_DFMT:
             break;
         default:
@@ -2020,7 +2014,7 @@ int main(int argc, char **argv)
         case RAWL_DFMT:
             image = rawltoimage(parameters.infile, &parameters, &raw_cp);
             if (!image) {
-                fprintf(stderr, "Unable to load raw/yuv file\n");
+                fprintf(stderr, "Unable to load raw file\n");
                 ret = 1;
                 goto fin;
             }
