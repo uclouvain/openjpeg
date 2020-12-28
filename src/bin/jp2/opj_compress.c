@@ -1732,8 +1732,8 @@ static int parse_cmdline_encoder(int argc, char **argv,
         }
     }
 
-    if ((parameters->decod_format == RAW_DFMT || parameters->decod_format == RAWL_DFMT)
-            && (raw_cp->rawWidth == 0)) {
+    if ((parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0)
+            || (parameters->decod_format == RAWL_DFMT && raw_cp->rawWidth == 0)) {
         fprintf(stderr, "[ERROR] invalid raw/yuv image parameters\n");
         fprintf(stderr, "Please use the Format option -F:\n");
         fprintf(stderr,
