@@ -20,7 +20,44 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 98a4c5c3709e0cc43b0a1c151ed5bd85a2d607fa
+<pre class='wrap'>commit 4980f46210f19bd2d83dffdfeb8496f29d68b9c9
+Merge: 6c5acd4 aaddbc7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-28 19:05:14 +0100
+
+    Merge pull request #1307 from cygwin-lem/pr_use-OPENJPEG_INSTALL_DOC_DIR-to-DESTINATION-of-HTMLs
+    
+    Set ${OPENJPEG_INSTALL_DOC_DIR} to DESTINATION of HTMLs
+
+commit 6c5acd4d656870882432ff28d4103de80d109a8d
+Merge: 98a4c5c 5d494a7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-28 19:04:28 +0100
+
+    Merge pull request #1308 from timgates42/bugfix_typo_produced
+    
+    docs: fix simple typo, producted -&gt; produced
+
+commit 5d494a7e8b9591a8923f387679c692b5c1f45e5a
+Author: Tim Gates &lt;tim.gates@iress.com&gt;
+Date:   2020-12-16 21:19:17 +1100
+
+    docs: fix simple typo, producted -&gt; produced
+    
+    There is a small typo in thirdparty/include/zlib.h, thirdparty/libz/zlib.h.
+    
+    Should read `produced` rather than `producted`.
+
+commit aaddbc7c07f00f0704da4db7616e6dc7448e5f07
+Author: Lemures Lemniscati &lt;lemures.lemniscati@gmail.com&gt;
+Date:   2020-12-14 23:00:04 +0900
+
+    Set ${OPENJPEG_INSTALL_DOC_DIR} to DESTINATION of HTMLs
+    
+    Use ${OPENJPEG_INSTALL_DOC_DIR} as DESTINATION of HTML documents,
+    instead of share/doc.
+
+commit 98a4c5c3709e0cc43b0a1c151ed5bd85a2d607fa
 Merge: 5d0a8b0 6558637
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-10 15:55:41 +0100
@@ -862,36 +899,6 @@ Date:   2019-09-03 17:03:54 +0200
     Merge pull request #1164 from sebras/master
     
     openjp2/j2k: Report error if all wanted components are not decoded.
-
-commit 8db9d25dcf360528fd1e094e4f9274c0635e90cc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-06-15 09:55:16 +0200
-
-    opj_decompress_fuzzer: remove checks regarding input dimensions (fixes #1079)
-
-commit f4d65783593fd0490e0fdb9f323f2d5aff81a21d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-05-26 11:06:01 +0200
-
-    test_decode_area.c: assign tdy to *ptileh instead of *ptilew (fixes #1195)
-
-commit 9b7620ee7a3d72bfcdbebd78e607c5ee8aa7fade
-Merge: 4f447c6 3aef207
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-26 19:52:52 +0200
-
-    Merge pull request #1185 from Young-X/fix
-    
-    Fix several potential vulnerabilities
-
-commit 4f447c6e18444a4182f7844d25033861eee8df55
-Merge: 5dd75f6 a94cfbd
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-04-25 15:32:22 +0200
-
-    Merge pull request #1192 from rouault/poc_fixes
-    
-    compression: emit POC marker when only one single POC is requested (f…
 
 ...</pre></div>
 
