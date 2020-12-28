@@ -1947,12 +1947,19 @@ int main(int argc, char **argv)
 
         switch (parameters.decod_format) {
         case PGX_DFMT:
+            break;
         case PXM_DFMT:
+            break;
         case BMP_DFMT:
+            break;
         case TIF_DFMT:
+            break;
         case RAW_DFMT:
+            break;
         case RAWL_DFMT:
+            break;
         case TGA_DFMT:
+            break;
         case PNG_DFMT:
             break;
         default:
