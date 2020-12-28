@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 4980f46210f19bd2d83dffdfeb8496f29d68b9c9
+<pre class='wrap'>commit 37ac30ceff6640bbab502388c5e0fa0bff23f505
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-28 21:55:55 +0100
+
+    Prepare for v2.4.0
+
+commit a335b4d008359a32656026fa6780ef185b35cf0a
+Merge: 4980f46 0c2b633
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-28 21:49:48 +0100
+
+    Merge pull request #1310 from Jamaika1/patch-1
+    
+    Change defined WIN32
+
+commit 4980f46210f19bd2d83dffdfeb8496f29d68b9c9
 Merge: 6c5acd4 aaddbc7
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-28 19:05:14 +0100
@@ -37,6 +52,12 @@ Date:   2020-12-28 19:04:28 +0100
     Merge pull request #1308 from timgates42/bugfix_typo_produced
     
     docs: fix simple typo, producted -&gt; produced
+
+commit 0c2b633992417c8794470c9932e3c75447c8ab13
+Author: Jamaika1 &lt;lukaszcz18@wp.pl&gt;
+Date:   2020-12-21 07:59:12 +0100
+
+    Change defined WIN32
 
 commit 5d494a7e8b9591a8923f387679c692b5c1f45e5a
 Author: Tim Gates &lt;tim.gates@iress.com&gt;
@@ -854,51 +875,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2019-10-03 11:04:30 +0200
 
     opj_tcd_mct_decode()/opj_mct_decode()/opj_mct_encode_real()/opj_mct_decode_real(): proper deal with a number of samples larger than 4 billion (refs #1151)
-
-commit f3ee448815eb992b8d4746e32c05e8289f30415f
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2018-10-31 15:56:11 +0100
-
-    openjp2/j2k: Validate all SGcod/SPcod/SPcoc parameter values.
-    
-    Previously the multiple component transformation SGcod(C)
-    and wavelet transformation SPcod(H)/SPcoc(E) parameter
-    values were never checked, allowing for out of range values.
-    
-    The lack of validation allowed the bit stream provided in
-    issue #1158 through. After this commit an error message
-    points to the marker segments' parameters as being out of
-    range.
-    
-    input/nonregression/edf_c2_20.jp2 contains an SPcod(H) value
-    of 17, but according to Table A-20 of the specification only
-    values 0 and 1 are valid. input/nonregression/issue826.jp2
-    contains a SGcod(B) value of 2, but according to Table A-17
-    of the specification only values 0 and 1 are valid.
-    input/nonregression/oss-fuzz2785.jp2 contains a SGcod(B)
-    value of 32, but it is likewise limited to 0 or 1. These test
-    cases have been updated to consistently fail to parse the
-    headers since they contain out of bounds values.
-    
-    This fixes issue #1210.
-
-commit d801bd4e6287d13b65a48775ebd43fca350b21d9
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2019-09-04 01:18:37 +0200
-
-    openjp2/j2k: Make comments adhere to specification.
-    
-    The function is used to read both SPcod and SPcoc, so all
-    comments should refer to both marker segments' parameter names.
-
-commit e66125fe260deee49fdf6e9978d9bd29871dd5bb
-Merge: 8db9d25 b275196
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-09-03 17:03:54 +0200
-
-    Merge pull request #1164 from sebras/master
-    
-    openjp2/j2k: Report error if all wanted components are not decoded.
 
 ...</pre></div>
 

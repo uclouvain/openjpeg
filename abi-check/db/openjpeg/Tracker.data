@@ -141,10 +141,10 @@ $VAR1 = {
                                                  }
                                     },
                          'current' => {
-                                        'ef225' => {
+                                        '3344f' => {
                                                      'Lang' => 'C',
-                                                     'Object' => 'lib/libopenjp2.so.2.3.1',
-                                                     'Path' => 'abi_dump/openjpeg/current/ef225/ABI.dump',
+                                                     'Object' => 'lib/libopenjp2.so.2.4.0',
+                                                     'Path' => 'abi_dump/openjpeg/current/3344f/ABI.dump',
                                                      'TotalSymbols' => '50',
                                                      'Version' => '1.7'
                                                    }
@@ -658,12 +658,12 @@ $VAR1 = {
                                         },
                              '2.3.1' => {
                                           'current' => {
-                                                         'daa7f' => {
+                                                         'aa9fe' => {
                                                                       'Added' => 1,
                                                                       'Affected' => 0,
                                                                       'Object1' => 'lib/libopenjp2.so.2.3.1',
-                                                                      'Object2' => 'lib/libopenjp2.so.2.3.1',
-                                                                      'Path' => 'compat_report/openjpeg/2.3.1/current/daa7f/abi_compat_report.html',
+                                                                      'Object2' => 'lib/libopenjp2.so.2.4.0',
+                                                                      'Path' => 'compat_report/openjpeg/2.3.1/current/aa9fe/abi_compat_report.html',
                                                                       'Removed' => 0,
                                                                       'TotalProblems' => 0
                                                                     }
@@ -705,7 +705,7 @@ $VAR1 = {
                       '2.2.0' => '2017-08-10 00:31',
                       '2.3.0' => '2017-10-04 22:23',
                       '2.3.1' => '2019-04-02 10:08',
-                      'current' => '2020-12-28 19:05:14'
+                      'current' => '2020-12-28 21:55:55'
                     },
           'HeadersDiff' => {
                              '1.1' => {
@@ -806,14 +806,14 @@ $VAR1 = {
                              '2.3.1' => {
                                           'current' => {
                                                          'Path' => 'headers_diff/openjpeg/2.3.1/current/diff.html',
-                                                         'Total' => 1
+                                                         'Total' => 2
                                                        }
                                         }
                            },
           'Maintainer' => 'OpenJPEG team',
           'MaintainerUrl' => 'http://www.openjpeg.org/',
           'PackageDiff' => {},
-          'ScmUpdateTime' => '1609182283',
+          'ScmUpdateTime' => '1609193892',
           'Soname' => {
                         '1.1' => {
                                    'lib/libopenjpeg.so' => 'libopenjpeg.so'
@@ -858,7 +858,7 @@ $VAR1 = {
                                      'lib/libopenjp2.so.2.3.1' => 'libopenjp2.so.7'
                                    },
                         'current' => {
-                                       'lib/libopenjp2.so.2.3.1' => 'libopenjp2.so.7'
+                                       'lib/libopenjp2.so.2.4.0' => 'libopenjp2.so.7'
                                      }
                       },
           'Sover' => {

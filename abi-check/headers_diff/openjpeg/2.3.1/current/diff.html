@@ -22,7 +22,33 @@
   <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
   <tr id="part-1" bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (2.3.1)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (current)&nbsp;</th><th></th></tr> 
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="part-1" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-1"><em> line 206<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-1"><em> line 206<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr id="part-1" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-1"><em> line 80<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-1"><em> line 80<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_DEPRECATED(func) func __attribute__ ((deprecated))</td><td> </td><td class="right">#define OPJ_DEPRECATED(func) func __attribute__ ((deprecated))</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#elif defined(_MSC_VER)</td><td> </td><td class="right">#elif defined(_MSC_VER)</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_DEPRECATED(func) __declspec(deprecated) func</td><td> </td><td class="right">#define OPJ_DEPRECATED(func) __declspec(deprecated) func</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#else</td><td> </td><td class="right">#else</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#pragma message("WARNING: You need to implement DEPRECATED for this compile
+r")</td><td> </td><td class="right">#pragma message("WARNING: You need to implement DEPRECATED for this compile
+r")</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_DEPRECATED(func) func</td><td> </td><td class="right">#define OPJ_DEPRECATED(func) func</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#endif</td><td> </td><td class="right">#endif</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#if defined(OPJ_STATIC) || !defined(_WIN32)</td><td> </td><td class="right">#if defined(OPJ_STATIC) || !defined(_WIN32)</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/* http://gcc.gnu.org/wiki/Visibility */</td><td> </td><td class="right">/* http://gcc.gnu.org/wiki/Visibility */</td><td class="lineno"></td></tr>
+      <tr id="diff0001"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">#   if __GNUC__ &gt;= 4</td><td> </td><td class="rblock">#   if <span class="insert">!defined(_WIN32) &amp;&amp; </span>__GNUC__ &gt;= 4</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#       if defined(OPJ_STATIC) /* static library uses "hidden" */</td><td> </td><td class="right">#       if defined(OPJ_STATIC) /* static library uses "hidden" */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#           define OPJ_API    __attribute__ ((visibility ("hidden")))</td><td> </td><td class="right">#           define OPJ_API    __attribute__ ((visibility ("hidden")))</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#       else</td><td> </td><td class="right">#       else</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#           define OPJ_API    __attribute__ ((visibility ("default")))</td><td> </td><td class="right">#           define OPJ_API    __attribute__ ((visibility ("default")))</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#       endif</td><td> </td><td class="right">#       endif</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#       define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))</td><td> </td><td class="right">#       define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#   else</td><td> </td><td class="right">#   else</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#       define OPJ_API</td><td> </td><td class="right">#       define OPJ_API</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#       define OPJ_LOCAL</td><td> </td><td class="right">#       define OPJ_LOCAL</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#   endif</td><td> </td><td class="right">#   endif</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr id="part-2" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-2"><em> line 206<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-2"><em> line 206<span class="hide"> &para;</span></em></a></th><td></td></tr>
       <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_PART2       0x8000 /** At least 1 extension defined in 
 15444-2 (Part-2) */</td><td> </td><td class="right">#define OPJ_PROFILE_PART2       0x8000 /** At least 1 extension defined in 
 15444-2 (Part-2) */</td><td class="lineno"></td></tr>
@@ -53,7 +79,7 @@ profile defined in 15444-1 AMD3 */</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_IMF_2K      0x0400 /** 2K Single Tile Lossy IMF profile
  defined in 15444-1 AMD 8 */</td><td> </td><td class="right">#define OPJ_PROFILE_IMF_2K      0x0400 /** 2K Single Tile Lossy IMF profile
  defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
-      <tr id="diff0001"><td></td></tr>
+      <tr id="diff0002"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock">#define OPJ_PROFILE_IMF_4K      <span class="delete">0x0401</span> /** 4K Single Tile Lossy IMF profile</td><td> </td><td class="rblock">#define OPJ_PROFILE_IMF_4K      <span class="insert">0x0500</span> /** 4K Single Tile Lossy IMF profile</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"> defined in 15444-1 AMD 8 */</td><td> </td><td class="rblock"> defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock">#define OPJ_PROFILE_IMF_8K      <span class="delete">0x0402</span> /** 8K Single Tile Lossy IMF profile</td><td> </td><td class="rblock">#define OPJ_PROFILE_IMF_8K      <span class="insert">0x0600</span> /** 8K Single Tile Lossy IMF profile</td><td class="lineno"></td></tr>
@@ -63,7 +89,7 @@ profile defined in 15444-1 AMD3 */</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">#define OPJ_PROFILE_IMF_4K_R    0x0800 /** 4K Single/Multi Tile Reversible 
 IMF profile defined in 15444-1 AMD 8 */</td><td> </td><td class="right">#define OPJ_PROFILE_IMF_4K_R    0x0800 /** 4K Single/Multi Tile Reversible 
 IMF profile defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
-      <tr id="diff0002"><td></td></tr>
+      <tr id="diff0003"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock">#define OPJ_PROFILE_IMF_8K_R    0x0<span class="delete">801  /** 8K Single/Multi Tile Reversible
  </span>IMF profile defined in 15444-1 AMD 8 */</td><td> </td><td class="rblock">#define OPJ_PROFILE_IMF_8K_R    0x0<span class="insert">900 /** 8K Single/Multi Tile Reversible 
 </span>IMF profile defined in 15444-1 AMD 8 */</td><td class="lineno"></td></tr>
@@ -89,7 +115,7 @@ OFILE_IMF_8K_R) | (0x009b))))</td><td> </td><td class="right">#define OPJ_IS_IMF
 OFILE_IMF_8K_R) | (0x009b))))</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">#define OPJ_IS_PART2(v)      ((v) &amp; OPJ_PROFILE_PART2)</td><td> </td><td class="right">#define OPJ_IS_PART2(v)      ((v) &amp; OPJ_PROFILE_PART2)</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="diff0003"><td></td></tr>
+      <tr id="diff0004"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_GET_IMF_PROFILE(v)   ((v) &amp; 0xff00)      /** Extract IMF profil</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">e without mainlevel/sublevel */</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_GET_IMF_MAINLEVEL(v) ((v) &amp; 0xf)         /** Extract IMF main l</span></td><td class="lineno"></td></tr>
@@ -162,7 +188,7 @@ t for 2K @ 48fps */</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="part-2" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-2"><em> line 319<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-2"><em> line 349<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr id="part-3" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-3"><em> line 319<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-3"><em> line 349<span class="hide"> &para;</span></em></a></th><td></td></tr>
       <tr><td class="lineno"></td><td class="left"> * @param client_data       Client object where will be return the event me
 ssage</td><td> </td><td class="right"> * @param client_data       Client object where will be return the event me
 ssage</td><td class="lineno"></td></tr>
@@ -175,7 +201,7 @@ ssage</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="diff0004"><td></td></tr>
+      <tr id="diff0005"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#ifndef OPJ_UINT32_SEMANTICALLY_BUT_INT32</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#define OPJ_UINT32_SEMANTICALLY_BUT_INT32 OPJ_INT32</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#endif</span></td><td class="lineno"></td></tr>
@@ -197,11 +223,11 @@ ssage</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_PROG_ORDER prg1, prg;</td><td> </td><td class="right">    OPJ_PROG_ORDER prg1, prg;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Progression order string*/</td><td> </td><td class="right">    /** Progression order string*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_CHAR progorder[5];</td><td> </td><td class="right">    OPJ_CHAR progorder[5];</td><td class="lineno"></td></tr>
-      <tr id="diff0005"><td></td></tr>
+      <tr id="diff0006"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock">    /** Tile number */</td><td> </td><td class="rblock">    /** Tile number <span class="insert">(starting at 1) </span>*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 tile;</td><td> </td><td class="right">    OPJ_UINT32 tile;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Start and end values for Tile width and height*/</td><td> </td><td class="right">    /** Start and end values for Tile width and height*/</td><td class="lineno"></td></tr>
-      <tr id="diff0006"><td></td></tr>
+      <tr id="diff0007"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock">    OPJ_INT32 tx0, tx1, ty0, ty1;</td><td> </td><td class="rblock">    OPJ_<span class="insert">UINT32_SEMANTICALLY_BUT_</span>INT32 tx0, tx1, ty0, ty1;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    /** Start value, initialised in pi_initialise_encode*/</td><td> </td><td class="right">    /** Start value, initialised in pi_initialise_encode*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">    OPJ_UINT32 layS, resS, compS, prcS;</td><td> </td><td class="right">    OPJ_UINT32 layS, resS, compS, prcS;</td><td class="lineno"></td></tr>
@@ -216,7 +242,7 @@ itialise_encode*/</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">} opj_poc_t;</td><td> </td><td class="right">} opj_poc_t;</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="part-3" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-3"><em> line 1307<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-3"><em> line 1341<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr id="part-4" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-4"><em> line 1307<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-4"><em> line 1341<span class="hide"> &para;</span></em></a></th><td></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"> * Allocates worker threads for the compressor/decompressor.</td><td> </td><td class="right"> * Allocates worker threads for the compressor/decompressor.</td><td class="lineno"></td></tr>
@@ -231,17 +257,17 @@ lled,</td><td> </td><td class="right"> * number, or "ALL_CPUS". If OPJ_NUM_THREA
 lled,</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"> * this function will override the behaviour of the environment variable.</td><td> </td><td class="right"> * this function will override the behaviour of the environment variable.</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
-      <tr id="diff0007"><td></td></tr>
+      <tr id="diff0008"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock"> * <span class="delete">Currently this</span> function must be called after opj_setup_decoder() and</td><td> </td><td class="rblock"> * <span class="insert">This</span> function must be called after opj_setup_decoder() and</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"> * before <span class="delete">opj_read_header().</span></td><td> </td><td class="rblock"> * before <span class="insert">opj_read_header() for the decoding side, or after opj_setup_encod</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"><span class="delete"> *</span></td><td> </td><td class="rblock"><span class="insert">er()</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"> * <span class="delete">Note: currently only has effect on</span> the <span class="delete">decompressor.</span></td><td> </td><td class="rblock"> * <span class="insert">and before opj_start_compress() for</span> the <span class="insert">encoding side.</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
-      <tr id="diff0008"><td></td></tr>
+      <tr id="diff0009"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock"> * @param p_codec       decompressor handler</td><td> </td><td class="rblock"> * @param p_codec       decompressor <span class="insert">or compressor </span>handler</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"> * @param num_threads   number of threads.</td><td> </td><td class="right"> * @param num_threads   number of threads.</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno"></td></tr>
-      <tr id="diff0009"><td></td></tr>
+      <tr id="diff0010"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock"> * @return OPJ_TRUE     if the <span class="delete">decoder is correctly set</span></td><td> </td><td class="rblock"> * @return OPJ_TRUE     if the <span class="insert">function is successful.</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,</td><td class="lineno"></td></tr>
@@ -256,7 +282,7 @@ lled,</td><td class="lineno"></td></tr>
 teristics of encoded image.</td><td> </td><td class="right"> * @param   p_image         the image structure initialized with the charac
 teristics of encoded image.</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr id="part-4" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-4"><em> line 1539<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-4"><em> line 1572<span class="hide"> &para;</span></em></a></th><td></td></tr>
+      <tr id="part-5" class="change" ><td></td><th><small>skipping to change at</small><a href="#part-5"><em> line 1539<span class="hide"> &para;</span></em></a></th><th> </th><th><small>skipping to change at</small><a href="#part-5"><em> line 1572<span class="hide"> &para;</span></em></a></th><td></td></tr>
       <tr><td class="lineno"></td><td class="left"> * Setup the encoder parameters using the current image and using user para
 meters.</td><td> </td><td class="right"> * Setup the encoder parameters using the current image and using user para
 meters.</td><td class="lineno"></td></tr>
@@ -269,7 +295,7 @@ meters.</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">        opj_image_t *image);</td><td> </td><td class="right">        opj_image_t *image);</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
-      <tr id="diff0010"><td></td></tr>
+      <tr id="diff0011"><td></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* Specify extra options for the encoder.</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * This may be called after opj_setup_encoder() and before opj_start_compre</span></td><td class="lineno"></td></tr>
@@ -313,8 +339,33 @@ meters.</td><td class="lineno"></td></tr>
       <tr><td class="lineno"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
-     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 10 change blocks.&nbsp;</th></tr>
-     <tr class="stats"><td></td><th><i>15 lines changed or deleted</i></th><th><i> </i></th><th><i>103 lines changed or added</i></th><td></td></tr>
+     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 11 change blocks.&nbsp;</th></tr>
+     <tr class="stats"><td></td><th><i>16 lines changed or deleted</i></th><th><i> </i></th><th><i>104 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><br/>
+ 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr id="part-1" bgcolor="orange"><th></th><th>&nbsp;opj_config.h (2.3.1)&nbsp;</th><th> </th><th>&nbsp;opj_config.h (current)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno"></td><td class="left">/* create opj_config.h for CMake */</td><td> </td><td class="right">/* create opj_config.h for CMake */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_HAVE_STDINT_H              1</td><td> </td><td class="right">#define OPJ_HAVE_STDINT_H              1</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/*-------------------------------------------------------------------------
+-*/</td><td> </td><td class="right">/*-------------------------------------------------------------------------
+-*/</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/* OpenJPEG Versioning                                                     
+ */</td><td> </td><td class="right">/* OpenJPEG Versioning                                                     
+ */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">/* Version number. */</td><td> </td><td class="right">/* Version number. */</td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="left">#define OPJ_VERSION_MAJOR 2</td><td> </td><td class="right">#define OPJ_VERSION_MAJOR 2</td><td class="lineno"></td></tr>
+      <tr id="diff0001"><td></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">#define OPJ_VERSION_MINOR <span class="delete">3</span></td><td> </td><td class="rblock">#define OPJ_VERSION_MINOR <span class="insert">4</span></td><td class="lineno"></td></tr>
+      <tr><td class="lineno"></td><td class="lblock">#define OPJ_VERSION_BUILD <span class="delete">1</span></td><td> </td><td class="rblock">#define OPJ_VERSION_BUILD <span class="insert">0</span></td><td class="lineno"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr id="end" bgcolor="gray"><th colspan="5" align="center">&nbsp;End of changes. 1 change blocks.&nbsp;</th></tr>
+     <tr class="stats"><td></td><th><i>0 lines changed or deleted</i></th><th><i> </i></th><th><i>0 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"></td></tr>
    </table>
    <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>

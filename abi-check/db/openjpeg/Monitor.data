@@ -51,6 +51,7 @@ $VAR1 = {
                         '2.2.0' => 'src/openjpeg/2.2.0/version.-2.2.0.tar.gz',
                         '2.3.0' => 'src/openjpeg/2.3.0/version.-2.3.0.tar.gz',
                         '2.3.1' => 'src/openjpeg/2.3.1/version.-2.3.1.tar.gz',
+                        '2.4.0' => 'src/openjpeg/2.4.0/version.-2.4.0.tar.gz',
                         'current' => 'src/openjpeg/current'
                       }
         };

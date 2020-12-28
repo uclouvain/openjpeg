@@ -78,7 +78,7 @@ Most compilers implement their own version of this keyword ...
 
 #if defined(OPJ_STATIC) || !defined(_WIN32)
 /* http://gcc.gnu.org/wiki/Visibility */
-#   if __GNUC__ >= 4
+#   if !defined(_WIN32) && __GNUC__ >= 4
 #       if defined(OPJ_STATIC) /* static library uses "hidden" */
 #           define OPJ_API    __attribute__ ((visibility ("hidden")))
 #       else
