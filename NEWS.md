@@ -2,7 +2,7 @@
 
 More details in the [CHANGELOG](https://github.com/uclouvain/openjpeg/blob/master/CHANGELOG.md)
 
-## OpenJPEG 2.4.0 (December 2021)
+## OpenJPEG 2.4.0 (December 2020)
 
 No API/ABI break compared to v2.3.1, but additional symbols for subset of components decoding (hence the MINOR version bump).
 
