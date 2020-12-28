@@ -628,12 +628,19 @@ int parse_cmdline_decoder(int argc, char **argv,
             parameters->cod_format = get_file_format(outfile);
             switch (parameters->cod_format) {
             case PGX_DFMT:
+                break;
             case PXM_DFMT:
+                break;
             case BMP_DFMT:
+                break;
             case TIF_DFMT:
+                break;
             case RAW_DFMT:
+                break;
             case RAWL_DFMT:
+                break;
             case TGA_DFMT:
+                break;
             case PNG_DFMT:
                 break;
             default:
