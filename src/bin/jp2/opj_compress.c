@@ -153,12 +153,12 @@ static void encode_help_display(void)
     fprintf(stdout, "    Required only if -ImgDir is used\n");
     fprintf(stdout,
             "-F <width>,<height>,<ncomp>,<bitdepth>,{s,u}@<dx1>x<dy1>:...:<dxn>x<dyn>\n");
-    fprintf(stdout, "    Characteristics of the raw or yuv input image\n");
+    fprintf(stdout, "    Characteristics of the raw/yuv input image\n");
     fprintf(stdout,
             "    If subsampling is omitted, 1x1 is assumed for all components\n");
     fprintf(stdout, "      Example: -F 512,512,3,8,u@1x1:2x2:2x2\n");
     fprintf(stdout,
-            "               for raw or yuv 512x512 image with 4:2:0 subsampling\n");
+            "               for raw/yuv 512x512 image with 4:2:0 subsampling\n");
     fprintf(stdout, "    Required only if RAW or RAWL input file is provided.\n");
     fprintf(stdout, "\n");
     fprintf(stdout, "Optional Parameters:\n");
@@ -326,7 +326,7 @@ static void encode_help_display(void)
             JPWL_MAX_NO_TILESPECS);
     fprintf(stdout,
             "     p selects the packet error protection (EEP/UEP with EPBs)\n");
-    fprintf(stdout, "      to be applied to raw or yuv data: 'type' can be\n");
+    fprintf(stdout, "      to be applied to raw/yuv data: 'type' can be\n");
     fprintf(stdout,
             "       [0=none 1,absent=predefined 16=CRC-16 32=CRC-32 37-128=RS]\n");
     fprintf(stdout,
@@ -792,7 +792,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
             }
             free(substr1);
             if (wrong) {
-                fprintf(stderr, "\nError: invalid raw or yuv image parameters\n");
+                fprintf(stderr, "\nError: invalid raw/yuv image parameters\n");
                 fprintf(stderr, "Please use the Format option -F:\n");
                 fprintf(stderr,
                         "-F <width>,<height>,<ncomp>,<bitdepth>,{s,u}@<dx1>x<dy1>:...:<dxn>x<dyn>\n");
@@ -801,7 +801,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
                 fprintf(stderr,
                         "Example: -i image.raw -o image.j2k -F 512,512,3,8,u@1x1:2x2:2x2\n");
                 fprintf(stderr, 
-                        "         for raw or yuv 512x512 image with 4:2:0 subsampling\n");
+                        "         for raw/yuv 512x512 image with 4:2:0 subsampling\n");
                 fprintf(stderr, "Aborting.\n");
                 return 1;
             }
@@ -1736,7 +1736,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
     if ((parameters->decod_format == RAW_DFMT || 
             parameters->decod_format == RAWL_DFMT)
             && (raw_cp->rawWidth == 0)) {
-        fprintf(stderr, "[ERROR] invalid raw or yuv image parameters\n");
+        fprintf(stderr, "[ERROR] invalid raw/yuv image parameters\n");
         fprintf(stderr, "Please use the Format option -F:\n");
         fprintf(stderr,
                 "-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
@@ -2007,7 +2007,7 @@ int main(int argc, char **argv)
         case RAW_DFMT:
             image = rawtoimage(parameters.infile, &parameters, &raw_cp);
             if (!image) {
-                fprintf(stderr, "Unable to load raw or yuv file\n");
+                fprintf(stderr, "Unable to load raw/yuv file\n");
                 ret = 1;
                 goto fin;
             }
