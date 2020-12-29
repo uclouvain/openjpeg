@@ -20,7 +20,24 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 37ac30ceff6640bbab502388c5e0fa0bff23f505
+<pre class='wrap'>commit b897e2cb369b6944d791209f491f382a983cda87
+Merge: 37ac30c 7dd5497
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-28 22:58:58 +0100
+
+    Merge pull request #1312 from stweil/news
+    
+    Fix year in NEWS
+
+commit 7dd5497b15a33a8020bf1ab116f649328b037a89
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2020-12-28 22:52:34 +0100
+
+    Fix year in NEWS
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 37ac30ceff6640bbab502388c5e0fa0bff23f505
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-28 21:55:55 +0100
 
@@ -863,18 +880,6 @@ Date:   2019-11-17 01:35:26 +0100
     and current. It disappears when removing the generated reports of v2.3.1
     and recreating them. It is likely that some tooling has evolved since
     the initial v2.3.1 report generation.
-
-commit 4cb1f663049aab96e122d1ff16f601d0cc0be976
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-11-17 01:18:26 +0100
-
-    pi.c: avoid integer overflow, resulting in later invalid access to memory in opj_t2_decode_packets(). Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18979
-
-commit 5875a6b44618fb7dfd5cd6d742533eaee2014060
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-10-03 11:04:30 +0200
-
-    opj_tcd_mct_decode()/opj_mct_decode()/opj_mct_encode_real()/opj_mct_decode_real(): proper deal with a number of samples larger than 4 billion (refs #1151)
 
 ...</pre></div>
 
