@@ -800,7 +800,8 @@ static int parse_cmdline_encoder(int argc, char **argv,
                         "If subsampling is omitted, 1x1 is assumed for all components\n");
                 fprintf(stderr,
                         "Example: -i image.raw -o image.j2k -F 512,512,3,8,u@1x1:2x2:2x2\n");
-                fprintf(stderr, "         for raw or yuv 512x512 image with 4:2:0 subsampling\n");
+                fprintf(stderr, 
+                        "         for raw or yuv 512x512 image with 4:2:0 subsampling\n");
                 fprintf(stderr, "Aborting.\n");
                 return 1;
             }
