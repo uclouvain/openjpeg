@@ -1710,7 +1710,7 @@ int main(int argc, char **argv)
         case RAW_DFMT:          /* RAW */
             if (imagetoraw(image, parameters.outfile)) {
                 fprintf(stderr,
-                        "[ERROR] Error generating raw/yuv file. Outfile %s not generated\n",
+                        "[ERROR] Error generating raw or yuv file. Outfile %s not generated\n",
                         parameters.outfile);
                 failed = 1;
             } else if (!(parameters.quiet)) {
