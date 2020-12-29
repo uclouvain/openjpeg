@@ -1732,7 +1732,8 @@ static int parse_cmdline_encoder(int argc, char **argv,
         }
     }
 
-    if ((parameters->decod_format == RAW_DFMT || parameters->decod_format == RAWL_DFMT)
+    if ((parameters->decod_format == RAW_DFMT || 
+            parameters->decod_format == RAWL_DFMT)
             && (raw_cp->rawWidth == 0)) {
         fprintf(stderr, "[ERROR] invalid raw or yuv image parameters\n");
         fprintf(stderr, "Please use the Format option -F:\n");
@@ -1947,19 +1948,12 @@ int main(int argc, char **argv)
 
         switch (parameters.decod_format) {
         case PGX_DFMT:
-            break;
         case PXM_DFMT:
-            break;
         case BMP_DFMT:
-            break;
         case TIF_DFMT:
-            break;
         case RAW_DFMT:
-            break;
         case RAWL_DFMT:
-            break;
         case TGA_DFMT:
-            break;
         case PNG_DFMT:
             break;
         default:
