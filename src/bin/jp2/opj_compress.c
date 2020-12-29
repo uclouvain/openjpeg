@@ -800,7 +800,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
                         "If subsampling is omitted, 1x1 is assumed for all components\n");
                 fprintf(stderr,
                         "Example: -i image.raw -o image.j2k -F 512,512,3,8,u@1x1:2x2:2x2\n");
-                fprintf(stderr, 
+                fprintf(stderr,
                         "         for raw/yuv 512x512 image with 4:2:0 subsampling\n");
                 fprintf(stderr, "Aborting.\n");
                 return 1;
@@ -1733,7 +1733,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
         }
     }
 
-    if ((parameters->decod_format == RAW_DFMT || 
+    if ((parameters->decod_format == RAW_DFMT ||
             parameters->decod_format == RAWL_DFMT)
             && (raw_cp->rawWidth == 0)) {
         fprintf(stderr, "[ERROR] invalid raw/yuv image parameters\n");
