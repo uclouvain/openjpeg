@@ -20,7 +20,13 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b897e2cb369b6944d791209f491f382a983cda87
+<pre class='wrap'>commit b93996d5e018b3d9525acf406053d8b46240f914
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2020-12-29 14:46:50 +0100
+
+    abi_check.sh: Update version number for automatic abi check
+
+commit b897e2cb369b6944d791209f491f382a983cda87
 Merge: 37ac30c 7dd5497
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-28 22:58:58 +0100
@@ -869,17 +875,6 @@ Date:   2019-11-17 02:47:26 +0100
     Merge pull request #1218 from rouault/fix_broken_abi_check
     
     abi-check.sh: fix false postive ABI error, and display output error log
-
-commit 016f80ae2106c2b1b5bca08a684b0bd082e231e6
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2019-11-17 01:35:26 +0100
-
-    abi-check.sh: fix false postive ABI error, and display output error log
-    
-    There is currently a false positive ABI check failure between v2.3.1
-    and current. It disappears when removing the generated reports of v2.3.1
-    and recreating them. It is likely that some tooling has evolved since
-    the initial v2.3.1 report generation.
 
 ...</pre></div>
 

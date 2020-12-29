@@ -29,9 +29,7 @@
     "HeadersDiff":    "On",
     "PkgDiff":        "Off",
     "ABIView":        "Off",
-    "ABIDiff":        "Off",
-    "PublicSymbols":  "public_symbols/openjpeg/2.4.0/list",
-    "PublicTypes":    "public_types/openjpeg/2.4.0/list"
+    "ABIDiff":        "Off"
   },
   {
     "Number":         "2.3.1",
