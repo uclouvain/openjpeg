@@ -628,19 +628,12 @@ int parse_cmdline_decoder(int argc, char **argv,
             parameters->cod_format = get_file_format(outfile);
             switch (parameters->cod_format) {
             case PGX_DFMT:
-                break;
             case PXM_DFMT:
-                break;
             case BMP_DFMT:
-                break;
             case TIF_DFMT:
-                break;
             case RAW_DFMT:
-                break;
             case RAWL_DFMT:
-                break;
             case TGA_DFMT:
-                break;
             case PNG_DFMT:
                 break;
             default:
@@ -1716,7 +1709,8 @@ int main(int argc, char **argv)
 #endif /* OPJ_HAVE_LIBTIFF */
         case RAW_DFMT:          /* RAW */
             if (imagetoraw(image, parameters.outfile)) {
-                fprintf(stderr, "[ERROR] Error generating raw or yuv file. Outfile %s not generated\n",
+                fprintf(stderr, 
+                        "[ERROR] Error generating raw or yuv file. Outfile %s not generated\n",
                         parameters.outfile);
                 failed = 1;
             } else if (!(parameters.quiet)) {
