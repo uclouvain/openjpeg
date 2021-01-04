@@ -20,7 +20,33 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 2519439d7d4d0e51abf479afe73f30b1c7c70530
+<pre class='wrap'>commit eb27272a79cd81256e475b9aad8461fda8b7f989
+Merge: 2519439 4d147d9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-01-04 10:45:52 +0100
+
+    Merge pull request #1317 from ffontaine/master
+    
+    CMakeLists.txt: Don't require a C++ compiler
+
+commit 4d147d9630653e4c93a70a2a8026c323ed1042d2
+Author: Peter Korsgaard &lt;peter@korsgaard.com&gt;
+Date:   2021-01-04 09:05:42 +0100
+
+    CMakeLists.txt: Don't require a C++ compiler
+    
+    By default, CMake assumes that the project is using both C and C++.  By
+    explicitly passing 'C' as argument of the project() macro, we tell CMake
+    that only C is used, which prevents CMake from erroring out if a C++
+    compiler doesn't exist.
+    
+    Signed-off-by: Peter Korsgaard &lt;peter@korsgaard.com&gt;
+    [Retrieved (and slightly updated by adding enable_language(CXX) if
+    WITH_ASTYLE is set) from:
+    https://git.buildroot.net/buildroot/tree/package/openjpeg/0003-CMakeLists.txt-Don-t-require-a-C-compiler.patch]
+    Signed-off-by: Fabrice Fontaine &lt;fontaine.fabrice@gmail.com&gt;
+
+commit 2519439d7d4d0e51abf479afe73f30b1c7c70530
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-31 14:54:59 +0100
 
@@ -848,25 +874,6 @@ Date:   2020-01-30 00:59:57 +0100
     That could lead to later assertion failures.
     
     Fixes #1231 / CVE-2020-8112
-
-commit b63a433ba168bad5fa10e83de04d6305e6a222e2
-Author: Max Moroz &lt;dor3s1@gmail.com&gt;
-Date:   2020-01-13 09:07:54 -0800
-
-    tests/fuzzers: link fuzz binaries using $LIB_FUZZING_ENGINE. (#1230)
-    
-    This was changed some time ago (https://google.github.io/oss-fuzz/getting-started/new-project-guide/) but the build didn't fail as there is a fallback mechanism. The main advantage of the new approach is that for libFuzzer this produces more performant binaries (as `$LIB_FUZZING_ENGINE` expands into `-fsanitize=fuzzer`, which links libFuzzer from the compiler-rt, allowing better optimization tricks).
-    
-    I'm also experimenting with dataflow (https://github.com/google/oss-fuzz/issues/1632) on your project, and the dataflow config doesn't have a fallback (as it's a new configuration), therefore I'm proposing a change to migrate from `-lFuzzingEngine` to `$LIB_FUZZING_ENGINE`.
-
-commit 46c1eff9e98bbcf794d042f7b2e3d45556e805ce
-Merge: ac37373 024b840
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-01-11 11:29:11 +0100
-
-    Merge pull request #1229 from rouault/fix_1228
-    
-    opj_j2k_update_image_dimensions(): reject images whose coordinates are beyond INT_MAX (fixes #1228)
 
 ...</pre></div>
 
