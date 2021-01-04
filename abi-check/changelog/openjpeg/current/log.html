@@ -20,7 +20,16 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit eb27272a79cd81256e475b9aad8461fda8b7f989
+<pre class='wrap'>commit 07a454324cfeb431ee3fc3799df522dff252b12b
+Merge: eb27272 75a7f1a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-01-04 14:06:43 +0100
+
+    Merge pull request #866 from tSed/master
+    
+    fix static build only against tiff and its indirect dependencies
+
+commit eb27272a79cd81256e475b9aad8461fda8b7f989
 Merge: 2519439 4d147d9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-01-04 10:45:52 +0100
@@ -666,15 +675,6 @@ Date:   2020-04-30 11:52:42 +0200
     memory access to be the bottleneck.
     The slightly worse results with threads==8 than with thread==4
     is due to hyperthreading being not appropriate here.
-
-commit 97eb7e0bf17b476d516262e0af462ec7eeb8f505
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-29 11:50:17 +0200
-
-    Add multithreading support in the T1 (entropy phase) encoder
-    
-    - API wise, opj_codec_set_threads() can be used on the encoding side
-    - opj_compress has a -threads switch similar to opj_uncompress
 
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
