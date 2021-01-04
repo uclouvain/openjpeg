@@ -20,7 +20,35 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 07a454324cfeb431ee3fc3799df522dff252b12b
+<pre class='wrap'>commit 0782cd075d7e9678bf1cb448c1f3d048fabe4489
+Merge: 07a4543 b6f0e41
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-01-04 19:42:30 +0100
+
+    Merge pull request #867 from pseiderer/fix-lcms2-static-linking-using-pgk-config
+    
+    Fix lcms2 static linking using pgk config
+
+commit b6f0e41399f2e67117de2641b169f4400260be57
+Author: Peter Seiderer &lt;ps.report@gmx.net&gt;
+Date:   2016-11-11 23:35:13 +0100
+
+    thirdparty: lcms2: append flags found by pkg-config if available
+    
+    This change allows to get all required CFLAGS/LDFLAGS in case of static only
+    build.
+    
+    Fixes a buildroot build failure (see [1], [2] and [3]).
+    
+    [1] http://autobuild.buildroot.net/results/5ce/5cee20afd8bef5268832cddcb3a5270746be7a57
+    [2] http://lists.busybox.net/pipermail/buildroot/2016-November/177187.html
+    [3] http://lists.busybox.net/pipermail/buildroot/2016-November/177188.html
+    
+    Signed-off-by: Peter Seiderer &lt;ps.report@gmx.net&gt;
+    ---
+    Depends on https://github.com/uclouvain/openjpeg/pull/866
+
+commit 07a454324cfeb431ee3fc3799df522dff252b12b
 Merge: eb27272 75a7f1a
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-01-04 14:06:43 +0100
@@ -647,35 +675,6 @@ Date:   2020-05-18 18:09:10 +0200
 
     dwt.c: change sign of constants to match standard and compensate (no functional change)
 
-commit 07d1f775a1ef95496b0c78b18f671dac41983320
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-30 11:52:42 +0200
-
-    Add multithreaded support in the DWT encoder.
-    
-    Update the bench_dwt utility to have a -decode/-encode switch
-    
-    Measured performance gains for DWT encoder on a
-    Intel(R) Core(TM) i7-6700HQ CPU @ 2.60GHz (4 cores, hyper threaded)
-    
-    Encoding time:
-    $ ./bin/bench_dwt -encode -num_threads 1
-    time for dwt_encode: total = 8.348 s, wallclock = 8.352 s
-    
-    $ ./bin/bench_dwt -encode -num_threads 2
-    time for dwt_encode: total = 9.776 s, wallclock = 4.904 s
-    
-    $ ./bin/bench_dwt -encode -num_threads 4
-    time for dwt_encode: total = 13.188 s, wallclock = 3.310 s
-    
-    $ ./bin/bench_dwt -encode -num_threads 8
-    time for dwt_encode: total = 30.024 s, wallclock = 4.064 s
-    
-    Scaling is probably limited by memory access patterns causing
-    memory access to be the bottleneck.
-    The slightly worse results with threads==8 than with thread==4
-    is due to hyperthreading being not appropriate here.
-
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -864,16 +863,6 @@ Date:   2020-01-30 13:07:31 +0100
     Merge pull request #1232 from rouault/fix_1231
     
     opj_tcd_init_tile(): avoid integer overflow
-
-commit 05f9b91e60debda0e83977e5e63b2e66486f7074
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-01-30 00:59:57 +0100
-
-    opj_tcd_init_tile(): avoid integer overflow
-    
-    That could lead to later assertion failures.
-    
-    Fixes #1231 / CVE-2020-8112
 
 ...</pre></div>
 
