@@ -120,5 +120,6 @@ endif(BUILD_THIRDPARTY)
 
 #------------
 IF (WITH_ASTYLE)
+  enable_language(CXX)
   ADD_SUBDIRECTORY(astyle)
 ENDIF(WITH_ASTYLE)
