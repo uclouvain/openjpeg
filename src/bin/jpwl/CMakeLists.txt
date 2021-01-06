@@ -57,6 +57,6 @@ foreach(exe decompress compress)
   endif()
 
   install(TARGETS ${jpwl_exe}
-    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+    DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Applications
   )
 endforeach()

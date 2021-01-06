@@ -36,6 +36,6 @@ foreach(exe opj_jp3d_compress opj_jp3d_decompress)
   # Install exe
   install(TARGETS ${exe}
     EXPORT OpenJP3DTargets
-    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+    DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Applications
   )
 endforeach()

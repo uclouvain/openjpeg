@@ -43,5 +43,5 @@ foreach(exe
   endif()
 
   install(TARGETS ${exe}
-  	DESTINATION ${OPENJPEG_INSTALL_BIN_DIR})
+    DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
