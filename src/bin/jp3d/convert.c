@@ -581,7 +581,7 @@ opj_volume_t* bintovolume(char *filename, char *fileimg,
     f = fopen(filename, "rb");
     if (!f) {
         fprintf(stdout, "[ERROR] Failed to open %s for reading !!\n", filename);
-        opj_free(volume);
+        free(volume);
         return 0;
     }
 
@@ -919,7 +919,7 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters)
     f = fopen(filename, "rb");
     if (!f) {
         fprintf(stderr, "[ERROR] Failed to open %s for reading !!\n", filename);
-        opj_free(volume);
+        free(volume);
         return 0;
     }
 
