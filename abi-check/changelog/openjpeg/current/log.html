@@ -20,7 +20,37 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 0782cd075d7e9678bf1cb448c1f3d048fabe4489
+<pre class='wrap'>commit 0bda7188b7b545232a341f1d978b1e4feda46fc2
+Merge: 0782cd0 4d0b49e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-01-10 23:58:37 +0100
+
+    Merge pull request #1321 from ffontaine/master
+    
+    Fix cmake file with DESTDIR
+
+commit 4d0b49edad7fb31ebbf03c60a45b72aaa7b7412b
+Author: Fabrice Fontaine &lt;fontaine.fabrice@gmail.com&gt;
+Date:   2021-01-07 14:11:26 +0100
+
+    cmake/OpenJPEGConfig.cmake: replace ABSOLUTE by REALPATH
+    
+    Fix #1174 by replacing ABSOLUTE by REALPATH which will resolve symlinks:
+    https://cmake.org/cmake/help/latest/command/get_filename_component.html
+    
+    Signed-off-by: Fabrice Fontaine &lt;fontaine.fabrice@gmail.com&gt;
+
+commit 14f4c27e7c91f745a1dda9991b5deea3cbef2072
+Author: Fabrice Fontaine &lt;fontaine.fabrice@gmail.com&gt;
+Date:   2021-01-07 14:09:50 +0100
+
+    Revert "Use INC_DIR for OPENJPEG_INCLUDE_DIRS (fixes uclouvain#1174)"
+    
+    This reverts commit 65586374d639cfc0104419992f9022174b412594 which
+    breaks cross-compilation of poppler under buildroot (because of
+    DESTDIR usage).
+
+commit 0782cd075d7e9678bf1cb448c1f3d048fabe4489
 Merge: 07a4543 b6f0e41
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-01-04 19:42:30 +0100
@@ -669,12 +699,6 @@ Date:   2020-05-18 20:15:07 +0200
 
     Encoder: use floating-point operations for irreversible transformation
 
-commit 99107d5e468beef3cf2f7db24633ba8b40732405
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-18 18:09:10 +0200
-
-    dwt.c: change sign of constants to match standard and compensate (no functional change)
-
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -841,28 +865,6 @@ Date:   2020-02-10 11:20:20 +0100
     Merge pull request #1234 from rouault/md5_libtiff_4_1
     
     tests: add alternate checksums for libtiff 4.1
-
-commit b5cb419faff300fdbc0b4e98dab5c9010db6f39d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-02-07 21:53:10 +0100
-
-    tests: add alternate checksums for libtiff 4.1
-    
-    Fixes #1233
-    
-    libtiff 4.1 slightly modifies the way it generates files. So
-    add the new expected md5sum.
-    
-    Not super elegant solution admitedly.
-
-commit 647f9b118d12819c63635eea65909b0e49e0f201
-Merge: b63a433 05f9b91
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-01-30 13:07:31 +0100
-
-    Merge pull request #1232 from rouault/fix_1231
-    
-    opj_tcd_init_tile(): avoid integer overflow
 
 ...</pre></div>
 

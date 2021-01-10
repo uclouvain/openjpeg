@@ -27,8 +27,12 @@ if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   # This is an install tree
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
 
+  # We find a relative path from the PKG directory to header files.
+  set(PKG_DIR "/home/travis/abi-check/work/abi-check/installed/openjpeg/current/lib/openjpeg-2.4")
   set(INC_DIR "/home/travis/abi-check/work/abi-check/installed/openjpeg/current/include/openjpeg-2.4")
-  get_filename_component(OPENJPEG_INCLUDE_DIRS "${INC_DIR}" ABSOLUTE)
+  file(RELATIVE_PATH PKG_TO_INC_RPATH "${PKG_DIR}" "${INC_DIR}")
+
+  get_filename_component(OPENJPEG_INCLUDE_DIRS "${SELF_DIR}/${PKG_TO_INC_RPATH}" REALPATH)
 
 else()
   if(EXISTS ${SELF_DIR}/OpenJPEGExports.cmake)
