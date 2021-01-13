@@ -10,6 +10,7 @@ include_directories(
 
 # Tool to embed metadata into JP2 file
 add_executable(opj_jpip_addxml opj_jpip_addxml.c)
+add_sanitizers(opj_jpip_addxml)
 # Install exe
 install(TARGETS opj_jpip_addxml
   EXPORT OpenJPEGTargets
@@ -23,6 +24,7 @@ if(BUILD_JPIP_SERVER)
 
   # Build executable
   add_executable(opj_server ${OPJ_SERVER_SRCS})
+  add_sanitizers(opj_server)
   target_link_libraries(opj_server ${FCGI_LIBRARIES} openjpip_server)
   set_property(
     TARGET opj_server
@@ -49,6 +51,7 @@ set(EXES
   )
 foreach(exe ${EXES})
 add_executable(${exe} ${exe}.c)
+add_sanitizers(${exe})
   target_link_libraries(${exe} openjpip)
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets

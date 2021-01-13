@@ -60,6 +60,7 @@ if(WIN32)
   endif()
 endif()
 add_library(openjpip ${OPENJPIP_SRCS} ${LOCAL_SRCS})
+add_sanitizers(openjpip)
 set_target_properties(openjpip
   PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 if(NOT ${CMAKE_VERSION} VERSION_LESS "2.8.12")
@@ -81,6 +82,7 @@ install(TARGETS openjpip
 
 if(BUILD_JPIP_SERVER)
   add_library(openjpip_server STATIC ${OPENJPIP_SRCS} ${SERVER_SRCS})
+  add_sanitizers(openjpip_server)
   target_link_libraries(openjpip_server ${FCGI_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
   set_target_properties(openjpip_server
     PROPERTIES COMPILE_FLAGS "-DSERVER")

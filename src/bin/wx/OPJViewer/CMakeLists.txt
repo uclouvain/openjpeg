@@ -26,4 +26,5 @@ set(OPJV_SRCS
   ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/index.c
   )
 add_executable(opjviewer ${OPJV_SRCS})
+add_sanitizers(opjviewer)
 target_link_libraries(opjviewer ${wxWidgets_LIBRARIES} openjpeg)

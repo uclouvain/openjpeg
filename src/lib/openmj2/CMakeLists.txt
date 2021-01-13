@@ -40,6 +40,7 @@ endif()
 
 # build mj2 lib:
 add_library(${OPENMJ2_LIBRARY_NAME} ${OPENMJ2_SRCS})
+add_sanitizers(${OPENMJ2_LIBRARY_NAME})
 # FIXME: We are using an openjpeg 1.5 copy:
 #target_link_libraries(${OPENMJ2_LIBRARY_NAME} openjp2)
 if(UNIX)
