@@ -8202,7 +8202,7 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
             tccp->qmfbid = parameters->irreversible ? 0 : 1;
             tccp->qntsty = parameters->irreversible ? J2K_CCP_QNTSTY_SEQNT :
                            J2K_CCP_QNTSTY_NOQNT;
-            tccp->numgbits = 2;
+            tccp->numgbits = parameters->numgbits;
 
             if ((OPJ_INT32)i == parameters->roi_compno) {
                 tccp->roishift = parameters->roi_shift;
