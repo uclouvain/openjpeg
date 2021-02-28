@@ -768,9 +768,13 @@ static int parse_cmdline_encoder(int argc, char **argv,
         case 'O': {         /* output format */
             char outformat[50];
             char *of = opj_optarg;
-            sprintf(outformat, ".%s", of);
-            img_fol->set_out_format = 1;
-            parameters->cod_format = get_file_format(outformat);
+            if (strlen(opj_optarg) < sizeof(outformat)) {
+                sprintf(outformat, ".%s", of);
+                img_fol->set_out_format = 1;
+                parameters->cod_format = get_file_format(outformat);
+            } else {
+                parameters->cod_format = -1;
+            }
             switch (parameters->cod_format) {
             case J2K_CFMT:
             case JP2_CFMT:
