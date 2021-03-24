@@ -92,7 +92,7 @@ Most compilers implement their own version of this keyword ...
 #endif
 
 /* MSVC and Borland C do not have lrintf */
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if (defined(_MSC_VER) && (_MSC_FULL_VER < 192829913)) || defined(__BORLANDC__)
 static INLINE long lrintf(float f)
 {
 #ifdef _M_X64
