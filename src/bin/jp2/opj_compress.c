@@ -1912,9 +1912,9 @@ int main(int argc, char **argv)
         num_images = get_num_images(img_fol.imgdirpath);
         dirptr = (dircnt_t*)malloc(sizeof(dircnt_t));
         if (dirptr) {
-            dirptr->filename_buf = (char*)malloc(num_images * OPJ_PATH_LEN * sizeof(
+            dirptr->filename_buf = (char*)calloc(num_images, OPJ_PATH_LEN * sizeof(
                     char)); /* Stores at max 10 image file names*/
-            dirptr->filename = (char**) malloc(num_images * sizeof(char*));
+            dirptr->filename = (char**) calloc(num_images, sizeof(char*));
             if (!dirptr->filename_buf) {
                 ret = 0;
                 goto fin;

@@ -457,7 +457,7 @@ int main(int argc, char *argv[])
     opj_codestream_info_v2_t* cstr_info = NULL;
     opj_codestream_index_t* cstr_index = NULL;
 
-    OPJ_INT32 num_images, imageno;
+    int num_images, imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
 
@@ -486,13 +486,13 @@ int main(int argc, char *argv[])
         if (!dirptr) {
             return EXIT_FAILURE;
         }
-        dirptr->filename_buf = (char*)malloc((size_t)num_images * OPJ_PATH_LEN * sizeof(
+        dirptr->filename_buf = (char*) calloc((size_t) num_images, OPJ_PATH_LEN * sizeof(
                 char)); /* Stores at max 10 image file names*/
         if (!dirptr->filename_buf) {
             free(dirptr);
             return EXIT_FAILURE;
         }
-        dirptr->filename = (char**) malloc((size_t)num_images * sizeof(char*));
+        dirptr->filename = (char**) calloc((size_t) num_images, sizeof(char*));
 
         if (!dirptr->filename) {
             goto fails;
