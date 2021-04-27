@@ -201,8 +201,8 @@ static int get_file_format(const char *filename)
 static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
                           opj_dparameters_t *parameters)
 {
-    char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
-         outfilename[OPJ_PATH_LEN], temp_ofname[OPJ_PATH_LEN];
+    char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN * 2],
+         outfilename[OPJ_PATH_LEN * 2], temp_ofname[OPJ_PATH_LEN];
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
@@ -211,7 +211,7 @@ static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
     if (parameters->decod_format == -1) {
         return 1;
     }
-    sprintf(infilename, "%s/%s", img_fol->imgdirpath, image_filename);
+    snprintf(infilename, OPJ_PATH_LEN * 2, "%s/%s", img_fol->imgdirpath, image_filename);
     if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile),
                      infilename) != 0) {
         return 1;
@@ -224,7 +224,7 @@ static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
         sprintf(temp1, ".%s", temp_p);
     }
     if (img_fol->set_out_format == 1) {
-        sprintf(outfilename, "%s/%s.%s", img_fol->imgdirpath, temp_ofname,
+        snprintf(outfilename, OPJ_PATH_LEN * 2, "%s/%s.%s", img_fol->imgdirpath, temp_ofname,
                 img_fol->out_format);
         if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile),
                          outfilename) != 0) {

@@ -455,13 +455,13 @@ const char* path_separator = "/";
 char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
                    opj_decompress_parameters *parameters)
 {
-    char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
-         outfilename[OPJ_PATH_LEN], temp_ofname[OPJ_PATH_LEN];
+    char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN * 2],
+         outfilename[OPJ_PATH_LEN * 2], temp_ofname[OPJ_PATH_LEN];
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
     fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
-    sprintf(infilename, "%s%s%s", img_fol->imgdirpath, path_separator,
+    snprintf(infilename, OPJ_PATH_LEN * 2, "%s%s%s", img_fol->imgdirpath, path_separator,
             image_filename);
     parameters->decod_format = infile_format(infilename);
     if (parameters->decod_format == -1) {
@@ -479,7 +479,7 @@ char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
         sprintf(temp1, ".%s", temp_p);
     }
     if (img_fol->set_out_format == 1) {
-        sprintf(outfilename, "%s/%s.%s", img_fol->imgdirpath, temp_ofname,
+        snprintf(outfilename, OPJ_PATH_LEN * 2, "%s/%s.%s", img_fol->imgdirpath, temp_ofname,
                 img_fol->out_format);
         if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile),
                          outfilename) != 0) {
