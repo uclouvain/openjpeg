@@ -29,18 +29,12 @@ The library is developed and maintained by the Image and Signal Processing Group
 * src
   * lib
     * openjp2: contains the sources of the openjp2 library (Part 1 & 2)
-    * openjpwl: contains the additional sources if you want to build a JPWL-flavoured library.
     * openjpip: complete client-server architecture for remote browsing of jpeg 2000 images.
-    * openjp3d: JP3D implementation
-    * openmj2: MJ2 implementation
   * bin: contains all applications that use the openjpeg library
     * common: common files to all applications
     * jp2: a basic codec
-    * mj2: motion jpeg 2000 executables
     * jpip: OpenJPIP applications (server and dec server)
       * java: a Java client viewer for JPIP
-    * jp3d: JP3D applications
-      * tcltk: a test tool for JP3D
     * wx
       * OPJViewer: gui for displaying j2k files (based on wxWidget)
 * wrapping
@@ -56,6 +50,12 @@ See [LICENSE][link-license] for license and copyright information.
 See [INSTALL](https://github.com/uclouvain/openjpeg/blob/master/INSTALL.md) for installation procedures.
 
 See [NEWS](https://github.com/uclouvain/openjpeg/blob/master/NEWS.md) for user visible changes in successive releases.
+
+## Deprecated components
+
+The openjpwl, openjp3d and openmj2 components have been removed after the
+2.4.0 release. Their building and working state is unknown. People interested
+in them should start from the 2.4.0 tag.
 
 ## API/ABI
 
