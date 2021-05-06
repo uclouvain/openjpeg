@@ -543,31 +543,33 @@ static char * get_file_name(char *name)
 static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
                           opj_cparameters_t *parameters)
 {
-    char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
-         outfilename[OPJ_PATH_LEN], temp_ofname[OPJ_PATH_LEN];
-    char *temp_p, temp1[OPJ_PATH_LEN] = "";
+    char image_filename[OPJ_PATH_LEN + 2], infilename[OPJ_PATH_LEN * 2],
+         outfilename[OPJ_PATH_LEN * 2], temp_ofname[OPJ_PATH_LEN + 2];
+    char *temp_p, temp1[OPJ_PATH_LEN + 2] = "";
 
-    strcpy(image_filename, dirptr->filename[imageno]);
+    strncpy(image_filename, dirptr->filename[imageno], OPJ_PATH_LEN);
     fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
     parameters->decod_format = get_file_format(image_filename);
     if (parameters->decod_format == -1) {
         return 1;
     }
-    sprintf(infilename, "%s/%s", img_fol->imgdirpath, image_filename);
+    snprintf(infilename, OPJ_PATH_LEN * 2, "%s/%s", img_fol->imgdirpath,
+             image_filename);
     if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile),
                      infilename) != 0) {
         return 1;
     }
 
     /*Set output file*/
-    strcpy(temp_ofname, get_file_name(image_filename));
+    strncpy(temp_ofname, get_file_name(image_filename), OPJ_PATH_LEN);
     while ((temp_p = strtok(NULL, ".")) != NULL) {
         strcat(temp_ofname, temp1);
         sprintf(temp1, ".%s", temp_p);
     }
     if (img_fol->set_out_format == 1) {
-        sprintf(outfilename, "%s/%s.%s", img_fol->imgdirpath, temp_ofname,
-                img_fol->out_format);
+        snprintf(outfilename, OPJ_PATH_LEN * 2, "%s/%s.%s", img_fol->imgdirpath,
+                 temp_ofname,
+                 img_fol->out_format);
         if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile),
                          outfilename) != 0) {
             return 1;
@@ -959,7 +961,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
         case 'p': {         /* progression order */
             char progression[4];
 
-            strncpy(progression, opj_optarg, 4);
+            memcpy(progression, opj_optarg, 4);
             parameters->prog_order = give_progression(progression);
             if (parameters->prog_order == -1) {
                 fprintf(stderr, "Unrecognized progression order "
