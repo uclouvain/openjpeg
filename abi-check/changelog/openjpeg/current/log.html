@@ -20,7 +20,25 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 8aaafe69958f3528db4e59b50cbc49494262c7b5
+<pre class='wrap'>commit b6b8d28b3a85b74ff5415565cff2c20c019ca3c5
+Merge: 8aaafe6 238e849
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-05-07 11:22:13 +0200
+
+    Merge pull request #1345 from msabwat/emscripten
+    
+    emscripten: disable big endian test
+
+commit 238e849746e35232134533d826fdd2420d2e0274
+Author: Mehdi Sabwat &lt;mehdisabwat@gmail.com&gt;
+Date:   2021-04-26 15:37:44 +0200
+
+    emscripten: disable big endian test
+    
+    This test should not run on the emscripten platform because of :
+    https://github.com/emscripten-core/emscripten/blob/dff33368427fba16745c8ce52f11484a67b2855d/cmake/Modules/TestBigEndian.cmake#L5
+
+commit 8aaafe69958f3528db4e59b50cbc49494262c7b5
 Author: Jamaika1 &lt;lukaszcz18@wp.pl&gt;
 Date:   2021-05-06 19:30:34 +0200
 
@@ -717,12 +735,6 @@ Date:   2020-05-19 19:45:00 +0200
 
     opj_mct_encode_real(): add SSE optimization
 
-commit fe4c15f12c562a42a6b0c4b0a0c5e42a25797235
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-19 18:03:58 +0200
-
-    Testing: revise testing of lossy encoding by comparing PEAK and MSE with original image
-
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -857,15 +869,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-02-13 09:59:17 +0100
 
     opj_compress: improve help message regarding new IMF switch
-
-commit 4e5501b3c72a98b3117e68263afb922092c309cf
-Merge: 2888145 84f3beb
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-02-13 09:54:20 +0100
-
-    Merge pull request #1235 from rouault/imf
-    
-    Implement writing of IMF profiles
 
 ...</pre></div>
 
