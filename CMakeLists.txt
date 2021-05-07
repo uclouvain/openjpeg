@@ -162,8 +162,10 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Big endian test:
+if (!EMSCRIPTEN)
 include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(OPJ_BIG_ENDIAN)
+endif()
 
 #-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
