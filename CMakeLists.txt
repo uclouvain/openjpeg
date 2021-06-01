@@ -162,7 +162,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Big endian test:
-if (!EMSCRIPTEN)
+if (NOT EMSCRIPTEN)
 include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(OPJ_BIG_ENDIAN)
 endif()
