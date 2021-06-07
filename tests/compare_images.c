@@ -142,9 +142,9 @@ static char* createMultiComponentsFilename(const char* inFilename,
         return outFilename;
     }
 
-    outFilename = (char*)malloc((posToken + 7) * sizeof(char)); /*6*/
+    outFilename = (char*)malloc(posToken + 32);
 
-    strncpy(outFilename, inFilename, posToken);
+    memcpy(outFilename, inFilename, posToken);
     outFilename[posToken] = '\0';
     strcat(outFilename, separator);
     sprintf(s, "%i", indexF);

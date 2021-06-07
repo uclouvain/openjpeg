@@ -461,8 +461,13 @@ char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
 
     strcpy(image_filename, dirptr->filename[imageno]);
     fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
-    sprintf(infilename, "%s%s%s", img_fol->imgdirpath, path_separator,
-            image_filename);
+    if (strlen(img_fol->imgdirpath) + strlen(path_separator) + strlen(
+                image_filename) + 1 > sizeof(infilename)) {
+        return 1;
+    }
+    strcpy(infilename, img_fol->imgdirpath);
+    strcat(infilename, path_separator);
+    strcat(infilename, image_filename);
     parameters->decod_format = infile_format(infilename);
     if (parameters->decod_format == -1) {
         return 1;
@@ -479,8 +484,15 @@ char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
         sprintf(temp1, ".%s", temp_p);
     }
     if (img_fol->set_out_format == 1) {
-        sprintf(outfilename, "%s/%s.%s", img_fol->imgdirpath, temp_ofname,
-                img_fol->out_format);
+        if (strlen(img_fol->imgdirpath) + 1 + strlen(temp_ofname) + 1 + strlen(
+                    img_fol->out_format) + 1 > sizeof(outfilename)) {
+            return 1;
+        }
+        strcpy(outfilename, img_fol->imgdirpath);
+        strcat(outfilename, "/");
+        strcat(outfilename, temp_ofname);
+        strcat(outfilename, ".");
+        strcat(outfilename, img_fol->out_format);
         if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile),
                          outfilename) != 0) {
             return 1;

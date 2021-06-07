@@ -1384,7 +1384,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
                 goto fin;
             }
         }
-        strncpy(name, outfile, dotpos);
+        memcpy(name, outfile, dotpos);
         sprintf(name + dotpos, "_%u.pgx", compno);
         fdest = fopen(name, "wb");
         /* don't need name anymore */
@@ -2228,7 +2228,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
             const size_t olen = strlen(outfile);
             const size_t dotpos = olen - 4;
 
-            strncpy(destname, outfile, dotpos);
+            memcpy(destname, outfile, dotpos);
             sprintf(destname + dotpos, "_%u.pgm", compno);
         } else {
             sprintf(destname, "%s", outfile);
