@@ -20,7 +20,60 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit b6b8d28b3a85b74ff5415565cff2c20c019ca3c5
+<pre class='wrap'>commit 2624908517ac0489ff1b5471f423dfe84d79da08
+Merge: e7d908d b5ec98f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-07 15:48:42 +0200
+
+    Merge pull request #1360 from rouault/travis_gcc_4_8_fix
+    
+    .travis.yml: try to fix gcc 4.8 config by updating to xenial
+
+commit b5ec98f14f1947bc75eb76969ad5322490ae8e4c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-07 15:41:39 +0200
+
+    .travis.yml: try to fix gcc 4.8 config by updating to xenial
+
+commit e7d908d201a0fef9a619a537dae241341975cab9
+Merge: 7e4e09a f0629cb
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-07 13:56:11 +0200
+
+    Merge pull request #1358 from rouault/compiler_warning_fixes
+    
+    Fix various compiler warnings
+
+commit f0629cb1c4c485d905936413556deb2872ac51e5
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-07 13:28:26 +0200
+
+    Fix various compiler warnings
+
+commit 7e4e09a7fb2ee0de857227771b22abff54448cd4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-07 12:57:30 +0200
+
+    openjpeg.c: avoid casts of function pointers
+
+commit adb888920edb8477a271e640e5640237e2b4c0bb
+Merge: b6b8d28 99c28c9
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-01 22:59:11 +0200
+
+    Merge pull request #1354 from msabwat/emscripten
+    
+    fix #1345: don't remove big endian test for other platforms
+
+commit 99c28c960c18bfc0a4da5ec24adcedff1f1b143c
+Author: Mehdi Sabwat &lt;mehdi@videolabs.io&gt;
+Date:   2021-06-01 22:39:27 +0200
+
+    fix #1345: don't remove big endian test for other platforms
+    
+    thanks to @ePirat, it turns out that !EMSCRIPTEN does not evaluate to 1 on other platforms, so the the #1345 actually disabled the test for all platforms.
+
+commit b6b8d28b3a85b74ff5415565cff2c20c019ca3c5
 Merge: 8aaafe6 238e849
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-05-07 11:22:13 +0200
@@ -711,30 +764,6 @@ Date:   2020-05-20 18:00:45 +0200
     reduction of the mean square error and peak error in the irreversible encoding
     of issue141.tif !
 
-commit f38c069547f1c41dc94ec4a273efb07997685c21
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-20 13:14:16 +0200
-
-    Irreversible decoding: align code more closely to the standard by avoid messing up with stepsize (no functional change)
-
-commit e46e300de55aa35279935ef9e8572949d725d833
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-20 11:36:05 +0200
-
-    opj_dwt_encode_1_real(): avoid many bound comparisons, similarly to decoding side
-
-commit 4ab2ed090747ad2f22e78d45a1db5640d40e6a34
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-19 22:26:22 +0200
-
-    opj_j2k_setup_encoder(): add validation of tile width and height to avoid potential division by zero
-
-commit c6a413a42394836b956846cc037dd8297b732f44
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-19 19:45:00 +0200
-
-    opj_mct_encode_real(): add SSE optimization
-
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -842,33 +871,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-04-16 20:33:22 +0200
 
     Rename mis-named function opj_tcd_get_encoded_tile_size() to opj_tcd_get_encoder_input_buffer_size()
-
-commit 9c1cfb034a8cf24eb5e35fe9c7074fd079d14b80
-Merge: 563ecfb 1c54024
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-01 22:00:19 +0200
-
-    Merge pull request #1240 from rouault/fix_crash_opj_decompress
-    
-    opj_decompress: add sanity checks to avoid segfault in case of decoding error
-
-commit 1c54024165fd5db0e6047f28903274eb27d0980f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-01 20:58:55 +0200
-
-    opj_decompress: add sanity checks to avoid segfault in case of decoding error
-    
-    Prevent crashes like:
-    opj_decompress -i 0722_5-1_2019.jp2 -o out.ppm -r 4 -t 0
-    
-    where 0722_5-1_2019.jp2 is
-    https://drive.google.com/file/d/1ZxOUZg2-FKjYwa257VFLMpTXRWxEoP0a/view?usp=sharing
-
-commit 563ecfb55ca77c0fc5ea19e4885e00f55ec82ca9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-02-13 09:59:17 +0100
-
-    opj_compress: improve help message regarding new IMF switch
 
 ...</pre></div>
 
