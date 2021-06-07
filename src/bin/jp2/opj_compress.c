@@ -231,6 +231,8 @@ static void encode_help_display(void)
     fprintf(stdout, "    Write EPH marker after each header packet.\n");
     fprintf(stdout, "-PLT\n");
     fprintf(stdout, "    Write PLT marker in tile-part header.\n");
+    fprintf(stdout, "-TLM\n");
+    fprintf(stdout, "    Write TLM marker in main header.\n");
     fprintf(stdout, "-M <key value>\n");
     fprintf(stdout, "    Mode switch.\n");
     fprintf(stdout, "    [1=BYPASS(LAZY) 2=RESET 4=RESTART(TERMALL)\n");
@@ -597,6 +599,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
                                  size_t indexfilename_size,
                                  int* pOutFramerate,
                                  OPJ_BOOL* pOutPLT,
+                                 OPJ_BOOL* pOutTLM,
                                  int* pOutNumThreads)
 {
     OPJ_UINT32 i, j;
@@ -615,7 +618,8 @@ static int parse_cmdline_encoder(int argc, char **argv,
         {"mct", REQ_ARG, NULL, 'Y'},
         {"IMF", REQ_ARG, NULL, 'Z'},
         {"PLT", NO_ARG, NULL, 'A'},
-        {"threads",   REQ_ARG, NULL, 'B'}
+        {"threads",   REQ_ARG, NULL, 'B'},
+        {"TLM", NO_ARG, NULL, 'D'},
     };
 
     /* parse the command line */
@@ -1712,6 +1716,12 @@ static int parse_cmdline_encoder(int argc, char **argv,
             }
         }
         break;
+        /* ------------------------------------------------------ */
+
+        case 'D': {         /* TLM markers */
+            *pOutTLM = OPJ_TRUE;
+        }
+        break;
 
         /* ------------------------------------------------------ */
 
@@ -1895,6 +1905,7 @@ int main(int argc, char **argv)
     OPJ_FLOAT64 t = opj_clock();
 
     OPJ_BOOL PLT = OPJ_FALSE;
+    OPJ_BOOL TLM = OPJ_FALSE;
     int num_threads = 0;
 
     /* set encoding parameters to default values */
@@ -1916,7 +1927,8 @@ int main(int argc, char **argv)
     parameters.tcp_mct = (char)
                          255; /* This will be set later according to the input image or the provided option */
     if (parse_cmdline_encoder(argc, argv, &parameters, &img_fol, &raw_cp,
-                              indexfilename, sizeof(indexfilename), &framerate, &PLT, &num_threads) == 1) {
+                              indexfilename, sizeof(indexfilename), &framerate, &PLT, &TLM,
+                              &num_threads) == 1) {
         ret = 1;
         goto fin;
     }
@@ -2160,8 +2172,16 @@ int main(int argc, char **argv)
             goto fin;
         }
 
-        if (PLT) {
-            const char* const options[] = { "PLT=YES", NULL };
+        if (PLT || TLM) {
+            const char* options[3] = { NULL, NULL, NULL };
+            int iOpt = 0;
+            if (PLT) {
+                options[iOpt++] = "PLT=YES";
+            }
+            if (TLM) {
+                options[iOpt++] = "TLM=YES";
+            }
+            (void)iOpt;
             if (!opj_encoder_set_extra_options(l_codec, options)) {
                 fprintf(stderr, "failed to encode image: opj_encoder_set_extra_options\n");
                 opj_destroy_codec(l_codec);

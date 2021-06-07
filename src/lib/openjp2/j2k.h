@@ -503,6 +503,12 @@ typedef struct opj_j2k_enc {
     /** Tile part number currently coding, taking into account POC. m_current_tile_part_number holds the total number of tile parts while encoding the last tile part.*/
     OPJ_UINT32 m_current_tile_part_number; /*cur_tp_num */
 
+    /* whether to generate TLM markers */
+    OPJ_BOOL   m_TLM;
+
+    /* whether the Ttlmi field in a TLM marker is a byte (otherwise a uint16) */
+    OPJ_BOOL   m_Ttlmi_is_byte;
+
     /**
     locate the start position of the TLM marker
     after encoding the tilepart, a jump (in j2k_write_sod) is done to the TLM marker to store the value of its length.

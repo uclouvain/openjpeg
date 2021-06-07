@@ -186,6 +186,10 @@ opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PA
 opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_PLT.j2k -n 1 -PLT
 opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_PLT.jp2 -n 1 -PLT
 
+opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_TLM.j2k -n 1 -TLM
+# Use tile size 1x1 to generate more than 255 tiles
+opj_compress_no_raw_lossless -i @INPUT_NR_PATH@/byte.tif -o @TEMP_PATH@/byte_TLM_400tiles.j2k -n 1 -t 1,1 -TLM
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
