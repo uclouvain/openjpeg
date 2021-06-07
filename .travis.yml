@@ -126,7 +126,7 @@ matrix:
     - os: linux
       compiler: g++-4.8
       env: OPJ_CI_CC=gcc-4.8 OPJ_CI_CXX=g++-4.8 OPJ_CI_ABI_CHECK=1
-      dist: precise
+      dist: xenial
       addons:
         apt:
           sources:
