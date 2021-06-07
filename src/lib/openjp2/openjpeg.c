@@ -89,14 +89,16 @@ OPJ_BOOL OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec,
 /* ---------------------------------------------------------------------- */
 
 static OPJ_SIZE_T opj_read_from_file(void * p_buffer, OPJ_SIZE_T p_nb_bytes,
-                                     FILE * p_file)
+                                     void * p_user_data)
 {
-    OPJ_SIZE_T l_nb_read = fread(p_buffer, 1, p_nb_bytes, p_file);
+    FILE* p_file = (FILE*)p_user_data;
+    OPJ_SIZE_T l_nb_read = fread(p_buffer, 1, p_nb_bytes, (FILE*)p_file);
     return l_nb_read ? l_nb_read : (OPJ_SIZE_T) - 1;
 }
 
-static OPJ_UINT64 opj_get_data_length_from_file(FILE * p_file)
+static OPJ_UINT64 opj_get_data_length_from_file(void * p_user_data)
 {
+    FILE* p_file = (FILE*)p_user_data;
     OPJ_OFF_T file_length = 0;
 
     OPJ_FSEEK(p_file, 0, SEEK_END);
@@ -107,27 +109,36 @@ static OPJ_UINT64 opj_get_data_length_from_file(FILE * p_file)
 }
 
 static OPJ_SIZE_T opj_write_from_file(void * p_buffer, OPJ_SIZE_T p_nb_bytes,
-                                      FILE * p_file)
+                                      void * p_user_data)
 {
+    FILE* p_file = (FILE*)p_user_data;
     return fwrite(p_buffer, 1, p_nb_bytes, p_file);
 }
 
-static OPJ_OFF_T opj_skip_from_file(OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
+static OPJ_OFF_T opj_skip_from_file(OPJ_OFF_T p_nb_bytes, void * p_user_data)
 {
-    if (OPJ_FSEEK(p_user_data, p_nb_bytes, SEEK_CUR)) {
+    FILE* p_file = (FILE*)p_user_data;
+    if (OPJ_FSEEK(p_file, p_nb_bytes, SEEK_CUR)) {
         return -1;
     }
 
     return p_nb_bytes;
 }
 
-static OPJ_BOOL opj_seek_from_file(OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
+static OPJ_BOOL opj_seek_from_file(OPJ_OFF_T p_nb_bytes, void * p_user_data)
 {
-    if (OPJ_FSEEK(p_user_data, p_nb_bytes, SEEK_SET)) {
+    FILE* p_file = (FILE*)p_user_data;
+    if (OPJ_FSEEK(p_file, p_nb_bytes, SEEK_SET)) {
         return OPJ_FALSE;
     }
 
     return OPJ_TRUE;
+}
+
+static void opj_close_from_file(void* p_user_data)
+{
+    FILE* p_file = (FILE*)p_user_data;
+    fclose(p_file);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1074,15 +1085,14 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream(
         return NULL;
     }
 
-    opj_stream_set_user_data(l_stream, p_file,
-                             (opj_stream_free_user_data_fn) fclose);
+    opj_stream_set_user_data(l_stream, p_file, opj_close_from_file);
     opj_stream_set_user_data_length(l_stream,
                                     opj_get_data_length_from_file(p_file));
-    opj_stream_set_read_function(l_stream, (opj_stream_read_fn) opj_read_from_file);
+    opj_stream_set_read_function(l_stream, opj_read_from_file);
     opj_stream_set_write_function(l_stream,
                                   (opj_stream_write_fn) opj_write_from_file);
-    opj_stream_set_skip_function(l_stream, (opj_stream_skip_fn) opj_skip_from_file);
-    opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) opj_seek_from_file);
+    opj_stream_set_skip_function(l_stream, opj_skip_from_file);
+    opj_stream_set_seek_function(l_stream, opj_seek_from_file);
 
     return l_stream;
 }
