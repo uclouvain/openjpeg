@@ -20,7 +20,28 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit 2624908517ac0489ff1b5471f423dfe84d79da08
+<pre class='wrap'>commit c28965f255c711a7b2f84a08b1398e5a0f807b0e
+Merge: 2624908 a36ae03
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-08 11:11:04 +0200
+
+    Merge pull request #1359 from rouault/TLM
+    
+    Add support for enabling generation of TLM markers in encoder
+
+commit a36ae0386066c9ddd089788930be5a42a176446e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-07 15:16:53 +0200
+
+    Add support for enabling generation of TLM markers in encoder
+    
+    Support was already there, but restricted to Cinema and IMF profiles,
+    and 255 tiles
+    
+    * Add -TLM switch added to opj_compress
+    * Make opj_encoder_set_extra_options() function accept a TLM=YES option.
+
+commit 2624908517ac0489ff1b5471f423dfe84d79da08
 Merge: e7d908d b5ec98f
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-06-07 15:48:42 +0200
@@ -748,22 +769,6 @@ Date:   2020-05-20 19:24:09 +0200
 
     Irreversible decoding: partially revert previous commit, to fix failures in test suite
 
-commit 3cd1305596f191a01afdc11f9355f9c6590065dd
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-20 18:00:45 +0200
-
-    Irreversible compression/decompression DWT: use 1/K constant as per standard
-    
-    The previous constant opj_c13318 was mysteriously equal to 2/K , and in
-    the DWT, we had to divide K and opj_c13318 by 2... The issue was that the
-    band-&gt;stepsize computation in tcd.c didn't take into account the log2gain of
-    the band.
-    
-    The effect of this change is expected to be mostly equivalent to the previous
-    situation, except some difference in rounding. But it leads to a dramatic
-    reduction of the mean square error and peak error in the irreversible encoding
-    of issue141.tif !
-
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -852,25 +857,38 @@ Date:   2020-04-17 00:37:33 +0200
 
     color_apply_icc_profile: add checks on the number of components (#1236)
 
-commit 040e142288e90c9c2d46d25d0a27f828f968bb93
-Author: Eduardo Barretto &lt;edusbarretto@gmail.com&gt;
-Date:   2020-04-16 19:09:40 -0300
-
-    jp3d/jpwl/mj2/jpip: Fix resource leaks (#1226)
-    
-    This issues were found by cppcheck and coverity.
-
 commit 271a71ef0f1dd4740c9f4474279c7da8d15850c9
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-04-16 20:52:44 +0200
 
     Fix warnings about signed/unsigned casts in pi.c
 
-commit 221a801a97a3ea968a311f7905c18a1eb7f034c4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-16 20:33:22 +0200
+commit f3ee448815eb992b8d4746e32c05e8289f30415f
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2018-10-31 15:56:11 +0100
 
-    Rename mis-named function opj_tcd_get_encoded_tile_size() to opj_tcd_get_encoder_input_buffer_size()
+    openjp2/j2k: Validate all SGcod/SPcod/SPcoc parameter values.
+    
+    Previously the multiple component transformation SGcod(C)
+    and wavelet transformation SPcod(H)/SPcoc(E) parameter
+    values were never checked, allowing for out of range values.
+    
+    The lack of validation allowed the bit stream provided in
+    issue #1158 through. After this commit an error message
+    points to the marker segments' parameters as being out of
+    range.
+    
+    input/nonregression/edf_c2_20.jp2 contains an SPcod(H) value
+    of 17, but according to Table A-20 of the specification only
+    values 0 and 1 are valid. input/nonregression/issue826.jp2
+    contains a SGcod(B) value of 2, but according to Table A-17
+    of the specification only values 0 and 1 are valid.
+    input/nonregression/oss-fuzz2785.jp2 contains a SGcod(B)
+    value of 32, but it is likewise limited to 0 or 1. These test
+    cases have been updated to consistently fail to parse the
+    headers since they contain out of bounds values.
+    
+    This fixes issue #1210.
 
 ...</pre></div>
 

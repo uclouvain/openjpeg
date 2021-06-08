@@ -1592,7 +1592,10 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
  * <ul>
  * <li>PLT=YES/NO. Defaults to NO. If set to YES, PLT marker segments,
  *     indicating the length of each packet in the tile-part header, will be
- *     written. Since 2.3.2</li>
+ *     written. Since 2.4.0</li>
+  * <li>TLM=YES/NO. Defaults to NO (except for Cinema and IMF profiles).
+  *    If set to YES, TLM marker segments, indicating the length of each
+  *    tile-part part will be written. Since 2.4.0</li>
  * </ul>
  *
  * @param p_codec       Compressor handle
@@ -1600,7 +1603,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
  *                      array of strings. Each string is of the form KEY=VALUE.
  *
  * @return OPJ_TRUE in case of success.
- * @since 2.3.2
+ * @since 2.4.0
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_encoder_set_extra_options(
     opj_codec_t *p_codec,
