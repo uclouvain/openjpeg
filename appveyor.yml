@@ -1,4 +1,4 @@
-version: 2.4.0.{build}
+version: 2.5.0.{build}
 branches:
   except:
   - coverity_scan
