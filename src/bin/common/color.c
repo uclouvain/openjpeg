@@ -367,13 +367,15 @@ static void sycc420_to_rgb(opj_image_t *img)
             ++b;
 
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-
-            ++y;
+            if (*y != img->comps[0].data[max])
+                ++y;
             ++r;
             ++g;
             ++b;
-            ++cb;
-            ++cr;
+            if (*cb != img->comps[1].data[max])
+                ++cb;
+            if (*cr != img->comps[2].data[max])
+                ++cr;
         }
         if (j < maxw) {
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
