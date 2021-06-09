@@ -7,14 +7,14 @@
 
 # The OPENJPEG version number.
 set(OPENJPEG_MAJOR_VERSION "2")
-set(OPENJPEG_MINOR_VERSION "4")
+set(OPENJPEG_MINOR_VERSION "5")
 set(OPENJPEG_BUILD_VERSION "0")
 
 # The libraries.
 set(OPENJPEG_LIBRARIES "openjp2")
 
 # The CMake macros dir.
-set(OPENJPEG_CMAKE_DIR "lib/openjpeg-2.4")
+set(OPENJPEG_CMAKE_DIR "lib/openjpeg-2.5")
 
 # The configuration options.
 set(OPENJPEG_BUILD_SHARED_LIBS "ON")
@@ -28,8 +28,8 @@ if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
 
   # We find a relative path from the PKG directory to header files.
-  set(PKG_DIR "/home/travis/abi-check/work/abi-check/installed/openjpeg/current/lib/openjpeg-2.4")
-  set(INC_DIR "/home/travis/abi-check/work/abi-check/installed/openjpeg/current/include/openjpeg-2.4")
+  set(PKG_DIR "/home/travis/abi-check/work/abi-check/installed/openjpeg/current/lib/openjpeg-2.5")
+  set(INC_DIR "/home/travis/abi-check/work/abi-check/installed/openjpeg/current/include/openjpeg-2.5")
   file(RELATIVE_PATH PKG_TO_INC_RPATH "${PKG_DIR}" "${INC_DIR}")
 
   get_filename_component(OPENJPEG_INCLUDE_DIRS "${SELF_DIR}/${PKG_TO_INC_RPATH}" REALPATH)

@@ -20,7 +20,22 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit c28965f255c711a7b2f84a08b1398e5a0f807b0e
+<pre class='wrap'>commit cc1919b183f76d5ac79cc9927fb899b47700d925
+Merge: c28965f 655bb12
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-09 11:53:56 +0200
+
+    Merge pull request #1361 from rouault/update_version_numbers_to_2_5
+    
+    CMakeLists.txt/appveyor.yml: update version number to 2.5.0…
+
+commit 655bb125250561dd1fa518ce523c388bcd84754a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-06-08 14:34:43 +0200
+
+    CMakeLists.txt/appveyor.yml: update version number to 2.5.0 to make it easier for downstream consumers to use new features
+
+commit c28965f255c711a7b2f84a08b1398e5a0f807b0e
 Merge: 2624908 a36ae03
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-06-08 11:11:04 +0200
@@ -763,12 +778,6 @@ Date:   2020-05-20 21:10:55 +0200
     
     Add check to validate SGcod/SPcoc/SPcod parameter values.
 
-commit adccbc8336ce5c46ca7de85ac364d9c992d337c7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-20 19:24:09 +0200
-
-    Irreversible decoding: partially revert previous commit, to fix failures in test suite
-
 commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
 Merge: 64689d0 4edb8c8
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
@@ -843,24 +852,11 @@ Date:   2020-04-18 18:25:44 +0200
     struct opj_j2k: remove unused fields, and add some documentation
 
 commit 774889a328abd5d3c280d9a897f1ac4c672cb0e5
-Merge: b6b7e96 271a71e
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-04-17 00:39:46 +0200
 
     Merge pull request #1244 from rouault/fix_pi_warnings
     
-    Fix warnings about signed/unsigned casts in pi.c
-
-commit b6b7e96b0cf7819ef6a2e8ba2f8bdaaf938326ed
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2020-04-17 00:37:33 +0200
-
-    color_apply_icc_profile: add checks on the number of components (#1236)
-
-commit 271a71ef0f1dd4740c9f4474279c7da8d15850c9
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-16 20:52:44 +0200
-
     Fix warnings about signed/unsigned casts in pi.c
 
 commit f3ee448815eb992b8d4746e32c05e8289f30415f
@@ -889,6 +885,15 @@ Date:   2018-10-31 15:56:11 +0100
     headers since they contain out of bounds values.
     
     This fixes issue #1210.
+
+commit d801bd4e6287d13b65a48775ebd43fca350b21d9
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2019-09-04 01:18:37 +0200
+
+    openjp2/j2k: Make comments adhere to specification.
+    
+    The function is used to read both SPcod and SPcoc, so all
+    comments should refer to both marker segments' parameter names.
 
 ...</pre></div>
 

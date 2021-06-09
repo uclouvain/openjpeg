@@ -9,12 +9,12 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set_property(TARGET openjp2 APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(openjp2 PROPERTIES
   IMPORTED_LINK_INTERFACE_LIBRARIES_DEBUG "m;-lpthread"
-  IMPORTED_LOCATION_DEBUG "${_IMPORT_PREFIX}/lib/libopenjp2.so.2.4.0"
+  IMPORTED_LOCATION_DEBUG "${_IMPORT_PREFIX}/lib/libopenjp2.so.2.5.0"
   IMPORTED_SONAME_DEBUG "libopenjp2.so.7"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS openjp2 )
-list(APPEND _IMPORT_CHECK_FILES_FOR_openjp2 "${_IMPORT_PREFIX}/lib/libopenjp2.so.2.4.0" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_openjp2 "${_IMPORT_PREFIX}/lib/libopenjp2.so.2.5.0" )
 
 # Import target "openjp2_static" for configuration "Debug"
 set_property(TARGET openjp2_static APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
