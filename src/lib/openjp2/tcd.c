@@ -588,7 +588,9 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
 
                             if (distoachieved < distotarget) {
                                 hi = thresh;
-                                stable_thresh = thresh;
+                                if (distoachieved > DBL_EPSILON) {
+                                    stable_thresh = thresh;
+                                }
                                 continue;
                             } else {
                                 lo = thresh;
@@ -600,7 +602,9 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
 
                         if (distoachieved < distotarget) {
                             hi = thresh;
-                            stable_thresh = thresh;
+                            if (distoachieved > DBL_EPSILON) {
+                                stable_thresh = thresh;
+                            }
                             continue;
                         }
                         lo = thresh;
@@ -621,7 +625,7 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                 }
             }
 
-            goodthresh = stable_thresh == 0 ? thresh : stable_thresh;
+            goodthresh = stable_thresh == 0 ? lo : stable_thresh;
 
             opj_t2_destroy(t2);
         } else {
