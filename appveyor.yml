@@ -29,7 +29,7 @@ test: off
 #- cmd: c:\cygwin\bin\bash ./tools/travis-ci/before_deploy.sh
 deploy:
   #release: openjpeg-$(appveyor_repo_tag_name)
-  description: 'OpenJPEG $(appveyor_repo_tag_name) has been released. More info [here](https://github.com/uclouvain/openjpeg/blob/$(appveyor_repo_tag_name)/NEWS) and a detailed view [here](https://github.com/uclouvain/openjpeg/blob/$(appveyor_repo_tag_name)/CHANGES).'
+  description: 'OpenJPEG $(appveyor_repo_tag_name) has been released. More info [here](https://github.com/thinkoid/openjpeg/blob/$(appveyor_repo_tag_name)/NEWS) and a detailed view [here](https://github.com/thinkoid/openjpeg/blob/$(appveyor_repo_tag_name)/CHANGES).'
   provider: GitHub
   auth_token:
     secure: XUL+IoRRw8U/4tupa/fMpinxurft7WRQHZiWHMLO5iuFbwZ+C3vCjVVVM+5Ebky7 # your encrypted token from GitHub
