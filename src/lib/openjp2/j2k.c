@@ -7101,19 +7101,21 @@ static OPJ_BOOL opj_j2k_is_imf_compliant(opj_cparameters_t *parameters,
                       mainlevel);
         ret = OPJ_FALSE;
     }
-
-    /* Validate sublevel */
-    assert(sizeof(tabMaxSubLevelFromMainLevel) ==
-           (OPJ_IMF_MAINLEVEL_MAX + 1) * sizeof(tabMaxSubLevelFromMainLevel[0]));
-    if (sublevel > tabMaxSubLevelFromMainLevel[mainlevel]) {
-        opj_event_msg(p_manager, EVT_WARNING,
-                      "IMF profile require sublevel <= %d for mainlevel = %d.\n"
-                      "-> %d is thus not compliant\n"
-                      "-> Non-IMF codestream will be generated\n",
-                      tabMaxSubLevelFromMainLevel[mainlevel],
-                      mainlevel,
-                      sublevel);
-        ret = OPJ_FALSE;
+    else
+    {
+        /* Validate sublevel */
+        assert(sizeof(tabMaxSubLevelFromMainLevel) ==
+               (OPJ_IMF_MAINLEVEL_MAX + 1) * sizeof(tabMaxSubLevelFromMainLevel[0]));
+        if (sublevel > tabMaxSubLevelFromMainLevel[mainlevel]) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                          "IMF profile require sublevel <= %d for mainlevel = %d.\n"
+                          "-> %d is thus not compliant\n"
+                          "-> Non-IMF codestream will be generated\n",
+                          tabMaxSubLevelFromMainLevel[mainlevel],
+                          mainlevel,
+                          sublevel);
+            ret = OPJ_FALSE;
+        }
     }
 
     /* Number of components */
