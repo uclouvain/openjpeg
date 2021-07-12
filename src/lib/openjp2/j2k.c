@@ -7100,9 +7100,7 @@ static OPJ_BOOL opj_j2k_is_imf_compliant(opj_cparameters_t *parameters,
                       "-> Non-IMF codestream will be generated\n",
                       mainlevel);
         ret = OPJ_FALSE;
-    }
-    else
-    {
+    } else {
         /* Validate sublevel */
         assert(sizeof(tabMaxSubLevelFromMainLevel) ==
                (OPJ_IMF_MAINLEVEL_MAX + 1) * sizeof(tabMaxSubLevelFromMainLevel[0]));
