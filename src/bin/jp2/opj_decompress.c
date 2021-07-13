@@ -1356,7 +1356,7 @@ int main(int argc, char **argv)
         int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
 
-        dirptr = (dircnt_t*)malloc(sizeof(dircnt_t));
+        dirptr = (dircnt_t*)calloc(1, sizeof(dircnt_t));
         if (!dirptr) {
             destroy_parameters(&parameters);
             return EXIT_FAILURE;
