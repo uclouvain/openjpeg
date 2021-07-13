@@ -1361,6 +1361,9 @@ int main(int argc, char **argv)
             destroy_parameters(&parameters);
             return EXIT_FAILURE;
         }
+
+        memset(dirptr, 0, sizeof(dircnt_t));
+
         /* Stores at max 10 image file names */
         dirptr->filename_buf = (char*)malloc(sizeof(char) *
                                              (size_t)num_images * OPJ_PATH_LEN);
