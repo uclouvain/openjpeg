@@ -171,6 +171,8 @@ void opj_copy_image_header(const opj_image_t* p_image_src,
     assert(p_image_src != 00);
     assert(p_image_dest != 00);
 
+    p_image_dest->rsiz = p_image_src->rsiz;
+
     p_image_dest->x0 = p_image_src->x0;
     p_image_dest->y0 = p_image_src->y0;
     p_image_dest->x1 = p_image_src->x1;
