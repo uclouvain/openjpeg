@@ -372,8 +372,6 @@ static void sycc420_to_rgb(opj_image_t *img)
             ++r;
             ++g;
             ++b;
-            ++cb;
-            ++cr;
         }
         if (j < maxw) {
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
