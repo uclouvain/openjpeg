@@ -4,7 +4,7 @@
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
- * Copyright (c) 2007, Digital Signal Processing Laboratory, Universit‡ degli studi di Perugia (UPG), Italy
+ * Copyright (c) 2007, Digital Signal Processing Laboratory, Universit√† degli studi di Perugia (UPG), Italy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
