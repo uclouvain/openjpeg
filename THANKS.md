@@ -37,3 +37,4 @@ it complete and exempt of errors.
 * Vincent Torri
 * Yannick Verschueren
 * Peter Wimmer
+* Marcel Petavy
