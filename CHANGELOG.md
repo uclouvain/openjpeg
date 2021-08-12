@@ -79,7 +79,7 @@
 - tests/fuzzers: link fuzz binaries using $LIB\_FUZZING\_ENGINE. [\#1230](https://github.com/uclouvain/openjpeg/pull/1230) ([Dor1s](https://github.com/Dor1s))
 - opj\_j2k\_update\_image\_dimensions\(\): reject images whose coordinates are beyond INT\_MAX \(fixes \#1228\) [\#1229](https://github.com/uclouvain/openjpeg/pull/1229) ([rouault](https://github.com/rouault))
 - Fix resource leaks [\#1226](https://github.com/uclouvain/openjpeg/pull/1226) ([dodys](https://github.com/dodys))
-- abi-check.sh: fix false postive ABI error, and display output error log [\#1218](https://github.com/uclouvain/openjpeg/pull/1218) ([rouault](https://github.com/rouault))
+- abi-check.sh: fix false positive ABI error, and display output error log [\#1218](https://github.com/uclouvain/openjpeg/pull/1218) ([rouault](https://github.com/rouault))
 - pi.c: avoid integer overflow, resulting in later invalid access to memory in opj\_t2\_decode\_packets\(\) [\#1217](https://github.com/uclouvain/openjpeg/pull/1217) ([rouault](https://github.com/rouault))
 - Add check to validate SGcod/SPcoc/SPcod parameter values. [\#1211](https://github.com/uclouvain/openjpeg/pull/1211) ([sebras](https://github.com/sebras))
 - Fix buffer overflow reading an image file less than four characters [\#1196](https://github.com/uclouvain/openjpeg/pull/1196) ([robert-ancell](https://github.com/robert-ancell))
