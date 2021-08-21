@@ -605,6 +605,11 @@ typedef struct opj_dparameters {
 
 } opj_dparameters_t;
 
+typedef struct opj_buffer_info {
+    OPJ_BYTE* buf;
+    OPJ_BYTE* cur;
+    OPJ_SIZE_T len;
+} opj_buffer_info_t;
 
 /**
  * JPEG2000 codec V2.
@@ -1255,6 +1260,9 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream(
     const char *fname,
     OPJ_SIZE_T p_buffer_size,
     OPJ_BOOL p_is_read_stream);
+
+OPJ_API opj_stream_t* OPJ_CALLCONV
+opj_stream_create_buffer_stream(opj_buffer_info_t*, OPJ_BOOL);
 
 /*
 ==========================================================

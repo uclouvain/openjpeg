@@ -369,7 +369,7 @@ if [ "${OPJ_CI_PERF_TESTS:-}" == "1" ]; then
         REF_VERSION=v2.1.2
     fi
     if [ ! -d ref_opj ]; then
-        git clone https://github.com/uclouvain/openjpeg ref_opj
+        git clone https://github.com/thinkoid/openjpeg ref_opj
     fi
     echo "Building reference version (${REF_VERSION})"
     cd ref_opj
