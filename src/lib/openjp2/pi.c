@@ -1312,7 +1312,7 @@ static OPJ_BOOL opj_pi_check_next_level(OPJ_INT32 pos,
     opj_poc_t *tcp = &tcps->pocs[pino];
 
     if (pos >= 0) {
-        for (i = pos; pos >= 0; i--) {
+        for (i = pos; i >= 0; i--) {
             switch (prog[i]) {
             case 'R':
                 if (tcp->res_t == tcp->resE) {
