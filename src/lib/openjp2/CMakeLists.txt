@@ -15,6 +15,7 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/bio.h
   ${CMAKE_CURRENT_SOURCE_DIR}/cio.c
   ${CMAKE_CURRENT_SOURCE_DIR}/cio.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/fbc_dec.c
   ${CMAKE_CURRENT_SOURCE_DIR}/dwt.c
   ${CMAKE_CURRENT_SOURCE_DIR}/dwt.h
   ${CMAKE_CURRENT_SOURCE_DIR}/event.c
@@ -134,9 +135,9 @@ install(
 endif()
 
 if(BUILD_LUTS_GENERATOR)
-# internal utility to generate t1_luts.h (part of the jp2 lib)
+# internal utility to generate t1_luts.h and t1_ht_luts.h (part of the jp2 lib)
 # no need to install:
-  add_executable(t1_generate_luts t1_generate_luts.c)
+  add_executable(t1_generate_luts t1_generate_luts.c t1_ht_generate_luts.c)
   if(UNIX)
     target_link_libraries(t1_generate_luts m)
   endif()
