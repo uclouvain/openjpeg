@@ -1262,7 +1262,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
             if ((p_tcp->tccps[p_pi->compno].cblksty & J2K_CCP_CBLKSTY_HT) != 0)
                 do {
                   OPJ_UINT32 bit_number;
-                  l_cblk->segs[l_segno].numnewpasses = l_segno == 0 ? 1 : n;
+                  l_cblk->segs[l_segno].numnewpasses = l_segno == 0 ? 1u : (OPJ_UINT32)n;
                   bit_number = l_cblk->numlenbits + opj_uint_floorlog2(
                                    l_cblk->segs[l_segno].numnewpasses);
                   if (bit_number > 32) {

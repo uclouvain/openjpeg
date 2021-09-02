@@ -72,7 +72,8 @@ static OPJ_BOOL cannot_decode_spp_mrp_msg = OPJ_FALSE;
   *
   *   @param [in]  val is the value for which population count is sought
   */ 
-static inline OPJ_UINT32 population_count(OPJ_UINT32 val)
+static inline 
+OPJ_UINT32 population_count(OPJ_UINT32 val)
 {
 #ifdef OPJ_COMPILER_MSVC
   return (OPJ_UINT32)__popcnt(val);
@@ -96,7 +97,8 @@ static inline OPJ_UINT32 population_count(OPJ_UINT32 val)
 #ifdef OPJ_COMPILER_MSVC
   #pragma intrinsic(_BitScanReverse)
 #endif
-static inline OPJ_UINT32 count_leading_zeros(OPJ_UINT32 val)
+static inline 
+OPJ_UINT32 count_leading_zeros(OPJ_UINT32 val)
 {
 #ifdef OPJ_COMPILER_MSVC
   unsigned long result = 0;
@@ -150,29 +152,34 @@ typedef struct dec_mel {
 static inline
 void mel_read(dec_mel_t *melp)
 {
+  OPJ_UINT32 val; 
+  int bits;
+  OPJ_UINT32 t;
+  OPJ_BOOL unstuff;
+  
   if (melp->bits > 32)  //there are enough bits in the tmp variable
     return;             // return without reading new data
-  OPJ_UINT32 val = 0xFFFFFFFF;
+
+  val = 0xFFFFFFFF;
   //the next line (the if statement) needs to be tested first
   //if (melp->size > 0)              // if there is data in the MEL segment
     val = *(OPJ_UINT32*)melp->data;  // read 32 bits from MEL data
       
   // next we unstuff them before adding them to the buffer
-  int bits = 32 - melp->unstuff; // number of bits in val, subtract 1 if
-                                  // the previously read byte requires 
-                                  // unstuffing
+  bits = 32 - melp->unstuff; // number of bits in val, subtract 1 if
+                             // the previously read byte requires 
+                             // unstuffing
 
   // data is unstuffed and accumulated in t
   // bits has the number of bits in t
-  OPJ_UINT32 t = (melp->size > 0) ? (val & 0xFF) : 0xFF; // feed 0xFF if the 
+  t = (melp->size > 0) ? (val & 0xFF) : 0xFF; // feed 0xFF if the 
                                   // MEL bitstream has been exhausted
   if (melp->size == 1) t |= 0xF;  // if this is 1 byte before the last
                                   // in MEL+VLC segments (remember they
                                   // can overlap)
   melp->data += melp->size-- > 0; // advance data by 1 byte if we have not
                                   // reached the end of the MEL segment
-  OPJ_BOOL unstuff = ((val & 0xFF) == 0xFF); // true if the byte
-                                             // needs unstuffing
+  unstuff = ((val & 0xFF) == 0xFF); // true if the byte needs unstuffing
 
   bits -= unstuff; // there is one less bit in t if unstuffing is needed
   t = t << (8 - unstuff); // move up to make room for the next byte
@@ -274,6 +281,8 @@ void mel_decode(dec_mel_t *melp)
 static inline
 void mel_init(dec_mel_t *melp, OPJ_UINT8* bbuf, int lcup, int scup)
 {
+  int num;
+
   melp->data = bbuf + lcup - scup; // move the pointer to the start of MEL
   melp->bits = 0;                  // 0 bits in tmp
   melp->tmp = 0;                   //
@@ -286,16 +295,18 @@ void mel_init(dec_mel_t *melp, OPJ_UINT8* bbuf, int lcup, int scup)
   //This code is borrowed; original is for a different architecture
   //These few lines take care of the case where data is not at a multiple
   // of 4 boundary.  It reads 1,2,3 up to 4 bytes from the MEL segment
-  int num = 4 - (int)((intptr_t)(melp->data) & 0x3);
+  num = 4 - (int)((intptr_t)(melp->data) & 0x3);
   for (int i = 0; i < num; ++i) { // this code is similar to mel_read
+    OPJ_UINT64 d;
+    int d_bits;
+    
     assert(melp->unstuff == OPJ_FALSE || melp->data[0] <= 0x8F);
-    OPJ_UINT64 d = (melp->size > 0) ? *melp->data : 0xFF; // if buffer is 
-                                                          // consumed set data 
-                                                          // to 0xFF
+    d = (melp->size > 0) ? *melp->data : 0xFF; // if buffer is consumed 
+                                               // set data to 0xFF
     if (melp->size == 1) d |= 0xF; //if this is MEL+VLC-1, set LSBs to 0xF
                                     // see the standard
     melp->data += melp->size-- > 0; //increment if the end is not reached
-    int d_bits = 8 - melp->unstuff; //if unstuffing is needed, reduce by 1
+    d_bits = 8 - melp->unstuff; //if unstuffing is needed, reduce by 1
     melp->tmp = (melp->tmp << d_bits) | d; //store bits in tmp
     melp->bits += d_bits;  //increment tmp by number of bits
     melp->unstuff = ((d & 0xFF) == 0xFF); //true of next byte needs 
@@ -314,10 +325,11 @@ void mel_init(dec_mel_t *melp, OPJ_UINT8* bbuf, int lcup, int scup)
 static inline
 int mel_get_run(dec_mel_t *melp)
 {
+  int t;
   if (melp->num_runs == 0)  //if no runs, decode more bit from MEL segment
     mel_decode(melp);
 
-  int t = melp->runs & 0x7F; //retrieve one run
+  t = melp->runs & 0x7F; //retrieve one run
   melp->runs >>= 7;  // remove the retrieved run
   melp->num_runs--;
   return t; // return run
@@ -357,12 +369,18 @@ typedef struct rev_struct {
   *
   *  @param [in]  vlcp is a pointer to rev_struct_t structure
   */
-inline void rev_read(rev_struct_t *vlcp)
+static inline 
+void rev_read(rev_struct_t *vlcp)
 {
+  OPJ_UINT32 val;
+  OPJ_UINT32 tmp;
+  OPJ_UINT32 bits;
+  OPJ_BOOL unstuff;
+
   //process 4 bytes at a time
   if (vlcp->bits > 32)  // if there are more than 32 bits in tmp, then 
     return;             // reading 32 bits can overflow vlcp->tmp
-  OPJ_UINT32 val = 0;
+  val = 0;
   //the next line (the if statement) needs to be tested first
   if (vlcp->size > 0)  // if there are bytes left in the VLC segment
   {
@@ -374,23 +392,22 @@ inline void rev_read(rev_struct_t *vlcp)
   }
 
   //accumulate in tmp, number of bits in tmp are stored in bits
-  OPJ_UINT32 tmp = val >> 24;  //start with the MSB byte
-  OPJ_UINT32 bits;
+  tmp = val >> 24;  //start with the MSB byte
 
   // test unstuff (previous byte is >0x8F), and this byte is 0x7F
-  bits = 8 - ((vlcp->unstuff && (((val >> 24) & 0x7F) == 0x7F)) ? 1 : 0);
-  OPJ_BOOL unstuff = (val >> 24) > 0x8F; //this is for the next byte
+  bits = 8u - ((vlcp->unstuff && (((val >> 24) & 0x7F) == 0x7F)) ? 1u : 0u);
+  unstuff = (val >> 24) > 0x8F; //this is for the next byte
 
   tmp |= ((val >> 16) & 0xFF) << bits; //process the next byte
-  bits += 8 - ((unstuff && (((val >> 16) & 0x7F) == 0x7F)) ? 1 : 0);
+  bits += 8u - ((unstuff && (((val >> 16) & 0x7F) == 0x7F)) ? 1u : 0u);
   unstuff = ((val >> 16) & 0xFF) > 0x8F;
 
   tmp |= ((val >> 8) & 0xFF) << bits;
-  bits += 8 - ((unstuff && (((val >> 8) & 0x7F) == 0x7F)) ? 1 : 0);
+  bits += 8u - ((unstuff && (((val >> 8) & 0x7F) == 0x7F)) ? 1u : 0u);
   unstuff = ((val >> 8) & 0xFF) > 0x8F;
 
   tmp |= (val & 0xFF) << bits;
-  bits += 8 - ((unstuff && ((val & 0x7F) == 0x7F)) ? 1 : 0);
+  bits += 8u - ((unstuff && ((val & 0x7F) == 0x7F)) ? 1u : 0u);
   unstuff = (val & 0xFF) > 0x8F;
 
   // now move the read and unstuffed bits into vlcp->tmp
@@ -413,15 +430,20 @@ inline void rev_read(rev_struct_t *vlcp)
   *  @param [in]  lcup is the length of MagSgn+MEL+VLC segments
   *  @param [in]  scup is the length of MEL+VLC segments
   */
-inline void rev_init(rev_struct_t *vlcp, OPJ_UINT8* data, int lcup, int scup)
+static inline 
+void rev_init(rev_struct_t *vlcp, OPJ_UINT8* data, int lcup, int scup)
 {
+  OPJ_UINT32 d;
+  int num;
+  int tnum;
+
   //first byte has only the upper 4 bits
   vlcp->data = data + lcup - 2;
 
   //size can not be larger than this, in fact it should be smaller
   vlcp->size = scup - 2;
 
-  OPJ_UINT32 d = *vlcp->data--; // read one byte (this is a half byte)
+  d = *vlcp->data--;            // read one byte (this is a half byte)
   vlcp->tmp = d >> 4;           // both initialize and set
   vlcp->bits = 4 - ((vlcp->tmp & 7) == 7); //check standard
   vlcp->unstuff = (d | 0xF) > 0x8F; //this is useful for the next byte
@@ -430,13 +452,14 @@ inline void rev_init(rev_struct_t *vlcp, OPJ_UINT8* data, int lcup, int scup)
   // align to the read size (address multiple of 4 if read size is 4)
   //These few lines take care of the case where data is not at a multiple
   // of 4 boundary. It reads 1,2,3 up to 4 bytes from the VLC bitstream
-  int num = 1 + (int)((intptr_t)(vlcp->data) & 0x3);
-  int tnum = num < vlcp->size ? num : vlcp->size;
+  num = 1 + (int)((intptr_t)(vlcp->data) & 0x3);
+  tnum = num < vlcp->size ? num : vlcp->size;
   for (int i = 0; i < tnum; ++i) {
     OPJ_UINT64 d;
+    OPJ_UINT32 d_bits;
     d = *vlcp->data--;  // read one byte and move read pointer
     //check if the last byte was >0x8F (unstuff == true) and this is 0x7F
-    OPJ_UINT32 d_bits = 8 - ((vlcp->unstuff && ((d & 0x7F) == 0x7F)) ? 1 : 0);
+    d_bits = 8u - ((vlcp->unstuff && ((d & 0x7F) == 0x7F)) ? 1u : 0u);
     vlcp->tmp |= d << vlcp->bits; // move data to vlcp->tmp
     vlcp->bits += d_bits;
     vlcp->unstuff = d > 0x8F; // for next byte
@@ -453,7 +476,8 @@ inline void rev_init(rev_struct_t *vlcp, OPJ_UINT8* data, int lcup, int scup)
   *
   *  @param [in]  vlcp is a pointer to rev_struct structure
   */
-inline OPJ_UINT32 rev_fetch(rev_struct_t *vlcp)
+static inline 
+OPJ_UINT32 rev_fetch(rev_struct_t *vlcp)
 {
   if (vlcp->bits < 32)  // if there are less then 32 bits, read more
   {
@@ -470,7 +494,8 @@ inline OPJ_UINT32 rev_fetch(rev_struct_t *vlcp)
   *  @param [in]  vlcp is a pointer to rev_struct structure
   *  @param [in]  num_bits is the number of bits to be removed
   */
-inline OPJ_UINT32 rev_advance(rev_struct_t *vlcp, OPJ_UINT32 num_bits)
+static inline 
+OPJ_UINT32 rev_advance(rev_struct_t *vlcp, OPJ_UINT32 num_bits)
 {
   assert(num_bits <= vlcp->bits); // vlcp->tmp must have more than num_bits
   vlcp->tmp >>= num_bits;         // remove bits
@@ -489,12 +514,18 @@ inline OPJ_UINT32 rev_advance(rev_struct_t *vlcp, OPJ_UINT32 num_bits)
   *
   *  @param [in]  mrp is a pointer to rev_struct structure
   */
-inline void rev_read_mrp(rev_struct_t *mrp)
+static inline 
+void rev_read_mrp(rev_struct_t *mrp)
 {
+  OPJ_UINT32 val;
+  OPJ_UINT32 tmp; 
+  OPJ_UINT32 bits;
+  OPJ_BOOL unstuff;
+
   //process 4 bytes at a time
   if (mrp->bits > 32)
     return;
-  OPJ_UINT32 val = 0;
+  val = 0;
   //the next line (the if statement) needs to be tested first
   //notice that second line can be simplified to mrp->data -= 4
   // if (mrp->size > 0)
@@ -505,23 +536,23 @@ inline void rev_read_mrp(rev_struct_t *mrp)
   }
 
   //accumulate in tmp, and keep count in bits
-  OPJ_UINT32 tmp = (mrp->size-- > 0) ? (val >> 24) : 0; // fill zeros if all 
-  OPJ_UINT32 bits;                                      // bytes are used
+  tmp = (mrp->size-- > 0) ? (val >> 24) : 0; // fill zeros if all 
+                                                        
   //test if the last byte > 0x8F (unstuff must be true) and this is 0x7F
-  bits = 8 - ((mrp->unstuff && (((val >> 24) & 0x7F) == 0x7F)) ? 1 : 0);
-  OPJ_BOOL unstuff = (val >> 24) > 0x8F;
+  bits = 8u - ((mrp->unstuff && (((val >> 24) & 0x7F) == 0x7F)) ? 1u : 0u);
+  unstuff = (val >> 24) > 0x8F;
 
   //process the next byte
   tmp |= (mrp->size-- > 0) ? (((val >> 16) & 0xFF) << bits) : 0;
-  bits += 8 - ((unstuff && (((val >> 16) & 0x7F) == 0x7F)) ? 1 : 0);
+  bits += 8u - ((unstuff && (((val >> 16) & 0x7F) == 0x7F)) ? 1u : 0u);
   unstuff = ((val >> 16) & 0xFF) > 0x8F;
 
   tmp |= (mrp->size-- > 0) ? (((val >> 8) & 0xFF) << bits) : 0;
-  bits += 8 - ((unstuff && (((val >> 8) & 0x7F) == 0x7F)) ? 1 : 0);
+  bits += 8u - ((unstuff && (((val >> 8) & 0x7F) == 0x7F)) ? 1u : 0u);
   unstuff = ((val >> 8) & 0xFF) > 0x8F;
 
   tmp |= (mrp->size-- > 0) ? ((val & 0xFF) << bits) : 0;
-  bits += 8 - ((unstuff && ((val & 0x7F) == 0x7F)) ? 1 : 0);
+  bits += 8u - ((unstuff && ((val & 0x7F) == 0x7F)) ? 1u : 0u);
   unstuff = (val & 0xFF) > 0x8F;
 
   mrp->tmp |= (OPJ_UINT64)tmp << mrp->bits; // move data to mrp pointer
@@ -544,9 +575,11 @@ inline void rev_read_mrp(rev_struct_t *mrp)
   *  @param [in]  lcup is the length of MagSgn+MEL+VLC segments
   *  @param [in]  len2 is the length of SPP+MRP segments
   */
-inline void rev_init_mrp(rev_struct_t *mrp, OPJ_UINT8* data, int lcup, 
-                         int len2)
+static inline 
+void rev_init_mrp(rev_struct_t *mrp, OPJ_UINT8* data, int lcup, int len2)
 {
+  int num;
+
   mrp->data = data + lcup + len2 - 1;
   mrp->size = len2;
   mrp->unstuff = OPJ_TRUE;
@@ -557,13 +590,15 @@ inline void rev_init_mrp(rev_struct_t *mrp, OPJ_UINT8* data, int lcup,
   // align to the read size (address multiple of 4 if read size is 4)
   //These few lines take care of the case where data is not at a multiple
   // of 4 boundary.  It reads 1,2,3 up to 4 bytes from the MRP stream
-  int num = 1 + (int)((intptr_t)(mrp->data) & 0x3);
+  num = 1 + (int)((intptr_t)(mrp->data) & 0x3);
   for (int i = 0; i < num; ++i) {
     OPJ_UINT64 d;
+    OPJ_UINT32 d_bits;
+
     //read a byte, 0 if no more data
     d = (mrp->size-- > 0) ? *mrp->data-- : 0; 
     //check if unstuffing is needed
-    OPJ_UINT32 d_bits = 8 - ((mrp->unstuff && ((d & 0x7F) == 0x7F)) ? 1 : 0);
+    d_bits = 8u - ((mrp->unstuff && ((d & 0x7F) == 0x7F)) ? 1u : 0u);
     mrp->tmp |= d << mrp->bits; // move data to vlcp->tmp
     mrp->bits += d_bits;
     mrp->unstuff = d > 0x8F; // for next byte
@@ -579,7 +614,8 @@ inline void rev_init_mrp(rev_struct_t *mrp, OPJ_UINT8* data, int lcup,
   *
   *  @param [in]  mrp is a pointer to rev_struct structure
   */
-inline OPJ_UINT32 rev_fetch_mrp(rev_struct_t *mrp)
+static inline 
+OPJ_UINT32 rev_fetch_mrp(rev_struct_t *mrp)
 {
   if (mrp->bits < 32) // if there are less than 32 bits in mrp->tmp
   {
@@ -596,7 +632,8 @@ inline OPJ_UINT32 rev_fetch_mrp(rev_struct_t *mrp)
   *  @param [in]  mrp is a pointer to rev_struct structure
   *  @param [in]  num_bits is the number of bits to be removed
   */
-inline OPJ_UINT32 rev_advance_mrp(rev_struct_t *mrp, OPJ_UINT32 num_bits)
+static inline 
+OPJ_UINT32 rev_advance_mrp(rev_struct_t *mrp, OPJ_UINT32 num_bits)
 {
   assert(num_bits <= mrp->bits); // we must not consume more than mrp->bits
   mrp->tmp >>= num_bits;         // discard the lowest num_bits bits
@@ -615,8 +652,8 @@ inline OPJ_UINT32 rev_advance_mrp(rev_struct_t *mrp, OPJ_UINT32 num_bits)
   *  @param [out] u is the u value (or u_q) + 1.  Note: we produce u + 1;
   *               this value is a partial calculation of u + kappa.
   */
-inline OPJ_UINT32 decode_init_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode, 
-                                   OPJ_UINT32 *u)
+static inline 
+OPJ_UINT32 decode_init_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode, OPJ_UINT32 *u)
 {
   //table stores possible decoding three bits from vlc
   // there are 8 entries for xx1, x10, 100, 000, where x means do not care
@@ -642,11 +679,14 @@ inline OPJ_UINT32 decode_init_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode,
   }
   else if (mode <= 2) // u_off are either 01 or 10
   {
-    OPJ_UINT32 d = dec[vlc & 0x7];   //look at the least significant 3 bits
+    OPJ_UINT32 d;
+    OPJ_UINT32 suffix_len;
+
+    d = dec[vlc & 0x7];   //look at the least significant 3 bits
     vlc >>= d & 0x3;                 //prefix length
     consumed_bits += d & 0x3; 
 
-    OPJ_UINT32 suffix_len = ((d >> 2) & 0x7); 
+    suffix_len = ((d >> 2) & 0x7); 
     consumed_bits += suffix_len;
 
     d = (d >> 5) + (vlc & ((1U << suffix_len) - 1)); // u value
@@ -661,23 +701,28 @@ inline OPJ_UINT32 decode_init_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode,
 
     if ((d1 & 0x3) > 2)
     {
+      OPJ_UINT32 suffix_len;
+
       //u_{q_2} prefix
       u[1] = (vlc & 1) + 1 + 1; //Kappa is 1 for initial line
       ++consumed_bits;
       vlc >>= 1;
 
-      OPJ_UINT32 suffix_len = ((d1 >> 2) & 0x7);
+      suffix_len = ((d1 >> 2) & 0x7);
       consumed_bits += suffix_len;
       d1 = (d1 >> 5) + (vlc & ((1U << suffix_len) - 1)); // u value
       u[0] = d1 + 1; //Kappa is 1 for initial line
     }
     else
     {
-      OPJ_UINT32 d2 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
-      vlc >>= d2 & 0x3;                // Consume bits
+      OPJ_UINT32 d2;
+      OPJ_UINT32 suffix_len;
+
+      d2 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
+      vlc >>= d2 & 0x3;     // Consume bits
       consumed_bits += d2 & 0x3;
 
-      OPJ_UINT32 suffix_len = ((d1 >> 2) & 0x7);
+      suffix_len = ((d1 >> 2) & 0x7);
       consumed_bits += suffix_len;
 
       d1 = (d1 >> 5) + (vlc & ((1U << suffix_len) - 1)); // u value
@@ -693,15 +738,19 @@ inline OPJ_UINT32 decode_init_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode,
   }
   else if (mode == 4) // both u_off are 1, and MEL event is 1
   {
-    OPJ_UINT32 d1 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
-    vlc >>= d1 & 0x3;                // Consume bits
+    OPJ_UINT32 d1;
+    OPJ_UINT32 d2;
+    OPJ_UINT32 suffix_len;
+
+    d1 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
+    vlc >>= d1 & 0x3;     // Consume bits
     consumed_bits += d1 & 0x3;
 
-    OPJ_UINT32 d2 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
-    vlc >>= d2 & 0x3;                // Consume bits
+    d2 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
+    vlc >>= d2 & 0x3;     // Consume bits
     consumed_bits += d2 & 0x3;
 
-    OPJ_UINT32 suffix_len = ((d1 >> 2) & 0x7);
+    suffix_len = ((d1 >> 2) & 0x7);
     consumed_bits += suffix_len;
 
     d1 = (d1 >> 5) + (vlc & ((1U << suffix_len) - 1)); // u value
@@ -726,8 +775,8 @@ inline OPJ_UINT32 decode_init_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode,
   *  @param [out] u is the u value (or u_q) + 1.  Note: we produce u + 1;
   *               this value is a partial calculation of u + kappa.
   */
-inline OPJ_UINT32 decode_noninit_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode, 
-                                      OPJ_UINT32 *u)
+static inline 
+OPJ_UINT32 decode_noninit_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode, OPJ_UINT32 *u)
 {
   //table stores possible decoding three bits from vlc
   // there are 8 entries for xx1, x10, 100, 000, where x means do not care
@@ -753,11 +802,14 @@ inline OPJ_UINT32 decode_noninit_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode,
   }
   else if (mode <= 2) //u_off are either 01 or 10
   {
-    OPJ_UINT32 d = dec[vlc & 0x7];  //look at the least significant 3 bits
-    vlc >>= d & 0x3;                //prefix length
+    OPJ_UINT32 d;
+    OPJ_UINT32 suffix_len;
+
+    d = dec[vlc & 0x7];  //look at the least significant 3 bits
+    vlc >>= d & 0x3;     //prefix length
     consumed_bits += d & 0x3;
 
-    OPJ_UINT32 suffix_len = ((d >> 2) & 0x7);
+    suffix_len = ((d >> 2) & 0x7);
     consumed_bits += suffix_len;
 
     d = (d >> 5) + (vlc & ((1U << suffix_len) - 1)); // u value
@@ -766,15 +818,19 @@ inline OPJ_UINT32 decode_noninit_uvlc(OPJ_UINT32 vlc, OPJ_UINT32 mode,
   }
   else if (mode == 3) // both u_off are 1
   {
-    OPJ_UINT32 d1 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
-    vlc >>= d1 & 0x3;                // Consume bits
+    OPJ_UINT32 d1;
+    OPJ_UINT32 d2;
+    OPJ_UINT32 suffix_len;
+
+    d1 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
+    vlc >>= d1 & 0x3;     // Consume bits
     consumed_bits += d1 & 0x3;
 
-    OPJ_UINT32 d2 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
-    vlc >>= d2 & 0x3;                // Consume bits
+    d2 = dec[vlc & 0x7];  // LSBs of VLC are prefix codeword
+    vlc >>= d2 & 0x3;     // Consume bits
     consumed_bits += d2 & 0x3;
 
-    OPJ_UINT32 suffix_len = ((d1 >> 2) & 0x7);
+    suffix_len = ((d1 >> 2) & 0x7);
     consumed_bits += suffix_len;
 
     d1 = (d1 >> 5) + (vlc & ((1U << suffix_len) - 1)); // u value
@@ -820,31 +876,36 @@ typedef struct frwd_struct {
   *  @param  [in]  msp is a pointer to frwd_struct_t structure
   *
   */ 
+static inline
 void frwd_read(frwd_struct_t *msp)
 {
+  OPJ_UINT32 val;
+  OPJ_UINT32 bits;
+  OPJ_UINT32 t;
+  OPJ_BOOL unstuff;
+
   assert(msp->bits <= 32); // assert that there is a space for 32 bits
 
-  OPJ_UINT32 val;
   val = *(OPJ_UINT32*)msp->data;      // read 32 bits
   msp->data += msp->size > 0 ? 4 : 0; // move pointer if data is not 
                                       // exhausted
 
   // we accumulate in t and keep a count of the number of bits in bits
-  OPJ_UINT32 bits = 8 - msp->unstuff;     // if previous byte was 0xFF
+  bits = 8u - (msp->unstuff ? 1u:0u);     // if previous byte was 0xFF
   // get next byte, if bitstream is exhausted, replace it with X
-  OPJ_UINT32 t = msp->size-- > 0 ? (val & 0xFF) : msp->X;
-  OPJ_BOOL unstuff = ((val & 0xFF) == 0xFF);  // Do we need unstuffing next?
+  t = msp->size-- > 0 ? (val & 0xFF) : msp->X;
+  unstuff = ((val & 0xFF) == 0xFF);  // Do we need unstuffing next?
 
   t |= (msp->size-- > 0 ? ((val >> 8) & 0xFF) : msp->X) << bits;
-  bits += 8 - unstuff;
+  bits += 8u - (unstuff ? 1u:0u);
   unstuff = (((val >> 8) & 0xFF) == 0xFF);
 
   t |= (msp->size-- > 0 ? ((val >> 16) & 0xFF) : msp->X) << bits;
-  bits += 8 - unstuff;
+  bits += 8u - (unstuff ? 1u:0u);
   unstuff = (((val >> 16) & 0xFF) == 0xFF);
 
   t |= (msp->size-- > 0 ? ((val >> 24) & 0xFF) : msp->X) << bits;
-  bits += 8 - unstuff;
+  bits += 8u - (unstuff ? 1u:0u);
   msp->unstuff = (((val >> 24) & 0xFF) == 0xFF); // for next byte
 
   msp->tmp |= ((OPJ_UINT64)t) << msp->bits;  // move data to msp->tmp
@@ -860,9 +921,12 @@ void frwd_read(frwd_struct_t *msp)
   *  @param [in]  X is the value fed in when the bitstream is exhausted.
   *               See frwd_read.
   */
+static inline
 void frwd_init(frwd_struct_t *msp, const OPJ_UINT8* data, int size, 
                OPJ_UINT32 X)
 {
+  int num;
+
   msp->data = data;
   msp->tmp = 0;
   msp->bits = 0;
@@ -875,15 +939,15 @@ void frwd_init(frwd_struct_t *msp, const OPJ_UINT8* data, int size,
   // align to the read size (address multiple of 4 if read size is 4)
   //These few lines take care of the case where data is not at a multiple
   // of 4 boundary.  It reads 1,2,3 up to 4 bytes from the bitstream
-  int num = 4 - (int)((intptr_t)(msp->data) & 0x3);
+  num = 4 - (int)((intptr_t)(msp->data) & 0x3);
   for (int i = 0; i < num; ++i)
   {
     OPJ_UINT64 d;
     //read a byte if the buffer is not exhausted, otherwise set it to X
     d = msp->size-- > 0 ? *msp->data++ : msp->X;
-    msp->tmp |= (d << msp->bits);      // store data in msp->tmp
-    msp->bits += 8 - msp->unstuff;     // number of bits added to msp->tmp
-    msp->unstuff = ((d & 0xFF) == 0xFF); // unstuffing for next byte
+    msp->tmp |= (d << msp->bits);           // store data in msp->tmp
+    msp->bits += 8u - (msp->unstuff?1u:0u); // number of bits added to msp->tmp
+    msp->unstuff = ((d & 0xFF) == 0xFF);    // unstuffing for next byte
   }
   frwd_read(msp); // read 32 bits more
 }
@@ -894,7 +958,8 @@ void frwd_init(frwd_struct_t *msp, const OPJ_UINT8* data, int size,
   *  @param [in]  msp is a pointer to frwd_struct_t
   *  @param [in]  num_bits is the number of bit to consume
   */
-inline void frwd_advance(frwd_struct_t *msp, OPJ_UINT32 num_bits)
+static inline 
+void frwd_advance(frwd_struct_t *msp, OPJ_UINT32 num_bits)
 {
   assert(num_bits <= msp->bits);
   msp->tmp >>= num_bits;  // consume num_bits
@@ -906,6 +971,7 @@ inline void frwd_advance(frwd_struct_t *msp, OPJ_UINT32 num_bits)
   *
   *  @param [in]  msp is a pointer to frwd_struct_t
   */
+static inline 
 OPJ_UINT32 frwd_fetch(frwd_struct_t *msp)
 {
   if (msp->bits < 32)
@@ -926,7 +992,6 @@ static OPJ_BOOL opj_t1_allocate_buffers(
     OPJ_UINT32 h)
 {
     OPJ_UINT32 flagssize;
-    OPJ_UINT32 flags_stride;
 
     /* No risk of overflow. Prior checks ensure those assert are met */
     /* They are per the specification */
@@ -953,9 +1018,6 @@ static OPJ_BOOL opj_t1_allocate_buffers(
             memset(t1->data, 0, datasize * sizeof(OPJ_INT32));
         }
     }
-
-    flags_stride = 0; // not used
-
 
     // We expand these buffers to multiples of 16 bytes.
     // We need 4 buffers of 129 integers each, expanded to 132 integers each
@@ -997,6 +1059,34 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                                opj_mutex_t* p_manager_mutex,
                                OPJ_BOOL check_pterm)
 {
+  OPJ_BYTE* cblkdata = NULL;
+  OPJ_UINT8* coded_data;
+  OPJ_UINT32* decoded_data;
+  OPJ_UINT32 num_passes;
+  OPJ_UINT32 lengths1;
+  OPJ_UINT32 lengths2;
+  OPJ_INT32 width;
+  OPJ_INT32 height;
+  OPJ_INT32 stride;
+  OPJ_UINT32 *pflags, *sigma1, *sigma2, *mbr1, *mbr2, *sip, sip_shift;
+  OPJ_UINT32 p;
+  OPJ_UINT32 zero_planes_p1;
+  int lcup, scup;
+  dec_mel_t mel;
+  rev_struct_t vlc;
+  frwd_struct_t magsgn;
+  frwd_struct_t sigprop;
+  rev_struct_t magref;
+  OPJ_UINT8 *lsp, *line_state;
+  int run;  
+  OPJ_UINT32 vlc_val;           
+  OPJ_UINT32 qinf[2];
+  OPJ_UINT32 c_q;
+  OPJ_UINT32* sp;
+
+  (void)(orient);      // stops unused parameter message
+  (void)(check_pterm); // stops unused parameter message
+
   // We ignor orient, because the same decoder is used for all subbands
   // We also ignore check_pterm, because I am not sure how it applies
   assert(cblksty == 0x40); // that is the only support mode
@@ -1009,8 +1099,6 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       opj_mutex_unlock(p_manager_mutex);
     return OPJ_FALSE;
   }
-
-  OPJ_BYTE* cblkdata = NULL;
 
   if (!opj_t1_allocate_buffers(
               t1,
@@ -1059,24 +1147,24 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       return OPJ_TRUE;
   }
 
-  // coded_data is a pointer to bitstream
-  OPJ_UINT8* coded_data = cblkdata;
-  // decoded_data is a pointer to decoded codeblock data buf.
-  OPJ_UINT32* decoded_data = t1->data;
-  // num_passes is the number of passes: 1 if CUP only, 2 for CUP+SPP, and 
-  // 3 for CUP+SPP+MRP
-  OPJ_UINT32 num_passes = cblk->numsegs>0 ? cblk->segs[0].real_num_passes : 0;
+  // OPJ_BYTE* coded_data is a pointer to bitstream
+  coded_data = cblkdata;
+  // OPJ_UINT32* decoded_data is a pointer to decoded codeblock data buf.
+  decoded_data = (OPJ_UINT32*)t1->data;
+  // OPJ_UINT32 num_passes is the number of passes: 1 if CUP only, 2 for 
+  // CUP+SPP, and 3 for CUP+SPP+MRP
+  num_passes = cblk->numsegs>0 ? cblk->segs[0].real_num_passes : 0;
   num_passes += cblk->numsegs>1 ? cblk->segs[1].real_num_passes : 0;
-  // lengths1 is the length of cleanup pass
-  OPJ_UINT32 lengths1 = num_passes > 0 ? cblk->segs[0].len : 0;
-  // lengths2 is the length of refinement passes (either SPP only or SPP+MRP)
-  OPJ_UINT32 lengths2 = num_passes > 1 ? cblk->segs[1].len : 0;
-  // width is the decoded codeblock width 
-  OPJ_UINT32 width = cblk->x1 - cblk->x0;
-  // height is the decoded codeblock height
-  OPJ_UINT32 height = cblk->y1 - cblk->y0;
-  // stride is the decoded codeblock buffer stride 
-  OPJ_UINT32 stride = width;
+  // OPJ_UINT32 lengths1 is the length of cleanup pass
+  lengths1 = num_passes > 0 ? cblk->segs[0].len : 0;
+  // OPJ_UINT32 lengths2 is the length of refinement passes (either SPP only or SPP+MRP)
+  lengths2 = num_passes > 1 ? cblk->segs[1].len : 0;
+  // OPJ_INT32 width is the decoded codeblock width 
+  width = cblk->x1 - cblk->x0;
+  // OPJ_INT32 height is the decoded codeblock height
+  height = cblk->y1 - cblk->y0;
+  // OPJ_INT32 stride is the decoded codeblock buffer stride 
+  stride = width;
 
    /*  sigma1 and sigma2 contains significant (i.e., non-zero) pixel 
     *  locations.  The buffers are used interchangeably, because we need
@@ -1091,14 +1179,17 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     *  goes outside the structure
     *  To work in OpenJPEG these buffers has been expanded to 132.
     */
-  OPJ_UINT32 *pflags = (OPJ_UINT32 *)t1->flags;
-  OPJ_UINT32 *sigma1 = pflags, *sigma2 = sigma1 + 132;
+  // OPJ_UINT32 *pflags, *sigma1, *sigma2, *mbr1, *mbr2, *sip, sip_shift;
+  pflags = (OPJ_UINT32 *)t1->flags;
+  sigma1 = pflags;
+  sigma2 = sigma1 + 132;
   // mbr arrangement is similar to sigma; mbr contains locations 
   // that become significant during significance propagation pass
-  OPJ_UINT32 *mbr1 = sigma2 + 132, *mbr2 = mbr1 + 132;
+  mbr1 = sigma2 + 132;
+  mbr2 = mbr1 + 132;
   //a pointer to sigma
-  OPJ_UINT32 *sip = sigma1; //pointers to arrays to be used interchangeably
-  OPJ_UINT32 sip_shift = 0; //the amount of shift needed for sigma
+  sip = sigma1;  //pointers to arrays to be used interchangeably
+  sip_shift = 0; //the amount of shift needed for sigma
 
   if (num_passes > 1 && lengths2 == 0)
   {
@@ -1158,12 +1249,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       return OPJ_TRUE;
     }
 
-  OPJ_UINT32 p = cblk->numbps; 
-  // zero planes plus 1
-  OPJ_UINT32 zero_planes_p1 = cblk->Mb - cblk->numbps + 1;
+  // OPJ_INT32
+  p = cblk->numbps; 
+  // OPJ_INT32 zero planes plus 1
+  zero_planes_p1 = cblk->Mb - cblk->numbps + 1;
 
   // read scup and fix the bytes there
-  int lcup, scup;
   lcup = (int)lengths1;  // length of CUP
   //scup is the length of MEL + VLC
   scup = (((int)coded_data[lcup-1]) << 4) + (coded_data[lcup-2] & 0xF);
@@ -1171,16 +1262,11 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     return OPJ_FALSE;
 
   // init structures
-  dec_mel_t mel;
   mel_init(&mel, coded_data, lcup, scup);
-  rev_struct_t vlc;
   rev_init(&vlc, coded_data, lcup, scup);
-  frwd_struct_t magsgn;
   frwd_init(&magsgn, coded_data, lcup - scup, 0xFF);
-  frwd_struct_t sigprop;
   if (num_passes > 1) // needs to be tested
     frwd_init(&sigprop, coded_data + lengths1, (int)lengths2, 0);
-  rev_struct_t magref;
   if (num_passes > 2)
     rev_init_mrp(&magref, coded_data, (int)lengths1, (int)lengths2);
 
@@ -1195,22 +1281,29 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
   // 514 is enough for a block width of 1024, +2 extra
   // here expanded to 528
-  OPJ_UINT8 *lsp, *line_state = (OPJ_UINT8 *)(mbr2 + 132); 
+  line_state = (OPJ_UINT8 *)(mbr2 + 132); 
 
   //initial 2 lines
   /////////////////
-  lsp = line_state;              // point to line state
-  lsp[0] = 0;                    // for initial row of quad, we set to 0
-  int run = mel_get_run(&mel);   // decode runs of events from MEL bitstrm
-                                 // data represented as runs of 0 events
-                                 // See mel_decode description
-  OPJ_UINT32 vlc_val;            // fetched data from VLC bitstream
-  OPJ_UINT32 qinf[2] = { 0 };    // quad info decoded from VLC bitstream
-  OPJ_UINT32 c_q = 0;            // context for quad q
-  OPJ_UINT32* sp = decoded_data; // decoded codeblock samples
+  lsp = line_state;           // point to line state
+  lsp[0] = 0;                 // for initial row of quad, we set to 0
+  run = mel_get_run(&mel);    // decode runs of events from MEL bitstrm
+                              // data represented as runs of 0 events
+                              // See mel_decode description
+  qinf[0] = qinf[1] = 0;      // quad info decoded from VLC bitstream
+  c_q = 0;                    // context for quad q
+  sp = decoded_data;          // decoded codeblock samples
+  // vlc_val;                 // fetched data from VLC bitstream
 
-  for (OPJ_UINT32 x = 0; x < width; x += 4) // one iteration per quad pair
+  for (OPJ_INT32 x = 0; x < width; x += 4) // one iteration per quad pair
   {
+    OPJ_UINT32 U_q[2]; // u values for the quad pair
+    OPJ_UINT32 uvlc_mode;
+    OPJ_UINT32 consumed_bits;
+    OPJ_UINT32 m_n, v_n;
+    OPJ_UINT32 ms_val;
+    OPJ_UINT32 locs;
+
     // decode VLC
     /////////////
 
@@ -1308,10 +1401,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     // retrieve u
     /////////////
-    OPJ_UINT32 U_q[2]; // u values for the quad pair
 
     // uvlc_mode is made up of u_offset bits from the quad pair
-    OPJ_UINT32 uvlc_mode = ((qinf[0] & 0x8) >> 3) | ((qinf[1] & 0x8) >> 2);
+    uvlc_mode = ((qinf[0] & 0x8) >> 3) | ((qinf[1] & 0x8) >> 2);
     if (uvlc_mode == 3)  // if both u_offset are set, get an event from
     {                    // the MEL run of events
       run -= 2; //subtract 2, since events number if multiplied by 2
@@ -1320,7 +1412,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
         run = mel_get_run(&mel);
     }
     //decode uvlc_mode to get u for both quads
-    OPJ_UINT32 consumed_bits = decode_init_uvlc(vlc_val, uvlc_mode, U_q);
+    consumed_bits = decode_init_uvlc(vlc_val, uvlc_mode, U_q);
     if (U_q[0] > zero_planes_p1 || U_q[1] > zero_planes_p1)
     {
       if (p_manager_mutex)
@@ -1337,22 +1429,22 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     //decode magsgn and update line_state
     /////////////////////////////////////
-    OPJ_UINT32 m_n, v_n;
-    OPJ_UINT32 ms_val;
 
     //We obtain a mask for the samples locations that needs evaluation
-    OPJ_UINT32 locs = 0xFF;
+    locs = 0xFF;
     if (x + 4 > width) locs >>= (x + 4 - width) << 1; // limits width
     locs = height > 1 ? locs : (locs & 0x55);         // limits height
 
     //first quad, starting at first sample in quad and moving on
     if (qinf[0] & 0x10) //is it signifcant? (sigma_n)
     {
+      OPJ_UINT32 val;
+
       ms_val = frwd_fetch(&magsgn);         //get 32 bits of magsgn data
       m_n = U_q[0] - ((qinf[0] >> 12) & 1); //evaluate m_n (number of bits
                                   // to read from bitstream), using EMB e_k
       frwd_advance(&magsgn, m_n);         //consume m_n
-      OPJ_UINT32 val = ms_val << 31;      //get sign bit
+      val = ms_val << 31;                 //get sign bit
       v_n = ms_val & ((1U << m_n) - 1);   //keep only m_n bits
       v_n |= ((qinf[0] & 0x100) >> 8) << m_n;  //add EMB e_1 as MSB
       v_n |= 1;                                //add center of bin    
@@ -1365,10 +1457,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     if (qinf[0] & 0x20) //sigma_n
     {
+      OPJ_UINT32 val, t;
+
       ms_val = frwd_fetch(&magsgn);         //get 32 bits
       m_n = U_q[0] - ((qinf[0] >> 13) & 1); //m_n, uses EMB e_k
       frwd_advance(&magsgn, m_n);           //consume m_n
-      OPJ_UINT32 val = ms_val << 31;        //get sign bit
+      val = ms_val << 31;                   //get sign bit
       v_n = ms_val & ((1U << m_n) - 1);     //keep only m_n bits
       v_n |= ((qinf[0] & 0x200) >> 9) << m_n; //add EMB e_1
       v_n |= 1;                               //bin center
@@ -1377,7 +1471,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       sp[stride] = val | ((v_n + 2) << (p - 1)); 
 
       //update line_state: bit 7 (\sigma^N), and E^N
-      OPJ_UINT32 t = lsp[0] & 0x7F;          //keep E^NW
+      t = lsp[0] & 0x7F;       // keep E^NW
       v_n = 32 - count_leading_zeros(v_n); 
       lsp[0] = (OPJ_UINT8)(0x80 | (t > v_n ? t : v_n)); //max(E^NW, E^N) | s
     }
@@ -1390,10 +1484,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     //this is similar to the above two samples
     if (qinf[0] & 0x40) 
     {
+      OPJ_UINT32 val;
+
       ms_val = frwd_fetch(&magsgn);
       m_n = U_q[0] - ((qinf[0] >> 14) & 1); 
       frwd_advance(&magsgn, m_n);
-      OPJ_UINT32 val = ms_val << 31;
+      val = ms_val << 31;
       v_n = ms_val & ((1U << m_n) - 1);
       v_n |= (((qinf[0] & 0x400) >> 10) << m_n);
       v_n |= 1; 
@@ -1405,10 +1501,11 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     lsp[0] = 0;
     if (qinf[0] & 0x80) 
     {
+      OPJ_UINT32 val;
       ms_val = frwd_fetch(&magsgn);
       m_n = U_q[0] - ((qinf[0] >> 15) & 1); //m_n
       frwd_advance(&magsgn, m_n);
-      OPJ_UINT32 val = ms_val << 31;
+      val = ms_val << 31;
       v_n = ms_val & ((1U << m_n) - 1);
       v_n |= ((qinf[0] & 0x800) >> 11) << m_n;
       v_n |= 1; //center of bin
@@ -1425,10 +1522,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     //second quad
     if (qinf[1] & 0x10) 
     {
+      OPJ_UINT32 val;
+
       ms_val = frwd_fetch(&magsgn);
       m_n = U_q[1] - ((qinf[1] >> 12) & 1); //m_n
       frwd_advance(&magsgn, m_n);
-      OPJ_UINT32 val = ms_val << 31;
+      val = ms_val << 31;
       v_n = ms_val & ((1U << m_n) - 1);
       v_n |= (((qinf[1] & 0x100) >> 8) << m_n);
       v_n |= 1;
@@ -1439,17 +1538,19 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     if (qinf[1] & 0x20)
     {
+      OPJ_UINT32 val, t;
+
       ms_val = frwd_fetch(&magsgn);
       m_n = U_q[1] - ((qinf[1] >> 13) & 1); //m_n
       frwd_advance(&magsgn, m_n);
-      OPJ_UINT32 val = ms_val << 31;
+      val = ms_val << 31;
       v_n = ms_val & ((1U << m_n) - 1);
       v_n |= (((qinf[1] & 0x200) >> 9) << m_n);
       v_n |= 1;
       sp[stride] = val | ((v_n + 2) << (p - 1));
 
       //update line_state: bit 7 (\sigma^N), and E^N
-      OPJ_UINT32 t = lsp[0] & 0x7F;            //E^NW
+      t = lsp[0] & 0x7F;            //E^NW
       v_n = 32 - count_leading_zeros(v_n);     //E^N
       lsp[0] = (OPJ_UINT8)(0x80 | (t > v_n ? t : v_n)); //max(E^NW, E^N) | s
     }
@@ -1461,10 +1562,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     if (qinf[1] & 0x40)
     {
+      OPJ_UINT32 val;
+
       ms_val = frwd_fetch(&magsgn);
       m_n = U_q[1] - ((qinf[1] >> 14) & 1); //m_n
       frwd_advance(&magsgn, m_n);
-      OPJ_UINT32 val = ms_val << 31;
+      val = ms_val << 31;
       v_n = ms_val & ((1U << m_n) - 1);
       v_n |= (((qinf[1] & 0x400) >> 10) << m_n);
       v_n |= 1;
@@ -1476,10 +1579,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     lsp[0] = 0;
     if (qinf[1] & 0x80)
     {
+      OPJ_UINT32 val;
+
       ms_val = frwd_fetch(&magsgn);
       m_n = U_q[1] - ((qinf[1] >> 15) & 1); //m_n
       frwd_advance(&magsgn, m_n);
-      OPJ_UINT32 val = ms_val << 31;
+      val = ms_val << 31;
       v_n = ms_val & ((1U << m_n) - 1);
       v_n |= (((qinf[1] & 0x800) >> 11) << m_n);
       v_n |= 1; //center of bin
@@ -1496,19 +1601,28 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
   //non-initial lines
   //////////////////////////
-  for (OPJ_UINT32 y = 2; y < height; /*done at the end of loop*/)
+  for (OPJ_INT32 y = 2; y < height; /*done at the end of loop*/)
   {
+    OPJ_UINT32 *sip;
+    OPJ_UINT8 ls0;
+
     sip_shift ^= 0x2;  // shift sigma to the upper half od the nibble
     sip_shift &= 0xFFFFFFEFU; //move back to 0 (it might have been at 0x10)
-    OPJ_UINT32 *sip = y & 0x4 ? sigma2 : sigma1; //choose sigma array
+    sip = y & 0x4 ? sigma2 : sigma1; //choose sigma array
 
     lsp = line_state;
-    OPJ_UINT8 ls0 = lsp[0];         // read the line state value
+    ls0 = lsp[0];                   // read the line state value
     lsp[0] = 0;                     // and set it to zero
     sp = decoded_data + y * stride; // generated samples
     c_q = 0;                        // context
-    for (OPJ_UINT32 x = 0; x < width; x += 4)
+    for (OPJ_INT32 x = 0; x < width; x += 4)
     {
+      OPJ_UINT32 U_q[2];
+      OPJ_UINT32 uvlc_mode, consumed_bits;
+      OPJ_UINT32 m_n, v_n;
+      OPJ_UINT32 ms_val;
+      OPJ_UINT32 locs;
+
       // decode vlc
       /////////////
 
@@ -1574,9 +1688,8 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       //retrieve u
       ////////////
-      OPJ_UINT32 U_q[2];
-      OPJ_UINT32 uvlc_mode = ((qinf[0] & 0x8) >> 3) | ((qinf[1] & 0x8) >> 2);
-      OPJ_UINT32 consumed_bits = decode_noninit_uvlc(vlc_val, uvlc_mode, U_q);
+      uvlc_mode = ((qinf[0] & 0x8) >> 3) | ((qinf[1] & 0x8) >> 2);
+      consumed_bits = decode_noninit_uvlc(vlc_val, uvlc_mode, U_q);
       vlc_val = rev_advance(&vlc, consumed_bits);
 
       //calculate E^max and add it to U_q, eqns 5 and 6 in ITU T.814
@@ -1612,21 +1725,21 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       //decode magsgn and update line_state
       /////////////////////////////////////
-      OPJ_UINT32 m_n, v_n;
-      OPJ_UINT32 ms_val;
 
       //locations where samples need update
-      OPJ_UINT32 locs = 0xFF;
+      locs = 0xFF;
       if (x + 4 > width) locs >>= (x + 4 - width) << 1;
       locs = height > 1 ? locs : (locs & 0x55);
 
 
       if (qinf[0] & 0x10) //sigma_n
       {
+        OPJ_UINT32 val;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[0] - ((qinf[0] >> 12) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= ((qinf[0] & 0x100) >> 8) << m_n;
         v_n |= 1; //center of bin
@@ -1637,17 +1750,19 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       if (qinf[0] & 0x20) //sigma_n
       {
+        OPJ_UINT32 val, t;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[0] - ((qinf[0] >> 13) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= ((qinf[0] & 0x200) >> 9) << m_n;
         v_n |= 1; //center of bin
         sp[stride] = val | ((v_n + 2) << (p - 1));
 
         //update line_state: bit 7 (\sigma^N), and E^N
-        OPJ_UINT32 t = lsp[0] & 0x7F;          //E^NW
+        t = lsp[0] & 0x7F;          //E^NW
         v_n = 32 - count_leading_zeros(v_n); 
         lsp[0] = (OPJ_UINT8)(0x80 | (t > v_n ? t : v_n));
       }
@@ -1659,10 +1774,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       if (qinf[0] & 0x40) //sigma_n
       {
+        OPJ_UINT32 val;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[0] - ((qinf[0] >> 14) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= (((qinf[0] & 0x400) >> 10) << m_n);
         v_n |= 1;                            //center of bin
@@ -1673,10 +1790,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       if (qinf[0] & 0x80) //sigma_n
       {
+        OPJ_UINT32 val;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[0] - ((qinf[0] >> 15) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= ((qinf[0] & 0x800) >> 11) << m_n;
         v_n |= 1; //center of bin
@@ -1692,10 +1811,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       if (qinf[1] & 0x10) //sigma_n
       {
+        OPJ_UINT32 val;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[1] - ((qinf[1] >> 12) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= (((qinf[1] & 0x100) >> 8) << m_n);
         v_n |= 1;                            //center of bin
@@ -1706,17 +1827,19 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       if (qinf[1] & 0x20) //sigma_n
       {
+        OPJ_UINT32 val, t;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[1] - ((qinf[1] >> 13) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= (((qinf[1] & 0x200) >> 9) << m_n);
         v_n |= 1; //center of bin
         sp[stride] = val | ((v_n + 2) << (p - 1));
 
         //update line_state: bit 7 (\sigma^N), and E^N
-        OPJ_UINT32 t = lsp[0] & 0x7F;          //E^NW
+        t = lsp[0] & 0x7F;          //E^NW
         v_n = 32 - count_leading_zeros(v_n); 
         lsp[0] = (OPJ_UINT8)(0x80 | (t > v_n ? t : v_n));
       }
@@ -1728,10 +1851,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       if (qinf[1] & 0x40) //sigma_n
       {
+        OPJ_UINT32 val;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[1] - ((qinf[1] >> 14) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= (((qinf[1] & 0x400) >> 10) << m_n);
         v_n |= 1;                            //center of bin
@@ -1742,10 +1867,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
       if (qinf[1] & 0x80) //sigma_n
       {
+        OPJ_UINT32 val;
+
         ms_val = frwd_fetch(&magsgn);
         m_n = U_q[1] - ((qinf[1] >> 15) & 1); //m_n
         frwd_advance(&magsgn, m_n);
-        OPJ_UINT32 val = ms_val << 31;
+        val = ms_val << 31;
         v_n = ms_val & ((1U << m_n) - 1);
         v_n |= (((qinf[1] & 0x800) >> 11) << m_n);
         v_n |= 1; //center of bin
@@ -1770,8 +1897,8 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
         OPJ_UINT32 *cur_sig = y & 0x4 ? sigma1 : sigma2;
         // the address of the data that needs updating
         OPJ_UINT32 *dpp = decoded_data + (y - 4) * stride;
-        OPJ_UINT32 half = 1 << (p - 2); // half the center of the bin
-        for (OPJ_UINT32 i = 0; i < width; i += 8)
+        OPJ_UINT32 half = 1u << (p - 2); // half the center of the bin
+        for (OPJ_INT32 i = 0; i < width; i += 8)
         {
           //Process one entry from sigma array at a time
           // Each nibble (4 bits) in the sigma array represents 4 rows,
@@ -1790,8 +1917,10 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
                 if (sig & sample_mask) //if LSB is set
                 {
+                  OPJ_UINT32 sym;
+
                   assert(dp[0] != 0); // decoded value cannot be zero
-                  OPJ_UINT32 sym = cwd & 1; // get it value
+                  sym = cwd & 1; // get it value
                   // remove center of bin if sym is 0
                   dp[0] ^= (1 - sym) << (p - 1);
                   dp[0] |= half;      // put half the center of bin
@@ -1801,8 +1930,10 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
                 if (sig & sample_mask)
                 {
+                  OPJ_UINT32 sym;
+
                   assert(dp[stride] != 0);
-                  OPJ_UINT32 sym = cwd & 1;
+                  sym = cwd & 1;
                   dp[stride] ^= (1 - sym) << (p - 1);
                   dp[stride] |= half;
                   cwd >>= 1;
@@ -1811,8 +1942,10 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
                 if (sig & sample_mask)
                 {
+                  OPJ_UINT32 sym;
+
                   assert(dp[2 * stride] != 0);
-                  OPJ_UINT32 sym = cwd & 1;
+                  sym = cwd & 1;
                   dp[2 * stride] ^= (1 - sym) << (p - 1);
                   dp[2 * stride] |= half;
                   cwd >>= 1;
@@ -1821,8 +1954,10 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
                 if (sig & sample_mask)
                 {
+                  OPJ_UINT32 sym;
+
                   assert(dp[3 * stride] != 0);
-                  OPJ_UINT32 sym = cwd & 1;
+                  sym = cwd & 1;
                   dp[3 * stride] ^= (1 - sym) << (p - 1);
                   dp[3 * stride] |= half;
                   cwd >>= 1;
@@ -1848,8 +1983,10 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
         //integrate horizontally
         OPJ_UINT32 prev = 0; // previous columns
-        for (OPJ_UINT32 i = 0; i < width; i += 8, mbr++, sig++)
+        for (OPJ_INT32 i = 0; i < width; i += 8, mbr++, sig++)
         {
+          OPJ_UINT32 t, z;
+
           mbr[0] = sig[0];         //start with significant samples
           mbr[0] |= prev >> 28;    //for first column, left neighbors
           mbr[0] |= sig[0] << 4;   //left neighbors
@@ -1858,7 +1995,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
           prev = sig[0];           // for next group of columns
 
           //integrate vertically
-          OPJ_UINT32 t = mbr[0], z = mbr[0];
+          t = mbr[0], z = mbr[0];
           z |= (t & 0x77777777) << 1; //above neighbors
           z |= (t & 0xEEEEEEEE) >> 1; //below neighbors
           mbr[0] = z & ~sig[0]; //remove already significance samples
@@ -1868,13 +2005,15 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       if (y >= 8) //wait until 8 rows has been processed
       {
         OPJ_UINT32 *cur_sig, *cur_mbr, *nxt_sig, *nxt_mbr;
+        OPJ_UINT32 prev;
+        OPJ_UINT32 val;
 
         // add membership from the next stripe, obtained above
         cur_sig = y & 0x4 ? sigma2 : sigma1;
         cur_mbr = y & 0x4 ? mbr2 : mbr1;
         nxt_sig = y & 0x4 ? sigma1 : sigma2;  //future samples
-        OPJ_UINT32 prev = 0; // the columns before these group of 8 columns
-        for (OPJ_UINT32 i=0; i < width; i+=8, cur_mbr++, cur_sig++, nxt_sig++)
+        prev = 0; // the columns before these group of 8 columns
+        for (OPJ_INT32 i=0; i < width; i+=8, cur_mbr++, cur_sig++, nxt_sig++)
         {
           OPJ_UINT32 t = nxt_sig[0];
           t |= prev >> 28;        //for first column, left neighbors
@@ -1892,45 +2031,52 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
         cur_mbr = y & 0x4 ? mbr2 : mbr1;
         nxt_sig = y & 0x4 ? sigma1 : sigma2; //future samples
         nxt_mbr = y & 0x4 ? mbr1 : mbr2;     //future samples
-        OPJ_UINT32 val = 3u << (p - 2); // sample values for newly discovered 
-                          // signficant samples including the bin center
-        for (OPJ_UINT32 i = 0; i < width;
+        val = 3u << (p - 2); // sample values for newly discovered 
+                             // signficant samples including the bin center
+        for (OPJ_INT32 i = 0; i < width;
               i += 8, cur_sig++, cur_mbr++, nxt_sig++, nxt_mbr++)
         {
+          OPJ_UINT32 ux, tx;
           OPJ_UINT32 mbr = *cur_mbr;
           OPJ_UINT32 new_sig = 0;
           if (mbr)  //are there any samples that migt be signficant 
           {
-            for (OPJ_UINT32 n = 0; n < 8; n += 4)
+            for (OPJ_INT32 n = 0; n < 8; n += 4)
             {
+              OPJ_UINT32 col_mask;
+              OPJ_UINT32 inv_sig;
+              OPJ_INT32 end;
+
               OPJ_UINT32 cwd = frwd_fetch(&sigprop); //get 32 bits
               OPJ_UINT32 cnt = 0;
 
               OPJ_UINT32 *dp = decoded_data + (y - 8) * stride;
               dp += i + n; //address for decoded samples
 
-              OPJ_UINT32 col_mask = 0xFu << (4 * n); //a mask to select a 
-                                                     //column
+              col_mask = 0xFu << (4 * n); //a mask to select a column
 
-              OPJ_UINT32 inv_sig = ~cur_sig[0]; // insignificant samples
+              inv_sig = ~cur_sig[0]; // insignificant samples
 
               //find the last sample we operate on
-              OPJ_UINT32 end = n + 4 + i < width ? n + 4 : width - i;
+              end = n + 4 + i < width ? n + 4 : width - i;
 
-              for (OPJ_UINT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
+              for (OPJ_INT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
               {
+                OPJ_UINT32 sample_mask;
+
                 if ((col_mask & mbr) == 0) //no samples need checking
                   continue;
 
                 //scan mbr to find a new signficant sample
-                OPJ_UINT32 sample_mask = 0x11111111u & col_mask; // LSB
+                sample_mask = 0x11111111u & col_mask; // LSB
                 if (mbr & sample_mask)
                 {
                   assert(dp[0] == 0); // the sample must have been 0
                   if (cwd & 1) //if this sample has become significant
                   { // must propagate it to nearby samples
+                    OPJ_UINT32 t;
                     new_sig |= sample_mask;  // new significant samples
-                    OPJ_UINT32 t = 0x32u << (j * 4);// propagation to neighbors
+                    t = 0x32u << (j * 4);// propagation to neighbors
                     mbr |= t & inv_sig; //remove already signifcant samples
                   }
                   cwd >>= 1; ++cnt; //consume bit and increment number of
@@ -1943,8 +2089,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                   assert(dp[stride] == 0);
                   if (cwd & 1)
                   {
+                    OPJ_UINT32 t;
                     new_sig |= sample_mask;
-                    OPJ_UINT32 t = 0x74u << (j * 4);
+                    t = 0x74u << (j * 4);
                     mbr |= t & inv_sig;
                   }
                   cwd >>= 1; ++cnt;
@@ -1956,8 +2103,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                   assert(dp[2 * stride] == 0);
                   if (cwd & 1)
                   {
+                    OPJ_UINT32 t;
                     new_sig |= sample_mask;
-                    OPJ_UINT32 t = 0xE8u << (j * 4);
+                    t = 0xE8u << (j * 4);
                     mbr |= t & inv_sig;
                   }
                   cwd >>= 1; ++cnt;
@@ -1969,8 +2117,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                   assert(dp[3 * stride] == 0);
                   if (cwd & 1)
                   {
+                    OPJ_UINT32 t;
                     new_sig |= sample_mask;
-                    OPJ_UINT32 t = 0xC0u << (j * 4);
+                    t = 0xC0u << (j * 4);
                     mbr |= t & inv_sig;
                   }
                   cwd >>= 1; ++cnt;
@@ -1980,18 +2129,20 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
               //obtain signs here
               if (new_sig & (0xFFFFu << (4 * n))) //if any
               {
+                OPJ_UINT32 col_mask;
                 OPJ_UINT32 *dp = decoded_data + (y - 8) * stride;
                 dp += i + n; // decoded samples address
-                OPJ_UINT32 col_mask = 0xFu << (4 * n); //mask to select a 
-                                                       //column
+                col_mask = 0xFu << (4 * n); //mask to select a column
 
-                for (OPJ_UINT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
+                for (OPJ_INT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
                 {
+                  OPJ_UINT32 sample_mask;
+
                   if ((col_mask & new_sig) == 0) //if non is signficant
                     continue;
 
                   //scan 4 signs
-                  OPJ_UINT32 sample_mask = 0x11111111u & col_mask;
+                  sample_mask = 0x11111111u & col_mask;
                   if (new_sig & sample_mask)
                   {
                     assert(dp[0] == 0);
@@ -2041,31 +2192,32 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
           }
           //update the next stripe (vertically propagation)
           new_sig |= cur_sig[0];
-          OPJ_UINT32 u = (new_sig & 0x88888888) >> 3;
-          OPJ_UINT32 t = u | (u << 4) | (u >> 4); //left and right neighbors
+          ux = (new_sig & 0x88888888) >> 3;
+          tx = ux | (ux << 4) | (ux >> 4); //left and right neighbors
           if (i > 0)
-            nxt_mbr[-1] |= (u << 28) & ~nxt_sig[-1];
-          nxt_mbr[0] |= t & ~nxt_sig[0];
-          nxt_mbr[1] |= (u >> 28) & ~nxt_sig[1];
+            nxt_mbr[-1] |= (ux << 28) & ~nxt_sig[-1];
+          nxt_mbr[0] |= tx & ~nxt_sig[0];
+          nxt_mbr[1] |= (ux >> 28) & ~nxt_sig[1];
         }
 
         //clear current sigma
         //mbr need not be cleared because it is overwritten
         cur_sig = y & 0x4 ? sigma2 : sigma1;
-        memset(cur_sig, 0, (((width + 7) >> 3) + 1) << 2);
+        memset(cur_sig, 0, ((((OPJ_UINT32)width + 7u) >> 3) + 1u) << 2);
       }
     }
   }
 
   //terminating
   if (num_passes > 1) {
+    OPJ_INT32 st;
 
     if (num_passes > 2 && ((height & 3) == 1 || (height & 3) == 2))
     {//do magref
       OPJ_UINT32 *cur_sig = height & 0x4 ? sigma2 : sigma1; //reversed
-      OPJ_UINT32 *dpp = decoded_data + (height & 0xFFFFFFFCu) * stride;
-      OPJ_UINT32 half = 1 << (p - 2);
-      for (OPJ_UINT32 i = 0; i < width; i += 8)
+      OPJ_UINT32 *dpp = decoded_data + (height & 0xFFFFFC) * stride;
+      OPJ_UINT32 half = 1u << (p - 2);
+      for (OPJ_INT32 i = 0; i < width; i += 8)
       {
         OPJ_UINT32 cwd = rev_fetch_mrp(&magref);
         OPJ_UINT32 sig = *cur_sig++;
@@ -2081,8 +2233,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
               if (sig & sample_mask)
               {
+                OPJ_UINT32 sym;
                 assert(dp[0] != 0);
-                OPJ_UINT32 sym = cwd & 1;
+                sym = cwd & 1;
                 dp[0] ^= (1 - sym) << (p - 1);
                 dp[0] |= half;
                 cwd >>= 1;
@@ -2091,8 +2244,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
               if (sig & sample_mask)
               {
+                OPJ_UINT32 sym;
                 assert(dp[stride] != 0);
-                OPJ_UINT32 sym = cwd & 1;
+                sym = cwd & 1;
                 dp[stride] ^= (1 - sym) << (p - 1);
                 dp[stride] |= half;
                 cwd >>= 1;
@@ -2101,8 +2255,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
               if (sig & sample_mask)
               {
+                OPJ_UINT32 sym;
                 assert(dp[2 * stride] != 0);
-                OPJ_UINT32 sym = cwd & 1;
+                sym = cwd & 1;
                 dp[2 * stride] ^= (1 - sym) << (p - 1);
                 dp[2 * stride] |= half;
                 cwd >>= 1;
@@ -2111,8 +2266,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
               if (sig & sample_mask)
               {
+                OPJ_UINT32 sym;
                 assert(dp[3 * stride] != 0);
-                OPJ_UINT32 sym = cwd & 1;
+                sym = cwd & 1;
                 dp[3 * stride] ^= (1 - sym) << (p - 1);
                 dp[3 * stride] |= half;
                 cwd >>= 1;
@@ -2136,8 +2292,10 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       OPJ_UINT32 *mbr = height & 0x4 ? mbr2 : mbr1;
       //integrate horizontally
       OPJ_UINT32 prev = 0;
-      for (OPJ_UINT32 i = 0; i < width; i += 8, mbr++, sig++)
+      for (OPJ_INT32 i = 0; i < width; i += 8, mbr++, sig++)
       {
+        OPJ_UINT32 t, z;
+
         mbr[0] = sig[0];
         mbr[0] |= prev >> 28;    //for first column, left neighbors
         mbr[0] |= sig[0] << 4;   //left neighbors
@@ -2146,18 +2304,19 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
         prev = sig[0];
 
         //integrate vertically
-        OPJ_UINT32 t = mbr[0], z = mbr[0];
+        t = mbr[0], z = mbr[0];
         z |= (t & 0x77777777) << 1; //above neighbors
         z |= (t & 0xEEEEEEEE) >> 1; //below neighbors
         mbr[0] = z & ~sig[0]; //remove already significance samples
       }
     }
 
-    OPJ_UINT32 st = height;
+    st = height;
     st -= height > 6 ? (((height + 1) & 3) + 3) : height;
-    for (OPJ_UINT32 y = st; y < height; y += 4)
+    for (OPJ_INT32 y = st; y < height; y += 4)
     {
       OPJ_UINT32 *cur_sig, *cur_mbr, *nxt_sig, *nxt_mbr;
+      OPJ_UINT32 val;
 
       OPJ_UINT32 pattern = 0xFFFFFFFFu; // a pattern needed samples
       if (height - y == 3)
@@ -2170,11 +2329,12 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       //add membership from the next stripe, obtained above
       if (height - y > 4)
       {
+        OPJ_UINT32 prev = 0;
         cur_sig = y & 0x4 ? sigma2 : sigma1;
         cur_mbr = y & 0x4 ? mbr2 : mbr1;
         nxt_sig = y & 0x4 ? sigma1 : sigma2;
-        OPJ_UINT32 prev = 0;
-        for (OPJ_UINT32 i=0; i<width; i += 8, cur_mbr++, cur_sig++, nxt_sig++)
+
+        for (OPJ_INT32 i=0; i<width; i += 8, cur_mbr++, cur_sig++, nxt_sig++)
         {
           OPJ_UINT32 t = nxt_sig[0];
           t |= prev >> 28;     //for first column, left neighbors
@@ -2194,41 +2354,49 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
       cur_mbr = y & 0x4 ? mbr2 : mbr1;
       nxt_sig = y & 0x4 ? sigma1 : sigma2;
       nxt_mbr = y & 0x4 ? mbr1 : mbr2;
-      OPJ_UINT32 val = 3u << (p - 2);
-      for (OPJ_UINT32 i = 0; i < width; i += 8,
+      val = 3u << (p - 2);
+      for (OPJ_INT32 i = 0; i < width; i += 8,
             cur_sig++, cur_mbr++, nxt_sig++, nxt_mbr++)
       {
         OPJ_UINT32 mbr = *cur_mbr & pattern; //skip unneeded samples
         OPJ_UINT32 new_sig = 0;
+        OPJ_UINT32 ux, tx;
         if (mbr)
         {
-          for (OPJ_UINT32 n = 0; n < 8; n += 4)
+          for (OPJ_INT32 n = 0; n < 8; n += 4)
           {
+            OPJ_UINT32 col_mask;
+            OPJ_UINT32 inv_sig;
+            OPJ_INT32 end;
+
             OPJ_UINT32 cwd = frwd_fetch(&sigprop);
             OPJ_UINT32 cnt = 0;
 
             OPJ_UINT32 *dp = decoded_data + y * stride;
             dp += i + n;
 
-            OPJ_UINT32 col_mask = 0xFu << (4 * n);
+            col_mask = 0xFu << (4 * n);
 
-            OPJ_UINT32 inv_sig = ~cur_sig[0] & pattern;
+            inv_sig = ~cur_sig[0] & pattern;
 
-            OPJ_UINT32 end = n + 4 + i < width ? n + 4 : width - i;
-            for (OPJ_UINT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
+            end = n + 4 + i < width ? n + 4 : width - i;
+            for (OPJ_INT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
             {
+              OPJ_UINT32 sample_mask;
+
               if ((col_mask & mbr) == 0)
                 continue;
 
               //scan 4 mbr
-              OPJ_UINT32 sample_mask = 0x11111111u & col_mask;
+              sample_mask = 0x11111111u & col_mask;
               if (mbr & sample_mask)
               {
                 assert(dp[0] == 0);
                 if (cwd & 1)
                 {
+                  OPJ_UINT32 t;
                   new_sig |= sample_mask;
-                  OPJ_UINT32 t = 0x32u << (j * 4);
+                  t = 0x32u << (j * 4);
                   mbr |= t & inv_sig;
                 }
                 cwd >>= 1; ++cnt;
@@ -2240,8 +2408,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                 assert(dp[stride] == 0);
                 if (cwd & 1)
                 {
+                  OPJ_UINT32 t;
                   new_sig |= sample_mask;
-                  OPJ_UINT32 t = 0x74u << (j * 4);
+                  t = 0x74u << (j * 4);
                   mbr |= t & inv_sig;
                 }
                 cwd >>= 1; ++cnt;
@@ -2253,8 +2422,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                 assert(dp[2 * stride] == 0);
                 if (cwd & 1)
                 {
+                  OPJ_UINT32 t;
                   new_sig |= sample_mask;
-                  OPJ_UINT32 t = 0xE8u << (j * 4);
+                  t = 0xE8u << (j * 4);
                   mbr |= t & inv_sig;
                 }
                 cwd >>= 1; ++cnt;
@@ -2266,8 +2436,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                 assert(dp[3 * stride] == 0);
                 if (cwd & 1)
                 {
+                  OPJ_UINT32 t;
                   new_sig |= sample_mask;
-                  OPJ_UINT32 t = 0xC0u << (j * 4);
+                  t = 0xC0u << (j * 4);
                   mbr |= t & inv_sig;
                 }
                 cwd >>= 1; ++cnt;
@@ -2277,17 +2448,19 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
             //signs here
             if (new_sig & (0xFFFFu << (4 * n)))
             {
+              OPJ_UINT32 col_mask;
               OPJ_UINT32 *dp = decoded_data + y * stride;
               dp += i + n;
-              OPJ_UINT32 col_mask = 0xFu << (4 * n);
+              col_mask = 0xFu << (4 * n);
 
-              for (OPJ_UINT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
+              for (OPJ_INT32 j = n; j < end; ++j, ++dp, col_mask <<= 4)
               {
+                OPJ_UINT32 sample_mask;
                 if ((col_mask & new_sig) == 0)
                   continue;
 
                 //scan 4 signs
-                OPJ_UINT32 sample_mask = 0x11111111u & col_mask;
+                sample_mask = 0x11111111u & col_mask;
                 if (new_sig & sample_mask)
                 {
                   assert(dp[0] == 0);
@@ -2336,21 +2509,21 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
         }
         //propagate down (vertically propagation)
         new_sig |= cur_sig[0];
-        OPJ_UINT32 u = (new_sig & 0x88888888) >> 3;
-        OPJ_UINT32 t = u | (u << 4) | (u >> 4);
+        ux = (new_sig & 0x88888888) >> 3;
+        tx = ux | (ux << 4) | (ux >> 4);
         if (i > 0)
-          nxt_mbr[-1] |= (u << 28) & ~nxt_sig[-1];
-        nxt_mbr[0] |= t & ~nxt_sig[0];
-        nxt_mbr[1] |= (u >> 28) & ~nxt_sig[1];
+          nxt_mbr[-1] |= (ux << 28) & ~nxt_sig[-1];
+        nxt_mbr[0] |= tx & ~nxt_sig[0];
+        nxt_mbr[1] |= (ux >> 28) & ~nxt_sig[1];
       }
     }
   }
 
   //int shift = 29 - missing_msbs;
-  for (OPJ_UINT32 y = 0; y < height; ++y)
+  for (OPJ_INT32 y = 0; y < height; ++y)
   {
-    OPJ_UINT32* sp = decoded_data + y * stride; // generated samplesv
-    for (OPJ_UINT32 x = 0; x < width; ++x, ++sp)
+    OPJ_INT32* sp = (OPJ_INT32*)decoded_data + y * stride;
+    for (OPJ_INT32 x = 0; x < width; ++x, ++sp)
     {
       OPJ_INT32 val = (*sp & 0x7FFFFFFF);
       *sp = ((OPJ_UINT32)*sp & 0x80000000) ? -val : val;
