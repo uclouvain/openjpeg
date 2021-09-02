@@ -43,3 +43,4 @@ NR-DEC-issue559-eci-090-CIELab.jp2-255-decode-md5
 NR-DEC-issue559-eci-091-CIELab.jp2-256-decode-md5
 NR-DEC-db11217111510058.jp2-306-decode-md5
 NR-DEC-tnsot_zero.jp2-307-decode-md5
+NR-DEC-Bretagne1_ht_lossy.j2k-311-decode-md5

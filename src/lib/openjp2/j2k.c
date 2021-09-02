@@ -1177,6 +1177,32 @@ static OPJ_BOOL opj_j2k_read_cbd(opj_j2k_t *p_j2k,
                                  OPJ_UINT32 p_header_size,
                                  opj_event_mgr_t * p_manager);
 
+/**
+ * Reads a CAP marker (extended capabilities definition). Empty implementation.
+ * Found in HTJ2K files
+ *
+ * @param       p_header_data   the data contained in the CAP box.
+ * @param       p_j2k                   the jpeg2000 codec.
+ * @param       p_header_size   the size of the data contained in the CAP marker.
+ * @param       p_manager               the user event manager.
+*/
+static OPJ_BOOL opj_j2k_read_cap(opj_j2k_t *p_j2k,
+                                 OPJ_BYTE * p_header_data,
+                                 OPJ_UINT32 p_header_size,
+                                 opj_event_mgr_t * p_manager);
+
+/**
+ * Reads a CPF marker (corresponding profile). Empty implementation. Found in HTJ2K files
+ * @param       p_header_data   the data contained in the CPF box.
+ * @param       p_j2k                   the jpeg2000 codec.
+ * @param       p_header_size   the size of the data contained in the CPF marker.
+ * @param       p_manager               the user event manager.
+*/
+static OPJ_BOOL opj_j2k_read_cpf(opj_j2k_t *p_j2k,
+                                 OPJ_BYTE * p_header_data,
+                                 OPJ_UINT32 p_header_size,
+                                 opj_event_mgr_t * p_manager);
+
 
 /**
  * Writes COC marker for each component.
@@ -1399,6 +1425,8 @@ static const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
     {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_com},
     {J2K_MS_MCT, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_mct},
     {J2K_MS_CBD, J2K_STATE_MH, opj_j2k_read_cbd},
+    {J2K_MS_CAP, J2K_STATE_MH, opj_j2k_read_cap},
+    {J2K_MS_CPF, J2K_STATE_MH, opj_j2k_read_cpf},
     {J2K_MS_MCC, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_mcc},
     {J2K_MS_MCO, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_mco},
 #ifdef USE_JPWL
@@ -6594,6 +6622,60 @@ static OPJ_BOOL opj_j2k_read_cbd(opj_j2k_t *p_j2k,
     return OPJ_TRUE;
 }
 
+/**
+ * Reads a CAP marker (extended capabilities definition). Empty implementation.
+ * Found in HTJ2K files.
+ *
+ * @param       p_header_data   the data contained in the CAP box.
+ * @param       p_j2k                   the jpeg2000 codec.
+ * @param       p_header_size   the size of the data contained in the CAP marker.
+ * @param       p_manager               the user event manager.
+*/
+static OPJ_BOOL opj_j2k_read_cap(opj_j2k_t *p_j2k,
+                                 OPJ_BYTE * p_header_data,
+                                 OPJ_UINT32 p_header_size,
+                                 opj_event_mgr_t * p_manager
+                                )
+{
+    /* preconditions */
+    assert(p_header_data != 00);
+    assert(p_j2k != 00);
+    assert(p_manager != 00);
+
+    (void)p_j2k;
+    (void)p_header_data;
+    (void)p_header_size;
+    (void)p_manager;
+
+    return OPJ_TRUE;
+}
+
+/**
+ * Reads a CPF marker (corresponding profile). Empty implementation. Found in HTJ2K files
+ * @param       p_header_data   the data contained in the CPF box.
+ * @param       p_j2k                   the jpeg2000 codec.
+ * @param       p_header_size   the size of the data contained in the CPF marker.
+ * @param       p_manager               the user event manager.
+*/
+static OPJ_BOOL opj_j2k_read_cpf(opj_j2k_t *p_j2k,
+                                 OPJ_BYTE * p_header_data,
+                                 OPJ_UINT32 p_header_size,
+                                 opj_event_mgr_t * p_manager
+                                )
+{
+    /* preconditions */
+    assert(p_header_data != 00);
+    assert(p_j2k != 00);
+    assert(p_manager != 00);
+
+    (void)p_j2k;
+    (void)p_header_data;
+    (void)p_header_size;
+    (void)p_manager;
+
+    return OPJ_TRUE;
+}
+
 /* ----------------------------------------------------------------------- */
 /* J2K / JPT decoder interface                                             */
 /* ----------------------------------------------------------------------- */
@@ -10617,9 +10699,10 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(opj_j2k_t *p_j2k,
     /* SPcod (G) / SPcoc (D) */
     opj_read_bytes(l_current_ptr, &l_tccp->cblksty, 1);
     ++l_current_ptr;
-    if (l_tccp->cblksty & 0xC0U) { /* 2 msb are reserved, assume we can't read */
+    if ((l_tccp->cblksty & J2K_CCP_CBLKSTY_HTMIXED) != 0) {
+        /* We do not support HT mixed mode yet.  For conformance, it should be supported.*/
         opj_event_msg(p_manager, EVT_ERROR,
-                      "Error reading SPCod SPCoc element, Invalid code-block style found\n");
+                      "Error reading SPCod SPCoc element. Unsupported Mixed HT code-block style found\n");
         return OPJ_FALSE;
     }
 

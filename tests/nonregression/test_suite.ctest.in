@@ -651,3 +651,7 @@ opj_decompress -i @INPUT_NR_PATH@/tnsot_zero.jp2 -o @TEMP_PATH@/tnsot_zero.png
 !opj_decompress -i @INPUT_NR_PATH@/oss-fuzz2785.jp2 -o @TEMP_PATH@/oss-fuzz2785.png
 
 opj_decompress -i @INPUT_NR_PATH@/tnsot_zero_missing_eoc.jp2 -o @TEMP_PATH@/tnsot_zero_missing_eoc.png
+
+# HTJ2K tests
+opj_decompress -i @INPUT_NR_PATH@/htj2k/Bretagne1_ht.j2k -o @TEMP_PATH@/Bretagne1_ht.j2k.png
+opj_decompress -i @INPUT_NR_PATH@/htj2k/Bretagne1_ht_lossy.j2k -o @TEMP_PATH@/Bretagne1_ht_lossy.j2k.png
