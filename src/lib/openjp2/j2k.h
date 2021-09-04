@@ -61,7 +61,8 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #define J2K_CCP_CBLKSTY_VSC 0x08      /**< Vertically stripe causal context */
 #define J2K_CCP_CBLKSTY_PTERM 0x10    /**< Predictable termination */
 #define J2K_CCP_CBLKSTY_SEGSYM 0x20   /**< Segmentation symbols are used */
-#define J2K_CCP_CBLKSTY_HT 0x40       /**< (high throughput) HT codeblock */
+#define J2K_CCP_CBLKSTY_HT 0x40       /**< (high throughput) HT codeblocks */
+#define J2K_CCP_CBLKSTY_HTMIXED 0x80  /**< MIXED mode HT codeblocks */
 #define J2K_CCP_QNTSTY_NOQNT 0
 #define J2K_CCP_QNTSTY_SIQNT 1
 #define J2K_CCP_QNTSTY_SEQNT 2

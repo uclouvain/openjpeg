@@ -10617,12 +10617,18 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(opj_j2k_t *p_j2k,
     /* SPcod (G) / SPcoc (D) */
     opj_read_bytes(l_current_ptr, &l_tccp->cblksty, 1);
     ++l_current_ptr;
-    if ((l_tccp->cblksty & 0x80U) != 0 || (l_tccp->cblksty & 0x48U) == 0x48U) { 
-    /* For HT, we only support one mode, bit 6 set, meaning that "all code-blocks 
-       within the corresponding tile-component shall be HT code-blocks, and 
-       bit 3 is reset, meaning that "No vertically causal context". */
+    if ((l_tccp->cblksty & J2K_CCP_CBLKSTY_HTMIXED) != 0) {
+        /* We do not support HT mixed mode yet*/
         opj_event_msg(p_manager, EVT_ERROR,
-                      "Error reading SPCod SPCoc element, Invalid code-block style found\n");
+                      "Error reading SPCod SPCoc element. Unsupported Mixed HT code-block style found\n");
+        return OPJ_FALSE;
+    }
+
+    if ((l_tccp->cblksty & (J2K_CCP_CBLKSTY_HT | J2K_CCP_CBLKSTY_VSC)) ==
+            (J2K_CCP_CBLKSTY_HT | J2K_CCP_CBLKSTY_VSC)) {
+        /* For HT, we do not support vertically causal mode yet. */
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Error reading SPCod SPCoc element. Unsupported HT mode with vertically causal mode. \n");
         return OPJ_FALSE;
     }
 

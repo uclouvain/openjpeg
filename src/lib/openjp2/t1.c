@@ -1700,8 +1700,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
             opj_free(job);
             return;
         }
-    }
-    else {
+    } else {
         if (OPJ_FALSE == opj_t1_decode_cblk(
                     t1,
                     cblk,
