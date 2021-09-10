@@ -1,0 +1,24 @@
+name: ABI check
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  abi_check:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Requirements
+        run: |
+          sudo apt update
+          sudo apt install -y gcc g++ libelf-dev elfutils texinfo exuberant-ctags libtiff-dev libwebp-dev libzstd-dev
+
+      - name: Build
+        run: |
+            ./tools/travis-ci/install.sh
+            ./tools/travis-ci/run.sh
+            ./tools/travis-ci/abi-check.sh
+        env:
+            OPJ_CI_ABI_CHECK: 1

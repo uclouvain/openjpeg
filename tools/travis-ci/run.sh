@@ -49,53 +49,68 @@ OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)
 if [ "${OPJ_DO_SUBMIT:-}" == "" ]; then
 	OPJ_DO_SUBMIT=0 # Do not flood cdash by default
 fi
-if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
+
+if [ "${GITHUB_REPOSITORY:-}" != "" ]; then
+	OPJ_OWNER=$(echo "${GITHUB_REPOSITORY}" | sed 's/\(^.*\)\/.*/\1/')
+	OPJ_SITE="${OPJ_OWNER}.gha"
+elif [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
 	OPJ_OWNER=$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')
 	OPJ_SITE="${OPJ_OWNER}.travis-ci.org"
-	if [ "${OPJ_OWNER}" == "uclouvain" ]; then
-		OPJ_DO_SUBMIT=1
-	fi
 elif [ "${APPVEYOR_REPO_NAME:-}" != "" ]; then
 	OPJ_OWNER=$(echo "${APPVEYOR_REPO_NAME}" | sed 's/\(^.*\)\/.*/\1/')
 	OPJ_SITE="${OPJ_OWNER}.appveyor.com"
-	if [ "${OPJ_OWNER}" == "uclouvain" ]; then
-		OPJ_DO_SUBMIT=1
-	fi
 else
 	OPJ_SITE="$(hostname)"
 fi
 
-if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
+if [ "${OPJ_OWNER:-}" == "uclouvain" ]; then
+    OPJ_DO_SUBMIT=1
+fi
+
+if [ "${RUNNER_OS:-}" != "" ]; then
+    if [ "${RUNNER_OS:-}" == "Linux" ]; then
+        OPJ_SHORT_OS_NAME=linux
+    elif [ "${RUNNER_OS:-}" == "Windows" ]; then
+        OPJ_SHORT_OS_NAME=windows
+    elif [ "${RUNNER_OS:-}" == "macOS" ]; then
+        OPJ_SHORT_OS_NAME=osx
+    else
+        echo "Unhandled RUNNER_OS = ${RUNNER_OS:-}"; exit 1
+    fi
+elif [ "${TRAVIS_OS_NAME:-}" != "" ]; then
+  OPJ_SHORT_OS_NAME="${${TRAVIS_OS_NAME:-}}"
+else
   # Let's guess OS for testing purposes
 	echo "Guessing OS"
 	if uname -s | grep -i Darwin &> /dev/null; then
-		TRAVIS_OS_NAME=osx
+		OPJ_SHORT_OS_NAME=osx
 	elif uname -s | grep -i Linux &> /dev/null; then
-		TRAVIS_OS_NAME=linux
-		if [ "${CC:-}" == "" ]; then
-			# default to gcc
-			export CC=gcc
-		fi
+		OPJ_SHORT_OS_NAME=linux
 	elif uname -s | grep -i CYGWIN &> /dev/null; then
-		TRAVIS_OS_NAME=windows
+		OPJ_SHORT_OS_NAME=windows
 	elif uname -s | grep -i MINGW &> /dev/null; then
-		TRAVIS_OS_NAME=windows
+		OPJ_SHORT_OS_NAME=windows
 	elif [ "${APPVEYOR:-}" == "True" ]; then
-		TRAVIS_OS_NAME=windows
+		OPJ_SHORT_OS_NAME=windows
 	else
 		echo "Failed to guess OS"; exit 1
 	fi
-	echo "${TRAVIS_OS_NAME}"
+	echo "${OPJ_SHORT_OS_NAME}"
 fi
 
-if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
+if [ "${OPJ_SHORT_OS_NAME}" == "osx" ]; then
 	OPJ_OS_NAME=$(sw_vers -productName | tr -d ' ')$(sw_vers -productVersion | sed 's/\([^0-9]*\.[0-9]*\).*/\1/')
 	OPJ_CC_VERSION=$(xcodebuild -version | grep -i xcode)
 	OPJ_CC_VERSION=xcode${OPJ_CC_VERSION:6}
-elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+elif [ "${OPJ_SHORT_OS_NAME}" == "linux" ]; then
 	OPJ_OS_NAME=linux
 	if which lsb_release > /dev/null; then
 		OPJ_OS_NAME=$(lsb_release -si)$(lsb_release -sr | sed 's/\([^0-9]*\.[0-9]*\).*/\1/')
+	fi
+	if [ "${CC:-}" == "" ]; then
+		# default to gcc
+		export CC=gcc
+		echo "Defaulting to CC=gcc"
 	fi
 	if [ -z "${CC##*gcc*}" ]; then
 		OPJ_CC_VERSION=$(${CC} --version | head -1 | sed 's/.*\ \([0-9.]*[0-9]\)/\1/')
@@ -122,7 +137,7 @@ elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
 			export OPJ_CI_SKIP_TESTS=1
 		fi
         fi
-elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
+elif [ "${OPJ_SHORT_OS_NAME}" == "windows" ]; then
 	OPJ_OS_NAME=windows
 	if which cl > /dev/null; then
 		OPJ_CL_VERSION=$(cl 2>&1 | grep Version | sed 's/.*Version \([0-9]*\).*/\1/')
@@ -152,7 +167,7 @@ elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
 		fi
 	fi
 else
-	echo "OS not supported: ${TRAVIS_OS_NAME}"; exit 1
+	echo "OS not supported: ${OPJ_SHORT_OS_NAME}"; exit 1
 fi
 
 if [ "${OPJ_CI_ARCH:-}" == "" ]; then
@@ -164,18 +179,27 @@ if [ "${OPJ_CI_ARCH:-}" == "" ]; then
 	echo "${OPJ_CI_ARCH}"
 fi
 
-if [ "${TRAVIS_BRANCH:-}" == "" ]; then
-	if [ "${APPVEYOR_REPO_BRANCH:-}" != "" ]; then
-		TRAVIS_BRANCH=${APPVEYOR_REPO_BRANCH}
-	else
-		echo "Guessing branch"
-		TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]')
-	fi
+if [ "${GITHUB_HEAD_REF:-}" != "" ]; then
+    OPJ_BRANCH=${GITHUB_HEAD_REF}
+elif [ "${TRAVIS_BRANCH:-}" != "" ]; then
+    OPJ_BRANCH=${TRAVIS_BRANCH}
+elif [ "${APPVEYOR_REPO_BRANCH:-}" != "" ]; then
+    OPJ_BRANCH=${APPVEYOR_REPO_BRANCH}
+else
+    echo "Guessing branch"
+    OPJ_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]')
 fi
 
-OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}-${TRAVIS_BRANCH}
+OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}-${OPJ_BRANCH}
 OPJ_BUILDNAME_TEST=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}
-if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
+if [ "${OPJ_CI_INSTRUCTION_SETS-:}" == "/arch:AVX2" ]; then
+	OPJ_BUILDNAME=${OPJ_BUILDNAME}-avx2
+	OPJ_BUILDNAME_TEST=${OPJ_BUILDNAME_TEST}-avx2
+fi
+if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ]; then
+    PULL_REQUEST_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+	OPJ_BUILDNAME=${OPJ_BUILDNAME}-${PULL_REQUEST_NUMBER}
+elif [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
 elif [ "${APPVEYOR_PULL_REQUEST_NUMBER:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${APPVEYOR_PULL_REQUEST_NUMBER}
@@ -206,7 +230,7 @@ set -x
 # travis-ci doesn't dump cmake version in system info, let's print it 
 cmake --version
 
-export TRAVIS_OS_NAME=${TRAVIS_OS_NAME}
+export OPJ_SHORT_OS_NAME=${OPJ_SHORT_OS_NAME}
 export OPJ_SITE=${OPJ_SITE}
 export OPJ_BUILDNAME=${OPJ_BUILDNAME}
 export OPJ_SOURCE_DIR=$(opjpath -m ${OPJ_SOURCE_DIR})
@@ -233,22 +257,24 @@ fi
 # Deployment if needed
 #---------------------
 if [ "${TRAVIS_TAG:-}" != "" ]; then
-		OPJ_TAG_NAME=${TRAVIS_TAG}
-	elif [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
-		OPJ_TAG_NAME=${APPVEYOR_REPO_TAG_NAME}
-	else
-		OPJ_TAG_NAME=""
-	fi
+    OPJ_TAG_NAME=${TRAVIS_TAG}
+elif [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
+    OPJ_TAG_NAME=${APPVEYOR_REPO_TAG_NAME}
+elif test $(git describe --exact-match --tags 2>/dev/null); then
+    OPJ_TAG_NAME="$(git describe --exact-match --tags)"
+else
+    OPJ_TAG_NAME=""
+fi
 if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ "${OPJ_TAG_NAME:-}" != "" ]; then
 #if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ]; then
 	OPJ_CI_DEPLOY=1		# unused for now
 	OPJ_CUR_DIR=${PWD}
-	if [ "${TRAVIS_OS_NAME:-}" == "linux" ]; then
+	if [ "${OPJ_SHORT_OS_NAME:-}" == "linux" ]; then
 		OPJ_PACK_GENERATOR="TGZ" # ZIP generator currently segfaults on linux
 	else
 		OPJ_PACK_GENERATOR="ZIP"
 	fi
-	OPJ_PACK_NAME="openjpeg-${OPJ_TAG_NAME}-${TRAVIS_OS_NAME}-${OPJ_CI_ARCH}"
+	OPJ_PACK_NAME="openjpeg-${OPJ_TAG_NAME}-${OPJ_SHORT_OS_NAME}-${OPJ_CI_ARCH}"
 	cd ${OPJ_BINARY_DIR}
 	cmake -D CPACK_GENERATOR:STRING=${OPJ_PACK_GENERATOR} -D CPACK_PACKAGE_FILE_NAME:STRING=${OPJ_PACK_NAME} ${OPJ_SOURCE_DIR}
 	cd ${OPJ_CUR_DIR}
@@ -330,7 +356,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 		"
 	else
 		echo "
-New/unknown test failure found!!!
+New/unknown test failure found!!! You may need to update/create tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt
 	"
 	fi
 	
@@ -365,7 +391,7 @@ if [ "${OPJ_CI_PERF_TESTS:-}" == "1" ]; then
     cd ../..
 
     REF_VERSION=master
-    if [ "${TRAVIS_PULL_REQUEST:-false}" == "false" ]; then
+    if [ "${TRAVIS_PULL_REQUEST:-false}" == "false" -a "${GITHUB_EVENT_NAME:-}" != "pull_request" ]; then
         REF_VERSION=v2.1.2
     fi
     if [ ! -d ref_opj ]; then
