@@ -980,6 +980,10 @@ OPJ_UINT32 frwd_fetch(frwd_struct_t *msp)
 
 //************************************************************************/
 /** @brief Allocates T1 buffers
+  *
+  *  @param [in, out]  t1 is codeblock cofficients storage
+  *  @param [in]       w is codeblock width
+  *  @param [in]       h is codeblock height
   */
 static OPJ_BOOL opj_t1_allocate_buffers(
     opj_t1_t *t1,
@@ -1044,6 +1048,15 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 //************************************************************************/
 /** @brief Decodes one codeblock, processing the cleanup, siginificance
   *         propagation, and magnitude refinement pass
+  *
+  *  @param [in, out]  t1 is codeblock cofficients storage
+  *  @param [in]       cblk is codeblock properties
+  *  @param [in]       orient is the subband to which the codeblock belongs (not needed)
+  *  @param [in]       roishift is region of interest shift
+  *  @param [in]       cblksty is codeblock style
+  *  @param [in]       p_manager is events print manager
+  *  @param [in]       p_manager_mutex a mutex to control access to p_manager
+  *  @param [in]       check_pterm: check termination (not used)
   */
 OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                                opj_tcd_cblk_dec_t* cblk,
@@ -1085,7 +1098,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     // We ignor orient, because the same decoder is used for all subbands
     // We also ignore check_pterm, because I am not sure how it applies
-    assert(cblksty == 0x40); // that is the only support mode
+    assert(cblksty == J2K_CCP_CBLKSTY_HT); // that is the only support mode
     if (roishift != 0) {
         if (p_manager_mutex) {
             opj_mutex_lock(p_manager_mutex);
@@ -1103,6 +1116,10 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                 (OPJ_UINT32)(cblk->x1 - cblk->x0),
                 (OPJ_UINT32)(cblk->y1 - cblk->y0))) {
         return OPJ_FALSE;
+    }
+
+    if (cblk->Mb == 0) {
+        return OPJ_TRUE;
     }
 
     /* Even if we have a single chunk, in multi-threaded decoding */
@@ -1457,8 +1474,8 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
             //v_n now has 2 * (\mu - 1) + 0.5 with correct sign bit
             //add 2 to make it 2*\mu+0.5, shift it up to missing MSBs
             sp[0] = val | ((v_n + 2) << (p - 1));
-        } else if (locs & 0x1) { // if this is outside the codeblock, set the
-            sp[0] = 0;    // sample to zero
+        } else if (locs & 0x1) { // if this is inside the codeblock, set the
+            sp[0] = 0;           // sample to zero
         }
 
         if (qinf[0] & 0x20) { //sigma_n
@@ -1479,8 +1496,8 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
             t = lsp[0] & 0x7F;       // keep E^NW
             v_n = 32 - count_leading_zeros(v_n);
             lsp[0] = (OPJ_UINT8)(0x80 | (t > v_n ? t : v_n)); //max(E^NW, E^N) | s
-        } else if (locs & 0x2) { // if this is outside the codeblock, set the
-            sp[stride] = 0;    //no need to update line_state
+        } else if (locs & 0x2) { // if this is inside the codeblock, set the
+            sp[stride] = 0;      // sample to zero
         }
 
         ++lsp; // move to next quad information
@@ -1727,7 +1744,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
             if (x + 4 > width) {
                 locs >>= (x + 4 - width) << 1;
             }
-            locs = height > 1 ? locs : (locs & 0x55);
+            locs = y + 2 <= height ? locs : (locs & 0x55);
 
 
             if (qinf[0] & 0x10) { //sigma_n
