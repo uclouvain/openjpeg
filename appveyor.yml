@@ -27,15 +27,15 @@ build_script:
 test: off
 #before_deploy:
 #- cmd: c:\cygwin\bin\bash ./tools/travis-ci/before_deploy.sh
-deploy:
-  #release: openjpeg-$(appveyor_repo_tag_name)
-  description: 'OpenJPEG $(appveyor_repo_tag_name) has been released. More info [here](https://github.com/uclouvain/openjpeg/blob/$(appveyor_repo_tag_name)/NEWS) and a detailed view [here](https://github.com/uclouvain/openjpeg/blob/$(appveyor_repo_tag_name)/CHANGES).'
-  provider: GitHub
-  auth_token:
-    secure: XUL+IoRRw8U/4tupa/fMpinxurft7WRQHZiWHMLO5iuFbwZ+C3vCjVVVM+5Ebky7 # your encrypted token from GitHub
-  artifact: /.*\.zip/            # upload all zip packages to release assets
-  draft: true
-  prerelease: false
-  on:
-    appveyor_repo_tag: true        # deploy on tag push only
-    OPJ_CI_INCLUDE_IF_DEPLOY: 1
+#deploy:
+#  #release: openjpeg-$(appveyor_repo_tag_name)
+#  description: 'OpenJPEG $(appveyor_repo_tag_name) has been released. More info [here](https://github.com/uclouvain/openjpeg/blob/$(appveyor_repo_tag_name)/NEWS) and a detailed view [here](https://github.com/uclouvain/openjpeg/blob/$(appveyor_repo_tag_name)/CHANGES).'
+#  provider: GitHub
+#  auth_token:
+#    secure: XUL+IoRRw8U/4tupa/fMpinxurft7WRQHZiWHMLO5iuFbwZ+C3vCjVVVM+5Ebky7 # your encrypted token from GitHub
+#  artifact: /.*\.zip/            # upload all zip packages to release assets
+#  draft: true
+#  prerelease: false
+#  on:
+#    appveyor_repo_tag: true        # deploy on tag push only
+#    OPJ_CI_INCLUDE_IF_DEPLOY: 1
