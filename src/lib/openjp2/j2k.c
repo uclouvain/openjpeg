@@ -1178,7 +1178,7 @@ static OPJ_BOOL opj_j2k_read_cbd(opj_j2k_t *p_j2k,
                                  opj_event_mgr_t * p_manager);
 
 /**
- * Reads a CAP marker (extended capabilities definition). Empty implementation. 
+ * Reads a CAP marker (extended capabilities definition). Empty implementation.
  * Found in HTJ2K files
  *
  * @param       p_header_data   the data contained in the CAP box.
@@ -6623,9 +6623,9 @@ static OPJ_BOOL opj_j2k_read_cbd(opj_j2k_t *p_j2k,
 }
 
 /**
- * Reads a CAP marker (extended capabilities definition). Empty implementation. 
+ * Reads a CAP marker (extended capabilities definition). Empty implementation.
  * Found in HTJ2K files.
- * 
+ *
  * @param       p_header_data   the data contained in the CAP box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the CAP marker.
