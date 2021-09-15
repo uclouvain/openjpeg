@@ -3,7 +3,7 @@ cd $(git rev-parse --show-toplevel)
 
 export PATH=$PATH:$PWD/scripts
 
-if [ -z "$TRAVIS_COMMIT_RANGE" ]; then
+if [ -z "$TRAVIS_COMMIT_RANGE" -a -z "$GITHUB_SHA" ]; then
 	echo "No commit range given"
 	exit 0
 fi
@@ -18,14 +18,24 @@ set -e
 ASTYLEDIFF=/tmp/astyle.diff
 >$ASTYLEDIFF
 
-
-if [[ ! -z  $TRAVIS_PULL_REQUEST_BRANCH  ]]; then
+if [ ! -z $GITHUB_BASE_REF ] && [ ! -z $GITHUB_HEAD_REF ]; then
+  # on a PR
+  echo "GitHub PR COMMIT RANGE: ${GITHUB_BASE_REF}..${GITHUB_HEAD_REF}"
+  git branch ${GITHUB_BASE_REF} origin/${GITHUB_BASE_REF}
+  git branch ${GITHUB_HEAD_REF} origin/${GITHUB_HEAD_REF}
+  BASE_SHA1=$(git rev-parse ${GITHUB_BASE_REF})
+  HEAD_SHA1=$(git rev-parse ${GITHUB_HEAD_REF})
+  FILES=$(git diff --diff-filter=AMR --name-only ${BASE_SHA1}..${HEAD_SHA1} | tr '\n' ' ' )
+elif [ ! -z  $GITHUB_SHA ]; then
+  echo "GitHub push COMMIT $GITHUB_SHA"
+  FILES=$(git diff --diff-filter=AMR --name-only ${GITHUB_SHA}~1..${GITHUB_SHA} | tr '\n' ' ' )
+elif [ ! -z  $TRAVIS_PULL_REQUEST_BRANCH ]; then
   # if on a PR, just analyse the changed files
   echo "TRAVIS PR BRANCH: $TRAVIS_PULL_REQUEST_BRANCH"
-  FILES=$(git diff --diff-filter=AM --name-only $(git merge-base HEAD master) | tr '\n' ' ' )
-elif [[ ! -z  $TRAVIS_COMMIT_RANGE  ]]; then
+  FILES=$(git diff --diff-filter=AMR --name-only $(git merge-base HEAD master) | tr '\n' ' ' )
+elif [ ! -z  $TRAVIS_COMMIT_RANGE  ]; then
   echo "TRAVIS COMMIT RANGE: $TRAVIS_COMMIT_RANGE"
-  FILES=$(git diff --diff-filter=AM --name-only ${TRAVIS_COMMIT_RANGE/.../..} | tr '\n' ' ' )
+  FILES=$(git diff --diff-filter=AMR --name-only ${TRAVIS_COMMIT_RANGE/.../..} | tr '\n' ' ' )
 fi
 
 for f in $FILES; do
