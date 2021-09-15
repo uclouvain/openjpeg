@@ -73,9 +73,11 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #define J2K_MS_SOT 0xff90   /**< SOT marker value */
 #define J2K_MS_SOD 0xff93   /**< SOD marker value */
 #define J2K_MS_EOC 0xffd9   /**< EOC marker value */
+#define J2K_MS_CAP 0xff50   /**< CAP marker value */
 #define J2K_MS_SIZ 0xff51   /**< SIZ marker value */
 #define J2K_MS_COD 0xff52   /**< COD marker value */
 #define J2K_MS_COC 0xff53   /**< COC marker value */
+#define J2K_MS_CPF 0xff59   /**< CPF marker value */
 #define J2K_MS_RGN 0xff5e   /**< RGN marker value */
 #define J2K_MS_QCD 0xff5c   /**< QCD marker value */
 #define J2K_MS_QCC 0xff5d   /**< QCC marker value */
