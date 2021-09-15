@@ -21,11 +21,9 @@ ASTYLEDIFF=/tmp/astyle.diff
 if [ ! -z $GITHUB_BASE_REF ] && [ ! -z $GITHUB_HEAD_REF ]; then
   # on a PR
   echo "GitHub PR COMMIT RANGE: ${GITHUB_BASE_REF}..${GITHUB_HEAD_REF}"
-  git branch ${GITHUB_BASE_REF} origin/${GITHUB_BASE_REF}
-  git branch ${GITHUB_HEAD_REF} origin/${GITHUB_HEAD_REF}
-  BASE_SHA1=$(git rev-parse ${GITHUB_BASE_REF})
-  HEAD_SHA1=$(git rev-parse ${GITHUB_HEAD_REF})
-  FILES=$(git diff --diff-filter=AMR --name-only ${BASE_SHA1}..${HEAD_SHA1} | tr '\n' ' ' )
+  git branch tmp_${GITHUB_BASE_REF} origin/${GITHUB_BASE_REF}
+  BASE_SHA1=$(git rev-parse tmp_${GITHUB_BASE_REF})
+  FILES=$(git diff --diff-filter=AMR --name-only ${BASE_SHA1}..${GITHUB_SHA} | tr '\n' ' ' )
 elif [ ! -z  $GITHUB_SHA ]; then
   echo "GitHub push COMMIT $GITHUB_SHA"
   FILES=$(git diff --diff-filter=AMR --name-only ${GITHUB_SHA}~1..${GITHUB_SHA} | tr '\n' ' ' )
