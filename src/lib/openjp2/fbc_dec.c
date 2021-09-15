@@ -56,14 +56,21 @@
 #endif
 
 //************************************************************************/
-/** @brief Displays the error message for disabling the decoding of CUP
-  *        pass due to insufficient precision once
+/** @brief Displays the error message when 32 bits are not sufficient to
+  * decode any passes
   */
 static OPJ_BOOL cannot_decode_due_to_insufficient_precision = OPJ_FALSE;
 
 //************************************************************************/
+/** @brief Displays the error message when we do not have enough precision
+  * to decode the cleanup pass and set the bin center to 1.  The code can
+  * be modified to support this case.
+  */
+static OPJ_BOOL modify_code_to_support_this_precision = OPJ_FALSE;
+
+//************************************************************************/
 /** @brief Displays the error message for disabling the decoding of SPP and
-  *        MRP passes once
+  * MRP passes
   */
 static OPJ_BOOL cannot_decode_spp_mrp_msg = OPJ_FALSE;
 
@@ -1070,6 +1077,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     OPJ_BYTE* cblkdata = NULL;
     OPJ_UINT8* coded_data;
     OPJ_UINT32* decoded_data;
+    OPJ_UINT32 missing_msbs;
     OPJ_UINT32 num_passes;
     OPJ_UINT32 lengths1;
     OPJ_UINT32 lengths2;
@@ -1121,6 +1129,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     if (cblk->Mb == 0) {
         return OPJ_TRUE;
     }
+
+    /* Mb = Kmax, numbps = Kmax + 1 - missing_msbs */
+    missing_msbs = (cblk->Mb + 1) - cblk->numbps;
 
     /* Even if we have a single chunk, in multi-threaded decoding */
     /* the insertion of our synthetic marker might potentially override */
@@ -1231,47 +1242,62 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
         return OPJ_FALSE;
     }
 
-    if (cblk->numbps == 1 && num_passes > 1) {
-        // We do not have enough precision to decode SgnProp nor MagRef passes.
-        // We decode the cleanup passes only
-        if (cannot_decode_spp_mrp_msg == OPJ_FALSE) {
-            if (p_manager_mutex) {
-                opj_mutex_lock(p_manager_mutex);
-            }
-            cannot_decode_spp_mrp_msg = OPJ_TRUE;
-            opj_event_msg(p_manager, EVT_WARNING, "Not enough precision to decode "
-                          "the SgnProp nor MagRef passes.  This message "
-                          "will not be displayed again.\n");
-            if (p_manager_mutex) {
-                opj_mutex_unlock(p_manager_mutex);
-            }
-        }
-        num_passes = 1;
-    }
-    if (cblk->numbps == 0) {
-        // We do not have enough precision to decode the CUP pass with the
-        // center of bin bit set.  The code can be modified to support this
-        // case, without using the center of the bin.
+    if (missing_msbs > 30) {
+        /* We do not have enough precision to decode any passes */
         if (cannot_decode_due_to_insufficient_precision == OPJ_FALSE) {
             if (p_manager_mutex) {
                 opj_mutex_lock(p_manager_mutex);
             }
             cannot_decode_due_to_insufficient_precision = OPJ_TRUE;
-            opj_event_msg(p_manager, EVT_WARNING, "Not enough precision to decode "
-                          "the cleanup pass. The code should be "
-                          "modified to support this case. This message "
+            opj_event_msg(p_manager, EVT_ERROR, "32 bits are not enough to "
+                          "decode this codeblock. This message "
                           "will not be displayed again.\n");
             if (p_manager_mutex) {
                 opj_mutex_unlock(p_manager_mutex);
             }
         }
-        return OPJ_TRUE;
+        return OPJ_FALSE;
+    } else if (missing_msbs == 30) {
+        /* We do not have enough precision to decode the CUP pass with the
+           center of bin bit set.  The code can be modified to support this
+           case, where we do not set the center of the bin. */
+        if (modify_code_to_support_this_precision == OPJ_FALSE) {
+            if (p_manager_mutex) {
+                opj_mutex_lock(p_manager_mutex);
+            }
+            modify_code_to_support_this_precision = OPJ_TRUE;
+            opj_event_msg(p_manager, EVT_ERROR, "Not enough precision to decode "
+                          "the cleanup pass. The code can be modified to "
+                          "support this case. This message will not be "
+                          "displayed again.\n");
+            if (p_manager_mutex) {
+                opj_mutex_unlock(p_manager_mutex);
+            }
+        }
+        return OPJ_FALSE;
+    } else if (missing_msbs == 29) { /* if p is 1, then num_passes must be 1 */
+        if (num_passes > 1) {
+            num_passes = 1;
+            if (cannot_decode_spp_mrp_msg == OPJ_FALSE) {
+                if (p_manager_mutex) {
+                    opj_mutex_lock(p_manager_mutex);
+                }
+                cannot_decode_spp_mrp_msg = OPJ_TRUE;
+                opj_event_msg(p_manager, EVT_WARNING, "Not enough precision to decode "
+                              "the SgnProp nor MagRef passes, which will be skipped. "
+                              "This message will not be displayed again.\n");
+                if (p_manager_mutex) {
+                    opj_mutex_unlock(p_manager_mutex);
+                }
+            }
+        }
     }
 
-    // OPJ_UINT32
-    p = cblk->numbps;
+    /* OPJ_UINT32 */
+    p = 30 - missing_msbs;
+
     // OPJ_UINT32 zero planes plus 1
-    zero_planes_p1 = cblk->Mb - cblk->numbps + 1;
+    zero_planes_p1 = missing_msbs + 1;
 
     // read scup and fix the bytes there
     lcup = (int)lengths1;  // length of CUP
@@ -2502,10 +2528,11 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     {
         OPJ_INT32 x, y;
+        OPJ_UINT32 shift = 29u - cblk->Mb;
         for (y = 0; y < height; ++y) {
             OPJ_INT32* sp = (OPJ_INT32*)decoded_data + y * stride;
             for (x = 0; x < width; ++x, ++sp) {
-                OPJ_INT32 val = (*sp & 0x7FFFFFFF);
+                OPJ_INT32 val = (*sp & 0x7FFFFFFF) >> shift;
                 *sp = ((OPJ_UINT32) * sp & 0x80000000) ? -val : val;
             }
         }
