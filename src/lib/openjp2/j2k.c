@@ -10700,17 +10700,9 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(opj_j2k_t *p_j2k,
     opj_read_bytes(l_current_ptr, &l_tccp->cblksty, 1);
     ++l_current_ptr;
     if ((l_tccp->cblksty & J2K_CCP_CBLKSTY_HTMIXED) != 0) {
-        /* We do not support HT mixed mode yet*/
+        /* We do not support HT mixed mode yet.  For conformance, it should be supported.*/
         opj_event_msg(p_manager, EVT_ERROR,
                       "Error reading SPCod SPCoc element. Unsupported Mixed HT code-block style found\n");
-        return OPJ_FALSE;
-    }
-
-    if ((l_tccp->cblksty & (J2K_CCP_CBLKSTY_HT | J2K_CCP_CBLKSTY_VSC)) ==
-            (J2K_CCP_CBLKSTY_HT | J2K_CCP_CBLKSTY_VSC)) {
-        /* For HT, we do not support vertically causal mode yet. */
-        opj_event_msg(p_manager, EVT_ERROR,
-                      "Error reading SPCod SPCoc element. Unsupported HT mode with vertically causal mode. \n");
         return OPJ_FALSE;
     }
 
