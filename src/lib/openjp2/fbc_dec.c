@@ -1111,6 +1111,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     OPJ_UINT32* sp;
     OPJ_INT32 x, y; // loop indices
     OPJ_BOOL stripe_causal = (cblksty & J2K_CCP_CBLKSTY_VSC) != 0;
+    OPJ_UINT32 cblk_len = 0;
 
     (void)(orient);      // stops unused parameter message
     (void)(check_pterm); // stops unused parameter message
@@ -1143,29 +1144,27 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     /* numbps = Mb + 1 - zero_bplanes, Mb = Kmax, zero_bplanes = missing_msbs */
     zero_bplanes = (cblk->Mb + 1) - cblk->numbps;
 
-    /* Even if we have a single chunk, in multi-threaded decoding */
-    /* the insertion of our synthetic marker might potentially override */
-    /* valid codestream of other codeblocks decoded in parallel. */
-    if (cblk->numchunks > 1 || t1->mustuse_cblkdatabuffer) {
+    /* Compute whole codeblock length from chunk lengths */
+    cblk_len = 0;
+    {
         OPJ_UINT32 i;
-        OPJ_UINT32 cblk_len;
-
-        /* Compute whole codeblock length from chunk lengths */
-        cblk_len = 0;
         for (i = 0; i < cblk->numchunks; i++) {
             cblk_len += cblk->chunks[i].len;
         }
+    }
+
+    if (cblk->numchunks > 1 || t1->mustuse_cblkdatabuffer) {
+        OPJ_UINT32 i;
 
         /* Allocate temporary memory if needed */
-        if (cblk_len + OPJ_COMMON_CBLK_DATA_EXTRA > t1->cblkdatabuffersize) {
+        if (cblk_len > t1->cblkdatabuffersize) {
             cblkdata = (OPJ_BYTE*)opj_realloc(
-                           t1->cblkdatabuffer, cblk_len + OPJ_COMMON_CBLK_DATA_EXTRA);
+                           t1->cblkdatabuffer, cblk_len);
             if (cblkdata == NULL) {
                 return OPJ_FALSE;
             }
             t1->cblkdatabuffer = cblkdata;
-            memset(t1->cblkdatabuffer + cblk_len, 0, OPJ_COMMON_CBLK_DATA_EXTRA);
-            t1->cblkdatabuffersize = cblk_len + OPJ_COMMON_CBLK_DATA_EXTRA;
+            t1->cblkdatabuffersize = cblk_len;
         }
 
         /* Concatenate all chunks */
@@ -1327,6 +1326,18 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     // read scup and fix the bytes there
     lcup = (int)lengths1;  // length of CUP
     //scup is the length of MEL + VLC
+    if (lcup < 2 || (OPJ_UINT32)lcup - 2 >= cblk_len) {
+        if (p_manager_mutex) {
+            opj_mutex_lock(p_manager_mutex);
+        }
+        opj_event_msg(p_manager, EVT_ERROR, "Malformed HT codeblock. "
+                      "Invalid lcup value\n");
+
+        if (p_manager_mutex) {
+            opj_mutex_unlock(p_manager_mutex);
+        }
+        return OPJ_FALSE;
+    }
     scup = (((int)coded_data[lcup - 1]) << 4) + (coded_data[lcup - 2] & 0xF);
     if (scup < 2 || scup > lcup || scup > 4079) { //something is wrong
         /* The standard stipulates 2 <= Scup <= min(Lcup, 4079) */
