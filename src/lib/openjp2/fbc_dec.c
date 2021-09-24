@@ -1323,21 +1323,22 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
     // OPJ_UINT32 zero planes plus 1
     zero_bplanes_p1 = zero_bplanes + 1;
 
-    // read scup and fix the bytes there
-    lcup = (int)lengths1;  // length of CUP
-    //scup is the length of MEL + VLC
-    if (lcup < 2 || (OPJ_UINT32)lcup - 2 >= cblk_len) {
+    if (lengths1 < 2 || (OPJ_UINT32)lengths1 > cblk_len ||
+            (OPJ_UINT32)(lengths1 + lengths2) > cblk_len) {
         if (p_manager_mutex) {
             opj_mutex_lock(p_manager_mutex);
         }
         opj_event_msg(p_manager, EVT_ERROR, "Malformed HT codeblock. "
-                      "Invalid lcup value\n");
+                      "Invalid codeblock length values.\n");
 
         if (p_manager_mutex) {
             opj_mutex_unlock(p_manager_mutex);
         }
         return OPJ_FALSE;
     }
+    // read scup and fix the bytes there
+    lcup = (int)lengths1;  // length of CUP
+    //scup is the length of MEL + VLC
     scup = (((int)coded_data[lcup - 1]) << 4) + (coded_data[lcup - 2] & 0xF);
     if (scup < 2 || scup > lcup || scup > 4079) { //something is wrong
         /* The standard stipulates 2 <= Scup <= min(Lcup, 4079) */
@@ -1532,6 +1533,19 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
             locs >>= (x + 4 - width) << 1;    // limits width
         }
         locs = height > 1 ? locs : (locs & 0x55);         // limits height
+
+        if ((((qinf[0] & 0xF0) >> 4) | (qinf[1] & 0xF0)) & ~locs) {
+            if (p_manager_mutex) {
+                opj_mutex_lock(p_manager_mutex);
+            }
+            opj_event_msg(p_manager, EVT_ERROR, "Malformed HT codeblock. "
+                          "VLC code produces significant samples outside "
+                          "the codeblock area.\n");
+            if (p_manager_mutex) {
+                opj_mutex_unlock(p_manager_mutex);
+            }
+            return OPJ_FALSE;
+        }
 
         //first quad, starting at first sample in quad and moving on
         if (qinf[0] & 0x10) { //is it signifcant? (sigma_n)
@@ -1820,6 +1834,20 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
                 locs >>= (x + 4 - width) << 1;
             }
             locs = y + 2 <= height ? locs : (locs & 0x55);
+
+            if ((((qinf[0] & 0xF0) >> 4) | (qinf[1] & 0xF0)) & ~locs) {
+                if (p_manager_mutex) {
+                    opj_mutex_lock(p_manager_mutex);
+                }
+                opj_event_msg(p_manager, EVT_ERROR, "Malformed HT codeblock. "
+                              "VLC code produces significant samples outside "
+                              "the codeblock area.\n");
+                if (p_manager_mutex) {
+                    opj_mutex_unlock(p_manager_mutex);
+                }
+                return OPJ_FALSE;
+            }
+
 
 
             if (qinf[0] & 0x10) { //sigma_n
