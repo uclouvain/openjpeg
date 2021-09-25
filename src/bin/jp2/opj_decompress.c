@@ -427,8 +427,24 @@ int load_images(dircnt_t *dirptr, char *imgdirpath)
 int get_file_format(const char *filename)
 {
     unsigned int i;
-    static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp", "tif", "tiff", "raw", "yuv", "rawl", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
-    static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, TIF_DFMT, RAW_DFMT, RAW_DFMT, RAWL_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
+    static const char * const extension[] = {
+        "pgx", "pnm", "pgm", "ppm", "bmp",
+        "tif", "tiff",
+        "raw", "yuv", "rawl",
+        "tga", "png",
+        "j2k", "jp2", "jpt", "j2c", "jpc",
+        "jph", /* HTJ2K with JP2 boxes */
+        "jhc" /* HTJ2K codestream */
+    };
+    static const int format[] = {
+        PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT,
+        TIF_DFMT, TIF_DFMT,
+        RAW_DFMT, RAW_DFMT, RAWL_DFMT,
+        TGA_DFMT, PNG_DFMT,
+        J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT,
+        JP2_CFMT, /* HTJ2K with JP2 boxes */
+        J2K_CFMT /* HTJ2K codestream */
+    };
     const char * ext = strrchr(filename, '.');
     if (ext == NULL) {
         return -1;
@@ -538,10 +554,10 @@ static int infile_format(const char *fname)
 
     if (memcmp(buf, JP2_RFC3745_MAGIC, 12) == 0 || memcmp(buf, JP2_MAGIC, 4) == 0) {
         magic_format = JP2_CFMT;
-        magic_s = ".jp2";
+        magic_s = ".jp2 or .jph";
     } else if (memcmp(buf, J2K_CODESTREAM_MAGIC, 4) == 0) {
         magic_format = J2K_CFMT;
-        magic_s = ".j2k or .jpc or .j2c";
+        magic_s = ".j2k or .jpc or .j2c or .jhc";
     } else {
         return -1;
     }
