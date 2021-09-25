@@ -111,6 +111,24 @@ OPJ_UINT32 count_leading_zeros(OPJ_UINT32 val)
 }
 
 //************************************************************************/
+/** @brief Read a little-endian serialized UINT32.
+  *
+  *   @param [in]  dataIn pointer to byte stream to read from
+  */
+static INLINE OPJ_UINT32 read_le_uint32(const void* dataIn)
+{
+#if defined(OPJ_BIG_ENDIAN)
+    const OPJ_UINT8* data = (const OPJ_UINT8*)dataIn;
+    return ((OPJ_UINT32)data[0]) | (OPJ_UINT32)(data[1] << 8) | (OPJ_UINT32)(
+               data[2] << 16) | (((
+                                      OPJ_UINT32)data[3]) <<
+                                 24U);
+#else
+    return *(OPJ_UINT32*)dataIn;
+#endif
+}
+
+//************************************************************************/
 /** @brief MEL state structure for reading and decoding the MEL bitstream
   *
   *  A number of events is decoded from the MEL bitstream ahead of time
@@ -157,7 +175,7 @@ void mel_read(dec_mel_t *melp)
 
     val = 0xFFFFFFFF;      // feed in 0xFF if buffer is exhausted
     if (melp->size > 4) {  // if there is more than 4 bytes the MEL segment
-        val = *(OPJ_UINT32*)melp->data;  // read 32 bits from MEL data
+        val = read_le_uint32(melp->data);  // read 32 bits from MEL data
         melp->data += 4;           // advance pointer
         melp->size -= 4;           // reduce counter
     } else if (melp->size > 0) { // 4 or less
@@ -386,7 +404,7 @@ void rev_read(rev_struct_t *vlcp)
     //the next line (the if statement) needs to be tested first
     if (vlcp->size > 3) { // if there are more than 3 bytes left in VLC
         // (vlcp->data - 3) move pointer back to read 32 bits at once
-        val = *(OPJ_UINT32*)(vlcp->data - 3); // then read 32 bits
+        val = read_le_uint32(vlcp->data - 3); // then read 32 bits
         vlcp->data -= 4;                // move data pointer back by 4
         vlcp->size -= 4;                // reduce available byte by 4
     } else if (vlcp->size > 0) { // 4 or less
@@ -536,7 +554,7 @@ void rev_read_mrp(rev_struct_t *mrp)
     val = 0;
     if (mrp->size > 3) { // If there are 3 byte or more
         // (mrp->data - 3) move pointer back to read 32 bits at once
-        val = *(OPJ_UINT32*)(mrp->data - 3); // read 32 bits
+        val = read_le_uint32(mrp->data - 3); // read 32 bits
         mrp->data -= 4;                      // move back pointer
         mrp->size -= 4;                      // reduce count
     } else if (mrp->size > 0) {
@@ -887,7 +905,7 @@ void frwd_read(frwd_struct_t *msp)
 
     val = 0u;
     if (msp->size > 3) {
-        val = *(OPJ_UINT32*)msp->data;  // read 32 bits
+        val = read_le_uint32(msp->data);  // read 32 bits
         msp->data += 4;           // increment pointer
         msp->size -= 4;           // reduce size
     } else if (msp->size > 0) {
