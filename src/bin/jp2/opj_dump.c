@@ -227,7 +227,13 @@ static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
     if (parameters->decod_format == -1) {
         return 1;
     }
-    sprintf(infilename, "%s/%s", img_fol->imgdirpath, image_filename);
+    if (strlen(img_fol->imgdirpath) + 1 + strlen(
+                image_filename) + 1 > sizeof(infilename)) {
+        return 1;
+    }
+    strcpy(infilename, img_fol->imgdirpath);
+    strcat(infilename, "/");
+    strcat(infilename, image_filename);
     if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile),
                      infilename) != 0) {
         return 1;
@@ -240,8 +246,15 @@ static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
         sprintf(temp1, ".%s", temp_p);
     }
     if (img_fol->set_out_format == 1) {
-        sprintf(outfilename, "%s/%s.%s", img_fol->imgdirpath, temp_ofname,
-                img_fol->out_format);
+        if (strlen(img_fol->imgdirpath) + 1 + strlen(temp_ofname) + 1 + strlen(
+                    img_fol->out_format) + 1 > sizeof(outfilename)) {
+            return 1;
+        }
+        strcpy(outfilename, img_fol->imgdirpath);
+        strcat(outfilename, "/");
+        strcat(outfilename, temp_ofname);
+        strcat(outfilename, ".");
+        strcat(outfilename, img_fol->out_format);
         if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile),
                          outfilename) != 0) {
             return 1;
