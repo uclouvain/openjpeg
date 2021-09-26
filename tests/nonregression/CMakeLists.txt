@@ -92,6 +92,7 @@ file(GLOB_RECURSE OPJ_DATA_NR_LIST
      "${INPUT_NR}/*.jp2"
      "${INPUT_NR}/*.jpc"
      "${INPUT_NR}/*.jph"
+     "${INPUT_NR}/*.jhc"
      #"${INPUT_NR}/*.jpx"
      )
 
