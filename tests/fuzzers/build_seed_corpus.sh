@@ -13,3 +13,7 @@ cd $SRC_DIR/data/input/conformance
 rm -f $OUT/opj_decompress_fuzzer_seed_corpus.zip
 zip $OUT/opj_decompress_fuzzer_seed_corpus.zip *.jp2 *.j2k
 cd $OLDPWD
+
+cd $SRC_DIR/data/input/nonregression/htj2k
+zip $OUT/opj_decompress_fuzzer_seed_corpus.zip *.j2k *.jhc *.jph
+cd $OLDPWD
