@@ -4964,8 +4964,14 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
         /* Check enough bytes left in stream before allocation */
         if ((OPJ_OFF_T)p_j2k->m_specific_param.m_decoder.m_sot_length >
                 opj_stream_get_number_byte_left(p_stream)) {
-            opj_event_msg(p_manager, EVT_WARNING,
-                          "Tile part length size inconsistent with stream length\n");
+            if(p_j2k->m_cp.strict) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                            "Tile part length size inconsistent with stream length\n");
+                return OPJ_FALSE;
+            } else {
+                opj_event_msg(p_manager, EVT_WARNING,
+                            "Tile part length size inconsistent with stream length\n");
+            }
         }
         if (p_j2k->m_specific_param.m_decoder.m_sot_length >
                 UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA) {
@@ -6684,6 +6690,7 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
     if (j2k && parameters) {
         j2k->m_cp.m_specific_param.m_dec.m_layer = parameters->cp_layer;
         j2k->m_cp.m_specific_param.m_dec.m_reduce = parameters->cp_reduce;
+        j2k->m_cp.strict = OPJ_TRUE;
 
         j2k->dump_state = (parameters->flags & OPJ_DPARAMETERS_DUMP_FLAG);
 #ifdef USE_JPWL
@@ -6691,6 +6698,13 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
         j2k->m_cp.exp_comps = parameters->jpwl_exp_comps;
         j2k->m_cp.max_tiles = parameters->jpwl_max_tiles;
 #endif /* USE_JPWL */
+    }
+}
+
+void opj_j2k_decoder_set_strict_mode(opj_j2k_t *j2k, OPJ_BOOL strict)
+{
+    if (j2k) {
+        j2k->m_cp.strict = strict;
     }
 }
 
