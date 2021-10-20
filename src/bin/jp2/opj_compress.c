@@ -186,6 +186,10 @@ static void encode_help_display(void)
     fprintf(stdout,
             "    It corresponds to the number of DWT decompositions +1. \n");
     fprintf(stdout, "    Default: 6.\n");
+    fprintf(stdout, "-X <target bitdepth>\n");
+    fprintf(stdout, "    Target bitdepth.\n");
+    fprintf(stdout, "    Number of bits per component to use from input image\n");
+    fprintf(stdout, "    if all bits are unwanted. \n");
     fprintf(stdout, "-b <cblk width>,<cblk height>\n");
     fprintf(stdout,
             "    Code-block size. The dimension must respect the constraint \n");
@@ -623,7 +627,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
     };
 
     /* parse the command line */
-    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:"
+    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:X:"
 #ifdef USE_JPWL
                            "W:"
 #endif /* USE_JPWL */
@@ -905,6 +909,19 @@ static int parse_cmdline_encoder(int argc, char **argv,
         case 't': {         /* tiles */
             sscanf(opj_optarg, "%d,%d", &parameters->cp_tdx, &parameters->cp_tdy);
             parameters->tile_size_on = OPJ_TRUE;
+        }
+        break;
+
+        /* ----------------------------------------------------- */
+        case 'X': {         /* target bitdepth */
+            int target_bitdepth = 0;
+            char *s = opj_optarg;
+            sscanf(s, "%d", &target_bitdepth);
+            if (target_bitdepth <= 0) {
+              fprintf(stderr, "Target bitdepth must be at least 1 bit.\n");
+              return 1;
+            }
+            parameters->target_bitdepth = target_bitdepth;
         }
         break;
 

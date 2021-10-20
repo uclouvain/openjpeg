@@ -465,6 +465,8 @@ typedef struct opj_cparameters {
     int decod_format;
     /** output file format 0: J2K, 1: JP2, 2: JPT */
     int cod_format;
+    /** desired bitdepth from input file */
+    int target_bitdepth;
     /*@}*/
 
     /* UniPG>> */ /* NOT YET USED IN THE V2 VERSION OF OPENJPEG */
