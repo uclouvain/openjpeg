@@ -225,7 +225,6 @@ static opj_image_t* readImageFromFilePPM(const char* filename,
         param_image_read[it_file].dy = 0;
         param_image_read[it_file].h = image_read->comps->h;
         param_image_read[it_file].w = image_read->comps->w;
-        param_image_read[it_file].bpp = image_read->comps->bpp;
         param_image_read[it_file].prec = image_read->comps->prec;
         param_image_read[it_file].sgnd = image_read->comps->sgnd;
 
@@ -356,7 +355,6 @@ static opj_image_t* readImageFromFilePGX(const char* filename,
         param_image_read[it_file].dy = 0;
         param_image_read[it_file].h = image_read->comps->h;
         param_image_read[it_file].w = image_read->comps->w;
-        param_image_read[it_file].bpp = image_read->comps->bpp;
         param_image_read[it_file].prec = image_read->comps->prec;
         param_image_read[it_file].sgnd = image_read->comps->sgnd;
 
@@ -403,7 +401,6 @@ static int imageToPNG(const opj_image_t* image, const char* filename,
     param_image_write.dy = 0;
     param_image_write.h = image->comps[num_comp_select].h;
     param_image_write.w = image->comps[num_comp_select].w;
-    param_image_write.bpp = image->comps[num_comp_select].bpp;
     param_image_write.prec = image->comps[num_comp_select].prec;
     param_image_write.sgnd = image->comps[num_comp_select].sgnd;
 
@@ -797,7 +794,6 @@ int main(int argc, char **argv)
         param_image_diff[it_comp].dy = 0;
         param_image_diff[it_comp].sgnd = 0;
         param_image_diff[it_comp].prec = 8;
-        param_image_diff[it_comp].bpp = 1;
         param_image_diff[it_comp].h = imageBase->comps[it_comp].h;
         param_image_diff[it_comp].w = imageBase->comps[it_comp].w;
 
@@ -811,13 +807,6 @@ int main(int argc, char **argv)
                 !inParam.ignore_prec) {
             printf("ERROR: prec mismatch [comp %d] (%d><%d)\n", it_comp,
                    ((imageBase->comps)[it_comp]).prec, ((imageTest->comps)[it_comp]).prec);
-            goto cleanup;
-        }
-
-        if (((imageBase->comps)[it_comp]).bpp != ((imageTest->comps)[it_comp]).bpp &&
-                !inParam.ignore_prec) {
-            printf("ERROR: bit per pixel mismatch [comp %d] (%d><%d)\n", it_comp,
-                   ((imageBase->comps)[it_comp]).bpp, ((imageTest->comps)[it_comp]).bpp);
             goto cleanup;
         }
 
@@ -856,12 +845,12 @@ int main(int argc, char **argv)
         double MSE = 0;
         unsigned right_shift_input = 0;
         unsigned right_shift_output = 0;
-        if (((imageBase->comps)[it_comp]).bpp > ((imageTest->comps)[it_comp]).bpp) {
-            right_shift_input = ((imageBase->comps)[it_comp]).bpp - ((
-                                    imageTest->comps)[it_comp]).bpp;
+        if (((imageBase->comps)[it_comp]).prec > ((imageTest->comps)[it_comp]).prec) {
+            right_shift_input = ((imageBase->comps)[it_comp]).prec - ((
+                                    imageTest->comps)[it_comp]).prec;
         } else {
-            right_shift_output = ((imageTest->comps)[it_comp]).bpp - ((
-                                     imageBase->comps)[it_comp]).bpp;
+            right_shift_output = ((imageTest->comps)[it_comp]).prec - ((
+                                     imageBase->comps)[it_comp]).prec;
         }
         for (itpxl = 0;
                 itpxl < ((imageDiff->comps)[it_comp]).w * ((imageDiff->comps)[it_comp]).h;
