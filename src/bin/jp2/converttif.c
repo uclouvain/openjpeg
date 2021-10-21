@@ -1247,7 +1247,8 @@ static void tif_16uto32s(const OPJ_UINT16* pSrc, OPJ_INT32* pDst,
  * libtiff/tif_getimage.c : 1,2,4,8,16 bitspersample accepted
  * CINEMA                 : 12 bit precision
  */
-opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
+opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters,
+                        const unsigned int target_bitdepth)
 {
     int subsampling_dx = parameters->subsampling_dx;
     int subsampling_dy = parameters->subsampling_dy;
@@ -1506,10 +1507,9 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
             scale_component(&(image->comps[j]), 12);
         }
 
-    } else if ((parameters->target_bitdepth > 0) &&
-               (parameters->target_bitdepth != tiBps)) {
+    } else if ((target_bitdepth > 0) && (target_bitdepth != tiBps)) {
         for (j = 0; j < numcomps; ++j) {
-            scale_component(&(image->comps[j]), parameters->target_bitdepth);
+            scale_component(&(image->comps[j]), target_bitdepth);
         }
     }
     return image;
