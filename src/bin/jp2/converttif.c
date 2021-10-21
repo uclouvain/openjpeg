@@ -1389,7 +1389,6 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 
     for (j = 0; j < numcomps; j++) {
         cmptparm[j].prec = tiBps;
-        cmptparm[j].bpp = tiBps;
         cmptparm[j].dx = (OPJ_UINT32)subsampling_dx;
         cmptparm[j].dy = (OPJ_UINT32)subsampling_dy;
         cmptparm[j].w = (OPJ_UINT32)w;

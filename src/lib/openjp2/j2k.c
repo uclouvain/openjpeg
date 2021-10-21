@@ -6975,7 +6975,7 @@ static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz,
 
     /* Bitdepth */
     for (i = 0; i < image->numcomps; i++) {
-        if ((image->comps[i].bpp != 12) | (image->comps[i].sgnd)) {
+        if ((image->comps[i].prec != 12) | (image->comps[i].sgnd)) {
             char signed_str[] = "signed";
             char unsigned_str[] = "unsigned";
             char *tmp_str = image->comps[i].sgnd ? signed_str : unsigned_str;
@@ -6984,7 +6984,7 @@ static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz,
                           "Precision of each component shall be 12 bits unsigned"
                           "-> At least component %d of input image (%d bits, %s) is not compliant\n"
                           "-> Non-profile-3 codestream will be generated\n",
-                          i, image->comps[i].bpp, tmp_str);
+                          i, image->comps[i].prec, tmp_str);
             return OPJ_FALSE;
         }
     }
@@ -7275,7 +7275,7 @@ static OPJ_BOOL opj_j2k_is_imf_compliant(opj_cparameters_t *parameters,
 
     /* Bitdepth */
     for (i = 0; i < image->numcomps; i++) {
-        if (!(image->comps[i].bpp >= 8 && image->comps[i].bpp <= 16) ||
+        if (!(image->comps[i].prec >= 8 && image->comps[i].prec <= 16) ||
                 (image->comps[i].sgnd)) {
             char signed_str[] = "signed";
             char unsigned_str[] = "unsigned";
@@ -7284,7 +7284,7 @@ static OPJ_BOOL opj_j2k_is_imf_compliant(opj_cparameters_t *parameters,
                           "IMF profiles require precision of each component to b in [8-16] bits unsigned"
                           "-> At least component %d of input image (%d bits, %s) is not compliant\n"
                           "-> Non-IMF codestream will be generated\n",
-                          i, image->comps[i].bpp, tmp_str);
+                          i, image->comps[i].prec, tmp_str);
             ret = OPJ_FALSE;
         }
     }

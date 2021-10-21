@@ -1086,8 +1086,6 @@ static opj_image_t* convert_gray_to_rgb(opj_image_t* original)
         return NULL;
     }
 
-    l_new_components[0].bpp  = l_new_components[1].bpp  = l_new_components[2].bpp  =
-                                   original->comps[0].bpp;
     l_new_components[0].dx   = l_new_components[1].dx   = l_new_components[2].dx   =
                                    original->comps[0].dx;
     l_new_components[0].dy   = l_new_components[1].dy   = l_new_components[2].dy   =
@@ -1106,7 +1104,6 @@ static opj_image_t* convert_gray_to_rgb(opj_image_t* original)
                                    original->comps[0].y0;
 
     for (compno = 1U; compno < original->numcomps; ++compno) {
-        l_new_components[compno + 2U].bpp  = original->comps[compno].bpp;
         l_new_components[compno + 2U].dx   = original->comps[compno].dx;
         l_new_components[compno + 2U].dy   = original->comps[compno].dy;
         l_new_components[compno + 2U].h    = original->comps[compno].h;
@@ -1196,7 +1193,6 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
         opj_image_cmptparm_t* l_new_cmp = &(l_new_components[compno]);
         opj_image_comp_t*     l_org_cmp = &(original->comps[compno]);
 
-        l_new_cmp->bpp  = l_org_cmp->bpp;
         l_new_cmp->prec = l_org_cmp->prec;
         l_new_cmp->sgnd = l_org_cmp->sgnd;
         l_new_cmp->x0   = original->x0;
