@@ -914,10 +914,10 @@ static int parse_cmdline_encoder(int argc, char **argv,
 
         /* ----------------------------------------------------- */
         case 'X': {         /* target bitdepth */
-            int target_bitdepth = 0;
+            unsigned int target_bitdepth = 0;
             char *s = opj_optarg;
-            sscanf(s, "%d", &target_bitdepth);
-            if (target_bitdepth <= 0) {
+            sscanf(s, "%u", &target_bitdepth);
+            if (target_bitdepth == 0) {
               fprintf(stderr, "Target bitdepth must be at least 1 bit.\n");
               return 1;
             }
