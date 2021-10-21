@@ -82,7 +82,6 @@ int main(int argc, char *argv[])
     parameters.cod_format = J2K_CFMT;
     puts(v);
     cmptparm.prec = 8;
-    cmptparm.bpp = 8;
     cmptparm.sgnd = 0;
     cmptparm.dx = subsampling_dx;
     cmptparm.dy = subsampling_dy;

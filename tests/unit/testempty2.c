@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
     subsampling_dx = (unsigned int)parameters.subsampling_dx;
     subsampling_dy = (unsigned int)parameters.subsampling_dy;
     cmptparm.prec = 8;
-    cmptparm.bpp = 8;
     cmptparm.sgnd = 0;
     cmptparm.dx = subsampling_dx;
     cmptparm.dy = subsampling_dy;
