@@ -76,6 +76,12 @@ Most compilers implement their own version of this keyword ...
 #define OPJ_DEPRECATED(func) func
 #endif
 
+#if defined(__GNUC__) && __GNUC__ >= 6
+#define OPJ_DEPRECATED_STRUCT_MEMBER(memb, msg) __attribute__ ((deprecated(msg))) memb
+#else
+#define OPJ_DEPRECATED_STRUCT_MEMBER(memb, msg) memb
+#endif
+
 #if defined(OPJ_STATIC) || !defined(_WIN32)
 /* http://gcc.gnu.org/wiki/Visibility */
 #   if !defined(_WIN32) && __GNUC__ >= 4
@@ -681,10 +687,10 @@ typedef struct opj_image_comp {
     OPJ_UINT32 x0;
     /** y component offset compared to the whole image */
     OPJ_UINT32 y0;
-    /** precision */
+    /** precision: number of bits per component per pixel */
     OPJ_UINT32 prec;
-    /** image depth in bits */
-    OPJ_UINT32 bpp;
+    /** obsolete: use prec instead */
+    OPJ_DEPRECATED_STRUCT_MEMBER(OPJ_UINT32 bpp, "Use prec instead");
     /** signed (1) / unsigned (0) */
     OPJ_UINT32 sgnd;
     /** number of decoded resolution */
@@ -738,10 +744,10 @@ typedef struct opj_image_comptparm {
     OPJ_UINT32 x0;
     /** y component offset compared to the whole image */
     OPJ_UINT32 y0;
-    /** precision */
+    /** precision: number of bits per component per pixel */
     OPJ_UINT32 prec;
-    /** image depth in bits */
-    OPJ_UINT32 bpp;
+    /** obsolete: use prec instead */
+    OPJ_DEPRECATED_STRUCT_MEMBER(OPJ_UINT32 bpp, "Use prec instead");
     /** signed (1) / unsigned (0) */
     OPJ_UINT32 sgnd;
 } opj_image_cmptparm_t;

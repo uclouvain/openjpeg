@@ -117,7 +117,6 @@ static void scale_component_up(opj_image_comp_t* component,
         }
     }
     component->prec = precision;
-    component->bpp = precision;
 }
 void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 {
@@ -144,7 +143,6 @@ void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
             l_data[i] >>= shift;
         }
     }
-    component->bpp = precision;
     component->prec = precision;
 }
 
@@ -838,7 +836,6 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters)
 
     for (i = 0; i < numcomps; i++) {
         cmptparm[i].prec = 8;
-        cmptparm[i].bpp = 8;
         cmptparm[i].sgnd = 0;
         cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
         cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
@@ -1269,7 +1266,6 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
     }
 
     cmptparm.prec = (OPJ_UINT32)prec;
-    cmptparm.bpp = (OPJ_UINT32)prec;
     cmptparm.dx = (OPJ_UINT32)parameters->subsampling_dx;
     cmptparm.dy = (OPJ_UINT32)parameters->subsampling_dy;
 
@@ -1327,7 +1323,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters)
         comp->data[i] = v;
     }
     fclose(f);
-    comp->bpp = (OPJ_UINT32)int_floorlog2(max) + 1;
+    comp->prec = (OPJ_UINT32)int_floorlog2(max) + 1;
 
     return image;
 }
@@ -1875,7 +1871,6 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters)
 
     for (i = 0; i < numcomps; i++) {
         cmptparm[i].prec = (OPJ_UINT32)prec;
-        cmptparm[i].bpp = (OPJ_UINT32)prec;
         cmptparm[i].sgnd = 0;
         cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
         cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
@@ -2366,7 +2361,6 @@ static opj_image_t* rawtoimage_common(const char *filename,
     /* initialize image components */
     for (i = 0; i < numcomps; i++) {
         cmptparm[i].prec = (OPJ_UINT32)raw_cp->rawBitDepth;
-        cmptparm[i].bpp = (OPJ_UINT32)raw_cp->rawBitDepth;
         cmptparm[i].sgnd = (OPJ_UINT32)raw_cp->rawSigned;
         cmptparm[i].dx = (OPJ_UINT32)(subsampling_dx * raw_cp->rawComps[i].dx);
         cmptparm[i].dy = (OPJ_UINT32)(subsampling_dy * raw_cp->rawComps[i].dy);
