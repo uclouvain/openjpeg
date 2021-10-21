@@ -2041,7 +2041,7 @@ int main(int argc, char **argv)
 
 #ifdef OPJ_HAVE_LIBTIFF
         case TIF_DFMT:
-	  image = tiftoimage(parameters.infile, &parameters, target_bitdepth);
+            image = tiftoimage(parameters.infile, &parameters, target_bitdepth);
             if (!image) {
                 fprintf(stderr, "Unable to load tif(f) file\n");
                 ret = 1;
