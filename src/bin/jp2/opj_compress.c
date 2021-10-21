@@ -918,8 +918,8 @@ static int parse_cmdline_encoder(int argc, char **argv,
             char *s = opj_optarg;
             sscanf(s, "%u", &target_bitdepth);
             if (target_bitdepth == 0) {
-              fprintf(stderr, "Target bitdepth must be at least 1 bit.\n");
-              return 1;
+                fprintf(stderr, "Target bitdepth must be at least 1 bit.\n");
+                return 1;
             }
             parameters->target_bitdepth = target_bitdepth;
         }

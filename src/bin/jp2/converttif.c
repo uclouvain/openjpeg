@@ -1506,7 +1506,8 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
             scale_component(&(image->comps[j]), 12);
         }
 
-    } else if ((parameters->target_bitdepth > 0) && (parameters->target_bitdepth != tiBps)) {
+    } else if ((parameters->target_bitdepth > 0) &&
+               (parameters->target_bitdepth != tiBps)) {
         for (j = 0; j < numcomps; ++j) {
             scale_component(&(image->comps[j]), parameters->target_bitdepth);
         }
