@@ -186,6 +186,11 @@ static void encode_help_display(void)
     fprintf(stdout,
             "    It corresponds to the number of DWT decompositions +1. \n");
     fprintf(stdout, "    Default: 6.\n");
+    fprintf(stdout, "-TargetBitDepth <target bit depth>\n");
+    fprintf(stdout, "    Target bit depth.\n");
+    fprintf(stdout, "    Number of bits per component to use from input image\n");
+    fprintf(stdout, "    if all bits are unwanted.\n");
+    fprintf(stdout, "    (Currently only implemented for TIF.)\n");
     fprintf(stdout, "-b <cblk width>,<cblk height>\n");
     fprintf(stdout,
             "    Code-block size. The dimension must respect the constraint \n");
@@ -600,7 +605,8 @@ static int parse_cmdline_encoder(int argc, char **argv,
                                  int* pOutFramerate,
                                  OPJ_BOOL* pOutPLT,
                                  OPJ_BOOL* pOutTLM,
-                                 int* pOutNumThreads)
+                                 int* pOutNumThreads,
+                                 unsigned int* pTarget_bitdepth)
 {
     OPJ_UINT32 i, j;
     int totlen, c;
@@ -620,10 +626,11 @@ static int parse_cmdline_encoder(int argc, char **argv,
         {"PLT", NO_ARG, NULL, 'A'},
         {"threads",   REQ_ARG, NULL, 'B'},
         {"TLM", NO_ARG, NULL, 'D'},
+        {"TargetBitDepth", REQ_ARG, NULL, 'X'},
     };
 
     /* parse the command line */
-    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:"
+    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:X:"
 #ifdef USE_JPWL
                            "W:"
 #endif /* USE_JPWL */
@@ -905,6 +912,17 @@ static int parse_cmdline_encoder(int argc, char **argv,
         case 't': {         /* tiles */
             sscanf(opj_optarg, "%d,%d", &parameters->cp_tdx, &parameters->cp_tdy);
             parameters->tile_size_on = OPJ_TRUE;
+        }
+        break;
+
+        /* ----------------------------------------------------- */
+        case 'X': {         /* target bitdepth */
+            char *s = opj_optarg;
+            sscanf(s, "%u", pTarget_bitdepth);
+            if (*pTarget_bitdepth == 0) {
+                fprintf(stderr, "Target bitdepth must be at least 1 bit.\n");
+                return 1;
+            }
         }
         break;
 
@@ -1908,6 +1926,9 @@ int main(int argc, char **argv)
     OPJ_BOOL TLM = OPJ_FALSE;
     int num_threads = 0;
 
+    /** desired bitdepth from input file */
+    unsigned int target_bitdepth = 0;
+
     /* set encoding parameters to default values */
     opj_set_default_encoder_parameters(&parameters);
 
@@ -1928,7 +1949,7 @@ int main(int argc, char **argv)
                          255; /* This will be set later according to the input image or the provided option */
     if (parse_cmdline_encoder(argc, argv, &parameters, &img_fol, &raw_cp,
                               indexfilename, sizeof(indexfilename), &framerate, &PLT, &TLM,
-                              &num_threads) == 1) {
+                              &num_threads, &target_bitdepth) == 1) {
         ret = 1;
         goto fin;
     }
@@ -2021,7 +2042,7 @@ int main(int argc, char **argv)
 
 #ifdef OPJ_HAVE_LIBTIFF
         case TIF_DFMT:
-            image = tiftoimage(parameters.infile, &parameters);
+            image = tiftoimage(parameters.infile, &parameters, target_bitdepth);
             if (!image) {
                 fprintf(stderr, "Unable to load tif(f) file\n");
                 ret = 1;
