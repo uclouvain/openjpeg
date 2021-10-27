@@ -186,8 +186,8 @@ static void encode_help_display(void)
     fprintf(stdout,
             "    It corresponds to the number of DWT decompositions +1. \n");
     fprintf(stdout, "    Default: 6.\n");
-    fprintf(stdout, "-X <target bitdepth>\n");
-    fprintf(stdout, "    Target bitdepth.\n");
+    fprintf(stdout, "-TargetBitDepth <target bit depth>\n");
+    fprintf(stdout, "    Target bit depth.\n");
     fprintf(stdout, "    Number of bits per component to use from input image\n");
     fprintf(stdout, "    if all bits are unwanted.\n");
     fprintf(stdout, "    (Currently only implemented for TIF.)\n");
@@ -626,6 +626,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
         {"PLT", NO_ARG, NULL, 'A'},
         {"threads",   REQ_ARG, NULL, 'B'},
         {"TLM", NO_ARG, NULL, 'D'},
+        {"TargetBitDepth", REQ_ARG, NULL, 'X'},
     };
 
     /* parse the command line */
