@@ -8829,7 +8829,7 @@ static OPJ_BOOL opj_j2k_read_header_procedure(opj_j2k_t *p_j2k,
         if (l_marker_handler->id == J2K_MS_UNK) {
             if (! opj_j2k_read_unk(p_j2k, p_stream, &l_current_marker, p_manager)) {
                 opj_event_msg(p_manager, EVT_ERROR,
-                              "Unknown marker have been detected and generated error.\n");
+                              "Unknown marker has been detected and generated error.\n");
                 return OPJ_FALSE;
             }
 
