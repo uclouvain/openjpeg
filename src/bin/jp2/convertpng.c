@@ -120,7 +120,7 @@ static opj_image_t * pngtoimage_internal(opj_cparameters_t * params,
         if (png_get_valid(png, info, PNG_INFO_tRNS)) {
             png_set_expand(png);
         }
-        /* We might wan't to expand background */
+        /* We might want to expand background */
         /*
         if(png_get_valid(png, info, PNG_INFO_bKGD)) {
             png_color_16p bgnd;

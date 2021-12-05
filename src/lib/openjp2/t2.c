@@ -1124,7 +1124,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
     /*
     When the marker PPT/PPM is used the packet header are store in PPT/PPM marker
-    This part deal with this caracteristic
+    This part deal with this characteristic
     step 1: Read packet header in the saved structure
     step 2: Return to codestream for decoding
     */

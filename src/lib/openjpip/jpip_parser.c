@@ -140,7 +140,7 @@ OPJ_BOOL close_channel(query_param_t query_param,
 #ifndef SERVER
         fprintf(logstream, "local log: close all\n");
 #endif
-        /* all channels associatd with the session will be closed */
+        /* all channels associated with the session will be closed */
         if (!delete_session(cursession, sessionlist)) {
             return OPJ_FALSE;
         }

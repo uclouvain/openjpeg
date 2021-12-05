@@ -87,7 +87,7 @@ typedef struct aux_response_param {
     unsigned char *data;  /*!< sending data */
     OPJ_SIZE_T datalen;          /*!< length of data */
     OPJ_SIZE_T maxlenPerFrame;   /*!< maximum data length to send per frame */
-    SOCKET listensock;    /*!< listeing socket */
+    SOCKET listensock;    /*!< listening socket */
 #ifdef _WIN32
     HANDLE hTh;           /*!< thread handle */
 #endif
@@ -131,7 +131,7 @@ void send_responsedata_on_aux(OPJ_BOOL istcp, auxtrans_param_t auxtrans,
         auxresponse->hTh = (HANDLE)_beginthreadex(NULL, 0, &aux_streaming, auxresponse,
                            0, &threadId);
         if (auxresponse->hTh == 0) {
-            fprintf(FCGI_stderr, "ERRO: pthread_create() %s",
+            fprintf(FCGI_stderr, "ERROR: pthread_create() %s",
                     strerror((int)auxresponse->hTh));
         }
 #else

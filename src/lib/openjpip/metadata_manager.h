@@ -45,7 +45,7 @@ typedef struct metadata_param {
     boxlist_param_t *boxlist;                 /**< box list*/
     placeholderlist_param_t *placeholderlist; /**< placeholder box list*/
     boxcontents_param_t
-    *boxcontents;         /**< box contens in case of no boxlist and placeholderlist*/
+    *boxcontents;         /**< box contents in case of no boxlist and placeholderlist*/
     struct metadata_param
         *next;              /**< pointer to the next metadata-bin*/
 } metadata_param_t;

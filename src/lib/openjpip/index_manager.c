@@ -53,7 +53,7 @@
 #endif /*SERVER*/
 
 /**
- * chekc JP2 box indexing
+ * check JP2 box indexing
  *
  * @param[in] toplev_boxlist top level box list
  * @return                   if correct (true) or wrong (false)

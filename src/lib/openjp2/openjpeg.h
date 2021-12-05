@@ -455,9 +455,9 @@ typedef struct opj_cparameters {
     char infile[OPJ_PATH_LEN];
     /** output file name */
     char outfile[OPJ_PATH_LEN];
-    /** DEPRECATED. Index generation is now handeld with the opj_encode_with_info() function. Set to NULL */
+    /** DEPRECATED. Index generation is now handled with the opj_encode_with_info() function. Set to NULL */
     int index_on;
-    /** DEPRECATED. Index generation is now handeld with the opj_encode_with_info() function. Set to NULL */
+    /** DEPRECATED. Index generation is now handled with the opj_encode_with_info() function. Set to NULL */
     char index[OPJ_PATH_LEN];
     /** subimage encoding: origin image offset in x direction */
     int image_offset_x0;
@@ -1453,7 +1453,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode(opj_codec_t *p_decompressor,
  * Get the decoded tile from the codec
  *
  * @param   p_codec         the jpeg2000 codec.
- * @param   p_stream        input streamm
+ * @param   p_stream        input stream
  * @param   p_image         output image
  * @param   tile_index      index of the tile which will be decode
  *
