@@ -305,7 +305,7 @@ if(BUILD_DOC)
 endif()
 
 #-----------------------------------------------------------------------------
-# Buld Testing
+# Build Testing
 option(BUILD_TESTING "Build the tests." OFF)
 if(BUILD_TESTING)
   if(BUILD_CODEC)

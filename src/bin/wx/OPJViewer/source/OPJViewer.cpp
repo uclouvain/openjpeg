@@ -52,7 +52,7 @@
 // Name:        dialogs.cpp
 // Purpose:     Common dialogs demo
 // Author:      Julian Smart
-// Modified by: ABX (2004) - adjustements for conditional building + new menu
+// Modified by: ABX (2004) - adjustments for conditional building + new menu
 // Created:     04/01/98
 // RCS-ID:      $Id: dialogs.cpp,v 1.163 2006/11/04 10:57:24 VZ Exp $
 // Copyright:   (c) Julian Smart
@@ -102,7 +102,7 @@
 // Name:        dialogs.cpp
 // Purpose:     Common dialogs demo
 // Author:      Julian Smart
-// Modified by: ABX (2004) - adjustements for conditional building + new menu
+// Modified by: ABX (2004) - adjustments for conditional building + new menu
 // Created:     04/01/98
 // RCS-ID:      $Id: dialogs.cpp,v 1.163 2006/11/04 10:57:24 VZ Exp $
 // Copyright:   (c) Julian Smart

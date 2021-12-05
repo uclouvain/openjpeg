@@ -331,14 +331,14 @@ static OPJ_BOOL opj_jp2_read_colr(opj_jp2_t *jp2,
 
 /**
  * Sets up the procedures to do on writing header after the codestream.
- * Developpers wanting to extend the library can add their own writing procedures.
+ * Developers wanting to extend the library can add their own writing procedures.
  */
 static OPJ_BOOL opj_jp2_setup_end_header_writing(opj_jp2_t *jp2,
         opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the procedures to do on reading header after the codestream.
- * Developpers wanting to extend the library can add their own writing procedures.
+ * Developers wanting to extend the library can add their own writing procedures.
  */
 static OPJ_BOOL opj_jp2_setup_end_header_reading(opj_jp2_t *jp2,
         opj_event_mgr_t * p_manager);
@@ -388,13 +388,13 @@ static OPJ_BOOL opj_jp2_read_boxhdr(opj_jp2_box_t *box,
 
 /**
  * Sets up the validation ,i.e. adds the procedures to launch to make sure the codec parameters
- * are valid. Developpers wanting to extend the library can add their own validation procedures.
+ * are valid. Developers wanting to extend the library can add their own validation procedures.
  */
 static OPJ_BOOL opj_jp2_setup_encoding_validation(opj_jp2_t *jp2,
         opj_event_mgr_t * p_manager);
 
 /**
- * Sets up the procedures to do on writing header. Developpers wanting to extend the library can add their own writing procedures.
+ * Sets up the procedures to do on writing header. Developers wanting to extend the library can add their own writing procedures.
  */
 static OPJ_BOOL opj_jp2_setup_header_writing(opj_jp2_t *jp2,
         opj_event_mgr_t * p_manager);
@@ -457,14 +457,14 @@ static OPJ_BOOL opj_jp2_read_boxhdr_char(opj_jp2_box_t *box,
 
 /**
  * Sets up the validation ,i.e. adds the procedures to launch to make sure the codec parameters
- * are valid. Developpers wanting to extend the library can add their own validation procedures.
+ * are valid. Developers wanting to extend the library can add their own validation procedures.
  */
 static OPJ_BOOL opj_jp2_setup_decoding_validation(opj_jp2_t *jp2,
         opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the procedures to do on reading header.
- * Developpers wanting to extend the library can add their own writing procedures.
+ * Developers wanting to extend the library can add their own writing procedures.
  */
 static OPJ_BOOL opj_jp2_setup_header_reading(opj_jp2_t *jp2,
         opj_event_mgr_t * p_manager);

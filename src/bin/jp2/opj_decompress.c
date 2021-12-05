@@ -226,7 +226,7 @@ static void decode_help_display(void)
             "    OPTIONAL\n"
             "    Force the precision (bit depth) of components.\n");
     fprintf(stdout,
-            "    There shall be at least 1 value. Theres no limit on the number of values (comma separated, last values ignored if too much values).\n"
+            "    There shall be at least 1 value. There is no limit on the number of values (comma separated, last values ignored if too much values).\n"
             "    If there are less values than components, the last value is used for remaining components.\n"
             "    If 'C' is specified (default), values are clipped.\n"
             "    If 'S' is specified, values are scaled.\n"
@@ -802,7 +802,7 @@ int parse_cmdline_decoder(int argc, char **argv,
         break;
 
         /* ----------------------------------------------------- */
-        case 'c': { /* Componenets */
+        case 'c': { /* Components */
             const char* iter = opj_optarg;
             while (1) {
                 parameters->numcomps ++;

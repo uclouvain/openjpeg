@@ -887,7 +887,7 @@ static vlc_src_table_t tbl1[] = {
   *  \li \c cwd_len : 3bits -> the codeword length of the VLC codeword;
   *                   the VLC cwd is in the LSB of bitstream              \n
   *  \li \c u_off   : 1bit  -> u_offset, which is 1 if u value is not 0   \n
-  *  \li \c rho     : 4bits -> signficant samples within a quad           \n
+  *  \li \c rho     : 4bits -> significant samples within a quad          \n
   *  \li \c e_1     : 4bits -> EMB e_1                                    \n
   *  \li \c e_k     : 4bits -> EMB e_k                                    \n
   *                                                                       \n
@@ -924,7 +924,7 @@ OPJ_BOOL vlc_init_tables()
     }
 
     // this is to convert table entries into values for decoder look up
-    // There can be at most 1024 possibilites, not all of them are valid.
+    // There can be at most 1024 possibilities, not all of them are valid.
     //
     for (int i = 0; i < 1024; ++i) {
         int cwd = i & 0x7F; // from i extract codeword

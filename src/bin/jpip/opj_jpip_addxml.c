@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     long fsize, boxsize;
 
     if (argc < 3) {
-        fprintf(stderr, "USAGE: %s modifing.jp2 adding.xml\n", argv[0]);
+        fprintf(stderr, "USAGE: %s modifying.jp2 adding.xml\n", argv[0]);
         return -1;
     }
 

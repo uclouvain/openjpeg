@@ -69,7 +69,7 @@
  * handle inclusion of sys/dir.h in a part that is compiled only in Apollo
  * operating system.  To fix the problem you need to insert DIR.H into
  * SYSINCL.DAT located in MSVC\BIN directory and restart visual C++.
- * Consult manuals for more informaton about the problem.
+ * Consult manuals for more information about the problem.
  *
  * Since many UNIX systems have dirent.h we assume to have one also.
  * However, if your UNIX system does not have dirent.h you can download one
@@ -102,7 +102,7 @@
 
 /*
  * See what kind of dirent interface we have unless autoconf has already
- * determinated that.
+ * determined that.
  */
 #if !defined(HAVE_DIRENT_H) && !defined(HAVE_DIRECT_H) && !defined(HAVE_SYS_DIR_H) && !defined(HAVE_NDIR_H) && !defined(HAVE_SYS_NDIR_H) && !defined(HAVE_DIR_H)
 # if defined(_MSC_VER)                         /* Microsoft C/C++ */
@@ -172,7 +172,7 @@
 
 #elif defined(MSDOS) || defined(WIN32)
 
-/* figure out type of underlaying directory interface to be used */
+/* figure out type of underlying directory interface to be used */
 # if defined(WIN32)
 #   define DIRENT_WIN32_INTERFACE
 # elif defined(MSDOS)
@@ -254,7 +254,7 @@ typedef struct dirent {
     /*** Operating system specific part ***/
 # if defined(DIRENT_WIN32_INTERFACE)       /*WIN32*/
     WIN32_FIND_DATA data;
-# elif defined(DIRENT_MSDOS_INTERFACE)     /*MSDOS*/
+# elif defined(DIRENT_MSDOS_INTERFACE)     /*MS-DOS*/
 #   if defined(DIRENT_USE_FFBLK)
     struct ffblk data;
 #   else
@@ -592,7 +592,7 @@ rewinddir(DIR *dirp)
     /* re-open previous stream */
     if (_initdir(dirp) == 0) {
         /* initialization failed but we cannot deal with error.  User will notice
-         * error later when she tries to retrieve first directory enty. */
+         * error later when she tries to retrieve first directory entry. */
         /*EMPTY*/;
     }
 }

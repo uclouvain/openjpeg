@@ -77,7 +77,7 @@ void send_PNMstream(SOCKET connected_socket, Byte_t *pnmstream,
  *
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [in]  xmlstream        xml data stream
- * @param [in]  length           legnth of the xml data stream
+ * @param [in]  length           length of the xml data stream
  */
 void send_XMLstream(SOCKET connected_socket, Byte_t *xmlstream,
                     OPJ_SIZE_T length);
@@ -87,7 +87,7 @@ void send_XMLstream(SOCKET connected_socket, Byte_t *xmlstream,
  *
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [in]  tid              tid string
- * @param [in]  tidlen           legnth of the tid string
+ * @param [in]  tidlen           length of the tid string
  */
 void send_TIDstream(SOCKET connected_socket, const char *tid,
                     OPJ_SIZE_T tidlen);
@@ -97,7 +97,7 @@ void send_TIDstream(SOCKET connected_socket, const char *tid,
  *
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [in]  cid              cid string
- * @param [in]  cidlen           legnth of the cid string
+ * @param [in]  cidlen           length of the cid string
  */
 void send_CIDstream(SOCKET connected_socket, const char *cid,
                     OPJ_SIZE_T cidlen);
