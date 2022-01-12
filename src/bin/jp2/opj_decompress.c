@@ -1374,14 +1374,13 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
         /* Stores at max 10 image file names */
-        dirptr->filename_buf = (char*)malloc(sizeof(char) *
-                                             (size_t)num_images * OPJ_PATH_LEN);
+        dirptr->filename_buf = calloc((size_t) num_images, sizeof(char) * OPJ_PATH_LEN);
         if (!dirptr->filename_buf) {
             failed = 1;
             goto fin;
         }
 
-        dirptr->filename = (char**) malloc((size_t)num_images * sizeof(char*));
+        dirptr->filename = (char**) calloc((size_t) num_images, sizeof(char*));
 
         if (!dirptr->filename) {
             failed = 1;
