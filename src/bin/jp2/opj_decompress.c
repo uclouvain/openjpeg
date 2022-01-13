@@ -1367,7 +1367,11 @@ int main(int argc, char **argv)
     if (img_fol.set_imgdir == 1) {
         int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
-
+        if( num_images > SIZE_MAX/(sizeof(char)* OPJ_PATH_LEN)){
+             fprintf(stderr, "Max number of images exceeded\n");
+             failed = 1;
+             goto fin;
+        } else {
         dirptr = (dircnt_t*)calloc(1, sizeof(dircnt_t));
         if (!dirptr) {
             destroy_parameters(&parameters);
@@ -1393,6 +1397,7 @@ int main(int argc, char **argv)
         if (load_images(dirptr, img_fol.imgdirpath) == 1) {
             failed = 1;
             goto fin;
+        }
         }
         if (num_images == 0) {
             fprintf(stderr, "Folder is empty\n");

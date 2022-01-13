@@ -516,6 +516,10 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
         /* Stores at max 10 image file names*/
+        if(num_images> SIZE_MAX/(OPJ_PATH_LEN * sizeof(char))){
+            free(dirptr);
+            return EXIT_FAILURE;
+        }else{
         dirptr->filename_buf = (char*) calloc((size_t) num_images,
                                               OPJ_PATH_LEN * sizeof(char));
         if (!dirptr->filename_buf) {
@@ -535,7 +539,7 @@ int main(int argc, char *argv[])
         if (load_images(dirptr, img_fol.imgdirpath) == 1) {
             goto fails;
         }
-
+        }
         if (num_images == 0) {
             fprintf(stdout, "Folder is empty\n");
             goto fails;
