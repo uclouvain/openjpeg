@@ -374,7 +374,7 @@ int get_num_images(char *imgdirpath)
 {
     DIR *dir;
     struct dirent* content;
-    unsigned int num_images = 0;
+    int num_images = 0;
 
     /*Reading the input images from given input directory*/
 
@@ -389,10 +389,6 @@ int get_num_images(char *imgdirpath)
             continue;
         }
         num_images++;
-        if(num_images == 0) {
-            fprintf(stderr, "Integer overflow detected when reading %s\n", imgdirpath);
-            return 0;
-        }
     }
     closedir(dir);
     return num_images;
@@ -1371,11 +1367,6 @@ int main(int argc, char **argv)
     if (img_fol.set_imgdir == 1) {
         int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
-        if (num_images == 0) {
-            fprintf(stderr, "Folder is empty\n");
-            failed = 1;
-            goto fin;
-        }
         dirptr = (dircnt_t*)calloc(1, sizeof(dircnt_t));
         if (!dirptr) {
             destroy_parameters(&parameters);
@@ -1403,7 +1394,11 @@ int main(int argc, char **argv)
             failed = 1;
             goto fin;
         }
-
+        if (num_images == 0) {
+            fprintf(stderr, "Folder is empty\n");
+            failed = 1;
+            goto fin;
+        }
     } else {
         num_images = 1;
     }

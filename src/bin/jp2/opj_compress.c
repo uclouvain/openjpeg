@@ -486,10 +486,6 @@ static unsigned int get_num_images(char *imgdirpath)
             continue;
         }
         num_images++;
-        if(num_images == 0) {
-            fprintf(stderr, "Integer overflow detected when reading %s\n", imgdirpath);
-            return 0;
-        }
     }
     closedir(dir);
     return num_images;
@@ -1961,11 +1957,6 @@ int main(int argc, char **argv)
     /* Read directory if necessary */
     if (img_fol.set_imgdir == 1) {
         num_images = get_num_images(img_fol.imgdirpath);
-        if (num_images == 0) {
-            fprintf(stdout, "Folder is empty\n");
-            ret = 0;
-            goto fin;
-        }
         dirptr = (dircnt_t*)malloc(sizeof(dircnt_t));
         if (dirptr) {
             dirptr->filename_buf = (char*)calloc(num_images, OPJ_PATH_LEN * sizeof(
@@ -1983,7 +1974,11 @@ int main(int argc, char **argv)
             ret = 0;
             goto fin;
         }
-
+        if (num_images == 0) {
+            fprintf(stdout, "Folder is empty\n");
+            ret = 0;
+            goto fin;
+        }
     } else {
         num_images = 1;
     }
