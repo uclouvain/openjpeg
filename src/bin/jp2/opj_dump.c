@@ -126,7 +126,7 @@ static int get_num_images(char *imgdirpath)
 {
     DIR *dir;
     struct dirent* content;
-    int num_images = 0;
+    unsigned int num_images = 0;
 
     /*Reading the input images from given input directory*/
 
@@ -141,6 +141,9 @@ static int get_num_images(char *imgdirpath)
             continue;
         }
         num_images++;
+        if (num_images == 0) {
+            fprintf(stderr,"Too many files in folder %s\n", imgdirpath);
+        }
     }
     closedir(dir);
     return num_images;
@@ -510,7 +513,10 @@ int main(int argc, char *argv[])
     if (img_fol.set_imgdir == 1) {
         int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
-
+        if (num_images == 0) {
+            fprintf(stdout, "Folder is empty\n");
+            goto fails;
+        }
         dirptr = (dircnt_t*)malloc(sizeof(dircnt_t));
         if (!dirptr) {
             return EXIT_FAILURE;
@@ -536,10 +542,7 @@ int main(int argc, char *argv[])
         if (load_images(dirptr, img_fol.imgdirpath) == 1) {
             goto fails;
         }
-        if (num_images == 0) {
-            fprintf(stdout, "Folder is empty\n");
-            goto fails;
-        }
+
     } else {
         num_images = 1;
     }
