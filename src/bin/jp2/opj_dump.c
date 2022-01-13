@@ -529,7 +529,7 @@ int main(int argc, char *argv[])
         }
 
         for (it_image = 0; it_image < num_images; it_image++) {
-            dirptr->filename[it_image] = dirptr->filename_buf + (size_t)it_image * 
+            dirptr->filename[it_image] = dirptr->filename_buf + (size_t)it_image *
                                          OPJ_PATH_LEN;
         }
 
