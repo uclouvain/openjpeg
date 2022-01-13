@@ -1957,7 +1957,7 @@ int main(int argc, char **argv)
     /* Read directory if necessary */
     if (img_fol.set_imgdir == 1) {
         num_images = get_num_images(img_fol.imgdirpath);
-        if((num_images > SIZE_MAX/(OPJ_PATH_LEN * sizeof(char)))){
+        if(num_images > SIZE_MAX/(OPJ_PATH_LEN * sizeof(char)) || num_images < 0){
             fprintf(stdout, "Max images exceeded\n");
             ret = 0;
             goto fin;

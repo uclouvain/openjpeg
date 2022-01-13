@@ -516,7 +516,7 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
         /* Stores at max 10 image file names*/
-        if(num_images> SIZE_MAX/(OPJ_PATH_LEN * sizeof(char))){
+        if(num_images> SIZE_MAX/(OPJ_PATH_LEN * sizeof(char)) || num_images < 0){
             free(dirptr);
             return EXIT_FAILURE;
         }else{

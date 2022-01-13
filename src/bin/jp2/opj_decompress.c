@@ -1367,7 +1367,7 @@ int main(int argc, char **argv)
     if (img_fol.set_imgdir == 1) {
         int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
-        if( num_images > SIZE_MAX/(sizeof(char)* OPJ_PATH_LEN)){
+        if( num_images > SIZE_MAX/(sizeof(char)* OPJ_PATH_LEN) || num_images < 0){
              fprintf(stderr, "Max number of images exceeded\n");
              failed = 1;
              goto fin;
