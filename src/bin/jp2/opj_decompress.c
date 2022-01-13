@@ -390,7 +390,7 @@ int get_num_images(char *imgdirpath)
         }
         num_images++;
         if (num_images == 0) {
-            fprintf(stderr,"Too many files in folder %s\n", imgdirpath);
+            fprintf(stderr, "Too many files in folder %s\n", imgdirpath);
         }
     }
     closedir(dir);
