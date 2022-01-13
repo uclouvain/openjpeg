@@ -1967,7 +1967,7 @@ int main(int argc, char **argv)
                 goto fin;
             }
             for (i = 0; i < num_images; i++) {
-                dirptr->filename[i] = dirptr->filename_buf + i * OPJ_PATH_LEN;
+                dirptr->filename[i] = dirptr->filename_buf + (size_t)i * OPJ_PATH_LEN;
             }
         }
         if (load_images(dirptr, img_fol.imgdirpath) == 1) {
