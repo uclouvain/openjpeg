@@ -141,9 +141,8 @@ static int get_num_images(char *imgdirpath)
             continue;
         }
         num_images++;
-        if (num_images == 0) {
-            fprintf(stderr, "Integer overflow detected when reading images from %s\n",
-                    imgdirpath);
+        if(num_images == 0) {
+            fprintf(stderr, "Integer overflow detected when reading images from %s\n", imgdirpath);
             return 0;
         }
     }
