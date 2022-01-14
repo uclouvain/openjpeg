@@ -36,6 +36,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <limits.h>
 
 #ifdef _WIN32
 #include "windirent.h"
@@ -82,7 +83,7 @@ typedef struct img_folder {
 
 /* -------------------------------------------------------------------------- */
 /* Declarations                                                               */
-static int get_num_images(char *imgdirpath);
+static unsigned int get_num_images(char *imgdirpath);
 static int load_images(dircnt_t *dirptr, char *imgdirpath);
 static int get_file_format(const char *filename);
 static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
@@ -122,7 +123,7 @@ static void decode_help_display(void)
 }
 
 /* -------------------------------------------------------------------------- */
-static int get_num_images(char *imgdirpath)
+static unsigned int get_num_images(char *imgdirpath)
 {
     DIR *dir;
     struct dirent* content;
@@ -140,10 +141,10 @@ static int get_num_images(char *imgdirpath)
         if (strcmp(".", content->d_name) == 0 || strcmp("..", content->d_name) == 0) {
             continue;
         }
-        num_images++;
-        if (num_images == 0) {
+        if (num_images == UINT_MAX) {
             fprintf(stderr, "Too many files in folder %s\n", imgdirpath);
         }
+        num_images++;
     }
     closedir(dir);
     return num_images;

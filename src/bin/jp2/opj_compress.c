@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
+#include <limits.h>
 
 #ifdef _WIN32
 #include "windirent.h"
@@ -485,10 +486,10 @@ static unsigned int get_num_images(char *imgdirpath)
         if (strcmp(".", content->d_name) == 0 || strcmp("..", content->d_name) == 0) {
             continue;
         }
-        num_images++;
-        if (num_images == 0) {
+        if (num_images == UINT_MAX) {
             fprintf(stderr, "Too many files in folder %s\n", imgdirpath);
         }
+        num_images++;
     }
     closedir(dir);
     return num_images;

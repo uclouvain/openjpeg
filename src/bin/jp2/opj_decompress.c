@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <limits.h>
 
 #ifdef _WIN32
 #include "windirent.h"
@@ -160,7 +161,7 @@ typedef struct opj_decompress_params {
 
 /* -------------------------------------------------------------------------- */
 /* Declarations                                                               */
-int get_num_images(char *imgdirpath);
+unsigned int get_num_images(char *imgdirpath);
 int load_images(dircnt_t *dirptr, char *imgdirpath);
 int get_file_format(const char *filename);
 char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
@@ -370,7 +371,7 @@ static OPJ_BOOL parse_precision(const char* option,
 
 /* -------------------------------------------------------------------------- */
 
-int get_num_images(char *imgdirpath)
+unsigned int get_num_images(char *imgdirpath)
 {
     DIR *dir;
     struct dirent* content;
@@ -388,10 +389,11 @@ int get_num_images(char *imgdirpath)
         if (strcmp(".", content->d_name) == 0 || strcmp("..", content->d_name) == 0) {
             continue;
         }
-        num_images++;
-        if (num_images == 0) {
+        if (num_images == UINT_MAX) {
             fprintf(stderr, "Too many files in folder %s\n", imgdirpath);
         }
+        num_images++;
+
     }
     closedir(dir);
     return num_images;
