@@ -36,6 +36,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <limits.h>
 
 #ifdef _WIN32
 #include "windirent.h"
@@ -82,7 +83,7 @@ typedef struct img_folder {
 
 /* -------------------------------------------------------------------------- */
 /* Declarations                                                               */
-static int get_num_images(char *imgdirpath);
+static unsigned int get_num_images(char *imgdirpath);
 static int load_images(dircnt_t *dirptr, char *imgdirpath);
 static int get_file_format(const char *filename);
 static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
@@ -122,11 +123,11 @@ static void decode_help_display(void)
 }
 
 /* -------------------------------------------------------------------------- */
-static int get_num_images(char *imgdirpath)
+static unsigned int get_num_images(char *imgdirpath)
 {
     DIR *dir;
     struct dirent* content;
-    int num_images = 0;
+    unsigned int num_images = 0;
 
     /*Reading the input images from given input directory*/
 
@@ -139,6 +140,11 @@ static int get_num_images(char *imgdirpath)
     while ((content = readdir(dir)) != NULL) {
         if (strcmp(".", content->d_name) == 0 || strcmp("..", content->d_name) == 0) {
             continue;
+        }
+        if (num_images == UINT_MAX) {
+            fprintf(stderr, "Too many files in folder %s\n", imgdirpath);
+            num_images = 0;
+            break;
         }
         num_images++;
     }
@@ -510,7 +516,10 @@ int main(int argc, char *argv[])
     if (img_fol.set_imgdir == 1) {
         int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
-
+        if (num_images == 0) {
+            fprintf(stdout, "Folder is empty\n");
+            goto fails;
+        }
         dirptr = (dircnt_t*)malloc(sizeof(dircnt_t));
         if (!dirptr) {
             return EXIT_FAILURE;
@@ -536,10 +545,7 @@ int main(int argc, char *argv[])
         if (load_images(dirptr, img_fol.imgdirpath) == 1) {
             goto fails;
         }
-        if (num_images == 0) {
-            fprintf(stdout, "Folder is empty\n");
-            goto fails;
-        }
+
     } else {
         num_images = 1;
     }
