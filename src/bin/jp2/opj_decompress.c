@@ -391,7 +391,7 @@ unsigned int get_num_images(char *imgdirpath)
         }
         if (num_images == UINT_MAX) {
             fprintf(stderr, "Too many files in folder %s\n", imgdirpath);
-            return 0; 
+            return 0;
         }
         num_images++;
 
