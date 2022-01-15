@@ -1797,12 +1797,9 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
                                             rw - j);
             }
         }  else {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+            OPJ_UINT32 num_jobs;
             OPJ_UINT32 step_j;
-
-            if (rw < num_jobs) {
-                num_jobs = rw;
-            }
+            num_jobs = rw;
             step_j = ((rw / num_jobs) / NB_ELTS_V8) * NB_ELTS_V8;
 
             for (j = 0; j < num_jobs; j++) {
@@ -1846,12 +1843,10 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_thread_pool_t* tp,
                                                        cas_row == 0 ? OPJ_TRUE : OPJ_FALSE);
             }
         }  else {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+            OPJ_UINT32 num_jobs;
             OPJ_UINT32 step_j;
 
-            if (rh < num_jobs) {
-                num_jobs = rh;
-            }
+            num_jobs = rh;
             step_j = (rh / num_jobs);
 
             for (j = 0; j < num_jobs; j++) {
@@ -2123,12 +2118,9 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
                 opj_idwt53_h(&h, &tiledp[(OPJ_SIZE_T)j * w]);
             }
         } else {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads * 2;
+            OPJ_UINT32 num_jobs;
             OPJ_UINT32 step_j;
-
-            if (rh < num_jobs) {
-                num_jobs = rh;
-            }
+            num_jobs = rh;
             step_j = (rh / num_jobs);
 
             for (j = 0; j < num_jobs; j++) {
@@ -2178,12 +2170,9 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
                 opj_idwt53_v(&v, &tiledp[j], (OPJ_SIZE_T)w, (OPJ_INT32)(rw - j));
             }
         } else {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+            OPJ_UINT32 num_jobs;
             OPJ_UINT32 step_j;
-
-            if (rw < num_jobs) {
-                num_jobs = rw;
-            }
+            num_jobs = rw;
             step_j = (rw / num_jobs);
 
             for (j = 0; j < num_jobs; j++) {
@@ -3380,12 +3369,9 @@ OPJ_BOOL opj_dwt_decode_tile_97(opj_thread_pool_t* tp,
                 aj += w * NB_ELTS_V8;
             }
         } else {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
+            OPJ_UINT32 num_jobs; 
             OPJ_UINT32 step_j;
-
-            if ((rh / NB_ELTS_V8) < num_jobs) {
-                num_jobs = rh / NB_ELTS_V8;
-            }
+            num_jobs = rh / NB_ELTS_V8;
             step_j = ((rh / num_jobs) / NB_ELTS_V8) * NB_ELTS_V8;
             for (j = 0; j < num_jobs; j++) {
                 opj_dwt97_decode_h_job_t* job;
@@ -3459,12 +3445,9 @@ OPJ_BOOL opj_dwt_decode_tile_97(opj_thread_pool_t* tp,
                 transfer being the limiting factor. So limit the number of
                 threads.
              */
-            OPJ_UINT32 num_jobs = opj_uint_max((OPJ_UINT32)num_threads / 2, 2U);
+            OPJ_UINT32 num_jobs;
             OPJ_UINT32 step_j;
-
-            if ((rw / NB_ELTS_V8) < num_jobs) {
-                num_jobs = rw / NB_ELTS_V8;
-            }
+            num_jobs = rw / NB_ELTS_V8;
             step_j = ((rw / num_jobs) / NB_ELTS_V8) * NB_ELTS_V8;
             for (j = 0; j < num_jobs; j++) {
                 opj_dwt97_decode_v_job_t* job;
