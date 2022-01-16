@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
 
     /* Initialize reading of directory */
     if (img_fol.set_imgdir == 1) {
-        int it_image;
+        unsigned int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
         if (num_images == 0) {
             fprintf(stdout, "Folder is empty\n");
