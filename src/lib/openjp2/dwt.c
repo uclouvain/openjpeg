@@ -2123,7 +2123,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
                 opj_idwt53_h(&h, &tiledp[(OPJ_SIZE_T)j * w]);
             }
         } else {
-            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads * 2;
+            OPJ_UINT32 num_jobs = (OPJ_UINT32)num_threads;
             OPJ_UINT32 step_j;
 
             if (rh < num_jobs) {
