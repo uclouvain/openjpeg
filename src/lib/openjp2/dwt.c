@@ -3369,7 +3369,7 @@ OPJ_BOOL opj_dwt_decode_tile_97(opj_thread_pool_t* tp,
                 aj += w * NB_ELTS_V8;
             }
         } else {
-            OPJ_UINT32 num_jobs;
+            OPJ_UINT32 num_jobs; 
             OPJ_UINT32 step_j;
             num_jobs = rh / NB_ELTS_V8;
             step_j = ((rh / num_jobs) / NB_ELTS_V8) * NB_ELTS_V8;
