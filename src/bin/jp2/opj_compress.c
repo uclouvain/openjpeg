@@ -553,7 +553,8 @@ static char * get_file_name(char *name)
     return fname;
 }
 
-static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+static char get_next_file(unsigned int imageno, dircnt_t *dirptr,
+                          img_fol_t *img_fol,
                           opj_cparameters_t *parameters)
 {
     char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
@@ -561,7 +562,7 @@ static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
-    fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
+    fprintf(stderr, "File Number %u \"%s\"\n", imageno, image_filename);
     parameters->decod_format = get_file_format(image_filename);
     if (parameters->decod_format == -1) {
         return 1;
@@ -1995,7 +1996,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "\n");
 
         if (img_fol.set_imgdir == 1) {
-            if (get_next_file((int)imageno, dirptr, &img_fol, &parameters)) {
+            if (get_next_file(imageno, dirptr, &img_fol, &parameters)) {
                 fprintf(stderr, "skipping file...\n");
                 continue;
             }
@@ -2250,7 +2251,7 @@ int main(int argc, char **argv)
             }
             for (i = 0; i < l_nb_tiles; ++i) {
                 if (! opj_write_tile(l_codec, i, l_data, l_data_size, l_stream)) {
-                    fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",
+                    fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %u!\n",
                             i);
                     opj_stream_destroy(l_stream);
                     opj_destroy_codec(l_codec);

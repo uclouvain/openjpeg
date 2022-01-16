@@ -86,7 +86,8 @@ typedef struct img_folder {
 static unsigned int get_num_images(char *imgdirpath);
 static int load_images(dircnt_t *dirptr, char *imgdirpath);
 static int get_file_format(const char *filename);
-static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+static char get_next_file(unsigned int imageno, dircnt_t *dirptr,
+                          img_fol_t *img_fol,
                           opj_dparameters_t *parameters);
 static int infile_format(const char *fname);
 
@@ -220,7 +221,8 @@ static int get_file_format(const char *filename)
 }
 
 /* -------------------------------------------------------------------------- */
-static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+static char get_next_file(unsigned int imageno, dircnt_t *dirptr,
+                          img_fol_t *img_fol,
                           opj_dparameters_t *parameters)
 {
     char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
@@ -228,7 +230,7 @@ static char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
-    fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
+    fprintf(stderr, "File Number %u \"%s\"\n", imageno, image_filename);
     parameters->decod_format = get_file_format(image_filename);
     if (parameters->decod_format == -1) {
         return 1;
@@ -492,7 +494,7 @@ int main(int argc, char *argv[])
     opj_codestream_info_v2_t* cstr_info = NULL;
     opj_codestream_index_t* cstr_index = NULL;
 
-    OPJ_INT32 num_images, imageno;
+    unsigned int num_images, imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
 
@@ -514,7 +516,7 @@ int main(int argc, char *argv[])
 
     /* Initialize reading of directory */
     if (img_fol.set_imgdir == 1) {
-        int it_image;
+        unsigned int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
         if (num_images == 0) {
             fprintf(stdout, "Folder is empty\n");

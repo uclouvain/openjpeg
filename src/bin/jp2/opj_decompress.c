@@ -164,7 +164,7 @@ typedef struct opj_decompress_params {
 unsigned int get_num_images(char *imgdirpath);
 int load_images(dircnt_t *dirptr, char *imgdirpath);
 int get_file_format(const char *filename);
-char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+char get_next_file(unsigned int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
                    opj_decompress_parameters *parameters);
 static int infile_format(const char *fname);
 
@@ -475,7 +475,7 @@ const char* path_separator = "/";
 #endif
 
 /* -------------------------------------------------------------------------- */
-char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+char get_next_file(unsigned int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
                    opj_decompress_parameters *parameters)
 {
     char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
@@ -483,7 +483,7 @@ char get_next_file(int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
-    fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
+    fprintf(stderr, "File Number %u \"%s\"\n", imageno, image_filename);
     if (strlen(img_fol->imgdirpath) + strlen(path_separator) + strlen(
                 image_filename) + 1 > sizeof(infilename)) {
         return 1;
@@ -1341,7 +1341,7 @@ int main(int argc, char **argv)
 {
     opj_decompress_parameters parameters;           /* decompression parameters */
 
-    OPJ_INT32 num_images, imageno;
+    unsigned int num_images, imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
     int failed = 0;
@@ -1372,7 +1372,7 @@ int main(int argc, char **argv)
 
     /* Initialize reading of directory */
     if (img_fol.set_imgdir == 1) {
-        int it_image;
+        unsigned int it_image;
         num_images = get_num_images(img_fol.imgdirpath);
         if (num_images == 0) {
             fprintf(stderr, "Folder is empty\n");
