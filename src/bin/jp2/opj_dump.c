@@ -492,7 +492,7 @@ int main(int argc, char *argv[])
     opj_codestream_info_v2_t* cstr_info = NULL;
     opj_codestream_index_t* cstr_index = NULL;
 
-    OPJ_INT32 num_images, imageno;
+    unsigned int num_images, imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
 

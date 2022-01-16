@@ -1341,7 +1341,7 @@ int main(int argc, char **argv)
 {
     opj_decompress_parameters parameters;           /* decompression parameters */
 
-    OPJ_INT32 num_images, imageno;
+    unsigned int num_images, imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
     int failed = 0;
