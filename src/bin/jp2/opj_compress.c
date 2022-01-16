@@ -553,7 +553,8 @@ static char * get_file_name(char *name)
     return fname;
 }
 
-static char get_next_file(unsigned int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+static char get_next_file(unsigned int imageno, dircnt_t *dirptr,
+                          img_fol_t *img_fol,
                           opj_cparameters_t *parameters)
 {
     char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
