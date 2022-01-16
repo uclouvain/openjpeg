@@ -483,7 +483,7 @@ char get_next_file(unsigned int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
-    fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
+    fprintf(stderr, "File Number %u \"%s\"\n", imageno, image_filename);
     if (strlen(img_fol->imgdirpath) + strlen(path_separator) + strlen(
                 image_filename) + 1 > sizeof(infilename)) {
         return 1;

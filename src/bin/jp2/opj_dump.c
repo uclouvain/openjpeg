@@ -230,7 +230,7 @@ static char get_next_file(unsigned int imageno, dircnt_t *dirptr,
     char *temp_p, temp1[OPJ_PATH_LEN] = "";
 
     strcpy(image_filename, dirptr->filename[imageno]);
-    fprintf(stderr, "File Number %d \"%s\"\n", imageno, image_filename);
+    fprintf(stderr, "File Number %u \"%s\"\n", imageno, image_filename);
     parameters->decod_format = get_file_format(image_filename);
     if (parameters->decod_format == -1) {
         return 1;
