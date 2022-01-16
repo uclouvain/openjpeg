@@ -86,7 +86,8 @@ typedef struct img_folder {
 static unsigned int get_num_images(char *imgdirpath);
 static int load_images(dircnt_t *dirptr, char *imgdirpath);
 static int get_file_format(const char *filename);
-static char get_next_file(unsigned int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+static char get_next_file(unsigned int imageno, dircnt_t *dirptr,
+                          img_fol_t *img_fol,
                           opj_dparameters_t *parameters);
 static int infile_format(const char *fname);
 
@@ -220,7 +221,8 @@ static int get_file_format(const char *filename)
 }
 
 /* -------------------------------------------------------------------------- */
-static char get_next_file(unsigned int imageno, dircnt_t *dirptr, img_fol_t *img_fol,
+static char get_next_file(unsigned int imageno, dircnt_t *dirptr,
+                          img_fol_t *img_fol,
                           opj_dparameters_t *parameters)
 {
     char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],
