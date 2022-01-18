@@ -1136,9 +1136,9 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
     }
 
     max = image->numcomps;
-    for (i = 0; i < max; ++i) {
-        if (old_comps[i].data) {
-            opj_image_data_free(old_comps[i].data);
+    for (j = 0; j < max; ++j) {
+        if (old_comps[j].data) {
+            opj_image_data_free(old_comps[j].data);
         }
     }
 
