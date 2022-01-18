@@ -7953,6 +7953,13 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
                                              (OPJ_INT32)cp->tdx);
         cp->th = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->y1 - cp->ty0),
                                              (OPJ_INT32)cp->tdy);
+        /* Check that the number of tiles is valid */
+        if (cp->tw > 65535 / cp->th) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Invalid number of tiles : %u x %u (maximum fixed by jpeg2000 norm is 65535 tiles)\n",
+                          cp->tw, cp->th);
+            return OPJ_FALSE;
+        }
     } else {
         cp->tdx = image->x1 - cp->tx0;
         cp->tdy = image->y1 - cp->ty0;
