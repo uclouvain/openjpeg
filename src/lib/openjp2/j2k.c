@@ -1677,7 +1677,7 @@ static OPJ_BOOL opj_j2k_check_poc_val(const opj_poc_t *p_pocs,
 
     assert(p_nb_pocs > 0);
 
-    packet_array = (OPJ_UINT32*) opj_calloc(step_l * p_num_layers,
+    packet_array = (OPJ_UINT32*) opj_calloc((size_t)step_l * p_num_layers,
                                             sizeof(OPJ_UINT32));
     if (packet_array == 00) {
         opj_event_msg(p_manager, EVT_ERROR,
