@@ -304,6 +304,9 @@ static void encode_help_display(void)
     fprintf(stdout, "    Y >= 0 and Y <= 9.\n");
     fprintf(stdout,
             "    framerate > 0 may be specified to enhance checks and set maximum bit rate when Y > 0.\n");
+    fprintf(stdout, "-GuardBits value\n");
+    fprintf(stdout,
+            "    Number of guard bits in [0,7] range. Usually 1 or 2 (default value).\n");
     fprintf(stdout, "-jpip\n");
     fprintf(stdout, "    Write jpip codestream index box in JP2 output file.\n");
     fprintf(stdout, "    Currently supports only RPCL order.\n");
@@ -612,6 +615,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
                                  int* pOutFramerate,
                                  OPJ_BOOL* pOutPLT,
                                  OPJ_BOOL* pOutTLM,
+                                 int* pOutGuardBits,
                                  int* pOutNumThreads,
                                  unsigned int* pTarget_bitdepth)
 {
@@ -634,10 +638,11 @@ static int parse_cmdline_encoder(int argc, char **argv,
         {"threads",   REQ_ARG, NULL, 'B'},
         {"TLM", NO_ARG, NULL, 'D'},
         {"TargetBitDepth", REQ_ARG, NULL, 'X'},
+        {"GuardBits", REQ_ARG, NULL, 'G'}
     };
 
     /* parse the command line */
-    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:X:"
+    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:X:G:"
 #ifdef USE_JPWL
                            "W:"
 #endif /* USE_JPWL */
@@ -930,6 +935,13 @@ static int parse_cmdline_encoder(int argc, char **argv,
                 fprintf(stderr, "Target bitdepth must be at least 1 bit.\n");
                 return 1;
             }
+        }
+        break;
+
+        /* ----------------------------------------------------- */
+        case 'G': {         /* guard bits */
+            char *s = opj_optarg;
+            sscanf(s, "%d", pOutGuardBits);
         }
         break;
 
@@ -1932,6 +1944,7 @@ int main(int argc, char **argv)
     OPJ_BOOL PLT = OPJ_FALSE;
     OPJ_BOOL TLM = OPJ_FALSE;
     int num_threads = 0;
+    int guard_bits = -1;
 
     /** desired bitdepth from input file */
     unsigned int target_bitdepth = 0;
@@ -1956,7 +1969,7 @@ int main(int argc, char **argv)
                          255; /* This will be set later according to the input image or the provided option */
     if (parse_cmdline_encoder(argc, argv, &parameters, &img_fol, &raw_cp,
                               indexfilename, sizeof(indexfilename), &framerate, &PLT, &TLM,
-                              &num_threads, &target_bitdepth) == 1) {
+                              &guard_bits, &num_threads, &target_bitdepth) == 1) {
         ret = 1;
         goto fin;
     }
@@ -2201,17 +2214,21 @@ int main(int argc, char **argv)
             goto fin;
         }
 
-        if (PLT || TLM) {
-            const char* options[3] = { NULL, NULL, NULL };
+        {
+            const char* options[4] = { NULL, NULL, NULL, NULL };
             int iOpt = 0;
+            char szGuardBits[32];
             if (PLT) {
                 options[iOpt++] = "PLT=YES";
             }
             if (TLM) {
                 options[iOpt++] = "TLM=YES";
             }
-            (void)iOpt;
-            if (!opj_encoder_set_extra_options(l_codec, options)) {
+            if (guard_bits >= 0) {
+                sprintf(szGuardBits, "GUARD_BITS=%d", guard_bits);
+                options[iOpt++] = szGuardBits;
+            }
+            if (iOpt > 0 && !opj_encoder_set_extra_options(l_codec, options)) {
                 fprintf(stderr, "failed to encode image: opj_encoder_set_extra_options\n");
                 opj_destroy_codec(l_codec);
                 opj_image_destroy(image);
