@@ -7654,6 +7654,8 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
         return OPJ_FALSE;
     }
 
+    p_j2k->m_specific_param.m_encoder.m_nb_comps = image->numcomps;
+
     /* keep a link to cp so that we can destroy it later in j2k_destroy_compress */
     cp = &(p_j2k->m_cp);
 
@@ -12179,6 +12181,25 @@ OPJ_BOOL opj_j2k_encoder_set_extra_options(
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid value for option: %s.\n", *p_option_iter);
                 return OPJ_FALSE;
+            }
+        } else if (strncmp(*p_option_iter, "GUARD_BITS=", strlen("GUARD_BITS=")) == 0) {
+            OPJ_UINT32 tileno;
+            opj_cp_t *cp = cp = &(p_j2k->m_cp);
+
+            int numgbits = atoi(*p_option_iter + strlen("GUARD_BITS="));
+            if (numgbits < 0 || numgbits > 7) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Invalid value for option: %s. Should be in [0,7]\n", *p_option_iter);
+                return OPJ_FALSE;
+            }
+
+            for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
+                OPJ_UINT32 i;
+                opj_tcp_t *tcp = &cp->tcps[tileno];
+                for (i = 0; i < p_j2k->m_specific_param.m_encoder.m_nb_comps; i++) {
+                    opj_tccp_t *tccp = &tcp->tccps[i];
+                    tccp->numgbits = (OPJ_UINT32)numgbits;
+                }
             }
         } else {
             opj_event_msg(p_manager, EVT_ERROR,

@@ -1599,9 +1599,12 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
  * <li>PLT=YES/NO. Defaults to NO. If set to YES, PLT marker segments,
  *     indicating the length of each packet in the tile-part header, will be
  *     written. Since 2.4.0</li>
-  * <li>TLM=YES/NO. Defaults to NO (except for Cinema and IMF profiles).
-  *    If set to YES, TLM marker segments, indicating the length of each
-  *    tile-part part will be written. Since 2.4.0</li>
+ * <li>TLM=YES/NO. Defaults to NO (except for Cinema and IMF profiles).
+ *     If set to YES, TLM marker segments, indicating the length of each
+ *     tile-part part will be written. Since 2.4.0</li>
+ * <li>GUARD_BITS=value. Number of guard bits in [0,7] range. Default value is 2.
+ *     1 may be used sometimes (like in SMPTE DCP Bv2.1 Application Profile for 2K images).
+ *     Since 2.5.0</li>
  * </ul>
  *
  * @param p_codec       Compressor handle

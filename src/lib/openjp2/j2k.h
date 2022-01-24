@@ -550,6 +550,9 @@ typedef struct opj_j2k_enc {
     /* reserved bytes in m_encoded_tile_size for PLT markers */
     OPJ_UINT32 m_reserved_bytes_for_PLT;
 
+    /** Number of components */
+    OPJ_UINT32 m_nb_comps;
+
 } opj_j2k_enc_t;
 
 
