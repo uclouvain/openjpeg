@@ -1399,9 +1399,9 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
 
             // if we have a partial data stream, set numchunks to zero
             // since we have no data to actually decode.
-            if(partial_buffer) {
+            if (partial_buffer) {
                 l_cblk->numchunks = 0;
-            } 
+            }
 
             if (!l_cblk->numnewpasses) {
                 /* nothing to do */
@@ -1425,14 +1425,14 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                 /* Check possible overflow (on l_current_data only, assumes input args already checked) then size */
                 if ((((OPJ_SIZE_T)l_current_data + (OPJ_SIZE_T)l_seg->newlen) <
                         (OPJ_SIZE_T)l_current_data) ||
-                        (l_current_data + l_seg->newlen > p_src_data + p_max_length) || 
+                        (l_current_data + l_seg->newlen > p_src_data + p_max_length) ||
                         (partial_buffer)) {
-                    if(p_t2->cp->strict) {
+                    if (p_t2->cp->strict) {
                         opj_event_msg(p_manager, EVT_ERROR,
                                       "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                       l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
                                       p_pi->compno);
-                        return OPJ_FALSE; 
+                        return OPJ_FALSE;
                     } else {
                         opj_event_msg(p_manager, EVT_WARNING,
                                       "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
@@ -1447,8 +1447,6 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                         if (l_cblk->numnewpasses > 0) {
                             ++l_seg;
                             ++l_cblk->numsegs;
-                        }
-                        if(l_cblk->numnewpasses > 0) {
                             break;
                         }
                         continue;
@@ -1515,7 +1513,7 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
     }
 
     // return the number of bytes read
-    if(partial_buffer) {
+    if (partial_buffer) {
         *(p_data_read) = p_max_length;
     } else {
         *(p_data_read) = (OPJ_UINT32)(l_current_data - p_src_data);
@@ -1581,7 +1579,7 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                 /* Check possible overflow then size */
                 if (((*p_data_read + l_seg->newlen) < (*p_data_read)) ||
                         ((*p_data_read + l_seg->newlen) > p_max_length)) {
-                    if(p_t2->cp->strict) {
+                    if (p_t2->cp->strict) {
                         opj_event_msg(p_manager, EVT_ERROR,
                                       "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                       l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,

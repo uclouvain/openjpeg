@@ -1356,7 +1356,8 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
  * @return true         if the decoder is correctly set
  */
 
-OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decoder_set_strict_mode(opj_codec_t *p_codec, OPJ_BOOL strict);
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decoder_set_strict_mode(opj_codec_t *p_codec,
+        OPJ_BOOL strict);
 
 /**
  * Allocates worker threads for the compressor/decompressor.
