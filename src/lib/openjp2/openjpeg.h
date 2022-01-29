@@ -1351,7 +1351,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
  * bitstreams as much as possible without erroring
  *
  * @param p_codec       decompressor handler
- * @param strict        OBJ_TRUE to enable strict decoding, OBJ_FALSE to disable
+ * @param strict        OPJ_TRUE to enable strict decoding, OPJ_FALSE to disable
  *
  * @return true         if the decoder is correctly set
  */

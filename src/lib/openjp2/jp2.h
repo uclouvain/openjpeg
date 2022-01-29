@@ -240,7 +240,7 @@ Set the strict mode parameter.  When strict mode is enabled, the entire
 bitstream must be decoded or an error is returned.  When it is disabled,
 the decoder will decode partial bitstreams.
 @param jp2 JP2 decompressor handle
-@param strict JPH_TRUE for strict mode
+@param strict OPJ_TRUE for strict mode
 */
 void opj_jp2_decoder_set_strict_mode(opj_jp2_t *jp2, OPJ_BOOL strict);
 
