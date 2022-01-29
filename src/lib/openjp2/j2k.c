@@ -6690,7 +6690,6 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
     if (j2k && parameters) {
         j2k->m_cp.m_specific_param.m_dec.m_layer = parameters->cp_layer;
         j2k->m_cp.m_specific_param.m_dec.m_reduce = parameters->cp_reduce;
-        j2k->m_cp.strict = OPJ_TRUE;
 
         j2k->dump_state = (parameters->flags & OPJ_DPARAMETERS_DUMP_FLAG);
 #ifdef USE_JPWL
@@ -10421,6 +10420,9 @@ opj_j2k_t* opj_j2k_create_decompress(void)
     /* in the absence of JP2 boxes, consider different bit depth / sign */
     /* per component is allowed */
     l_j2k->m_cp.allow_different_bit_depth_sign = 1;
+
+    /* Default to using strict mode. */
+    l_j2k->m_cp.strict = OPJ_TRUE;
 
 #ifdef OPJ_DISABLE_TPSOT_FIX
     l_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
