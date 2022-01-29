@@ -1498,7 +1498,8 @@ int main(int argc, char **argv)
         }
 
         /* Disable strict mode if we want to decode partial codestreams. */
-        if (parameters.allow_partial && !opj_decoder_set_strict_mode(l_codec, OPJ_FALSE)) {
+        if (parameters.allow_partial &&
+                !opj_decoder_set_strict_mode(l_codec, OPJ_FALSE)) {
             fprintf(stderr, "ERROR -> opj_decompress: failed to disable strict mode\n");
             opj_stream_destroy(l_stream);
             opj_destroy_codec(l_codec);
