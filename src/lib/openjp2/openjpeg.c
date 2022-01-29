@@ -433,8 +433,8 @@ OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
     return OPJ_FALSE;
 }
 
- OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decoder_set_strict_mode(opj_codec_t *p_codec, OPJ_BOOL strict)
- {
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decoder_set_strict_mode(opj_codec_t *p_codec, OPJ_BOOL strict)
+{
     if (p_codec) {
         opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
 
@@ -449,9 +449,7 @@ OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
         return OPJ_TRUE;
     }
     return OPJ_FALSE;
-
- }
-
+}
 
 OPJ_BOOL OPJ_CALLCONV opj_read_header(opj_stream_t *p_stream,
                                       opj_codec_t *p_codec,

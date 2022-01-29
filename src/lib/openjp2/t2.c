@@ -1429,15 +1429,15 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                         (partial_buffer)) {
                     if(p_t2->cp->strict) {
                         opj_event_msg(p_manager, EVT_WARNING,
-                                    "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                    l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
-                                    p_pi->compno);
+                                      "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                                      l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
+                                      p_pi->compno);
                         return OPJ_FALSE; 
                     } else {
                         opj_event_msg(p_manager, EVT_WARNING,
-                                    "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                    l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
-                                    p_pi->compno);
+                                      "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                                      l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
+                                      p_pi->compno);
                         // skip this codeblock since it is a partial read
                         partial_buffer = OPJ_TRUE;
                         l_cblk->numchunks = 0;
@@ -1583,15 +1583,15 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                         ((*p_data_read + l_seg->newlen) > p_max_length)) {
                     if(p_t2->cp->strict) {
                         opj_event_msg(p_manager, EVT_ERROR,
-                                    "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                    l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
-                                    p_pi->compno);
+                                      "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                                      l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
+                                      p_pi->compno);
                         return OPJ_FALSE;
                     } else {
                         opj_event_msg(p_manager, EVT_WARNING,
-                                    "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                    l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
-                                    p_pi->compno);
+                                      "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                                      l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
+                                      p_pi->compno);
                     }
                 }
 
