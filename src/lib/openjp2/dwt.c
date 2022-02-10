@@ -801,7 +801,8 @@ static void opj_idwt3_v_cas0(OPJ_INT32* tmp,
                                       opj_int_add_no_overflow(opj_int_add_no_overflow(d1c, d1n), 2) >> 2);
 
         tmp[i  ] = s0c;
-        tmp[i + 1] = d1c + ((s0c + s0n) >> 1);
+        tmp[i + 1] = opj_int_add_no_overflow(d1c, opj_int_add_no_overflow(s0c,
+                                             s0n) >> 1);
     }
 
     tmp[i] = s0n;
