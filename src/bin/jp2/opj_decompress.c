@@ -153,6 +153,8 @@ typedef struct opj_decompress_params {
     int num_threads;
     /* Quiet */
     int quiet;
+    /* Allow partial decode */
+    int allow_partial;
     /** number of components to decode */
     OPJ_UINT32 numcomps;
     /** indices of components to decode */
@@ -246,6 +248,8 @@ static void decode_help_display(void)
         fprintf(stdout, "  -threads <num_threads|ALL_CPUS>\n"
                 "    Number of threads to use for decoding or ALL_CPUS for all available cores.\n");
     }
+    fprintf(stdout, "  -allow-partial\n"
+            "    Disable strict mode to allow decoding partial codestreams.\n");
     fprintf(stdout, "  -quiet\n"
             "    Disable output from the library and other output.\n");
     /* UniPG>> */
@@ -601,6 +605,7 @@ int parse_cmdline_decoder(int argc, char **argv,
         {"split-pnm", NO_ARG,  NULL, 1},
         {"threads",   REQ_ARG, NULL, 'T'},
         {"quiet", NO_ARG,  NULL, 1},
+        {"allow-partial", NO_ARG,  NULL, 1},
     };
 
     const char optlist[] = "i:o:r:l:x:d:t:p:c:"
@@ -616,6 +621,7 @@ int parse_cmdline_decoder(int argc, char **argv,
     long_option[3].flag = &(parameters->upsample);
     long_option[4].flag = &(parameters->split_pnm);
     long_option[6].flag = &(parameters->quiet);
+    long_option[7].flag = &(parameters->allow_partial);
     totlen = sizeof(long_option);
     opj_reset_options_reading();
     img_fol->set_out_format = 0;
@@ -1485,6 +1491,16 @@ int main(int argc, char **argv)
         /* Setup the decoder decoding parameters using user parameters */
         if (!opj_setup_decoder(l_codec, &(parameters.core))) {
             fprintf(stderr, "ERROR -> opj_decompress: failed to setup the decoder\n");
+            opj_stream_destroy(l_stream);
+            opj_destroy_codec(l_codec);
+            failed = 1;
+            goto fin;
+        }
+
+        /* Disable strict mode if we want to decode partial codestreams. */
+        if (parameters.allow_partial &&
+                !opj_decoder_set_strict_mode(l_codec, OPJ_FALSE)) {
+            fprintf(stderr, "ERROR -> opj_decompress: failed to disable strict mode\n");
             opj_stream_destroy(l_stream);
             opj_destroy_codec(l_codec);
             failed = 1;

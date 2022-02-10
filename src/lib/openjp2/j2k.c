@@ -4964,9 +4964,14 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
         /* Check enough bytes left in stream before allocation */
         if ((OPJ_OFF_T)p_j2k->m_specific_param.m_decoder.m_sot_length >
                 opj_stream_get_number_byte_left(p_stream)) {
-            opj_event_msg(p_manager, EVT_ERROR,
-                          "Tile part length size inconsistent with stream length\n");
-            return OPJ_FALSE;
+            if (p_j2k->m_cp.strict) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Tile part length size inconsistent with stream length\n");
+                return OPJ_FALSE;
+            } else {
+                opj_event_msg(p_manager, EVT_WARNING,
+                              "Tile part length size inconsistent with stream length\n");
+            }
         }
         if (p_j2k->m_specific_param.m_decoder.m_sot_length >
                 UINT_MAX - OPJ_COMMON_CBLK_DATA_EXTRA) {
@@ -6692,6 +6697,13 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
         j2k->m_cp.exp_comps = parameters->jpwl_exp_comps;
         j2k->m_cp.max_tiles = parameters->jpwl_max_tiles;
 #endif /* USE_JPWL */
+    }
+}
+
+void opj_j2k_decoder_set_strict_mode(opj_j2k_t *j2k, OPJ_BOOL strict)
+{
+    if (j2k) {
+        j2k->m_cp.strict = strict;
     }
 }
 
@@ -10408,6 +10420,9 @@ opj_j2k_t* opj_j2k_create_decompress(void)
     /* in the absence of JP2 boxes, consider different bit depth / sign */
     /* per component is allowed */
     l_j2k->m_cp.allow_different_bit_depth_sign = 1;
+
+    /* Default to using strict mode. */
+    l_j2k->m_cp.strict = OPJ_TRUE;
 
 #ifdef OPJ_DISABLE_TPSOT_FIX
     l_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;

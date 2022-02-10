@@ -1346,6 +1346,20 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
         opj_dparameters_t *parameters);
 
 /**
+ * Set strict decoding parameter for this decoder.  If strict decoding is enabled, partial bit
+ * streams will fail to decode.  If strict decoding is disabled, the decoder will decode partial
+ * bitstreams as much as possible without erroring
+ *
+ * @param p_codec       decompressor handler
+ * @param strict        OPJ_TRUE to enable strict decoding, OPJ_FALSE to disable
+ *
+ * @return true         if the decoder is correctly set
+ */
+
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decoder_set_strict_mode(opj_codec_t *p_codec,
+        OPJ_BOOL strict);
+
+/**
  * Allocates worker threads for the compressor/decompressor.
  *
  * By default, only the main thread is used. If this function is not used,
