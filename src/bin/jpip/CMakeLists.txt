@@ -57,14 +57,14 @@ add_executable(${exe} ${exe}.c)
 endforeach()
 
 # Build the two java clients:
-find_package(Java 1.6 COMPONENTS Development) # javac, jar
+find_package(Java 1.8 COMPONENTS Development) # javac, jar
 
 # User can override this:
 if(NOT DEFINED JAVA_SOURCE_VERSION)
-  set(JAVA_SOURCE_VERSION 1.6)
+  set(JAVA_SOURCE_VERSION 1.8)
 endif()
 if(NOT DEFINED JAVA_TARGET_VERSION)
-  set(JAVA_TARGET_VERSION 1.6)
+  set(JAVA_TARGET_VERSION 1.8)
 endif()
 
 # Only build the java viewer if dev is found:
