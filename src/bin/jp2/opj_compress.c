@@ -313,7 +313,7 @@ static void encode_help_display(void)
     fprintf(stdout, "-C <comment>\n");
     fprintf(stdout, "    Add <comment> in the comment marker segment.\n");
     if (opj_has_thread_support()) {
-        fprintf(stdout, "  -threads <num_threads|ALL_CPUS>\n"
+        fprintf(stdout, "-threads <num_threads|ALL_CPUS>\n"
                 "    Number of threads to use for encoding or ALL_CPUS for all available cores.\n");
     }
     /* UniPG>> */
