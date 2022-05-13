@@ -1,4 +1,4 @@
-prefix=/home/even/abi-check/work/abi-check/installed/openjpeg/current
+prefix=/home/even/abi-check/work/abi-check/installed/openjpeg/2.5.0
 bindir=${prefix}/bin
 mandir=${prefix}/
 docdir=${prefix}/

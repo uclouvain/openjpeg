@@ -20,8 +20,541 @@
 <br/>
 <h1>Changelog from Git</h1><br/><br/>
 <div class='changelog'>
-<pre class='wrap'>commit cc1919b183f76d5ac79cc9927fb899b47700d925
-Merge: c28965f 655bb12
+<pre class='wrap'>commit 77e391cfe61ae8d0d251e2c7b083a0b9b1968927
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-13 19:13:11 +0200
+
+    update tools/abi-tracker/openjpeg.json
+
+commit 7065d2cd3f4ddf46a7b89969989079a3fe4cf306
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-13 19:02:54 +0200
+
+    abi_check.sh: Update version number for automatic abi check
+
+commit a5891555eb49ed7cc26b2901ea680acda136d811
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-13 18:54:29 +0200
+
+    Prepare for 2.5.0 release
+
+commit cf90ff0c57ad5b12aa6e227d7202960a5770144d
+Author: Navidem &lt;navid.emamdoost@gmail.com&gt;
+Date:   2022-05-13 11:18:47 -0500
+
+    Separate fuzz targets to increase coverage (#1416)
+
+commit a13f9793481ee452268e9b6956b11dc8f9c19c9d
+Merge: 76c6a257 630b9d7f
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-13 17:58:38 +0200
+
+    Merge pull request #1386 from DavidKorczynski/cifuzz
+    
+    CI: Add CIFuzz action
+
+commit 76c6a257264da40fff1805cfc957536af451faff
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-08 19:45:42 +0200
+
+    opj_compress.c: usage formatting fix
+
+commit 576f72112e33e47152bbaa9630db6bfa949aa0aa
+Merge: 30e7c88b 3ac495c7
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-07 11:52:20 +0200
+
+    Merge pull request #1418 from LongerVision/master
+    
+    Java Support 1.8 now...
+
+commit 30e7c88bdf02335225c7b6df0200a74e931a6a4f
+Merge: 7b474e6d ef36cd01
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-07 11:52:09 +0200
+
+    Merge pull request #1419 from rouault/fix_ci
+    
+    tools/travis-ci/install.sh: git clone with https:// to fix 'The unaut…
+
+commit ef36cd015efcef463fdd8ba13f4b4598cfe3aa25
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-07 11:14:52 +0200
+
+    Rename knownfailures-Ubuntu20.04-gcc9.3.0-x86_64-Release-3rdP.txt to knownfailures-Ubuntu20.04-gcc9.4.0-x86_64-Release-3rdP.txt
+
+commit f7b5310e66d6c45253ac973af8138955b8071488
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-07 11:05:04 +0200
+
+    .github/workflows/build.yml: force use of windows-2019 VM
+
+commit af4fd8d317c161b2b08380c3fb08fbe357715eb5
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-07 10:55:00 +0200
+
+    tools/travis-ci/install.sh: git clone with https:// to fix 'The unauthenticated git protocol on port 9418 is no longer supported.'
+
+commit 7b474e6d815900eeebcaf03e44d8d076e3ee900a
+Merge: 6a29f5a9 e33944ea
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-05-07 10:23:26 +0200
+
+    Merge pull request #1410 from rouault/fix_1404
+    
+    CMakeLists.txt: do not set INSTALL_NAME_DIR for MacOS builds for CMake &gt;= 3.0 (fixes #1404)
+
+commit 3ac495c7fc8c23010a15b3d282e1dbfb6422dae0
+Author: Pei Jia &lt;jiapei@longervision.com&gt;
+Date:   2022-05-06 18:27:27 -0700
+
+    JAVA_SOURCE_VERSION from 1.6 to 1.8
+
+commit e33944ea9e4aaf5763d4b2b25cc97cc021989948
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-02-13 10:42:47 +0100
+
+    CMakeLists.txt: do not set INSTALL_NAME_DIR for MacOS builds for CMake &gt;= 3.0 (fixes #1404)
+
+commit 6a29f5a9e3a1e2dbf1e3df22b7e449bc1db20b5c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-02-10 15:49:57 +0100
+
+    opj_j2k_decode_tile(): avoid 'Stream too short' error in non-strict mode
+
+commit 3837ff1b1ac3ad81ec73024140a5e5eb1794123e
+Merge: 883c31db 1462e940
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-02-10 15:13:49 +0100
+
+    Merge pull request #1408 from rouault/fix_ossfuzz_44544
+    
+    Avoid integer overflows in DWT. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44544
+
+commit 1462e9403fb7d1186e999701dfe72980262a089c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-02-10 14:30:13 +0100
+
+    Avoid integer overflows in DWT. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=44544
+
+commit 883c31dbe09771aab043744ac2b490d7386878e3
+Author: Robert Gabriel Jakabosky &lt;rjakabosky+github@neoawareness.com&gt;
+Date:   2022-02-10 21:27:17 +0800
+
+    Add support for partial bitstream decoding (#1407) (fixes #715)
+    
+    Add a -allow-partial option to opj_decompress utility and a opj_decoder_set_strict_mode() option to the API
+    
+    Co-authored-by: Chris Hafey &lt;chafey@gmail.com&gt;
+
+commit 99d555c0f1818277645a0c79a5199f2e827d68cc
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-01-26 21:52:40 +0100
+
+    Add .github/ISSUE_TEMPLATE.md
+
+commit a5c95cfe2617639e52e5892038e7876021bdd7ea
+Merge: 241e9e8e 1de5fc6c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-01-24 12:00:46 +0100
+
+    Merge pull request #1403 from rouault/configure_guard_bits
+    
+    opj_encoder_set_extra_options(): add a GUARD_BITS=value option
+
+commit 1de5fc6c51617f49515ef80708dd074432a27a6a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-01-23 17:53:55 +0100
+
+    opj_encoder_set_extra_options(): add a GUARD_BITS=value option
+    
+    and add a -GuardBits option to opj_compress.
+    
+    The recently-released SMPTE DCP Bv2.1 Application Profile (link below)
+    says that the number of guard bits in the QCD marker shall be 1 for 2K
+    content and 2 for 4K content. This change allows the number of guard bits
+    to be configured, so that users of openjpeg have the control they need to meet the specification.
+    
+    https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9161348
+    
+    This is an alternative implementation of https://github.com/uclouvain/openjpeg/pull/1388
+    that keeps ABI unchanged.
+
+commit 241e9e8efeb6750ef4202a61b3a436628e4f6d23
+Author: Eric Harvey &lt;71228603+Eharve14@users.noreply.github.com&gt;
+Date:   2022-01-18 15:55:10 -0500
+
+    Fix potential overflow related issues spotted by LGTM code analysis (#1402)
+
+commit d87fd9279a9e0f8ce8fb23ab10e536410a907336
+Merge: a1eec9c4 70f5e0a0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-01-18 17:22:44 +0100
+
+    Merge pull request #1401 from rouault/fix_1399
+    
+    opj_j2k_setup_encoder(): validate number of tiles to avoid illegal values and potential overflow (fixes #1399)
+
+commit 70f5e0a0df0b97a5675673b779105dc8e5cfed30
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2022-01-18 15:44:18 +0100
+
+    opj_j2k_setup_encoder(): validate number of tiles to avoid illegal values and potential overflow (fixes #1399)
+
+commit a1eec9c49e143fab0e0c0dcc13f94f11fef04f22
+Author: Eric Harvey &lt;71228603+Eharve14@users.noreply.github.com&gt;
+Date:   2022-01-16 12:54:00 -0500
+
+    Fix unsigned vs OPJ_INT32 mismatches  (#1398)
+
+commit 6e4588f379be0eb5b62fff65bf96aa1ca556ea96
+Author: Eharve14 &lt;71228603+Eharve14@users.noreply.github.com&gt;
+Date:   2022-01-15 09:33:03 -0500
+
+    Added check for integer overflow in get_num_images  (#1397)
+    
+    As discussed in pull request 1396, added a check for integer overflow.
+    Change list:
+    Defined num_images as unsigned int
+    Moved the if statement to check for an empty directory to the beginning of the read directory section
+    Added a check to see if num images would roll back to zero when incrementing.
+
+commit 1daaa0b909aebdf71be36238d16dfbec83c494ed
+Author: Eharve14 &lt;71228603+Eharve14@users.noreply.github.com&gt;
+Date:   2022-01-13 15:05:52 -0500
+
+    Avoid overflow in multiplications in utilities related to big number of files in a directory (CVE-2021-29338)  (#1396)
+
+commit 79c7d7af598b778c3cdcb455df23d50efc95eb3c
+Author: Brad Parham &lt;baparham@gmail.com&gt;
+Date:   2022-01-12 13:46:10 +0100
+
+    opj_compress/opj_uncompress: fix integer overflow in num_images (#1395)
+    
+    Includes the fix for CVE-2021-29338
+    Credit to @kaniini based on #1346
+    Fixes #1338
+
+commit fe2fa707161b2025ef82c325b9110c08bd0e812e
+Merge: 22eb737d af8339d3
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-12-10 11:57:41 +0100
+
+    Merge pull request #1392 from stweil/duplicate
+    
+    Remove duplicate assignments in function tiftoimage
+
+commit af8339d33f92d1f88b504d9cd84cde981fef94df
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2021-12-10 11:27:44 +0100
+
+    Remove duplicate assignments in function tiftoimage
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 22eb737d5d5d25947cec28cf23bcb0b4a5a682a3
+Merge: 90481203 6ec9871e
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-12-05 14:32:51 +0100
+
+    Merge pull request #1390 from stweil/typos
+    
+    Fix some typos (found by codespell)
+
+commit 6ec9871eca3871b285a125ae22e7623da48305c3
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2021-12-05 13:38:47 +0100
+
+    Format source file with typo fixes
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit ef73ad1c97b0a9be81786c137f31baef6387e268
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2021-12-05 13:32:09 +0100
+
+    Fix singular/plural mismatch
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 667149ffa11f0255db92f522bc5b5fc8aefb16ec
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2021-12-05 13:04:30 +0100
+
+    Fix some typos (found by codespell)
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 90481203a28d4d18052a07711d6d890ed1ab8c8a
+Author: msheby &lt;44249925+msheby@users.noreply.github.com&gt;
+Date:   2021-10-27 05:10:50 -0700
+
+    opj_compress: add a -TargetBitDepth switch for TIFF output (#1384)
+    
+    Sometimes, given the same (16-bit TIF) input, one wants to generate a variety of J2C outputs (say, 16-, 12-, and 10-bit). This patch allows one to downsample input files, and so makes it easier to automate OpenJPEG in mass generation of J2Cs without having to pipe though an image processing program.
+
+commit 630b9d7fb1a817bab2fc5edac133eb7f6ac49cf9
+Author: David Korczynski &lt;david@adalogics.com&gt;
+Date:   2021-10-27 11:10:11 +0100
+
+    ci: Add CIFuzz action
+    
+    Signed-off-by: David Korczynski &lt;david@adalogics.com&gt;
+
+commit 9f70bf0ad1ba02fa3af87c552647bbc05c94c18e
+Merge: 714c63ef 0b5d6268
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-10-21 17:21:36 +0200
+
+    Merge pull request #1383 from rouault/deprecate_bpp
+    
+    API: deprecate 'bpp' member in favor of 'prec'
+
+commit 0b5d62684fe360e098e3bccaef02ee3e9781cec4
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-10-21 12:43:50 +0200
+
+    API: deprecate 'bpp' member in favor of 'prec'
+    
+    in opj_image_comp and opj_image_comptparm structures.
+    
+    bpp was redundant with prec, and almost never set by the library, except
+    by opj_image_create(). This change should hopefully not impact existing,
+    working, users of the API, which should already have used prec to get
+    things working.
+    
+    Fixes #1379
+
+commit 3835f37084c762dc7a14b3e995bc005cf584de7c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-10-21 13:12:05 +0200
+
+    tests/: reformat a few files to be modified
+
+commit 714c63efee203a46fe366d22c0077425052bb62c
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-27 08:04:57 +0200
+
+    tests/fuzzers/build_seed_corpus.sh: add htj2k files
+
+commit 0fbeeff48e741d17dbb673c0e663433cbbf06094
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-26 13:02:40 +0200
+
+    Test decoding a .jhc file with vertically causal context variation
+
+commit cee880215078af501a69a173de112fd3063504fa
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-26 12:49:05 +0200
+
+    README.md: update badge to github action workflows [ci skip]
+
+commit 2e977fac16acc6b1994e37b4de9271b710bc5129
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-26 12:41:05 +0200
+
+    Test decoding a .jph test file
+
+commit 15594a3dbf735eb52b4a262ed1d4c50779404018
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-26 12:37:59 +0200
+
+    opj_dump.c: fix potential buffer overflow
+
+commit 15615751b840d5b85a46292cf8fe393dab8e1a8b
+Merge: ec651740 0544a088
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-25 13:29:02 +0200
+
+    Merge pull request #1381 from rouault/htj2k_followup
+    
+    Added support for high throughput (HTJ2K) decoding.
+
+commit 0544a0885bbc4c918e8b7f759cba70e0c70a0539
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-25 12:59:04 +0200
+
+    ht_dec.c: fix likely issue on big endian hosts (untested)
+
+commit f3d8c763ba5f427b7ec7961e63c597f9f0381856
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-25 12:14:27 +0200
+
+    opj_decompress / opj_dump: accept .jph and .jhc extensions for HTJ2K files
+
+commit 1e6c925eb5f6b68097a9592ca4df4f24eb8b9e56
+Author: Aous Naman &lt;aous72@yahoo.com&gt;
+Date:   2021-09-02 18:51:38 +1000
+
+    Added support for high throughput (HTJ2K) decoding.
+    
+    There are a few limitations:
+    - mixed mode (HT and regular code blocks) is not supported.
+    - ROI in HT blocks is not supported.
+    - Placeholder passes are not supported.
+    - MultiHT sets are not support, only a singleHT set.
+    - there are known issues with some compliance testing files related to
+      the parsing of packet header.
+
+commit ec651740191dc765c8a1fc5cc3c5348cd0cd2ccc
+Merge: fd485f2f af8ed50a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-15 14:01:20 +0200
+
+    Merge pull request #1380 from rouault/fix_verify_indent_pr
+    
+    verify-indentation.sh: fix for pull request from bar/master to foo/master
+
+commit af8ed50ae70409fb1a461474e1738dd004507a7d
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-15 13:40:50 +0200
+
+    CI 'regular': fix static builds when doing perf checks
+
+commit 29818b8e9241d5d891e150bd4ba523c899ecacd0
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-15 13:21:25 +0200
+
+    verify-indentation.sh: fix for pull request from bar/master to foo/master
+
+commit fd485f2f13d59d94649fe32a1969150908f569c9
+Merge: 8fc4bf8e 3d3b58c6
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-14 17:15:53 +0200
+
+    Merge pull request #1376 from rouault/gha
+    
+    Port continuous integration to github actions
+
+commit 8fc4bf8ecbccea2d2ec3faef143ca5a57eba677d
+Author: Jamaika1 &lt;lukaszcz18@wp.pl&gt;
+Date:   2021-09-12 12:32:38 +0200
+
+    Use standard integer types for compatibility with libtiff 4.3.0 (#1377)
+
+commit 3d3b58c61f584487c6ab6664fd8e667453b45c85
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-11 18:28:44 +0200
+
+    appveyor.yml: disable deploy
+
+commit 3d582dd8856bd9c8e3243407b61690263ed2ee48
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-10 16:05:04 +0200
+
+    Add github action workflows CI
+
+commit 0c1962669858b1d67a6b8851ae0e8c4123a1c282
+Merge: 172583ab badbd93a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-08 13:16:52 +0200
+
+    Merge pull request #1375 from rouault/fix_ossfuzz_11700_30646
+    
+    Avoid integer overflows in DWT.
+
+commit badbd93af92836c7a38ef069d410a829e2575ce2
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-09-03 15:17:56 +0200
+
+    Avoid integer overflows in DWT. Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11700 and https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=30646
+
+commit 172583ab5b9b8de67bed1eed11bd26a77d94b521
+Merge: 9bb0db7c bea58764
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-08-30 19:15:32 +0200
+
+    Merge pull request #1373 from DimitriPapadopoulos/lgtm
+    
+    LGTM warning: Comparison result is always the same
+
+commit bea58764ad2df966b455a4f3f4063d7f2ac8b0ca
+Author: Dimitri Papadopoulos &lt;3234522+DimitriPapadopoulos@users.noreply.github.com&gt;
+Date:   2021-08-30 18:48:57 +0300
+
+    LGTM warning: Comparison result is always the same
+    
+    Comparison is always true because pos &gt;= 0.
+
+commit 9bb0db7cfba9d5ca1417bde3b88c0bf0f7c711de
+Merge: 0d075aa5 5c205395
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-08-12 11:42:28 +0200
+
+    Merge pull request #1370 from madebr/cmake/export-include-directory
+    
+    cmake: add install interface include directory
+
+commit 0d075aa5dc5dca7b2f0c7e12f9967e190fbb2a32
+Merge: 0afbdcf3 3efa4fd3
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-08-12 11:40:40 +0200
+
+    Merge pull request #1371 from DimitriPapadopoulos/codespell
+    
+    A couple typos found by codespell
+
+commit 3efa4fd334eed98ba60cd08624982a4499c49860
+Author: Dimitri Papadopoulos &lt;3234522+DimitriPapadopoulos@users.noreply.github.com&gt;
+Date:   2021-08-12 12:12:22 +0300
+
+    A couple typos found by codespell
+
+commit 5c2053950eb4c2c76f17deefd35f5c49abf0232e
+Author: Anonymous Maarten &lt;anonymous.maarten@gmail.com&gt;
+Date:   2021-08-01 20:56:40 +0200
+
+    cmake: add install interface include directory
+
+commit 0afbdcf3e6d0d2bd2e16a0c4d513ee3cf86e460d
+Author: xiaoxiaoafeifei &lt;lliangliang2007@163.com&gt;
+Date:   2021-07-14 09:35:13 +0800
+
+    Fix segfault in src/bin/jp2/opj_decompress.c due to uninitialized pointer (fixes #1368) (#1369)
+
+commit 08ba6a1638242e7ddd884c6c9777a232c0ef82fd
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-07-12 15:59:41 +0200
+
+    Fix code formatting
+
+commit 67f8a1e4303d74fab4f15914259b4122180895e1
+Merge: 00beb209 e0993d07
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-07-12 15:58:06 +0200
+
+    Merge pull request #1366 from sebras/fix-out-of-bounds-access
+    
+    opj_j2k_is_imf_compliant: Fix out of bounds access
+
+commit e0993d072a0cd8c60d9babd30c58320f13eff867
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2021-07-12 15:31:28 +0200
+
+    opj_j2k_is_imf_compliant: Fix out of bounds access.
+    
+    Previously when mainlevel was parsed == 12 openjpeg would generate
+    a warning, but then the sublevel value would be compared to an out
+    of bounds element in the tabMaxSubLevelFromMainLevel array. From
+    this commit OpenJPEG will only use mainlevel if in range.
+
+commit 00beb209531cc258b71f81653299dcadd880b0aa
+Merge: cc1919b1 c8ab3e58
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2021-07-12 12:02:12 +0200
+
+    Merge pull request #1365 from sebras/fix-warning-formatting
+    
+    opj_j2k_is_imf_compliant: Fix argument formatting for warnings.
+
+commit c8ab3e5849da0c072e4e0eadd6ec48e951b316d0
+Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
+Date:   2021-07-12 03:04:55 +0200
+
+    opj_j2k_is_imf_compliant: Fix argument formatting for warnings.
+
+commit cc1919b183f76d5ac79cc9927fb899b47700d925
+Merge: c28965f2 655bb125
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-06-09 11:53:56 +0200
 
@@ -36,7 +569,7 @@ Date:   2021-06-08 14:34:43 +0200
     CMakeLists.txt/appveyor.yml: update version number to 2.5.0 to make it easier for downstream consumers to use new features
 
 commit c28965f255c711a7b2f84a08b1398e5a0f807b0e
-Merge: 2624908 a36ae03
+Merge: 26249085 a36ae038
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-06-08 11:11:04 +0200
 
@@ -57,7 +590,7 @@ Date:   2021-06-07 15:16:53 +0200
     * Make opj_encoder_set_extra_options() function accept a TLM=YES option.
 
 commit 2624908517ac0489ff1b5471f423dfe84d79da08
-Merge: e7d908d b5ec98f
+Merge: e7d908d2 b5ec98f1
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-06-07 15:48:42 +0200
 
@@ -72,7 +605,7 @@ Date:   2021-06-07 15:41:39 +0200
     .travis.yml: try to fix gcc 4.8 config by updating to xenial
 
 commit e7d908d201a0fef9a619a537dae241341975cab9
-Merge: 7e4e09a f0629cb
+Merge: 7e4e09a7 f0629cb1
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-06-07 13:56:11 +0200
 
@@ -93,7 +626,7 @@ Date:   2021-06-07 12:57:30 +0200
     openjpeg.c: avoid casts of function pointers
 
 commit adb888920edb8477a271e640e5640237e2b4c0bb
-Merge: b6b8d28 99c28c9
+Merge: b6b8d28b 99c28c96
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-06-01 22:59:11 +0200
 
@@ -110,7 +643,7 @@ Date:   2021-06-01 22:39:27 +0200
     thanks to @ePirat, it turns out that !EMSCRIPTEN does not evaluate to 1 on other platforms, so the the #1345 actually disabled the test for all platforms.
 
 commit b6b8d28b3a85b74ff5415565cff2c20c019ca3c5
-Merge: 8aaafe6 238e849
+Merge: 8aaafe69 238e8497
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-05-07 11:22:13 +0200
 
@@ -134,7 +667,7 @@ Date:   2021-05-06 19:30:34 +0200
     Import files tiff and yuv(raw) (#1316)
 
 commit 5f653ad673cf0f141801c1c4a810028a9876b5e5
-Merge: 05263ee 85a87cd
+Merge: 05263eee 85a87cd5
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-05-06 13:40:43 +0200
 
@@ -149,7 +682,7 @@ Date:   2021-05-04 19:21:45 +0200
     Remove obsolete components JPWL, JP3D and MJ2
 
 commit 05263eeee9bc666184a39cd2a83a7214cc83ec27
-Merge: 0bda718 9727f3a
+Merge: 0bda7188 9727f3ac
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-05-04 19:15:06 +0200
 
@@ -170,7 +703,7 @@ Date:   2021-05-04 16:27:05 +0200
     tools/travis-ci/install.sh: fix links to Kakadu and jpylyzer binaries
 
 commit 0bda7188b7b545232a341f1d978b1e4feda46fc2
-Merge: 0782cd0 4d0b49e
+Merge: 0782cd07 4d0b49ed
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-01-10 23:58:37 +0100
 
@@ -200,7 +733,7 @@ Date:   2021-01-07 14:09:50 +0100
     DESTDIR usage).
 
 commit 0782cd075d7e9678bf1cb448c1f3d048fabe4489
-Merge: 07a4543 b6f0e41
+Merge: 07a45432 b6f0e413
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-01-04 19:42:30 +0100
 
@@ -228,7 +761,7 @@ Date:   2016-11-11 23:35:13 +0100
     Depends on https://github.com/uclouvain/openjpeg/pull/866
 
 commit 07a454324cfeb431ee3fc3799df522dff252b12b
-Merge: eb27272 75a7f1a
+Merge: eb27272a 75a7f1a5
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-01-04 14:06:43 +0100
 
@@ -237,7 +770,7 @@ Date:   2021-01-04 14:06:43 +0100
     fix static build only against tiff and its indirect dependencies
 
 commit eb27272a79cd81256e475b9aad8461fda8b7f989
-Merge: 2519439 4d147d9
+Merge: 2519439d 4d147d96
 Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2021-01-04 10:45:52 +0100
 
@@ -285,615 +818,6 @@ Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
 Date:   2020-12-29 15:01:40 +0100
 
     Comment back opj_previous_version in abi_check.sh
-
-commit b93996d5e018b3d9525acf406053d8b46240f914
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-29 14:46:50 +0100
-
-    abi_check.sh: Update version number for automatic abi check
-
-commit b897e2cb369b6944d791209f491f382a983cda87
-Merge: 37ac30c 7dd5497
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-28 22:58:58 +0100
-
-    Merge pull request #1312 from stweil/news
-    
-    Fix year in NEWS
-
-commit 7dd5497b15a33a8020bf1ab116f649328b037a89
-Author: Stefan Weil &lt;sw@weilnetz.de&gt;
-Date:   2020-12-28 22:52:34 +0100
-
-    Fix year in NEWS
-    
-    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
-
-commit 37ac30ceff6640bbab502388c5e0fa0bff23f505
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-28 21:55:55 +0100
-
-    Prepare for v2.4.0
-
-commit a335b4d008359a32656026fa6780ef185b35cf0a
-Merge: 4980f46 0c2b633
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-28 21:49:48 +0100
-
-    Merge pull request #1310 from Jamaika1/patch-1
-    
-    Change defined WIN32
-
-commit 4980f46210f19bd2d83dffdfeb8496f29d68b9c9
-Merge: 6c5acd4 aaddbc7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-28 19:05:14 +0100
-
-    Merge pull request #1307 from cygwin-lem/pr_use-OPENJPEG_INSTALL_DOC_DIR-to-DESTINATION-of-HTMLs
-    
-    Set ${OPENJPEG_INSTALL_DOC_DIR} to DESTINATION of HTMLs
-
-commit 6c5acd4d656870882432ff28d4103de80d109a8d
-Merge: 98a4c5c 5d494a7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-28 19:04:28 +0100
-
-    Merge pull request #1308 from timgates42/bugfix_typo_produced
-    
-    docs: fix simple typo, producted -&gt; produced
-
-commit 0c2b633992417c8794470c9932e3c75447c8ab13
-Author: Jamaika1 &lt;lukaszcz18@wp.pl&gt;
-Date:   2020-12-21 07:59:12 +0100
-
-    Change defined WIN32
-
-commit 5d494a7e8b9591a8923f387679c692b5c1f45e5a
-Author: Tim Gates &lt;tim.gates@iress.com&gt;
-Date:   2020-12-16 21:19:17 +1100
-
-    docs: fix simple typo, producted -&gt; produced
-    
-    There is a small typo in thirdparty/include/zlib.h, thirdparty/libz/zlib.h.
-    
-    Should read `produced` rather than `producted`.
-
-commit aaddbc7c07f00f0704da4db7616e6dc7448e5f07
-Author: Lemures Lemniscati &lt;lemures.lemniscati@gmail.com&gt;
-Date:   2020-12-14 23:00:04 +0900
-
-    Set ${OPENJPEG_INSTALL_DOC_DIR} to DESTINATION of HTMLs
-    
-    Use ${OPENJPEG_INSTALL_DOC_DIR} as DESTINATION of HTML documents,
-    instead of share/doc.
-
-commit 98a4c5c3709e0cc43b0a1c151ed5bd85a2d607fa
-Merge: 5d0a8b0 6558637
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-10 15:55:41 +0100
-
-    Merge pull request #1306 from matthew-sharp/master
-    
-    Use INC_DIR for OPENJPEG_INCLUDE_DIRS (fixes uclouvain#1174)
-
-commit 65586374d639cfc0104419992f9022174b412594
-Author: Matthew Sharp &lt;sharpshopter@gmail.com&gt;
-Date:   2020-12-10 10:17:46 +1100
-
-    Use INC_DIR for OPENJPEG_INCLUDE_DIRS (fixes uclouvain#1174)
-    This fixes the case where the cmake file is accessed via a symlink.
-
-commit 5d0a8b08dcd3bcdf532c54702b5a88ec61b17918
-Merge: 43dd9ee 8f5aff1
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-05 11:39:23 +0100
-
-    Merge pull request #1304 from rouault/fix_1302
-    
-    pi.c: avoid out of bounds access with POC (fixes #1302)
-
-commit 8f5aff1dff510a964d3901d0fba281abec98ab63
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-04 20:45:25 +0100
-
-    pi.c: avoid out of bounds access with POC (fixes #1302)
-
-commit 43dd9ee17894a22fa3df88b1e561274632d9ab43
-Merge: aaff099 4ce7d28
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-04 20:37:43 +0100
-
-    Merge pull request #1303 from zodf0055980/fix#1283
-    
-    Encoder: grow again buffer size
-
-commit 4ce7d285a55d29b79880d0566d4b010fe1907aa9
-Author: yuan &lt;zodf0055980@gmail.com&gt;
-Date:   2020-12-04 19:00:22 +0800
-
-    Encoder: grow again buffer size in opj_tcd_code_block_enc_allocate_data() (fixes #1283)
-
-commit aaff099b49365cfecfc475ada48b9244c6eefc9c
-Merge: fb9eae5 73fdf28
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 23:56:57 +0100
-
-    Merge pull request #1301 from rouault/fix_1299
-    
-    opj_j2k_write_sod(): avoid potential heap buffer overflow (fixes #1299) (probably master only)
-
-commit fb9eae5d637d06209a6cb9ca57960ac72179ee14
-Merge: fc6abdb 00383e1
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 23:56:39 +0100
-
-    Merge pull request #1300 from rouault/complement_1293
-    
-    pi.c: avoid out of bounds access with POC (refs https://github.com/uclouvain/openjpeg/issues/1293#issuecomment-737122836)
-
-commit fc6abdbeb7aa427685c28a9ebfd2e653c10999b3
-Merge: 18b1138 38d661a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 23:56:30 +0100
-
-    Merge pull request #1298 from rouault/fix_1297
-    
-    opj_t2_encode_packet(): avoid out of bound access of #1297, but likely not the proper fix
-
-commit 73fdf28342e4594019af26eb6a347a34eceb6296
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 14:10:16 +0100
-
-    opj_j2k_write_sod(): avoid potential heap buffer overflow (fixes #1299) (probably master only)
-
-commit 00383e162ae2f8fc951f5745bf1011771acb8dce
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 14:02:17 +0100
-
-    pi.c: avoid out of bounds access with POC (refs https://github.com/uclouvain/openjpeg/issues/1293#issuecomment-737122836)
-
-commit 38d661a3897052c7ff0b39b30c29cb067e130121
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 13:13:26 +0100
-
-    opj_t2_encode_packet(): avoid out of bound access of #1297, but likely not the proper fix
-
-commit 18b1138fbe3bb0ae4aa2bf1369f9430a8ec6fa00
-Merge: 630b485 c9380ed
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 10:05:39 +0100
-
-    Merge pull request #1295 from rouault/fix_1293
-    
-    opj_j2k_setup_encoder(): validate POC compno0 and compno1 (fixes #1293)
-
-commit 630b485f86a6b0bb6fa03b698b8c5358df88d055
-Merge: 61ff143 fbd30b0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-02 10:05:31 +0100
-
-    Merge pull request #1296 from rouault/workaround_1294
-    
-    opj_t2_encode_packet(): avoid out of bound access of #1294, but likely not the proper fix
-
-commit c9380ed0f8cc4794fc71d556ea23ae61e32247af
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-01 19:39:09 +0100
-
-    opj_j2k_setup_encoder(): validate POC compno0 (fixes #1293)
-
-commit fbd30b064f8f9607d500437b6fedc41431fd6cdc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-01 19:51:35 +0100
-
-    opj_t2_encode_packet(): avoid out of bound access of #1294, but likely not the proper fix
-
-commit 61ff143ad63b9bbe12b6da266f8619b2cb2c3559
-Merge: 2d119d0 6daf5f3
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-12-01 11:35:59 +0100
-
-    Merge pull request #1292 from rouault/fix_1286
-    
-    Encoder: avoid global buffer overflow on irreversible conversion when…
-
-commit 6daf5f3e1ec6eff03b7982889874a3de6617db8d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-30 22:37:07 +0100
-
-    Encoder: avoid global buffer overflow on irreversible conversion when too many decomposition levels are specified (fixes #1286)
-
-commit 2d119d03a0c9f5e3b6c2a70c30cbdcea4857b40a
-Merge: b207240 1aa3c60
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-30 23:28:31 +0100
-
-    Merge pull request #1291 from rouault/tnsot_zero_missing_eoc
-    
-    Decoding: deal with some SPOT6 images that have tiles with a single tile-part with TPsot == 0 and TNsot == 0, and with missing EOC
-
-commit b2072402b7e14d22bba6fb8cde2a1e9996e9a919
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-30 22:31:51 +0100
-
-    pngtoimage(): fix wrong computation of x1,y1 if -d option is used, that would result in a heap buffer overflow (fixes #1284)
-
-commit 1aa3c60859ab2a3edb7a68682f131c6b3a91da72
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-30 17:36:27 +0100
-
-    Decoding: deal with some SPOT6 images that have tiles with a single tile-part with TPsot == 0 and TNsot == 0, and with missing EOC
-
-commit a2b2980a4bcb4d3903375de31495f99dde0e98a8
-Merge: 0c0f27f 4f48779
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-27 14:25:11 +0100
-
-    Merge pull request #1288 from zodf0055980/master
-    
-    Free p_tcd_marker_info to avoid memory leak
-
-commit 4f487798bac3eea5ffa07d3cc542f675c4b4d9ae
-Author: yuan &lt;zodf0055980@gmail.com&gt;
-Date:   2020-11-26 00:22:49 +0800
-
-    Free p_tcd_marker_info to avoid memory leak
-
-commit 0c0f27f17d431d98d190f30bec3879f434512158
-Merge: 15cf3d9 649298d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-25 16:59:46 +0100
-
-    Merge pull request #1287 from zodf0055980/master
-    
-    Encoder: grow again buffer size
-
-commit 649298dcf84b2f20cfe458d887c1591db47372a6
-Author: yuan &lt;zodf0055980@gmail.com&gt;
-Date:   2020-11-25 20:41:39 +0800
-
-    Encoder: grow again buffer size in opj_tcd_code_block_enc_allocate_data() (fixes #1283)
-
-commit 15cf3d95814dc931ca0ecb132f81cb152e051bae
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-23 18:14:02 +0100
-
-    Encoder: grow again buffer size in opj_tcd_code_block_enc_allocate_data() (fixes #1283)
-
-commit eaa098b59b346cb88e4d10d505061f669d7134fc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-23 13:49:05 +0100
-
-    Encoder: grow buffer size in opj_tcd_code_block_enc_allocate_data() to avoid write heap buffer overflow in opj_mqc_flush (fixes #1283)
-
-commit 67ec360f48aeded95d06578e717bdf40a8e6d16f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-11-23 13:38:27 +0100
-
-    Fix typo in internal function name
-
-commit 491299eb073c80602ca8ee333303a31a581d3fa8
-Merge: 65c8f57 1c5627e
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-10-09 13:25:27 +0200
-
-    Merge pull request #1253 from rouault/floating_point_irreversible_encoding
-    
-    Single-threaded performance improvements in forward DWT for 5-3 and 9-7 (and other improvements)
-
-commit 65c8f577d2f057e80040e98958eae80ca76c6b94
-Author: Pei JIA &lt;jiapei@longervision.com&gt;
-Date:   2020-09-23 02:34:31 -0700
-
-    Bump Java compatibility from 1.5 to 1.6 (#1263)
-
-commit 0f16986738725799237548ce6a2ea12516850e72
-Merge: cbee789 0863ccf
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-09-16 11:52:10 +0200
-
-    Merge pull request #1276 from rouault/fix_1243
-    
-    Encoder: avoid uint32 overflow when allocating memory for codestream buffer (fixes #1243)
-
-commit 0863ccf291238de15ca00da366b4c40fa9ffb673
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-09-16 11:27:53 +0200
-
-    Encoder: avoid uint32 overflow when allocating memory for codestream buffer (fixes #1243)
-
-commit cbee7891a0ee664dd83ca09553d2e30da716a883
-Merge: 172c8ae e8e258a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-06-30 22:05:13 +0200
-
-    Merge pull request #1262 from rouault/fix_1261
-    
-    opj_decompress: fix double-free on input directory with mix of valid and invalid images
-
-commit e8e258ab049240c2dd1f1051b4e773b21e2d3dc0
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-06-28 14:19:59 +0200
-
-    opj_decompress: fix double-free on input directory with mix of valid and invalid images (CVE-2020-15389)
-    
-    Fixes #1261
-    
-    Credits to @Ruia-ruia for reporting and analysis.
-
-commit 172c8ae5cf230ff74b5814daf29e5b577aa30a9b
-Merge: e252438 b028e8d
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-06-22 22:35:44 +0200
-
-    Merge pull request #1260 from sebras/fix-issue-1259
-    
-    openjp2: Plug image leak when failing to allocate codestream index.
-
-commit e252438d5e23e6ba9561e73a5a4754713bfd626a
-Merge: 98150d0 79b199a
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-06-22 22:12:08 +0200
-
-    Merge pull request #1258 from sebras/fix-issue-1257
-    
-    openjp2: Plug memory leak when setting data as TLS fails.
-
-commit b028e8d1ce7798f61c35b1b20d836f80d78a35d0
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2020-06-23 02:18:19 +0800
-
-    openjp2: Plug image leak when failing to allocate codestream index.
-    
-    This fixes issue #1259.
-
-commit 79b199a8fee2a0d51d4389fcde3f5f4dd01971eb
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2020-06-23 02:18:19 +0800
-
-    openjp2: Plug memory leak when setting data as TLS fails.
-    
-    Previously the Tier 1 handle was not freed when setting it as
-    TLS failed.
-    
-    This fixes issue #1257.
-
-commit 98150d09422149305c9c8648337a744df5786fbe
-Merge: 25fb144 93b9f72
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-06-22 21:03:23 +0200
-
-    Merge pull request #1256 from sebras/master
-    
-    openjp2: Error out if failing to create Tier 1 handle.
-
-commit 93b9f7236ce09614ea5edcb0f616f1b4095c4830
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2020-06-23 02:18:19 +0800
-
-    openjp2: Error out if failing to create Tier 1 handle.
-    
-    Previously when the handle failed to be created (e.g. when
-    opj_calloc returned NULL due to low memory), the code still
-    assumed that the t1 handle pointer was valid and dereferenced
-    NULL, causing a crash. After this commit OpenJPEG will instead
-    error out under this condition.
-    
-    This fixes issue #1255.
-
-commit 25fb144c42f97489594302e1e6ff886791e0a5b3
-Author: szukw000 &lt;szukw000@arcor.de&gt;
-Date:   2020-06-10 17:40:50 +0200
-
-    Testing for invalid values of width, height, numcomps (#1254)
-
-commit 1c5627ee7406f84cfb40809b7ac31c63342427df
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-24 15:38:21 +0200
-
-    T1 encoder: speed-up by aggressive inlining and more cache friendly data organization
-    
-    ~ 9% speed improvement seen on 10980x10980 uint16 image, T36JTT_20160914T074612_B02.tif
-    opj_compress time from 17.2s to 15.8s
-
-commit 1e931fdb3655c64ab60ea5657f79309331a86485
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-22 23:57:51 +0200
-
-    Forward DWT 9-7: major speed up by vectorizing vertical pass
-    
-    `bench_dwt -I -encode` times goes from 8.6s to 2.1s
-
-commit a38e970fa59abd796c703ec469e578b09f7ffa33
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-22 17:50:15 +0200
-
-    Forward DWT 5-3: major speed up by vectorizing vertical pass
-    
-    `bench_dwt -encode` times goes from 7.9s to 1.7s
-
-commit e69fa09f604bc472f9fbff5c2b2db65e8dbe2418
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-22 15:58:47 +0200
-
-    Forward DWT: small code refactoring to allow future improvements for the vertical pass
-
-commit 33d3d0de07be710f53940c7548b9f2bd58ff3210
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-22 15:06:29 +0200
-
-    dwt.c: remove unused typedef
-
-commit 97b384aecdeea0c286213f5caf6244ec08ea32d7
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-22 15:03:40 +0200
-
-    Forward DWT 5x3: performance improvements in horizontal pass, and modest in vertical pass
-
-commit bd5f5ee7dea851aedae630fee094ef3b0ff0c888
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-21 21:20:19 +0200
-
-    Forward DWT: small code refactoring to allow future improvements for the horizontal pass
-
-commit 45a35223b79dee65a0059f999b690072e829669f
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-21 16:54:48 +0200
-
-    Speed-up 9x7 IDWD by ~30% with OPJ_NUM_THREADS=2
-    
-    "bench_dwt -I" time goes from 2.2s to 1.5s
-
-commit 272b3e0fb2530ca8bffdc8c64f1505a8ff5f6ecc
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-21 11:24:29 +0200
-
-    Remove useless + 5U margin in opj_dwt_decode_tile_97()
-    
-    Nothing in code analysis nor test suite shows that this margin is
-    needed.
-    It dates back to commit dbeebe72b9d35f6ff807c21c7f217b569fa894f6
-    where vector 9x7 decoding was introduced.
-
-commit 47943daa15983d20ab1ffd0a237125f1493c5658
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-21 11:23:00 +0200
-
-    Speed-up 9x7 IDWD by ~20%
-    
-    "bench_dwt -I" time goes from 2.8s to 2.2s
-
-commit 0c09062464fe74f62fb9a4da829992c6a8bd7920
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-20 23:20:48 +0200
-
-    bench_dwt.c: add a -I switch to test irreversible FWDT/IDWT
-
-commit 19ef7f26c43f689b627aad642da7f6150893b863
-Merge: 1d358f2 f3ee448
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-20 21:10:55 +0200
-
-    Merge pull request #1211 from sebras/master
-    
-    Add check to validate SGcod/SPcoc/SPcod parameter values.
-
-commit 1d358f25c8eabbc7c274bcc148f4f5d594ec13fe
-Merge: 64689d0 4edb8c8
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-05-20 20:29:31 +0200
-
-    Merge pull request #1246 from rouault/write_plt
-    
-    Add support for generation of PLT markers in encoder
-
-commit 4edb8c83374f52cd6a8f2c7c875e8ffacccb5fa5
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-21 15:55:44 +0200
-
-    Add support for generation of PLT markers in encoder
-    
-    * -PLT switch added to opj_compress
-    * Add a opj_encoder_set_extra_options() function that
-      accepts a PLT=YES option, and could be expanded later
-      for other uses.
-    
-    -------
-    
-    Testing with a Sentinel2 10m band, T36JTT_20160914T074612_B02.jp2,
-    coming from S2A_MSIL1C_20160914T074612_N0204_R135_T36JTT_20160914T081456.SAFE
-    
-    Decompress it to TIFF:
-    ```
-    opj_uncompress -i T36JTT_20160914T074612_B02.jp2 -o T36JTT_20160914T074612_B02.tif
-    ```
-    
-    Recompress it with similar parameters as original:
-    ```
-    opj_compress -n 5 -c [256,256],[256,256],[256,256],[256,256],[256,256] -t 1024,1024 -PLT -i T36JTT_20160914T074612_B02.tif -o T36JTT_20160914T074612_B02_PLT.jp2
-    ```
-    
-    Dump codestream detail with GDAL dump_jp2.py utility (https://github.com/OSGeo/gdal/blob/master/gdal/swig/python/samples/dump_jp2.py)
-    ```
-    python dump_jp2.py T36JTT_20160914T074612_B02.jp2 &gt; /tmp/dump_sentinel2_ori.txt
-    python dump_jp2.py T36JTT_20160914T074612_B02_PLT.jp2 &gt; /tmp/dump_sentinel2_openjpeg_plt.txt
-    ```
-    
-    The diff between both show very similar structure, and identical number of packets in PLT markers
-    
-    Now testing with Kakadu (KDU803_Demo_Apps_for_Linux-x86-64_200210)
-    
-    Full file decompression:
-    ```
-    kdu_expand -i T36JTT_20160914T074612_B02_PLT.jp2 -o tmp.tif
-    
-    Consumed 121 tile-part(s) from a total of 121 tile(s).
-    Consumed 80,318,806 codestream bytes (excluding any file format) = 5.329697
-    bits/pel.
-    Processed using the multi-threaded environment, with
-        8 parallel threads of execution
-    ```
-    
-    Partial decompresson (presumably using PLT markers):
-    ```
-    kdu_expand -i T36JTT_20160914T074612_B02.jp2 -o tmp.pgm -region "{0.5,0.5},{0.01,0.01}"
-    kdu_expand -i T36JTT_20160914T074612_B02_PLT.jp2 -o tmp2.pgm  -region "{0.5,0.5},{0.01,0.01}"
-    diff tmp.pgm tmp2.pgm &amp;& echo "same !"
-    ```
-    
-    -------
-    
-    Funded by ESA for S2-MPC project
-
-commit 64689d05dfaaf52105581d93fb1eb173b20829a4
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-18 18:25:44 +0200
-
-    struct opj_j2k: remove unused fields, and add some documentation
-
-commit 774889a328abd5d3c280d9a897f1ac4c672cb0e5
-Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
-Date:   2020-04-17 00:39:46 +0200
-
-    Merge pull request #1244 from rouault/fix_pi_warnings
-    
-    Fix warnings about signed/unsigned casts in pi.c
-
-commit f3ee448815eb992b8d4746e32c05e8289f30415f
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2018-10-31 15:56:11 +0100
-
-    openjp2/j2k: Validate all SGcod/SPcod/SPcoc parameter values.
-    
-    Previously the multiple component transformation SGcod(C)
-    and wavelet transformation SPcod(H)/SPcoc(E) parameter
-    values were never checked, allowing for out of range values.
-    
-    The lack of validation allowed the bit stream provided in
-    issue #1158 through. After this commit an error message
-    points to the marker segments' parameters as being out of
-    range.
-    
-    input/nonregression/edf_c2_20.jp2 contains an SPcod(H) value
-    of 17, but according to Table A-20 of the specification only
-    values 0 and 1 are valid. input/nonregression/issue826.jp2
-    contains a SGcod(B) value of 2, but according to Table A-17
-    of the specification only values 0 and 1 are valid.
-    input/nonregression/oss-fuzz2785.jp2 contains a SGcod(B)
-    value of 32, but it is likewise limited to 0 or 1. These test
-    cases have been updated to consistently fail to parse the
-    headers since they contain out of bounds values.
-    
-    This fixes issue #1210.
-
-commit d801bd4e6287d13b65a48775ebd43fca350b21d9
-Author: Sebastian Rasmussen &lt;sebras@gmail.com&gt;
-Date:   2019-09-04 01:18:37 +0200
-
-    openjp2/j2k: Make comments adhere to specification.
-    
-    The function is used to read both SPcod and SPcoc, so all
-    comments should refer to both marker segments' parameter names.
 
 ...</pre></div>
 

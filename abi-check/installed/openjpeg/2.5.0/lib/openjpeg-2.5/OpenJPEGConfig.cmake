@@ -28,8 +28,8 @@ if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
 
   # We find a relative path from the PKG directory to header files.
-  set(PKG_DIR "/home/even/abi-check/work/abi-check/installed/openjpeg/current/lib/openjpeg-2.5")
-  set(INC_DIR "/home/even/abi-check/work/abi-check/installed/openjpeg/current/include/openjpeg-2.5")
+  set(PKG_DIR "/home/even/abi-check/work/abi-check/installed/openjpeg/2.5.0/lib/openjpeg-2.5")
+  set(INC_DIR "/home/even/abi-check/work/abi-check/installed/openjpeg/2.5.0/include/openjpeg-2.5")
   file(RELATIVE_PATH PKG_TO_INC_RPATH "${PKG_DIR}" "${INC_DIR}")
 
   get_filename_component(OPENJPEG_INCLUDE_DIRS "${SELF_DIR}/${PKG_TO_INC_RPATH}" REALPATH)
