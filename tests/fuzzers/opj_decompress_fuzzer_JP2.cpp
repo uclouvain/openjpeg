@@ -111,11 +111,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *buf, size_t len)
 {
 
     OPJ_CODEC_FORMAT eCodecFormat;
-    if (len >= sizeof(jpc_header) &&
-            memcmp(buf, jpc_header, sizeof(jpc_header)) == 0) {
-        eCodecFormat = OPJ_CODEC_J2K;
-    } else if (len >= 4 + sizeof(jp2_box_jp) &&
-               memcmp(buf + 4, jp2_box_jp, sizeof(jp2_box_jp)) == 0) {
+    if (len >= 4 + sizeof(jp2_box_jp) &&
+            memcmp(buf + 4, jp2_box_jp, sizeof(jp2_box_jp)) == 0) {
         eCodecFormat = OPJ_CODEC_JP2;
     } else {
         return 0;
