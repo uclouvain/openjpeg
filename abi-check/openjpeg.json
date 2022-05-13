@@ -22,16 +22,6 @@
     "PublicTypes":    "public_types/openjpeg/current/list"
   },
   {
-    "Number":         "2.5.0",
-    "Installed":      "installed/openjpeg/2.5.0",
-    "Source":         "src/openjpeg/2.5.0/version.-2.5.0.tar.gz",
-    "Changelog":      "Off",
-    "HeadersDiff":    "On",
-    "PkgDiff":        "Off",
-    "ABIView":        "Off",
-    "ABIDiff":        "Off"
-  },
-  {
     "Number":         "2.4.0",
     "Installed":      "installed/openjpeg/2.4.0",
     "Source":         "src/openjpeg/2.4.0/version.-2.4.0.tar.gz",
