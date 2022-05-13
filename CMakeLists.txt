@@ -58,6 +58,7 @@ set(PACKAGE_VERSION
 #   2.3.0 |  7
 #   2.3.1 |  7
 #   2.4.0 |  7
+#   2.5.0 |  7
 # above is the recommendation by the OPJ team. If you really need to override this default,
 # you can specify your own OPENJPEG_SOVERSION at cmake configuration time:
 # cmake -DOPENJPEG_SOVERSION:STRING=42 /path/to/openjpeg

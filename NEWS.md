@@ -2,6 +2,15 @@
 
 More details in the [CHANGELOG](https://github.com/uclouvain/openjpeg/blob/master/CHANGELOG.md)
 
+## OpenJPEG 2.5.0 (May 2022)
+
+No API/ABI break compared to v2.4.0, but additional symbols for subset of components decoding (hence the MINOR version bump).
+
+* Encoder: add support for generation of TLM markers [\#1359](https://github.com/uclouvain/openjpeg/pull/1359)
+* Decoder: add support for high throughput \(HTJ2K\) decoding. [\#1381](https://github.com/uclouvain/openjpeg/pull/1381)
+* Decoder: add support for partial bitstream decoding [\#1407](https://github.com/uclouvain/openjpeg/pull/1407)
+* Bug fixes (including security fixes)
+
 ## OpenJPEG 2.4.0 (December 2020)
 
 No API/ABI break compared to v2.3.1, but additional symbols for subset of components decoding (hence the MINOR version bump).
