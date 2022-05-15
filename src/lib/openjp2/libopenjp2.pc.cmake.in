@@ -12,3 +12,4 @@ Version: @OPENJPEG_VERSION@
 Libs: -L${libdir} -lopenjp2
 Libs.private: -lm
 Cflags: -I${includedir}
+Cflags.private: -DOPJ_STATIC
