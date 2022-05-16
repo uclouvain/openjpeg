@@ -13,3 +13,4 @@ Requires: libopenjp2
 Libs: -L${libdir} -lopenjpip
 Libs.private: -lm -lcurl -lfcgi -lpthread
 Cflags: -I${includedir}
+Cflags.private: -DOPJ_STATIC
