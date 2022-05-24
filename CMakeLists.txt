@@ -105,13 +105,13 @@ endif()
 
 # --------------------------------------------------------------------------
 # Install directories
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME)
 include(GNUInstallDirs)
 
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
 
-string(TOLOWER ${PROJECT_NAME} projectname)
-set(OPENJPEG_INSTALL_SUBDIR "${projectname}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
+set(OPENJPEG_INSTALL_SUBDIR "${PROJECT_NAME}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
 
 if(NOT OPENJPEG_INSTALL_JNI_DIR)
   if(WIN32)
