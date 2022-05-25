@@ -6,14 +6,14 @@ endif(NOT BUILD_THIRDPARTY)
 
 #------------
 # Try to find lib Z
-if(BUILD_THIRDPARTY)
+if(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_ZLIB)
   # Try to build it
   message(STATUS "We will build Z lib from thirdparty")
   add_subdirectory(libz)
   set(Z_LIBNAME z PARENT_SCOPE)
   set(Z_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/include PARENT_SCOPE)
   set(ZLIB_FOUND 1)
-else(BUILD_THIRDPARTY)
+else(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_ZLIB)
   # Try to find lib Z
   find_package(ZLIB)
   if(ZLIB_FOUND)
@@ -24,12 +24,12 @@ else(BUILD_THIRDPARTY)
   else(ZLIB_FOUND) # not found
     message(STATUS "Z lib not found, activate BUILD_THIRDPARTY if you want build it (necessary to build libPNG)")
   endif(ZLIB_FOUND)
-endif(BUILD_THIRDPARTY)
+endif(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_ZLIB)
 
 
 #------------
 # Try to find lib PNG (which depends on zlib)
-if(BUILD_THIRDPARTY)
+if(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_PNG)
   # Try to build it
   message(STATUS "We will build PNG lib from thirdparty")
   add_subdirectory(libpng)
@@ -37,7 +37,7 @@ if(BUILD_THIRDPARTY)
   set(OPJ_HAVE_LIBPNG 1 PARENT_SCOPE)
   set(PNG_LIBNAME png PARENT_SCOPE)
   set(PNG_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/libpng PARENT_SCOPE)
-else(BUILD_THIRDPARTY)
+else(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_PNG)
   if(ZLIB_FOUND)
     find_package(PNG)
     # Static only build:
@@ -55,12 +55,12 @@ else(BUILD_THIRDPARTY)
       message(STATUS "PNG lib not found, activate BUILD_THIRDPARTY if you want build it")
     endif(PNG_FOUND)
   endif(ZLIB_FOUND)
-endif(BUILD_THIRDPARTY)
+endif(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_PNG)
 
 #------------
 # Try to find lib TIFF
 
-if(BUILD_THIRDPARTY)
+if(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_TIFF)
   # Try to build it
   message(STATUS "We will build TIFF lib from thirdparty")
   add_subdirectory(libtiff)
@@ -71,7 +71,7 @@ if(BUILD_THIRDPARTY)
     PARENT_SCOPE)
   set(OPJ_HAVE_TIFF_H 1 PARENT_SCOPE)
   set(OPJ_HAVE_LIBTIFF 1 PARENT_SCOPE)
-else(BUILD_THIRDPARTY)
+else(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_TIFF)
   find_package(TIFF)
   # Static only build:
   #   it is necessary to invoke pkg_check_module on libtiff since it may have
@@ -96,14 +96,14 @@ else(BUILD_THIRDPARTY)
     set(OPJ_HAVE_LIBTIFF 0 PARENT_SCOPE)
     message(STATUS "TIFF lib not found, activate BUILD_THIRDPARTY if you want build it")
   endif(TIFF_FOUND)
-endif(BUILD_THIRDPARTY)
+endif(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_TIFF)
 
 #------------
 # Try to find lib LCMS2 (or by default LCMS)
 set(OPJ_HAVE_LCMS_H 0 PARENT_SCOPE)
 set(OPJ_HAVE_LIBLCMS 0 PARENT_SCOPE)
 
-if( BUILD_THIRDPARTY)
+if( BUILD_THIRDPARTY OR BUILD_THIRDPARTY_LCMS2)
   # Try to build lcms2
   message(STATUS "We will build LCMS2 lib from thirdparty")
   add_subdirectory(liblcms2)
@@ -111,7 +111,7 @@ if( BUILD_THIRDPARTY)
   set(LCMS_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/liblcms2/include PARENT_SCOPE) #
   set(OPJ_HAVE_LCMS2_H 1 PARENT_SCOPE)
   set(OPJ_HAVE_LIBLCMS2 1 PARENT_SCOPE)
-else(BUILD_THIRDPARTY)
+else(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_LCMS2)
   find_package(LCMS2)
   # Static only build:
   #   it is necessary to invoke pkg_check_module on lcms2 since it may have
@@ -141,7 +141,7 @@ else(BUILD_THIRDPARTY)
       message(STATUS "LCMS2 or LCMS lib not found, activate BUILD_THIRDPARTY if you want build it")
     endif(LCMS_FOUND)
   endif(LCMS2_FOUND)
-endif(BUILD_THIRDPARTY)
+endif(BUILD_THIRDPARTY OR BUILD_THIRDPARTY_LCMS2)
 
 
 #------------
