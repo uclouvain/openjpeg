@@ -1071,7 +1071,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
         }
         t1->flagssize = flagssize;
 
-        memset(t1->flags, 0, flagssize);
+        memset(t1->flags, 0, flagssize * sizeof(opj_flag_t));
     }
 
     t1->w = w;
