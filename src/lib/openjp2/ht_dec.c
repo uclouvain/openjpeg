@@ -1063,7 +1063,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
         if (flagssize > t1->flagssize) {
 
             opj_aligned_free(t1->flags);
-            t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize);
+            t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize * sizeof(opj_flag_t));
             if (!t1->flags) {
                 /* FIXME event manager error callback */
                 return OPJ_FALSE;
@@ -1071,7 +1071,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
         }
         t1->flagssize = flagssize;
 
-        memset(t1->flags, 0, flagssize);
+        memset(t1->flags, 0, flagssize * sizeof(opj_flag_t));
     }
 
     t1->w = w;
