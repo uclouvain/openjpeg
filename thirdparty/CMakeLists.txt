@@ -89,8 +89,15 @@ else(BUILD_THIRDPARTY)
     message(STATUS "Your system seems to have a TIFF lib available, we will use it")
     set(OPJ_HAVE_TIFF_H 1 PARENT_SCOPE)
     set(OPJ_HAVE_LIBTIFF 1 PARENT_SCOPE)
-    set(TIFF_LIBNAME ${TIFF_LIBRARIES} ${PC_TIFF_STATIC_LIBRARIES} PARENT_SCOPE)
-    set(TIFF_INCLUDE_DIRNAME ${TIFF_INCLUDE_DIR} ${PC_TIFF_STATIC_INCLUDE_DIRS} PARENT_SCOPE)
+    if(BUILD_STATIC_LIBS AND NOT BUILD_SHARED_LIBS)
+      # Probably incorrect as PC_TIFF_STATIC_LIBRARIES will lack the path to the libraries
+      # and will only work if they are in system directories
+      set(TIFF_LIBNAME ${PC_TIFF_STATIC_LIBRARIES} PARENT_SCOPE)
+      set(TIFF_INCLUDE_DIRNAME ${PC_TIFF_STATIC_INCLUDE_DIRS} PARENT_SCOPE)
+    else()
+      set(TIFF_LIBNAME ${TIFF_LIBRARIES} PARENT_SCOPE)
+      set(TIFF_INCLUDE_DIRNAME ${TIFF_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
   else(TIFF_FOUND) # not found
     set(OPJ_HAVE_TIFF_H 0 PARENT_SCOPE)
     set(OPJ_HAVE_LIBTIFF 0 PARENT_SCOPE)
@@ -124,8 +131,15 @@ else(BUILD_THIRDPARTY)
     message(STATUS "Your system seems to have a LCMS2 lib available, we will use it")
     set(OPJ_HAVE_LCMS2_H 1 PARENT_SCOPE)
     set(OPJ_HAVE_LIBLCMS2 1 PARENT_SCOPE)
-    set(LCMS_LIBNAME ${LCMS2_LIBRARIES} ${PC_LCMS2_STATIC_LIBRARIES} PARENT_SCOPE)
-    set(LCMS_INCLUDE_DIRNAME ${LCMS2_INCLUDE_DIRS} ${PC_LCMS2_STATIC_INCLUDE_DIRS} PARENT_SCOPE)
+    if(BUILD_STATIC_LIBS AND NOT BUILD_SHARED_LIBS)
+      # Probably incorrect as PC_LCMS2_STATIC_LIBRARIES will lack the path to the libraries
+      # and will only work if they are in system directories
+      set(LCMS_LIBNAME ${PC_LCMS2_STATIC_LIBRARIES} PARENT_SCOPE)
+      set(LCMS_INCLUDE_DIRNAME ${PC_LCMS2_STATIC_INCLUDE_DIRS} PARENT_SCOPE)
+    else()
+      set(LCMS_LIBNAME ${LCMS2_LIBRARIES} PARENT_SCOPE)
+      set(LCMS_INCLUDE_DIRNAME ${LCMS2_INCLUDE_DIRS} PARENT_SCOPE)
+    endif()
   else(LCMS2_FOUND) # not found lcms2
     # try to find LCMS
     find_package(LCMS)
