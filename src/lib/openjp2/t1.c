@@ -2443,6 +2443,13 @@ static OPJ_FLOAT64 opj_t1_encode_cblk(opj_t1_t *t1,
             OPJ_INT32 tmp = *datap;
             if (tmp < 0) {
                 OPJ_UINT32 tmp_unsigned;
+                if (tmp == INT_MIN) {
+                    /* To avoid undefined behaviour when negating INT_MIN */
+                    /* but if we go here, it means we have supplied an input */
+                    /* with more bit depth than we we can really support. */
+                    /* Cf https://github.com/uclouvain/openjpeg/issues/1432 */
+                    tmp = INT_MIN + 1;
+                }
                 max = opj_int_max(max, -tmp);
                 tmp_unsigned = opj_to_smr(tmp);
                 memcpy(datap, &tmp_unsigned, sizeof(OPJ_INT32));
