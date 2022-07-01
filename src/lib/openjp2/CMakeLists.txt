@@ -1,8 +1,10 @@
 include_regular_expression("^.*$")
 
 #
-install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
- DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
+if(NOT OPENJPEG_SKIP_INSTALL)
+  install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
+   DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
+endif()
 
 include_directories(
   ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/src/lib/openjp2 # opj_config.h and opj_config_private.h
@@ -114,18 +116,20 @@ if(NOT ${CMAKE_VERSION} VERSION_LESS "2.8.12")
   target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJP2_COMPILE_OPTIONS})
 endif()
 
-# Install library
-install(TARGETS ${INSTALL_LIBS}
-  EXPORT OpenJPEGTargets
-  RUNTIME DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
-  LIBRARY DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
-  ARCHIVE DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
-)
-
-# Install includes files
-install(FILES openjpeg.h opj_stdint.h
-  DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers
-)
+if(NOT OPENJPEG_SKIP_INSTALL)
+  # Install library
+  install(TARGETS ${INSTALL_LIBS}
+    EXPORT OpenJPEGTargets
+    RUNTIME DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+    LIBRARY DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+    ARCHIVE DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+  )
+  
+  # Install includes files
+  install(FILES openjpeg.h opj_stdint.h
+    DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers
+  )
+endif()
 
 if(BUILD_DOC)
 # install man page of the library

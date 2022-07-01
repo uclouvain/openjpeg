@@ -107,6 +107,7 @@ endif()
 # Install directories
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
+option(OPENJPEG_SKIP_INSTALL "Disable openjpeg installation" ON)
 
 string(TOLOWER ${PROJECT_NAME} projectname)
 set(OPENJPEG_INSTALL_SUBDIR "${projectname}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
@@ -334,16 +335,18 @@ if(BUILD_TESTING)
   endif()
 endif()
 
-#-----------------------------------------------------------------------------
-# install all targets referenced as OPENJPEGTargets
-install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
-configure_file( ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake/OpenJPEGConfig.cmake.in
-  ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/OpenJPEGConfig.cmake
-  @ONLY
-)
-install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
-  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
-)
+if(NOT OPENJPEG_SKIP_INSTALL)
+  #-----------------------------------------------------------------------------
+  # install all targets referenced as OPENJPEGTargets
+  install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
+  configure_file( ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake/OpenJPEGConfig.cmake.in
+    ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/OpenJPEGConfig.cmake
+    @ONLY
+  )
+  install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+    DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+  )
+endif()
 
 #-----------------------------------------------------------------------------
 # install CHANGES and LICENSE
