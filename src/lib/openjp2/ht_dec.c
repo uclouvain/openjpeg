@@ -317,7 +317,7 @@ OPJ_BOOL mel_init(dec_mel_t *melp, OPJ_UINT8* bbuf, int lcup, int scup)
         int d_bits;
 
         if (melp->unstuff == OPJ_TRUE && melp->data[0] > 0x8F) {
-          return OPJ_FALSE;
+            return OPJ_FALSE;
         }
         d = (melp->size > 0) ? *melp->data : 0xFF; // if buffer is consumed
         // set data to 0xFF
@@ -1378,15 +1378,15 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
     // init structures
     if (mel_init(&mel, coded_data, lcup, scup) == OPJ_FALSE) {
-      if (p_manager_mutex) {
-        opj_mutex_lock(p_manager_mutex);
-      }
-      opj_event_msg(p_manager, EVT_ERROR, "Malformed HT codeblock. "
-                    "Incorrect MEL segment sequence.\n");
-      if (p_manager_mutex) {
-        opj_mutex_unlock(p_manager_mutex);
-      }
-      return OPJ_FALSE;
+        if (p_manager_mutex) {
+            opj_mutex_lock(p_manager_mutex);
+        }
+        opj_event_msg(p_manager, EVT_ERROR, "Malformed HT codeblock. "
+                      "Incorrect MEL segment sequence.\n");
+        if (p_manager_mutex) {
+            opj_mutex_unlock(p_manager_mutex);
+        }
+        return OPJ_FALSE;
     }
     rev_init(&vlc, coded_data, lcup, scup);
     frwd_init(&magsgn, coded_data, lcup - scup, 0xFF);
