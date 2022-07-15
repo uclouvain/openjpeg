@@ -1,9 +1,9 @@
 prefix=@CMAKE_INSTALL_PREFIX@
-bindir=${prefix}/@CMAKE_INSTALL_BINDIR@
-mandir=${prefix}/@CMAKE_INSTALL_MANDIR@
-docdir=${prefix}/@CMAKE_INSTALL_DOCDIR@
-libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/@OPENJPEG_INSTALL_SUBDIR@
+bindir=@bindir@
+mandir=@mandir@
+docdir=@docdir@
+libdir=@libdir@
+includedir=@includedir@
 
 Name: openjp2
 Description: JPEG2000 library (Part 1 and 2)
