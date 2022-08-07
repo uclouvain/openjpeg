@@ -67,7 +67,7 @@ foreach(exe opj_decompress opj_compress opj_dump)
   # Install exe
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets
-    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+    DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Applications
   )
   if(OPJ_USE_DSYMUTIL)
     add_custom_command(TARGET ${exe} POST_BUILD
@@ -83,6 +83,6 @@ install(
   FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_compress.1
               ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_decompress.1
               ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_dump.1
-  DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
+  DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
 #
 endif()
