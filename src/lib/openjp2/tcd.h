@@ -369,23 +369,6 @@ OPJ_BOOL opj_tcd_init(opj_tcd_t *p_tcd,
 OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                                   opj_event_mgr_t* p_manager);
 
-void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno,
-                             OPJ_UINT32 final);
-
-void opj_tcd_rateallocate_fixed(opj_tcd_t *tcd);
-
-void opj_tcd_makelayer(opj_tcd_t *tcd,
-                       OPJ_UINT32 layno,
-                       OPJ_FLOAT64 thresh,
-                       OPJ_UINT32 final);
-
-OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
-                              OPJ_BYTE *dest,
-                              OPJ_UINT32 * p_data_written,
-                              OPJ_UINT32 len,
-                              opj_codestream_info_t *cstr_info,
-                              opj_event_mgr_t *p_manager);
-
 /**
  * Gets the maximum tile size that will be taken by the tile once decoded.
  */
