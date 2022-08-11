@@ -222,8 +222,8 @@ typedef struct opj_tcd_tilecomp {
     OPJ_UINT32 win_x1;
     OPJ_UINT32 win_y1;
 
-    /* add fixed_quality */
-    OPJ_INT32 numpix;
+    /* number of pixels */
+    OPJ_SIZE_T numpix;
 } opj_tcd_tilecomp_t;
 
 
@@ -235,9 +235,9 @@ typedef struct opj_tcd_tile {
     OPJ_INT32 x0, y0, x1, y1;
     OPJ_UINT32 numcomps;            /* number of components in tile */
     opj_tcd_tilecomp_t *comps;  /* Components information */
-    OPJ_INT32 numpix;               /* add fixed_quality */
-    OPJ_FLOAT64 distotile;          /* add fixed_quality */
-    OPJ_FLOAT64 distolayer[100];    /* add fixed_quality */
+    OPJ_SIZE_T numpix;               /* number of pixels */
+    OPJ_FLOAT64 distotile;          /* distortion of the tile */
+    OPJ_FLOAT64 distolayer[100];    /* distortion per layer */
     OPJ_UINT32 packno;              /* packet number */
 } opj_tcd_tile_t;
 

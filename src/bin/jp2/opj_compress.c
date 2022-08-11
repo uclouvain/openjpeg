@@ -846,7 +846,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
 
         /* ----------------------------------------------------- */
 
-        case 'q': {         /* add fixed_quality */
+        case 'q': {         /* layer allocation by distortion ratio (PSNR) */
             char *s = opj_optarg;
             while (sscanf(s, "%f", &parameters->tcp_distoratio[parameters->tcp_numlayers])
                     == 1) {
@@ -866,7 +866,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
         /* dda */
         /* ----------------------------------------------------- */
 
-        case 'f': {         /* mod fixed_quality (before : -q) */
+        case 'f': {         /* layer allocation by fixed layer */
             int *row = NULL, *col = NULL;
             OPJ_UINT32 numlayers = 0, numresolution = 0, matrix_width = 0;
 
@@ -1812,7 +1812,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
                   parameters->cp_fixed_quality))) {
         fprintf(stderr, "[ERROR] options -r -q and -f cannot be used together !!\n");
         return 1;
-    }               /* mod fixed_quality */
+    }
 
 
     /* if no rate entered, lossless by default */

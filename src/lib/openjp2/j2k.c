@@ -7666,6 +7666,27 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
         return OPJ_FALSE;
     }
 
+    if (parameters->cp_fixed_alloc) {
+        if (parameters->cp_matrice == NULL) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "cp_fixed_alloc set, but cp_matrice missing\n");
+            return OPJ_FALSE;
+        }
+
+        if (parameters->tcp_numlayers > J2K_TCD_MATRIX_MAX_LAYER_COUNT) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "tcp_numlayers when cp_fixed_alloc set should not exceed %d\n",
+                          J2K_TCD_MATRIX_MAX_LAYER_COUNT);
+            return OPJ_FALSE;
+        }
+        if (parameters->numresolution > J2K_TCD_MATRIX_MAX_RESOLUTION_COUNT) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "numresolution when cp_fixed_alloc set should not exceed %d\n",
+                          J2K_TCD_MATRIX_MAX_RESOLUTION_COUNT);
+            return OPJ_FALSE;
+        }
+    }
+
     p_j2k->m_specific_param.m_encoder.m_nb_comps = image->numcomps;
 
     /* keep a link to cp so that we can destroy it later in j2k_destroy_compress */
@@ -7885,15 +7906,17 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
     cp->m_specific_param.m_enc.m_max_comp_size = (OPJ_UINT32)
             parameters->max_comp_size;
     cp->rsiz = parameters->rsiz;
-    cp->m_specific_param.m_enc.m_disto_alloc = (OPJ_UINT32)
-            parameters->cp_disto_alloc & 1u;
-    cp->m_specific_param.m_enc.m_fixed_alloc = (OPJ_UINT32)
-            parameters->cp_fixed_alloc & 1u;
-    cp->m_specific_param.m_enc.m_fixed_quality = (OPJ_UINT32)
-            parameters->cp_fixed_quality & 1u;
+    if (parameters->cp_fixed_alloc) {
+        cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy = FIXED_LAYER;
+    } else if (parameters->cp_fixed_quality) {
+        cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy =
+            FIXED_DISTORTION_RATIO;
+    } else {
+        cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy =
+            RATE_DISTORTION_RATIO;
+    }
 
-    /* mod fixed_quality */
-    if (parameters->cp_fixed_alloc && parameters->cp_matrice) {
+    if (parameters->cp_fixed_alloc) {
         size_t array_size = (size_t)parameters->tcp_numlayers *
                             (size_t)parameters->numresolution * 3 * sizeof(OPJ_INT32);
         cp->m_specific_param.m_enc.m_matrice = (OPJ_INT32 *) opj_malloc(array_size);
@@ -8051,22 +8074,25 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
 
     for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
         opj_tcp_t *tcp = &cp->tcps[tileno];
+        const OPJ_BOOL fixed_distoratio =
+            cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy ==
+            FIXED_DISTORTION_RATIO;
         tcp->numlayers = (OPJ_UINT32)parameters->tcp_numlayers;
 
         for (j = 0; j < tcp->numlayers; j++) {
             if (OPJ_IS_CINEMA(cp->rsiz) || OPJ_IS_IMF(cp->rsiz)) {
-                if (cp->m_specific_param.m_enc.m_fixed_quality) {
+                if (fixed_distoratio) {
                     tcp->distoratio[j] = parameters->tcp_distoratio[j];
                 }
                 tcp->rates[j] = parameters->tcp_rates[j];
             } else {
-                if (cp->m_specific_param.m_enc.m_fixed_quality) {       /* add fixed_quality */
+                if (fixed_distoratio) {
                     tcp->distoratio[j] = parameters->tcp_distoratio[j];
                 } else {
                     tcp->rates[j] = parameters->tcp_rates[j];
                 }
             }
-            if (!cp->m_specific_param.m_enc.m_fixed_quality &&
+            if (!fixed_distoratio &&
                     tcp->rates[j] <= 1.0) {
                 tcp->rates[j] = 0.0;    /* force lossless */
             }

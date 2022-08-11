@@ -256,7 +256,7 @@ OPJ_BOOL opj_tcd_makelayer(opj_tcd_t *tcd,
     opj_tcd_tile_t *tcd_tile = tcd->tcd_image->tiles;
     OPJ_BOOL layer_allocation_is_same = OPJ_TRUE;
 
-    tcd_tile->distolayer[layno] = 0;        /* fixed_quality */
+    tcd_tile->distolayer[layno] = 0;
 
     for (compno = 0; compno < tcd_tile->numcomps; compno++) {
         opj_tcd_tilecomp_t *tilec = &tcd_tile->comps[compno];
@@ -338,7 +338,7 @@ OPJ_BOOL opj_tcd_makelayer(opj_tcd_t *tcd,
                                            cblk->passes[cblk->numpassesinlayers - 1].distortiondec;
                         }
 
-                        tcd_tile->distolayer[layno] += layer->disto;    /* fixed_quality */
+                        tcd_tile->distolayer[layno] += layer->disto;
 
                         if (final) {
                             cblk->numpassesinlayers = n;
@@ -351,13 +351,14 @@ OPJ_BOOL opj_tcd_makelayer(opj_tcd_t *tcd,
     return layer_allocation_is_same;
 }
 
+/** For m_quality_layer_alloc_strategy == FIXED_LAYER */
 static
 void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno,
                              OPJ_UINT32 final)
 {
     OPJ_UINT32 compno, resno, bandno, precno, cblkno;
     OPJ_INT32 value;                        /*, matrice[tcd_tcp->numlayers][tcd_tile->comps[0].numresolutions][3]; */
-    OPJ_INT32 matrice[10][10][3];
+    OPJ_INT32 matrice[J2K_TCD_MATRIX_MAX_LAYER_COUNT][J2K_TCD_MATRIX_MAX_RESOLUTION_COUNT][3];
     OPJ_UINT32 i, j, k;
 
     opj_cp_t *cp = tcd->cp;
@@ -458,8 +459,8 @@ void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno,
 }
 
 /** Rate allocation for the following methods:
- * - allocation by rate/distortio (m_disto_alloc == 1)
- * - allocation by fixed quality  (m_fixed_quality == 1)
+ * - allocation by rate/distortio (m_quality_layer_alloc_strategy == RATE_DISTORTION_RATIO)
+ * - allocation by fixed quality  (m_quality_layer_alloc_strategy == FIXED_DISTORTION_RATIO)
  */
 static
 OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
@@ -472,8 +473,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
     OPJ_UINT32 compno, resno, bandno, precno, cblkno, layno;
     OPJ_UINT32 passno;
     OPJ_FLOAT64 min, max;
-    OPJ_FLOAT64 cumdisto[100];      /* fixed_quality */
-    const OPJ_FLOAT64 K = 1;                /* 1.1; fixed_quality */
+    OPJ_FLOAT64 cumdisto[100];
+    const OPJ_FLOAT64 K = 1;
     OPJ_FLOAT64 maxSE = 0;
 
     opj_cp_t *cp = tcd->cp;
@@ -483,7 +484,7 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
     min = DBL_MAX;
     max = 0;
 
-    tcd_tile->numpix = 0;           /* fixed_quality */
+    tcd_tile->numpix = 0;
 
     for (compno = 0; compno < tcd_tile->numcomps; compno++) {
         opj_tcd_tilecomp_t *tilec = &tcd_tile->comps[compno];
@@ -533,9 +534,12 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                             }
                         } /* passno */
 
-                        /* fixed_quality */
-                        tcd_tile->numpix += ((cblk->x1 - cblk->x0) * (cblk->y1 - cblk->y0));
-                        tilec->numpix += ((cblk->x1 - cblk->x0) * (cblk->y1 - cblk->y0));
+                        {
+                            const OPJ_SIZE_T cblk_pix_count = (OPJ_SIZE_T)((cblk->x1 - cblk->x0) *
+                                                              (cblk->y1 - cblk->y0));
+                            tcd_tile->numpix += cblk_pix_count;
+                            tilec->numpix += cblk_pix_count;
+                        }
                     } /* cbklno */
                 } /* precno */
             } /* bandno */
@@ -549,8 +553,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
     /* index file */
     if (cstr_info) {
         opj_tile_info_t *tile_info = &cstr_info->tile[tcd->tcd_tileno];
-        tile_info->numpix = tcd_tile->numpix;
-        tile_info->distotile = tcd_tile->distotile;
+        tile_info->numpix = (int)tcd_tile->numpix;
+        tile_info->distotile = (int)tcd_tile->distotile;
         tile_info->thresh = (OPJ_FLOAT64 *) opj_malloc(tcd_tcp->numlayers * sizeof(
                                 OPJ_FLOAT64));
         if (!tile_info->thresh) {
@@ -567,19 +571,20 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
         OPJ_FLOAT64 goodthresh = 0;
         OPJ_FLOAT64 stable_thresh = 0;
         OPJ_UINT32 i;
-        OPJ_FLOAT64 distotarget;                /* fixed_quality */
+        OPJ_FLOAT64 distotarget;
 
-        /* fixed_quality */
         distotarget = tcd_tile->distotile - ((K * maxSE) / pow((OPJ_FLOAT32)10,
                                              tcd_tcp->distoratio[layno] / 10));
 
         /* Don't try to find an optimal threshold but rather take everything not included yet, if
-          -r xx,yy,zz,0   (disto_alloc == 1 and rates == 0)
-          -q xx,yy,zz,0   (fixed_quality == 1 and distoratio == 0)
+          -r xx,yy,zz,0   (m_quality_layer_alloc_strategy == RATE_DISTORTION_RATIO and rates == NULL)
+          -q xx,yy,zz,0   (m_quality_layer_alloc_strategy == FIXED_DISTORTION_RATIO and distoratio == NULL)
           ==> possible to have some lossy layers and the last layer for sure lossless */
-        if (((cp->m_specific_param.m_enc.m_disto_alloc == 1) &&
+        if (((cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy ==
+                RATE_DISTORTION_RATIO) &&
                 (tcd_tcp->rates[layno] > 0.0f)) ||
-                ((cp->m_specific_param.m_enc.m_fixed_quality == 1) &&
+                ((cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy ==
+                  FIXED_DISTORTION_RATIO) &&
                  (tcd_tcp->distoratio[layno] > 0.0))) {
             opj_t2_t*t2 = opj_t2_create(tcd->image, cp);
             OPJ_FLOAT64 thresh = 0;
@@ -590,7 +595,7 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
             }
 
             for (i = 0; i < 128; ++i) {
-                OPJ_FLOAT64 distoachieved = 0;  /* fixed_quality */
+                OPJ_FLOAT64 distoachieved = 0;
                 OPJ_BOOL layer_allocation_is_same;
 
                 OPJ_FLOAT64 new_thresh = (lo + hi) / 2;
@@ -612,7 +617,8 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
                 opj_event_msg(p_manager, EVT_INFO, "--> layer_allocation_is_same = %d",
                               layer_allocation_is_same);
 #endif
-                if (cp->m_specific_param.m_enc.m_fixed_quality) {       /* fixed_quality */
+                if (cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy ==
+                        FIXED_DISTORTION_RATIO) {
                     if (OPJ_IS_CINEMA(cp->rsiz) || OPJ_IS_IMF(cp->rsiz)) {
                         if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,
                                                     p_data_written, maxlen, cstr_info, NULL, tcd->cur_tp_num, tcd->tp_pos,
@@ -698,7 +704,6 @@ OPJ_BOOL opj_tcd_rateallocate(opj_tcd_t *tcd,
 
         opj_tcd_makelayer(tcd, layno, goodthresh, 1);
 
-        /* fixed_quality */
         cumdisto[layno] = (layno == 0) ? tcd_tile->distolayer[0] :
                           (cumdisto[layno - 1] + tcd_tile->distolayer[layno]);
     }
@@ -2662,10 +2667,10 @@ static OPJ_BOOL opj_tcd_rate_allocate_encode(opj_tcd_t *p_tcd,
         p_cstr_info->index_write = 0;
     }
 
-    if (l_cp->m_specific_param.m_enc.m_disto_alloc ||
-            l_cp->m_specific_param.m_enc.m_fixed_quality)  {
-        /* fixed_quality */
-        /* Normal Rate/distortion allocation */
+    if (l_cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy ==
+            RATE_DISTORTION_RATIO ||
+            l_cp->m_specific_param.m_enc.m_quality_layer_alloc_strategy ==
+            FIXED_DISTORTION_RATIO)  {
         if (! opj_tcd_rateallocate(p_tcd, p_dest_data, &l_nb_written, p_max_dest_size,
                                    p_cstr_info, p_manager)) {
             return OPJ_FALSE;
