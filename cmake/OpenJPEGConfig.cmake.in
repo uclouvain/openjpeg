@@ -5,6 +5,7 @@
 # This file is configured by OPENJPEG and used by the UseOPENJPEG.cmake
 # module to load OPENJPEG's settings for an external project.
 @OPENJPEG_CONFIG_INSTALL_ONLY@
+@PACKAGE_INIT@
 # The OPENJPEG version number.
 set(OPENJPEG_MAJOR_VERSION "@OPENJPEG_VERSION_MAJOR@")
 set(OPENJPEG_MINOR_VERSION "@OPENJPEG_VERSION_MINOR@")
@@ -27,7 +28,7 @@ if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   # This is an install tree
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
 
-  set(INC_DIR "@CMAKE_INSTALL_FULL_INCLUDEDIR@/@OPENJPEG_INSTALL_SUBDIR@")
+  set(INC_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@/@OPENJPEG_INSTALL_SUBDIR@")
   get_filename_component(OPENJPEG_INCLUDE_DIRS "${INC_DIR}" ABSOLUTE)
 
 else()
