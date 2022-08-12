@@ -1042,7 +1042,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
     OPJ_UINT32 *entries;
     opj_jp2_cmap_comp_t *cmap;
     OPJ_INT32 *src, *dst;
-    OPJ_UINT32 j, max, newmax, oldmax;
+    OPJ_UINT32 j, max;
     OPJ_UINT16 i, nr_channels, cmp, pcol;
     OPJ_INT32 k, top_k;
 
@@ -1108,10 +1108,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
         pcol = cmap[i].pcol;
         src = old_comps[cmp].data;
         assert(src); /* verified above */
-        oldmax = old_comps[cmp].w * old_comps[cmp].h;
-        newmax = new_comps[pcol].w * new_comps[pcol].h;
-
-        max = oldmax < newmax ? oldmax : newmax;
+        max = new_comps[i].w * new_comps[i].h;
 
         /* Direct use: */
         if (cmap[i].mtyp == 0) {
