@@ -1410,7 +1410,6 @@ static void opj_t1_dec_clnpass(
 }
 
 
-/** mod fixed_quality */
 static OPJ_FLOAT64 opj_t1_getwmsedec(
     OPJ_INT32 nmsedec,
     OPJ_UINT32 compno,
@@ -2313,7 +2312,7 @@ OPJ_BOOL opj_t1_encode_cblks(opj_tcd_t* tcd,
     OPJ_UINT32 compno, resno, bandno, precno, cblkno;
     opj_mutex_t* mutex = opj_mutex_create();
 
-    tile->distotile = 0;        /* fixed_quality */
+    tile->distotile = 0;
 
     for (compno = 0; compno < tile->numcomps; ++compno) {
         opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
@@ -2401,7 +2400,6 @@ static int opj_t1_enc_is_term_pass(opj_tcd_cblk_enc_t* cblk,
 }
 
 
-/** mod fixed_quality */
 static OPJ_FLOAT64 opj_t1_encode_cblk(opj_t1_t *t1,
                                       opj_tcd_cblk_enc_t* cblk,
                                       OPJ_UINT32 orient,
@@ -2505,7 +2503,6 @@ static OPJ_FLOAT64 opj_t1_encode_cblk(opj_t1_t *t1,
             break;
         }
 
-        /* fixed_quality */
         tempwmsedec = opj_t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid,
                                         stepsize, numcomps, mct_norms, mct_numcomps) ;
         cumwmsedec += tempwmsedec;
