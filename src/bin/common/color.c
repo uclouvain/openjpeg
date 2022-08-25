@@ -1073,6 +1073,7 @@ void color_esycc_to_rgb(opj_image_t *image)
     unsigned int w, h, max, i;
     int flip_value = (1 << (image->comps[0].prec - 1));
     // runtime error: left shift of 1 by 31 places cannot be represented in type 'int'
+    // runtime error: signed integer overflow: -2147483648 - 1 cannot be represented in type 'int'
     int max_value = (1 << image->comps[0].prec) - 1;
 
     if (
