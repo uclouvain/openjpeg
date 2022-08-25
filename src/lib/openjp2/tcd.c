@@ -2324,6 +2324,7 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
                                                    l_max);
                     ++l_current_ptr;
                 }
+                assert(l_current_ptr!=NULL && "pointer arithmetic on null pointer is undefined behaviour");
                 l_current_ptr += l_stride;
             }
         } else {
@@ -2342,6 +2343,7 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
                     }
                     ++l_current_ptr;
                 }
+                assert(l_current_ptr!=NULL && "pointer arithmetic on null pointer is undefined behaviour");
                 l_current_ptr += l_stride;
             }
         }
