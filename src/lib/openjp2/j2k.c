@@ -7954,21 +7954,24 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
 
         /* UniPG>> */
 #ifdef USE_JPWL
-        cp->comment = (char*)opj_malloc(clen + strlen(version) + 11);
+        const size_t cp_comment_buf_size = clen + strlen(version) + 11;
+        cp->comment = (char*)opj_malloc(cp_comment_buf_size);
         if (!cp->comment) {
             opj_event_msg(p_manager, EVT_ERROR,
                           "Not enough memory to allocate comment string\n");
             return OPJ_FALSE;
         }
-        sprintf(cp->comment, "%s%s with JPWL", comment, version);
+        snprintf(cp->comment, cp_comment_buf_size, "%s%s with JPWL",
+                 comment, version);
 #else
-        cp->comment = (char*)opj_malloc(clen + strlen(version) + 1);
+        const size_t cp_comment_buf_size = clen + strlen(version) + 1;
+        cp->comment = (char*)opj_malloc(cp_comment_buf_size);
         if (!cp->comment) {
             opj_event_msg(p_manager, EVT_ERROR,
                           "Not enough memory to allocate comment string\n");
             return OPJ_FALSE;
         }
-        sprintf(cp->comment, "%s%s", comment, version);
+        snprintf(cp->comment, cp_comment_buf_size, "%s%s", comment, version);
 #endif
         /* <<UniPG */
     }
@@ -11973,7 +11976,7 @@ static OPJ_BOOL opj_j2k_move_data_from_codec_to_output_image(opj_j2k_t * p_j2k,
             p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
 #if 0
             char fn[256];
-            sprintf(fn, "/tmp/%d.raw", compno);
+            snprintf(fn, sizeof fn, "/tmp/%d.raw", compno);
             FILE *debug = fopen(fn, "wb");
             fwrite(p_image->comps[compno].data, sizeof(OPJ_INT32),
                    p_image->comps[compno].w * p_image->comps[compno].h, debug);
