@@ -55,6 +55,12 @@
 #ifdef __AVX2__
 #include <immintrin.h>
 #endif
+#ifdef __loongarch_sx
+#include <lsxintrin.h>
+#endif
+#ifdef __loongarch_asx
+#include <lasxintrin.h>
+#endif
 
 #if defined(__GNUC__)
 #pragma GCC poison malloc calloc realloc free
@@ -66,7 +72,7 @@
 #define OPJ_WS(i) v->mem[(i)*2]
 #define OPJ_WD(i) v->mem[(1+(i)*2)]
 
-#ifdef __AVX2__
+#if defined(__AVX2__) || defined(__loongarch_asx)
 /** Number of int32 values in a AVX2 register */
 #define VREG_INT_COUNT       8
 #else
@@ -511,7 +517,7 @@ static void opj_idwt53_h(const opj_dwt_t *dwt,
 #endif
 }
 
-#if (defined(__SSE2__) || defined(__AVX2__)) && !defined(STANDARD_SLOW_VERSION)
+#if (defined(__SSE2__) || defined(__AVX2__) || defined(__loongarch_asx)) && !defined(STANDARD_SLOW_VERSION)
 
 /* Conveniency macros to improve the readability of the formulas */
 #if __AVX2__
@@ -524,6 +530,16 @@ static void opj_idwt53_h(const opj_dwt_t *dwt,
 #define ADD(x,y)    _mm256_add_epi32((x),(y))
 #define SUB(x,y)    _mm256_sub_epi32((x),(y))
 #define SAR(x,y)    _mm256_srai_epi32((x),(y))
+#elif __loongarch_asx
+#define VREG        __m256i
+#define LOAD_CST(x) __lasx_xvreplgr2vr_w(x)
+#define LOAD(x)     __lasx_xvld((const VREG*)(x), 0)
+#define LOADU(x)    __lasx_xvld((const VREG*)(x), 0)
+#define STORE(x,y)  __lasx_xvst((y), (VREG*)(x), 0)
+#define STOREU(x,y) __lasx_xvst((y), (VREG*)(x), 0)
+#define ADD(x,y)    __lasx_xvadd_w((x),(y))
+#define SUB(x,y)    __lasx_xvsub_w((x),(y))
+#define SAR(x,y)    __lasx_xvsrai_w((x),(y))
 #else
 #define VREG        __m128i
 #define LOAD_CST(x) _mm_set1_epi32(x)
@@ -558,8 +574,8 @@ void opj_idwt53_v_final_memcpy(OPJ_INT32* tiledp_col,
 }
 
 /** Vertical inverse 5x3 wavelet transform for 8 columns in SSE2, or
- * 16 in AVX2, when top-most pixel is on even coordinate */
-static void opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2(
+ * 16 in AVX2, or 16 in LASX, when top-most pixel is on even coordinate */
+static void opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2_OR_LASX(
     OPJ_INT32* tmp,
     const OPJ_INT32 sn,
     const OPJ_INT32 len,
@@ -576,7 +592,7 @@ static void opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2(
     const VREG two = LOAD_CST(2);
 
     assert(len > 1);
-#if __AVX2__
+#if defined(__AVX2__) || defined(__loongarch_asx)
     assert(PARALLEL_COLS_53 == 16);
     assert(VREG_INT_COUNT == 8);
 #else
@@ -659,8 +675,8 @@ static void opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2(
 
 
 /** Vertical inverse 5x3 wavelet transform for 8 columns in SSE2, or
- * 16 in AVX2, when top-most pixel is on odd coordinate */
-static void opj_idwt53_v_cas1_mcols_SSE2_OR_AVX2(
+ * 16 in AVX2, or 16 in LASX, when top-most pixel is on odd coordinate */
+static void opj_idwt53_v_cas1_mcols_SSE2_OR_AVX2_OR_LASX(
     OPJ_INT32* tmp,
     const OPJ_INT32 sn,
     const OPJ_INT32 len,
@@ -678,7 +694,7 @@ static void opj_idwt53_v_cas1_mcols_SSE2_OR_AVX2(
     const OPJ_INT32* in_odd = &tiledp_col[0];
 
     assert(len > 2);
-#if __AVX2__
+#if defined(__AVX2__) || defined(__loongarch_asx)
     assert(PARALLEL_COLS_53 == 16);
     assert(VREG_INT_COUNT == 8);
 #else
@@ -767,7 +783,7 @@ static void opj_idwt53_v_cas1_mcols_SSE2_OR_AVX2(
 #undef SUB
 #undef SAR
 
-#endif /* (defined(__SSE2__) || defined(__AVX2__)) && !defined(STANDARD_SLOW_VERSION) */
+#endif /* (defined(__SSE2__) || defined(__AVX2__) || defined(__loongarch_asx)) && !defined(STANDARD_SLOW_VERSION) */
 
 #if !defined(STANDARD_SLOW_VERSION)
 /** Vertical inverse 5x3 wavelet transform for one column, when top-most
@@ -894,11 +910,11 @@ static void opj_idwt53_v(const opj_dwt_t *dwt,
     if (dwt->cas == 0) {
         /* If len == 1, unmodified value */
 
-#if (defined(__SSE2__) || defined(__AVX2__))
+#if (defined(__SSE2__) || defined(__AVX2__) || defined(__loongarch_asx))
         if (len > 1 && nb_cols == PARALLEL_COLS_53) {
             /* Same as below general case, except that thanks to SSE2/AVX2 */
             /* we can efficiently process 8/16 columns in parallel */
-            opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2(dwt->mem, sn, len, tiledp_col, stride);
+            opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2_OR_LASX(dwt->mem, sn, len, tiledp_col, stride);
             return;
         }
 #endif
@@ -937,11 +953,11 @@ static void opj_idwt53_v(const opj_dwt_t *dwt,
             return;
         }
 
-#if (defined(__SSE2__) || defined(__AVX2__))
+#if (defined(__SSE2__) || defined(__AVX2__) || defined(__loongarch_asx))
         if (len > 2 && nb_cols == PARALLEL_COLS_53) {
             /* Same as below general case, except that thanks to SSE2/AVX2 */
             /* we can efficiently process 8/16 columns in parallel */
-            opj_idwt53_v_cas1_mcols_SSE2_OR_AVX2(dwt->mem, sn, len, tiledp_col, stride);
+            opj_idwt53_v_cas1_mcols_SSE2_OR_AVX2_OR_LASX(dwt->mem, sn, len, tiledp_col, stride);
             return;
         }
 #endif
@@ -2428,6 +2444,24 @@ static void opj_dwt_decode_partial_1_parallel(OPJ_INT32 *a,
                     }
                 }
 #endif
+#ifdef __loongarch_sx
+                if (i + 1 < i_max) {
+                    const __m128i two = __lsx_vreplgr2vr_w(2);
+                    __m128i Dm1 = __lsx_vld((__m128i * const)(a + 4 + (i - 1) * 8), 0);
+                    for (; i + 1 < i_max; i += 2) {
+                        /* No bound checking */
+                        __m128i S  = __lsx_vld((__m128i * const)(a + i * 8), 0);
+                        __m128i D  = __lsx_vld((__m128i * const)(a + 4 + i * 8), 0);
+                        __m128i S1 = __lsx_vld((__m128i * const)(a + (i + 1) * 8), 0);
+                        __m128i D1 = __lsx_vld((__m128i * const)(a + 4 + (i + 1) * 8), 0);
+                        S  = __lsx_vsub_w(S, __lsx_vsrai_w(__lsx_vadd_w(__lsx_vadd_w(Dm1, D), two), 2));
+                        S1 = __lsx_vsub_w(S1, __lsx_vsrai_w(__lsx_vadd_w(__lsx_vadd_w(D,  D1), two), 2));
+                        __lsx_vst(S,  (__m128i*)(a + i * 8), 0);
+                        __lsx_vst(S1, (__m128i*)(a + (i + 1) * 8), 0);
+                        Dm1 = D1;
+                    }
+                }
+#endif
 
                 for (; i < i_max; i++) {
                     /* No bound checking */
@@ -2463,6 +2497,23 @@ static void opj_dwt_decode_partial_1_parallel(OPJ_INT32 *a,
                         D1 = _mm_add_epi32(D1, _mm_srai_epi32(_mm_add_epi32(S1, S2), 1));
                         _mm_store_si128((__m128i*)(a + 4 + i * 8), D);
                         _mm_store_si128((__m128i*)(a + 4 + (i + 1) * 8), D1);
+                        S = S2;
+                    }
+                }
+#endif
+#ifdef __loongarch_sx
+                if (i + 1 < i_max) {
+                    __m128i S =  __lsx_vld((__m128i * const)(a + i * 8), 0);
+                    for (; i + 1 < i_max; i += 2) {
+                        /* No bound checking */
+                        __m128i D  = __lsx_vld((__m128i * const)(a + 4 + i * 8), 0);
+                        __m128i S1 = __lsx_vld((__m128i * const)(a + (i + 1) * 8), 0);
+                        __m128i D1 = __lsx_vld((__m128i * const)(a + 4 + (i + 1) * 8), 0);
+                        __m128i S2 = __lsx_vld((__m128i * const)(a + (i + 2) * 8), 0);
+                        D  = __lsx_vadd_w(D,  __lsx_vsrai_w(__lsx_vadd_w(S,  S1), 1));
+                        D1 = __lsx_vadd_w(D1, __lsx_vsrai_w(__lsx_vadd_w(S1, S2), 1));
+                        __lsx_vst(D,  (__m128i*)(a + 4 + i * 8), 0);
+                        __lsx_vst(D1, (__m128i*)(a + 4 + (i + 1) * 8), 0);
                         S = S2;
                     }
                 }
@@ -3015,7 +3066,7 @@ static void opj_v8dwt_interleave_partial_v(opj_v8dwt_t* OPJ_RESTRICT dwt,
     OPJ_UNUSED(ret);
 }
 
-#ifdef __SSE__
+#if defined(__SSE__)
 
 static void opj_v8dwt_decode_step1_sse(opj_v8_t* w,
                                        OPJ_UINT32 start,
@@ -3067,6 +3118,66 @@ static void opj_v8dwt_decode_step2_sse(opj_v8_t* l, opj_v8_t* w,
         c = _mm_add_ps(c, c);
         vw[-2] = _mm_add_ps(vw[-2], _mm_mul_ps(c, vw[-4]));
         vw[-1] = _mm_add_ps(vw[-1], _mm_mul_ps(c, vw[-3]));
+    }
+}
+
+#elif defined(__loongarch_asx)
+
+static void opj_v8dwt_decode_step1_lasx(opj_v8_t* w,
+                                        OPJ_UINT32 start,
+                                        OPJ_UINT32 end,
+                                        const OPJ_FLOAT32 c)
+{
+    OPJ_UINT32 i;
+    OPJ_FLOAT32* OPJ_RESTRICT fw = (OPJ_FLOAT32*) w;
+    __m256 vfw, vmul, vc;
+    /* To be adapted if NB_ELTS_V8 changes */
+    fw += start * 16;
+    vc = (__m256)__lasx_xvldrepl_w(&c, 0);
+    for (i = start; i < end; ++i) {
+        vfw  = (__m256)__lasx_xvld(fw, 0);
+        vmul = __lasx_xvfmul_s(vfw, vc);
+        __lasx_xvst(vmul, fw, 0);
+        fw += 16;
+    }
+}
+
+static void opj_v8dwt_decode_step2_lasx(opj_v8_t* l, opj_v8_t* w,
+                                        OPJ_UINT32 start,
+                                        OPJ_UINT32 end,
+                                        OPJ_UINT32 m,
+                                        OPJ_FLOAT32 c)
+{
+    OPJ_UINT32 i;
+    OPJ_FLOAT32* fl = (OPJ_FLOAT32*) l;
+    OPJ_FLOAT32* fw = (OPJ_FLOAT32*) w;
+    OPJ_UINT32 imax = opj_uint_min(end, m);
+    __m256 vfl0, vfw0, vfw1, vret;
+    __m256 vc = (__m256)__lasx_xvldrepl_w(&c, 0);
+    if (start > 0) {
+        fw += 2 * NB_ELTS_V8 * start;
+        fl = fw - 2 * NB_ELTS_V8;
+    }
+    /* To be adapted if NB_ELTS_V8 changes */
+    for (i = start; i < imax; ++i) {
+        vfl0 = (__m256)__lasx_xvld(fl, 0);
+        vfw0 = (__m256)__lasx_xvld(fw, 0);
+        vfw1 = (__m256)__lasx_xvld(fw, -32);
+        vret = __lasx_xvfadd_s(vfl0, vfw0);
+        vret = __lasx_xvfmul_s(vret, vc);
+        vret = __lasx_xvfadd_s(vret, vfw1);
+        __lasx_xvst(vret, fw, -32);
+        fl = fw;
+        fw += 2 * NB_ELTS_V8;
+    }
+    if (m < end) {
+        assert(m + 1 == end);
+        vc   = __lasx_xvfadd_s(vc, vc);
+        vfl0 = (__m256)__lasx_xvld(fl, 0);
+        vfw1 = (__m256)__lasx_xvld(fw, -32);
+        vret = __lasx_xvfmul_s(vfl0, vc);
+        vret = __lasx_xvfadd_s(vret, vfw1);
+        __lasx_xvst(vret, fw, -32);
     }
 }
 
@@ -3162,7 +3273,7 @@ static void opj_v8dwt_decode(opj_v8dwt_t* OPJ_RESTRICT dwt)
         a = 1;
         b = 0;
     }
-#ifdef __SSE__
+#if defined(__SSE__)
     opj_v8dwt_decode_step1_sse(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
                                _mm_set1_ps(opj_K));
     opj_v8dwt_decode_step1_sse(dwt->wavelet + b, dwt->win_h_x0, dwt->win_h_x1,
@@ -3183,6 +3294,27 @@ static void opj_v8dwt_decode(opj_v8dwt_t* OPJ_RESTRICT dwt)
                                dwt->win_h_x0, dwt->win_h_x1,
                                (OPJ_UINT32)opj_int_min(dwt->dn, dwt->sn - b),
                                _mm_set1_ps(-opj_dwt_alpha));
+#elif defined(__loongarch_asx)
+    opj_v8dwt_decode_step1_lasx(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
+                                opj_K);
+    opj_v8dwt_decode_step1_lasx(dwt->wavelet + b, dwt->win_h_x0, dwt->win_h_x1,
+                                two_invK);
+    opj_v8dwt_decode_step2_lasx(dwt->wavelet + b, dwt->wavelet + a + 1,
+                                dwt->win_l_x0, dwt->win_l_x1,
+                                (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
+                                -opj_dwt_delta);
+    opj_v8dwt_decode_step2_lasx(dwt->wavelet + a, dwt->wavelet + b + 1,
+                                dwt->win_h_x0, dwt->win_h_x1,
+                                (OPJ_UINT32)opj_int_min(dwt->dn, dwt->sn - b),
+                                -opj_dwt_gamma);
+    opj_v8dwt_decode_step2_lasx(dwt->wavelet + b, dwt->wavelet + a + 1,
+                                dwt->win_l_x0, dwt->win_l_x1,
+                                (OPJ_UINT32)opj_int_min(dwt->sn, dwt->dn - a),
+                                -opj_dwt_beta);
+    opj_v8dwt_decode_step2_lasx(dwt->wavelet + a, dwt->wavelet + b + 1,
+                                dwt->win_h_x0, dwt->win_h_x1,
+                                (OPJ_UINT32)opj_int_min(dwt->dn, dwt->sn - b),
+                                -opj_dwt_alpha);
 #else
     opj_v8dwt_decode_step1(dwt->wavelet + a, dwt->win_l_x0, dwt->win_l_x1,
                            opj_K);
