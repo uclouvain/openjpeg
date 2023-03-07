@@ -1,0 +1,6 @@
+NR-DEC-_00042.j2k-2-decode-md5
+NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
+NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
+NR-DEC-issue205.jp2-43-decode-md5
+NR-DEC-issue135.j2k-68-decode-md5
+NR-DEC-issue208.jp2-69-decode-md5

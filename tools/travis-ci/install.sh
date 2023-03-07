@@ -35,13 +35,6 @@ if [ "${COVERITY_SCAN_BRANCH:-}" == "1" ] || [ "${OPJ_CI_ABI_CHECK:-}" == "1" ];
 	exit 0
 fi
 
-if [ "${OPJ_CI_ASAN:-}" == "1" ]; then
-	# We need a new version of cmake than travis-ci provides
-	wget --no-check-certificate -qO - https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz | tar -xz
-	# copy to a directory that will not changed every version
-	mv cmake-3.5.2-Linux-x86_64 cmake-install
-fi
-
 if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 
 	OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)

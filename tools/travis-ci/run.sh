@@ -221,10 +221,6 @@ Note: Binaries can only be used for non-commercial purposes.
 "
 fi
 
-if [ -d cmake-install ]; then
-	export PATH=${PWD}/cmake-install/bin:${PATH}
-fi
-
 set -x
 # This will print configuration
 # travis-ci doesn't dump cmake version in system info, let's print it 
