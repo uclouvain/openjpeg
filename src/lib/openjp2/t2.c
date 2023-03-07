@@ -1592,6 +1592,7 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                                       "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                       l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
                                       p_pi->compno);
+                        return OPJ_TRUE;
                     }
                 }
 
