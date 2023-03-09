@@ -144,6 +144,11 @@ static void opj_close_from_file(void* p_user_data)
 /* ---------------------------------------------------------------------- */
 #ifdef _WIN32
 #ifndef OPJ_STATIC
+
+/* declaration to avoid warning: no previous prototype for 'DllMain' */
+BOOL APIENTRY
+DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
+
 BOOL APIENTRY
 DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {

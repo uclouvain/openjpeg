@@ -1883,7 +1883,7 @@ static void info_callback(const char *msg, void *client_data)
     fprintf(stdout, "[INFO] %s", msg);
 }
 
-OPJ_FLOAT64 opj_clock(void)
+static OPJ_FLOAT64 opj_clock(void)
 {
 #ifdef _WIN32
     /* _WIN32: use QueryPerformance (very accurate) */

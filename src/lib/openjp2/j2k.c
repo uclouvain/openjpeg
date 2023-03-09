@@ -6726,7 +6726,7 @@ OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads)
     return OPJ_FALSE;
 }
 
-static int opj_j2k_get_default_thread_count()
+static int opj_j2k_get_default_thread_count(void)
 {
     const char* num_threads_str = getenv("OPJ_NUM_THREADS");
     int num_cpus;
