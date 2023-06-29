@@ -197,6 +197,16 @@ void * opj_malloc(size_t size)
 }
 void * opj_calloc(size_t num, size_t size)
 {
+    static unsigned long long allocated_size = 0;
+    static unsigned long long max_allocated_size = 4ULL * 1024 * 1024 * 1024;
+    /*Restrict this function can only malloc 4GB of memory*/
+    
+    unsigned long long total_size = (unsigned long long)(num * size);
+    allocated_size += total_size;
+    if (allocated_size > max_allocated_size) {
+        /*Prevent excessive resource allocation*/
+        return NULL;
+    }
     if (num == 0 || size == 0) {
         /* prevent implementation defined behavior of realloc */
         return NULL;
