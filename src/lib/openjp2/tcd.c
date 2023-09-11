@@ -2324,6 +2324,11 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
                                                    l_max);
                     ++l_current_ptr;
                 }
+
+                if (!l_current_ptr) {
+                    /* Avoid runtime error: applying zero offset to null pointer */
+                    return OPJ_FALSE;
+                }
                 l_current_ptr += l_stride;
             }
         } else {
@@ -2341,6 +2346,11 @@ static OPJ_BOOL opj_tcd_dc_level_shift_decode(opj_tcd_t *p_tcd)
                                              l_value_int + l_tccp->m_dc_level_shift, l_min, l_max);
                     }
                     ++l_current_ptr;
+                }
+
+                if (!l_current_ptr) {
+                    /* Avoid runtime error: applying zero offset to null pointer */
+                    return OPJ_FALSE;
                 }
                 l_current_ptr += l_stride;
             }
