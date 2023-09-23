@@ -7815,6 +7815,11 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
                                        image->comps[0].h * image->comps[0].prec) /
                                       ((double)parameters->tcp_rates[parameters->tcp_numlayers - 1] * 8 *
                                        image->comps[0].dx * image->comps[0].dy));
+            // this is problematic because INT_MAX is converted to float, but
+            // it can not represent that value (2147483647) exactly, instead it
+            // becomes 2147483648.0f which means the else clause may be hit with
+            // the value 2147483648.0f. that can not be represented as an int,
+            // so the assignment to int is undefined behaviour
             if (temp_size > INT_MAX) {
                 parameters->max_cs_size = INT_MAX;
             } else {

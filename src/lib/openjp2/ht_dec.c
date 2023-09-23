@@ -1212,6 +1212,7 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
         cblkdata = t1->cblkdatabuffer;
         cblk_len = 0;
         for (i = 0; i < cblk->numchunks; i++) {
+            assert(cblkdata!=NULL && "memcpy on NULL is undefined behaviour");
             memcpy(cblkdata + cblk_len, cblk->chunks[i].data, cblk->chunks[i].len);
             cblk_len += cblk->chunks[i].len;
         }
