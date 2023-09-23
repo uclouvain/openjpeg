@@ -84,6 +84,7 @@ set(BLACKLIST_JPEG2000
     issue823.jp2 #kdu_jp2info ok
     issue826.jp2 #inspection reveales that the transformation value is out of range
     oss-fuzz2785.jp2 #inspection reveales that the transformation value is out of range
+    issue1438.j2k
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST

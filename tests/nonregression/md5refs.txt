@@ -397,3 +397,4 @@ c34637a0f218e4074936e0c89534c5b5  tnsot_zero_missing_eoc.png
 33aeb45c59383bb4c2d3671f6431c718  Bretagne1_ht_lossy.j2k.png
 c34637a0f218e4074936e0c89534c5b5  byte.jph.png
 c34637a0f218e4074936e0c89534c5b5  byte_causal.jhc.png
+bc4f704c723329147bf6601a8b113bb2  huge-tile-size.png
