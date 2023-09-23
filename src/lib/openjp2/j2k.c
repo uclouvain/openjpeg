@@ -2333,10 +2333,8 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
     }
 
     /* Compute the number of tiles */
-    l_cp->tw = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(l_image->x1 - l_cp->tx0),
-                                           (OPJ_INT32)l_cp->tdx);
-    l_cp->th = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(l_image->y1 - l_cp->ty0),
-                                           (OPJ_INT32)l_cp->tdy);
+    l_cp->tw = opj_uint_ceildiv(l_image->x1 - l_cp->tx0, l_cp->tdx);
+    l_cp->th = opj_uint_ceildiv(l_image->y1 - l_cp->ty0, l_cp->tdy);
 
     /* Check that the number of tiles is valid */
     if (l_cp->tw == 0 || l_cp->th == 0 || l_cp->tw > 65535 / l_cp->th) {
@@ -2353,12 +2351,12 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
             (p_j2k->m_specific_param.m_decoder.m_start_tile_x - l_cp->tx0) / l_cp->tdx;
         p_j2k->m_specific_param.m_decoder.m_start_tile_y =
             (p_j2k->m_specific_param.m_decoder.m_start_tile_y - l_cp->ty0) / l_cp->tdy;
-        p_j2k->m_specific_param.m_decoder.m_end_tile_x = (OPJ_UINT32)opj_int_ceildiv((
-                    OPJ_INT32)(p_j2k->m_specific_param.m_decoder.m_end_tile_x - l_cp->tx0),
-                (OPJ_INT32)l_cp->tdx);
-        p_j2k->m_specific_param.m_decoder.m_end_tile_y = (OPJ_UINT32)opj_int_ceildiv((
-                    OPJ_INT32)(p_j2k->m_specific_param.m_decoder.m_end_tile_y - l_cp->ty0),
-                (OPJ_INT32)l_cp->tdy);
+        p_j2k->m_specific_param.m_decoder.m_end_tile_x = opj_uint_ceildiv(
+                    p_j2k->m_specific_param.m_decoder.m_end_tile_x - l_cp->tx0,
+                    l_cp->tdx);
+        p_j2k->m_specific_param.m_decoder.m_end_tile_y = opj_uint_ceildiv(
+                    p_j2k->m_specific_param.m_decoder.m_end_tile_y - l_cp->ty0,
+                    l_cp->tdy);
     } else {
         p_j2k->m_specific_param.m_decoder.m_start_tile_x = 0;
         p_j2k->m_specific_param.m_decoder.m_start_tile_y = 0;
@@ -7989,10 +7987,8 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
             opj_event_msg(p_manager, EVT_ERROR, "Invalid tile height\n");
             return OPJ_FALSE;
         }
-        cp->tw = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->x1 - cp->tx0),
-                                             (OPJ_INT32)cp->tdx);
-        cp->th = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)(image->y1 - cp->ty0),
-                                             (OPJ_INT32)cp->tdy);
+        cp->tw = opj_uint_ceildiv(image->x1 - cp->tx0, cp->tdx);
+        cp->th = opj_uint_ceildiv(image->y1 - cp->ty0, cp->tdy);
         /* Check that the number of tiles is valid */
         if (cp->tw > 65535 / cp->th) {
             opj_event_msg(p_manager, EVT_ERROR,
@@ -10189,10 +10185,8 @@ static OPJ_BOOL opj_j2k_update_image_dimensions(opj_image_t* p_image,
             return OPJ_FALSE;
         }
 
-        l_img_comp->x0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->x0,
-                         (OPJ_INT32)l_img_comp->dx);
-        l_img_comp->y0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->y0,
-                         (OPJ_INT32)l_img_comp->dy);
+        l_img_comp->x0 = opj_uint_ceildiv(p_image->x0, l_img_comp->dx);
+        l_img_comp->y0 = opj_uint_ceildiv(p_image->y0, l_img_comp->dy);
         l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
         l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
 
@@ -10395,8 +10389,8 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
         p_j2k->m_specific_param.m_decoder.m_end_tile_x = l_cp->tw;
         p_image->x1 = l_image->x1;
     } else {
-        p_j2k->m_specific_param.m_decoder.m_end_tile_x = (OPJ_UINT32)opj_int_ceildiv(
-                    p_end_x - (OPJ_INT32)l_cp->tx0, (OPJ_INT32)l_cp->tdx);
+        p_j2k->m_specific_param.m_decoder.m_end_tile_x = opj_uint_ceildiv((
+                    OPJ_UINT32)p_end_x - l_cp->tx0, l_cp->tdx);
         p_image->x1 = (OPJ_UINT32)p_end_x;
     }
 
@@ -10419,8 +10413,8 @@ OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
         p_j2k->m_specific_param.m_decoder.m_end_tile_y = l_cp->th;
         p_image->y1 = l_image->y1;
     } else {
-        p_j2k->m_specific_param.m_decoder.m_end_tile_y = (OPJ_UINT32)opj_int_ceildiv(
-                    p_end_y - (OPJ_INT32)l_cp->ty0, (OPJ_INT32)l_cp->tdy);
+        p_j2k->m_specific_param.m_decoder.m_end_tile_y = opj_uint_ceildiv((
+                    OPJ_UINT32)p_end_y - l_cp->ty0, l_cp->tdy);
         p_image->y1 = (OPJ_UINT32)p_end_y;
     }
     /* ----- */
@@ -11344,9 +11338,12 @@ static void opj_j2k_dump_MH_info(opj_j2k_t* p_j2k, FILE* out_stream)
 
     fprintf(out_stream, "Codestream info from main header: {\n");
 
-    fprintf(out_stream, "\t tx0=%d, ty0=%d\n", p_j2k->m_cp.tx0, p_j2k->m_cp.ty0);
-    fprintf(out_stream, "\t tdx=%d, tdy=%d\n", p_j2k->m_cp.tdx, p_j2k->m_cp.tdy);
-    fprintf(out_stream, "\t tw=%d, th=%d\n", p_j2k->m_cp.tw, p_j2k->m_cp.th);
+    fprintf(out_stream, "\t tx0=%" PRIu32 ", ty0=%" PRIu32 "\n", p_j2k->m_cp.tx0,
+            p_j2k->m_cp.ty0);
+    fprintf(out_stream, "\t tdx=%" PRIu32 ", tdy=%" PRIu32 "\n", p_j2k->m_cp.tdx,
+            p_j2k->m_cp.tdy);
+    fprintf(out_stream, "\t tw=%" PRIu32 ", th=%" PRIu32 "\n", p_j2k->m_cp.tw,
+            p_j2k->m_cp.th);
     opj_j2k_dump_tile_info(p_j2k->m_specific_param.m_decoder.m_default_tcp,
                            (OPJ_INT32)p_j2k->m_private_image->numcomps, out_stream);
     fprintf(out_stream, "}\n");
@@ -12102,10 +12099,8 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
 
         l_img_comp->factor = p_j2k->m_private_image->comps[compno].factor;
 
-        l_img_comp->x0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->x0,
-                         (OPJ_INT32)l_img_comp->dx);
-        l_img_comp->y0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->y0,
-                         (OPJ_INT32)l_img_comp->dy);
+        l_img_comp->x0 = opj_uint_ceildiv(p_image->x0, l_img_comp->dx);
+        l_img_comp->y0 = opj_uint_ceildiv(p_image->y0, l_img_comp->dy);
         l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
         l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
 
@@ -12485,12 +12480,9 @@ static void opj_get_tile_dimensions(opj_image_t * l_image,
 
     *l_width  = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
     *l_height = (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0);
-    *l_offset_x = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x0,
-                  (OPJ_INT32)l_img_comp->dx);
-    *l_offset_y = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->y0,
-                  (OPJ_INT32)l_img_comp->dy);
-    *l_image_width = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x1 -
-                     (OPJ_INT32)l_image->x0, (OPJ_INT32)l_img_comp->dx);
+    *l_offset_x = opj_uint_ceildiv(l_image->x0, l_img_comp->dx);
+    *l_offset_y = opj_uint_ceildiv(l_image->y0, l_img_comp->dy);
+    *l_image_width = opj_uint_ceildiv(l_image->x1 - l_image->x0, l_img_comp->dx);
     *l_stride = *l_image_width - *l_width;
     *l_tile_offset = ((OPJ_UINT32)l_tilec->x0 - *l_offset_x) + ((
                          OPJ_UINT32)l_tilec->y0 - *l_offset_y) * *l_image_width;

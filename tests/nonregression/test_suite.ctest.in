@@ -657,3 +657,7 @@ opj_decompress -i @INPUT_NR_PATH@/htj2k/Bretagne1_ht.j2k -o @TEMP_PATH@/Bretagne
 opj_decompress -i @INPUT_NR_PATH@/htj2k/Bretagne1_ht_lossy.j2k -o @TEMP_PATH@/Bretagne1_ht_lossy.j2k.png
 opj_decompress -i @INPUT_NR_PATH@/htj2k/byte.jph -o @TEMP_PATH@/byte.jph.png
 opj_decompress -i @INPUT_NR_PATH@/htj2k/byte_causal.jhc -o @TEMP_PATH@/byte_causal.jhc.png
+
+# huge tile size
+opj_decompress -i @INPUT_NR_PATH@/huge-tile-size.jp2 -o @TEMP_PATH@/huge-tile-size.png
+!opj_decompress -i @INPUT_NR_PATH@/issue1438.j2k -o @TEMP_PATH@/issue1438.png
