@@ -1,5 +1,4 @@
 /* create opj_config.h for CMake */
-#cmakedefine OPJ_HAVE_STDINT_H 		@OPJ_HAVE_STDINT_H@
 
 /*--------------------------------------------------------------------------*/
 /* OpenJPEG Versioning                                                      */

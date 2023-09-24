@@ -34,9 +34,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <inttypes.h>
 #include "openjpeg.h"
 #include "index.h"
-#include "opj_inttypes.h"
 
 /* ------------------------------------------------------------------------------------ */
 

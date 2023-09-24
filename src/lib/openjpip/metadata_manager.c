@@ -29,7 +29,7 @@
  */
 
 #include "metadata_manager.h"
-#include "opj_inttypes.h"
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

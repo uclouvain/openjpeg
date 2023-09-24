@@ -32,8 +32,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <inttypes.h>
 
-#include "opj_inttypes.h"
 #include "index_manager.h"
 #include "box_manager.h"
 #include "manfbox_manager.h"

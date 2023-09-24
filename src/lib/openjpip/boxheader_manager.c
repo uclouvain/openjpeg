@@ -32,8 +32,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include "boxheader_manager.h"
-#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"

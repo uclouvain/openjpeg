@@ -31,8 +31,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #include "placeholder_manager.h"
-#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
