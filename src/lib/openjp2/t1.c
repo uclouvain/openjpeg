@@ -1987,6 +1987,9 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
     }
 
     bpno_plus_one = (OPJ_INT32)(roishift + cblk->numbps);
+    if ((OPJ_UINT32)bpno_plus_one < cblk->numbps) {
+        return OPJ_FALSE;
+    }
     if (bpno_plus_one >= 31) {
         if (p_manager_mutex) {
             opj_mutex_lock(p_manager_mutex);
