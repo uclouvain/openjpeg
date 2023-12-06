@@ -1210,6 +1210,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
         /* Concatenate all chunks */
         cblkdata = t1->cblkdatabuffer;
+        if (cblkdata == NULL) {
+            return OPJ_FALSE;
+        }
         cblk_len = 0;
         for (i = 0; i < cblk->numchunks; i++) {
             memcpy(cblkdata + cblk_len, cblk->chunks[i].data, cblk->chunks[i].len);
