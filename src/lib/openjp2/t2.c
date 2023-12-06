@@ -1231,7 +1231,13 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
                 }
 
                 l_cblk->Mb = (OPJ_UINT32)l_band->numbps;
-                l_cblk->numbps = (OPJ_UINT32)l_band->numbps + 1 - i;
+                if ((OPJ_UINT32)l_band->numbps + 1 < i) {
+                    /* We should probably error out but that would break */
+                    /* test case related to dwt_interleave_h.gsr105.jp2 */
+                    l_cblk->numbps = 0;
+                } else {
+                    l_cblk->numbps = (OPJ_UINT32)l_band->numbps + 1 - i;
+                }
                 l_cblk->numlenbits = 3;
             }
 
