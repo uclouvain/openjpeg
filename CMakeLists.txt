@@ -296,9 +296,15 @@ configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/OpenJPEGConfig.cma
   ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
   INSTALL_DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
   PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
-install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
-  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
-)
+write_basic_package_version_file(
+  ${OPENJPEG_BINARY_DIR}/OpenJPEGConfigVersion.cmake
+  COMPATIBILITY SameMajorVersion
+  VERSION ${OPENJPEG_VERSION})
+install(
+  FILES
+    ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+    ${OPENJPEG_BINARY_DIR}/OpenJPEGConfigVersion.cmake
+  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
 
 #-----------------------------------------------------------------------------
 
