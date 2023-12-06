@@ -3959,9 +3959,12 @@ static OPJ_BOOL opj_j2k_merge_ppm(opj_cp_t *p_cp, opj_event_mgr_t * p_manager)
                     opj_read_bytes(l_data, &l_N_ppm, 4);
                     l_data += 4;
                     l_data_size -= 4;
-                    l_ppm_data_size +=
-                        l_N_ppm; /* can't overflow, max 256 markers of max 65536 bytes, that is when PPM markers are not corrupted which is checked elsewhere */
 
+                    if (l_ppm_data_size > UINT_MAX - l_N_ppm) {
+                        opj_event_msg(p_manager, EVT_ERROR, "Too large value for Nppm\n");
+                        return OPJ_FALSE;
+                    }
+                    l_ppm_data_size += l_N_ppm;
                     if (l_data_size >= l_N_ppm) {
                         l_data_size -= l_N_ppm;
                         l_data += l_N_ppm;
