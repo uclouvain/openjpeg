@@ -59,7 +59,9 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	# We need jpylyzer for the test suite
     JPYLYZER_VERSION="1.17.0"    
 	echo "Retrieving jpylyzer"
-	if [ "${APPVEYOR:-}" == "True" -o "${RUNNER_OS:-}" == "Windows" ]; then
+	if [ "${TRAVIS_OS_NAME:-}" == "osx"  -o "${RUNNER_OS:-}" == "macOS" ] || uname -s | grep -i Darwin &> /dev/null; then
+        echo "Skip Retrieving jpylyzer on OSX. Related tests no longer work on CI"
+	elif [ "${APPVEYOR:-}" == "True" -o "${RUNNER_OS:-}" == "Windows" ]; then
 		wget -q https://github.com/openpreserve/jpylyzer/releases/download/${JPYLYZER_VERSION}/jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		mkdir jpylyzer
 		cd jpylyzer
@@ -79,29 +81,29 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then
 		if [ "${TRAVIS_OS_NAME:-}" == "linux" -o "${RUNNER_OS:-}" == "Linux" ] || uname -s | grep -i Linux &> /dev/null; then
 			echo "Retrieving Kakadu"
-			wget -q http://kakadusoftware.com/wp-content/uploads/KDU805_Demo_Apps_for_Linux-x86-64_200602.zip
-			cmake -E tar -xf KDU805_Demo_Apps_for_Linux-x86-64_200602.zip
-			mv KDU805_Demo_Apps_for_Linux-x86-64_200602 kdu
+			wget -q http://kakadusoftware.com/wp-content/uploads/KDU841_Demo_Apps_for_Linux-x86-64_231117.zip
+			cmake -E tar -xf KDU841_Demo_Apps_for_Linux-x86-64_231117.zip
+			mv KDU841_Demo_Apps_for_Linux-x86-64_231117 kdu
 		elif [ "${TRAVIS_OS_NAME:-}" == "osx"  -o "${RUNNER_OS:-}" == "macOS" ] || uname -s | grep -i Darwin &> /dev/null; then
 			echo "Retrieving Kakadu"
-			wget -v http://kakadusoftware.com/wp-content/uploads/KDU805_Demo_Apps_for_MacOS_200602.dmg_.zip
-			cmake -E tar -xf KDU805_Demo_Apps_for_MacOS_200602.dmg_.zip
+			wget -v http://kakadusoftware.com/wp-content/uploads/KDU841_Demo_Apps_for_MacOS_231117.dmg_.zip
+			cmake -E tar -xf KDU841_Demo_Apps_for_MacOS_231117.dmg_.zip
 			wget -q http://downloads.sourceforge.net/project/catacombae/HFSExplorer/0.23/hfsexplorer-0.23-bin.zip
 			mkdir hfsexplorer && cmake -E chdir hfsexplorer tar -xf ../hfsexplorer-0.23-bin.zip
-			./hfsexplorer/bin/unhfs.sh -o ./ -fsroot Kakadu-demo-apps.pkg  KDU805_Demo_Apps_for_MacOS_200602.dmg
+			./hfsexplorer/bin/unhfs.sh -o ./ -fsroot Kakadu-demo-apps.pkg  KDU841_Demo_Apps_for_MacOS_231117.dmg
 			pkgutil --expand Kakadu-demo-apps.pkg ./kdu
 			cd kdu
-			cat libkduv80r.pkg/Payload | gzip -d | cpio -id
+			cat libkduv84r.pkg/Payload | gzip -d | cpio -id
 			cat kduexpand.pkg/Payload | gzip -d | cpio -id
 			cat kducompress.pkg/Payload | gzip -d | cpio -id
-			install_name_tool -id ${PWD}/libkdu_v80R.dylib libkdu_v80R.dylib 
-			install_name_tool -change /usr/local/lib/libkdu_v80R.dylib ${PWD}/libkdu_v80R.dylib kdu_compress
-			install_name_tool -change /usr/local/lib/libkdu_v80R.dylib ${PWD}/libkdu_v80R.dylib kdu_expand
+			install_name_tool -id ${PWD}/libkdu_v84R.dylib libkdu_v84R.dylib 
+			install_name_tool -change /usr/local/lib/libkdu_v84R.dylib ${PWD}/libkdu_v84R.dylib kdu_compress
+			install_name_tool -change /usr/local/lib/libkdu_v84R.dylib ${PWD}/libkdu_v84R.dylib kdu_expand
 		elif [ "${APPVEYOR:-}" == "True" -o "${RUNNER_OS:-}" == "Windows"  ] || uname -s | grep -i MINGW &> /dev/null || uname -s | grep -i CYGWIN &> /dev/null; then
 			echo "Retrieving Kakadu"
-			wget -q http://kakadusoftware.com/wp-content/uploads/KDU805_Demo_Apps_for_Win64_200602.msi_.zip
-			cmake -E tar -xf KDU805_Demo_Apps_for_Win64_200602.msi_.zip
-			msiexec /i KDU805_Demo_Apps_for_Win64_200602.msi /quiet /qn /norestart
+			wget -q http://kakadusoftware.com/wp-content/uploads/KDU841_Demo_Apps_for_Win64_231117.msi_.zip
+			cmake -E tar -xf KDU841_Demo_Apps_for_Win64_231117.msi_.zip
+			msiexec /i KDU841_Demo_Apps_for_Win64_231117.msi /quiet /qn /norestart
 			if [ -d "C:/Program Files/Kakadu" ]; then
 				cp -r "C:/Program Files/Kakadu" ./kdu
 			else
