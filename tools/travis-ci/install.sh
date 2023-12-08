@@ -59,7 +59,9 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	# We need jpylyzer for the test suite
     JPYLYZER_VERSION="1.17.0"    
 	echo "Retrieving jpylyzer"
-	if [ "${APPVEYOR:-}" == "True" -o "${RUNNER_OS:-}" == "Windows" ]; then
+	if [ "${TRAVIS_OS_NAME:-}" == "osx"  -o "${RUNNER_OS:-}" == "macOS" ] || uname -s | grep -i Darwin &> /dev/null; then
+        echo "Skip Retrieving jpylyzer on OSX. Related tests no longer work on CI"
+	elif [ "${APPVEYOR:-}" == "True" -o "${RUNNER_OS:-}" == "Windows" ]; then
 		wget -q https://github.com/openpreserve/jpylyzer/releases/download/${JPYLYZER_VERSION}/jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		mkdir jpylyzer
 		cd jpylyzer
