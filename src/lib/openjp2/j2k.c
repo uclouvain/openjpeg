@@ -11101,6 +11101,10 @@ static OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                 l_tccp->stepsizes[l_band_no].mant = 0;
             }
         }
+
+        if (*p_header_size < l_num_band) {
+            return OPJ_FALSE;
+        }
         *p_header_size = *p_header_size - l_num_band;
     } else {
         for (l_band_no = 0; l_band_no < l_num_band; l_band_no++) {
@@ -11110,6 +11114,10 @@ static OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                 l_tccp->stepsizes[l_band_no].expn = (OPJ_INT32)(l_tmp >> 11);
                 l_tccp->stepsizes[l_band_no].mant = l_tmp & 0x7ff;
             }
+        }
+
+        if (*p_header_size < 2 * l_num_band) {
+            return OPJ_FALSE;
         }
         *p_header_size = *p_header_size - 2 * l_num_band;
     }
