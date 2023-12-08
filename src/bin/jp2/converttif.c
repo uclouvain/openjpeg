@@ -43,6 +43,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <inttypes.h>
 
 #ifndef OPJ_HAVE_LIBTIFF
 # error OPJ_HAVE_LIBTIFF_NOT_DEFINED
@@ -51,7 +52,6 @@
 #include <tiffio.h>
 #include "openjpeg.h"
 #include "convert.h"
-#include "opj_inttypes.h"
 
 /* -->> -->> -->> -->>
 

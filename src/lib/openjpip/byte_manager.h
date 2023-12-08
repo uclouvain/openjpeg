@@ -32,8 +32,8 @@
 #define     BYTE_MANAGER_H_
 
 #include <stddef.h>
+#include <stdint.h>
 #include "openjpeg.h"
-#include "opj_stdint.h"
 typedef uint8_t Byte_t;
 typedef uint16_t Byte2_t;
 typedef uint32_t Byte4_t;

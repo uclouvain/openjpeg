@@ -33,8 +33,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <assert.h>
+#include <inttypes.h>
 #include "box_manager.h"
-#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"

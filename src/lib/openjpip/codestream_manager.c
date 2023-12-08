@@ -29,8 +29,8 @@
  */
 
 #include <stdio.h>
+#include <inttypes.h>
 #include "codestream_manager.h"
-#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"

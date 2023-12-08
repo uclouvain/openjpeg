@@ -33,11 +33,11 @@
 #include <string.h>
 #include <assert.h>
 #include <limits.h>
+#include <inttypes.h>
 #include "dec_clientmsg_handler.h"
 #include "ihdrbox_manager.h"
 #include "jpipstream_manager.h"
 #include "jp2k_encoder.h"
-#include "opj_inttypes.h"
 
 void handle_JPIPstreamMSG(SOCKET connected_socket, cachelist_param_t *cachelist,
                           Byte_t **jpipstream, OPJ_SIZE_T *streamlen, msgqueue_param_t *msgqueue)

@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include <limits.h>
+#include <inttypes.h>
 #ifdef _WIN32
 #include <io.h>
 #else
@@ -45,7 +46,6 @@
 #include "msgqueue_manager.h"
 #include "metadata_manager.h"
 #include "index_manager.h"
-#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"

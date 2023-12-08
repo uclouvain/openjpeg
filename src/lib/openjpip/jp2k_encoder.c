@@ -34,10 +34,10 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <inttypes.h>
 #include "jp2k_encoder.h"
 #include "j2kheader_manager.h"
 #include "imgreg_manager.h"
-#include "opj_inttypes.h"
 
 
 #ifdef SERVER
