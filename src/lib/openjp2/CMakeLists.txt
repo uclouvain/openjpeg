@@ -109,9 +109,7 @@ if(UNIX)
   target_link_libraries(${OPENJPEG_LIBRARY_NAME} m)
 endif()
 set_target_properties(${OPENJPEG_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
-if(NOT ${CMAKE_VERSION} VERSION_LESS "2.8.12")
-  target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJP2_COMPILE_OPTIONS})
-endif()
+target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJP2_COMPILE_OPTIONS})
 
 # Install library
 install(TARGETS ${INSTALL_LIBS}

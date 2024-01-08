@@ -7,14 +7,7 @@
 # For this purpose you can define a CMake var: OPENJPEG_NAMESPACE to whatever you like
 # e.g.:
 # set(OPENJPEG_NAMESPACE "GDCMOPENJPEG")
-cmake_minimum_required(VERSION 2.8.5)
-
-if(COMMAND CMAKE_POLICY)
-  cmake_policy(SET CMP0003 NEW)
-  if (NOT (${CMAKE_VERSION} VERSION_LESS 3.0))
-    cmake_policy(SET CMP0042 NEW)
-  endif()
-endif()
+cmake_minimum_required(VERSION 3.5)
 
 if(NOT OPENJPEG_NAMESPACE)
   set(OPENJPEG_NAMESPACE "OPENJPEG")
@@ -126,12 +119,6 @@ if(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 endif()
 
 if (APPLE)
-    if (${CMAKE_VERSION} VERSION_LESS 3.0)
-        # For cmake >= 3.0, we turn on CMP0042 and
-        # https://cmake.org/cmake/help/v3.0/policy/CMP0042.html mentions
-        # "Projects wanting @rpath in a target’s install name may remove any setting of the INSTALL_NAME_DIR and CMAKE_INSTALL_NAME_DIR variables"
-	list(APPEND OPENJPEG_LIBRARY_PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
-    endif()
 	option(OPJ_USE_DSYMUTIL "Call dsymutil on binaries after build." OFF)
 endif()
 
@@ -304,21 +291,11 @@ endif()
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets (relocatable with CMake 3.0+)
 install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
-if (${CMAKE_VERSION} VERSION_LESS 3.0)
-  set(PACKAGE_INIT)
-  set(PACKAGE_CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_FULL_INCLUDEDIR})
-  configure_file( ${${OPENJPEG_NAMESPACE}_SOURCE_DIR}/cmake/OpenJPEGConfig.cmake.in
-    ${${OPENJPEG_NAMESPACE}_BINARY_DIR}/OpenJPEGConfig.cmake
-    @ONLY
-  )
-else()
-  include(CMakePackageConfigHelpers)
-  configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/OpenJPEGConfig.cmake.in
-    ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
-    INSTALL_DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
-    PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
-endif()
-
+include(CMakePackageConfigHelpers)
+configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/OpenJPEGConfig.cmake.in
+  ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+  INSTALL_DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
 install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
   DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
 )
