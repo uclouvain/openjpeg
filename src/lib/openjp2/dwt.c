@@ -2121,6 +2121,11 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp,
 
         if (num_threads <= 1 || rh <= 1) {
             for (j = 0; j < rh; ++j) {
+                /* Avoid runtime error: applying zero offset to null pointer: tiledp */
+                if (!tiledp) {
+                    opj_aligned_free(h.mem);
+                    return OPJ_FALSE;
+                }
                 opj_idwt53_h(&h, &tiledp[(OPJ_SIZE_T)j * w]);
             }
         } else {
