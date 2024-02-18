@@ -358,7 +358,15 @@ static void sycc420_to_rgb(opj_image_t *img)
     if (i < loopmaxh) {
         size_t j;
 
-        for (j = 0U; j < (maxw & ~(size_t)1U); j += 2U) {
+        if (offx > 0U) {
+            sycc_to_rgb(offset, upb, *y, 0, 0, r, g, b);
+            ++y;
+            ++r;
+            ++g;
+            ++b;
+        }
+
+        for (j = 0U; j < (loopmaxw & ~(size_t)1U); j += 2U) {
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
 
             ++y;
@@ -375,7 +383,7 @@ static void sycc420_to_rgb(opj_image_t *img)
             ++cb;
             ++cr;
         }
-        if (j < maxw) {
+        if (j < loopmaxw) {
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
         }
     }
