@@ -1229,9 +1229,17 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
                 while (!opj_tgt_decode(l_bio, l_prc->imsbtree, cblkno, (OPJ_INT32)i)) {
                     ++i;
                 }
-
                 l_cblk->Mb = (OPJ_UINT32)l_band->numbps;
-                l_cblk->numbps = (OPJ_UINT32)l_band->numbps + 1 - i;
+                if ((OPJ_UINT32)l_band->numbps + 1 < i) {
+                    /* Not totally sure what we should do in that situation,
+                     * but that avoids the integer overflow of
+                     * https://github.com/uclouvain/openjpeg/pull/1488
+                     * while keeping the regression test suite happy.
+                     */
+                    l_cblk->numbps = (OPJ_UINT32)(l_band->numbps + 1 - (int)i);
+                } else {
+                    l_cblk->numbps = (OPJ_UINT32)l_band->numbps + 1 - i;
+                }
                 l_cblk->numlenbits = 3;
             }
 
