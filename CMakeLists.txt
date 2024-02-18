@@ -312,38 +312,30 @@ include (cmake/OpenJPEGCPack.cmake)
 
 #-----------------------------------------------------------------------------
 # pkgconfig support
-# enabled by default on Unix or if using GCC, disabled by default on other platforms
-if(UNIX OR CMAKE_COMPILER_IS_GNUCC)
-  option(BUILD_PKGCONFIG_FILES "Build and install pkg-config files" ON)
-else()
-  option(BUILD_PKGCONFIG_FILES "Build and install pkg-config files" OFF)
-endif()
-if(BUILD_PKGCONFIG_FILES)
-  macro(set_variable_from_rel_or_absolute_path var root rel_or_abs_path)
-    if(IS_ABSOLUTE "${rel_or_abs_path}")
-      set(${var} "${rel_or_abs_path}")
-    else()
-      set(${var} "${root}/${rel_or_abs_path}")
-    endif()
-  endmacro()
-  set_variable_from_rel_or_absolute_path("bindir" "\\\${prefix}" "${CMAKE_INSTALL_BINDIR}")
-  set_variable_from_rel_or_absolute_path("mandir" "\\\${prefix}" "${CMAKE_INSTALL_MANDIR}")
-  set_variable_from_rel_or_absolute_path("docdir" "\\\${prefix}" "${CMAKE_INSTALL_DOCDIR}")
-  set_variable_from_rel_or_absolute_path("libdir" "\\\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
-  set_variable_from_rel_or_absolute_path("includedir" "\\\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}/${OPENJPEG_INSTALL_SUBDIR}")
+macro(set_variable_from_rel_or_absolute_path var root rel_or_abs_path)
+  if(IS_ABSOLUTE "${rel_or_abs_path}")
+    set(${var} "${rel_or_abs_path}")
+  else()
+    set(${var} "${root}/${rel_or_abs_path}")
+  endif()
+endmacro()
+set_variable_from_rel_or_absolute_path("bindir" "\\\${prefix}" "${CMAKE_INSTALL_BINDIR}")
+set_variable_from_rel_or_absolute_path("mandir" "\\\${prefix}" "${CMAKE_INSTALL_MANDIR}")
+set_variable_from_rel_or_absolute_path("docdir" "\\\${prefix}" "${CMAKE_INSTALL_DOCDIR}")
+set_variable_from_rel_or_absolute_path("libdir" "\\\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
+set_variable_from_rel_or_absolute_path("includedir" "\\\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}/${OPENJPEG_INSTALL_SUBDIR}")
 
-  # install in lib and not share (CMAKE_INSTALL_LIBDIR takes care of it for multi-arch)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/libopenjp2.pc.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc @ONLY)
-  install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
+# install in lib and not share (CMAKE_INSTALL_LIBDIR takes care of it for multi-arch)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/libopenjp2.pc.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc @ONLY)
+install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc DESTINATION
+  ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
 #
-  if(BUILD_JPIP)
+if(BUILD_JPIP)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjpip/libopenjpip.pc.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjpip.pc @ONLY)
   install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpip.pc DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
-  endif()
 endif()
 
 #-----------------------------------------------------------------------------
