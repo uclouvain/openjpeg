@@ -1693,3 +1693,4 @@ static OPJ_BOOL opj_t2_init_seg(opj_tcd_cblk_dec_t* cblk,
 
     return OPJ_TRUE;
 }
+
