@@ -45,6 +45,7 @@ unset(_expectedTargets)
 get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 if(_IMPORT_PREFIX STREQUAL "/")
   set(_IMPORT_PREFIX "")
 endif()
@@ -54,6 +55,7 @@ add_library(openjp2 SHARED IMPORTED)
 
 set_target_properties(openjp2 PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include/openjpeg-2.5"
+  INTERFACE_LINK_LIBRARIES "m;-lpthread"
 )
 
 # Create imported target openjp2_static
@@ -71,6 +73,10 @@ add_executable(opj_compress IMPORTED)
 
 # Create imported target opj_dump
 add_executable(opj_dump IMPORTED)
+
+if(CMAKE_VERSION VERSION_LESS 2.8.12)
+  message(FATAL_ERROR "This file relies on consumers using CMake 2.8.12 or greater.")
+endif()
 
 # Load information for each installed configuration.
 get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)

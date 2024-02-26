@@ -17,7 +17,8 @@ $VAR1 = {
                            '2.3.0' => 'Off',
                            '2.3.1' => 'Off',
                            '2.4.0' => 'Off',
-                           '2.5.0' => 'Off'
+                           '2.5.0' => 'Off',
+                           '2.5.1' => 'Off'
                          },
           'Installed' => {
                            '1.1' => 'installed/openjpeg/1.1',
@@ -36,6 +37,7 @@ $VAR1 = {
                            '2.3.1' => 'installed/openjpeg/2.3.1',
                            '2.4.0' => 'installed/openjpeg/2.4.0',
                            '2.5.0' => 'installed/openjpeg/2.5.0',
+                           '2.5.1' => 'installed/openjpeg/2.5.1',
                            'current' => 'installed/openjpeg/current'
                          },
           'ScmUpdateTime' => '1652463409',
@@ -58,6 +60,7 @@ $VAR1 = {
                         '2.3.1' => 'src/openjpeg/2.3.1/version.-2.3.1.tar.gz',
                         '2.4.0' => 'src/openjpeg/2.4.0/version.-2.4.0.tar.gz',
                         '2.5.0' => 'src/openjpeg/2.5.0/version.-2.5.0.tar.gz',
+                        '2.5.1' => 'src/openjpeg/2.5.1/version.-2.5.1.tar.gz',
                         'current' => 'src/openjpeg/current'
                       }
         };

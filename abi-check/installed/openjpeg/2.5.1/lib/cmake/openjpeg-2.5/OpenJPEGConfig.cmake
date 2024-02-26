@@ -5,16 +5,41 @@
 # This file is configured by OPENJPEG and used by the UseOPENJPEG.cmake
 # module to load OPENJPEG's settings for an external project.
 
+
+####### Expanded from @PACKAGE_INIT@ by configure_package_config_file() #######
+####### Any changes to this file will be overwritten by the next CMake run ####
+####### The input file was OpenJPEGConfig.cmake.in                            ########
+
+get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
+
+macro(set_and_check _var _file)
+  set(${_var} "${_file}")
+  if(NOT EXISTS "${_file}")
+    message(FATAL_ERROR "File or directory ${_file} referenced by variable ${_var} does not exist !")
+  endif()
+endmacro()
+
+macro(check_required_components _NAME)
+  foreach(comp ${${_NAME}_FIND_COMPONENTS})
+    if(NOT ${_NAME}_${comp}_FOUND)
+      if(${_NAME}_FIND_REQUIRED_${comp})
+        set(${_NAME}_FOUND FALSE)
+      endif()
+    endif()
+  endforeach()
+endmacro()
+
+####################################################################################
 # The OPENJPEG version number.
 set(OPENJPEG_MAJOR_VERSION "2")
 set(OPENJPEG_MINOR_VERSION "5")
-set(OPENJPEG_BUILD_VERSION "0")
+set(OPENJPEG_BUILD_VERSION "1")
 
 # The libraries.
 set(OPENJPEG_LIBRARIES "openjp2")
 
 # The CMake macros dir.
-set(OPENJPEG_CMAKE_DIR "lib/openjpeg-2.5")
+set(OPENJPEG_CMAKE_DIR "lib/cmake/openjpeg-2.5")
 
 # The configuration options.
 set(OPENJPEG_BUILD_SHARED_LIBS "ON")
@@ -27,12 +52,8 @@ if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   # This is an install tree
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
 
-  # We find a relative path from the PKG directory to header files.
-  set(PKG_DIR "/home/even/abi-check/work/abi-check/installed/openjpeg/current/lib/openjpeg-2.5")
-  set(INC_DIR "/home/even/abi-check/work/abi-check/installed/openjpeg/current/include/openjpeg-2.5")
-  file(RELATIVE_PATH PKG_TO_INC_RPATH "${PKG_DIR}" "${INC_DIR}")
-
-  get_filename_component(OPENJPEG_INCLUDE_DIRS "${SELF_DIR}/${PKG_TO_INC_RPATH}" REALPATH)
+  set(INC_DIR "${PACKAGE_PREFIX_DIR}/include/openjpeg-2.5")
+  get_filename_component(OPENJPEG_INCLUDE_DIRS "${INC_DIR}" ABSOLUTE)
 
 else()
   if(EXISTS ${SELF_DIR}/OpenJPEGExports.cmake)
