@@ -20,7 +20,7 @@ Check-list OpenJPEG Release
 * PATH=$PWD/../../tools/abi-tracker/bin:$PWD/../../tools/wdiff/bin:$PWD/../../tools:$PATH abi-tracker  -build ./openjpeg.json 
 * rm -rf src/openjpeg/current
 * rm -rf build_logs
-* Remove symbolic links: rm -f installed/openjpeg/2.5.1/lib/libopenjp2.so installed/openjpeg/2.5.1/lib/libopenjp2.so.7
+* Remove symbolic links: rm -f installed/openjpeg/2.5.1/lib/libopenjp2.so installed/openjpeg/2.5.1/lib/libopenjp2.so.7 installed/openjpeg/current/lib/libopenjp2.so
 * git add --all .
 * git commit -m "Update ABI/API compatibility reports after 2.5.1 release"
 * git push
