@@ -15,13 +15,14 @@ Check-list OpenJPEG Release
 * update OPJ_LATEST_VERSION in abi-check.sh, uncomment and update OPJ_PREVIOUS_VERSION in abi-check.sh, and push
 * locally run: OPJ_CI_ABI_CHECK=1 ./tools/travis-ci/abi-check.sh
 * cd ~/abi-check/work/abi-check/
-* put the sources of the new version in src/openjpeg/2.X.0/version.-2.X.0.tar.gz
-* PATH=$PWD/../../tools/abi-tracker/bin:$PWD/../../tools/wdiff/bin:$PWD/../../tools:$PATH abi-monitor -v 2.X.0  -build ./openjpeg.json
+* put the sources of the new version in src/openjpeg/2.5.1/version.-2.5.1.tar.gz
+* PATH=$PWD/../../tools/abi-tracker/bin:$PWD/../../tools/wdiff/bin:$PWD/../../tools:$PATH abi-monitor -v 2.5.1  -build ./openjpeg.json
 * PATH=$PWD/../../tools/abi-tracker/bin:$PWD/../../tools/wdiff/bin:$PWD/../../tools:$PATH abi-tracker  -build ./openjpeg.json 
 * rm -rf src/openjpeg/current
 * rm -rf build_logs
+* Remove symbolic links: rm -f installed/openjpeg/2.5.1/lib/libopenjp2.so installed/openjpeg/2.5.1/lib/libopenjp2.so.7
 * git add --all .
-* git commit -m "Update ABI/API compatibility reports after 2.X.0 release"
+* git commit -m "Update ABI/API compatibility reports after 2.5.1 release"
 * git push
 * cd ~/openjpeg/openjpeg
 * comment back OPJ_PREVIOUS_VERSION and push
