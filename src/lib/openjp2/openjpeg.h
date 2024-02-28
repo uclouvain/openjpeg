@@ -138,6 +138,8 @@ typedef int64_t  OPJ_OFF_T; /* 64-bit file offset type */
 #include <stdio.h>
 typedef size_t   OPJ_SIZE_T;
 
+#include "opj_config.h"
+
 /* Avoid compile-time warning because parameter is not used */
 #define OPJ_ARG_NOT_USED(x) (void)(x)
 
