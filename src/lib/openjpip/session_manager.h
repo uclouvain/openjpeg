@@ -57,7 +57,7 @@ sessionlist_param_t * gene_sessionlist(void);
 
 
 /**
- * generate a session under the sesion list
+ * generate a session under the session list
  *
  * @param[in] sessionlist session list to insert the new session
  * @return                pointer to the generated session

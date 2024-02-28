@@ -728,7 +728,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
         /* ----------------------------------------------------- */
 
 
-        case 'r': {         /* rates rates/distorsion */
+        case 'r': {         /* rates rates/distortion */
             char *s = opj_optarg;
             parameters->tcp_numlayers = 0;
             while (sscanf(s, "%f", &parameters->tcp_rates[parameters->tcp_numlayers]) ==

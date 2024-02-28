@@ -652,7 +652,7 @@ jpeg2000_file_parse(wxInputStream& stream, unsigned long int filepoint,
     return (0);
 }
 
-// search first contiguos codestream box in an mj2 file
+// search first contiguous codestream box in an mj2 file
 unsigned long int
 searchjpeg2000c(wxInputStream& stream, unsigned long int fsize, int number)
 {

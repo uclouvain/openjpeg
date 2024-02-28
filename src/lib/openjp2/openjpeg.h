@@ -772,7 +772,7 @@ typedef struct opj_packet_info {
     OPJ_OFF_T end_ph_pos;
     /** packet end position */
     OPJ_OFF_T end_pos;
-    /** packet distorsion */
+    /** packet distortion */
     double disto;
 } opj_packet_info_t;
 

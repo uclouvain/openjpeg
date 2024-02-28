@@ -6,7 +6,7 @@
 #   + For encoder related tests = dump, compare dump to base, decode the encoded file with 
 #     reference and compare the decoded file with the baseline decoded previously with 
 #     ref decoder.
-#   + For decoder related tests = dump, compare dump to base, (TODO: compare outpout decoding 
+#   + For decoder related tests = dump, compare dump to base, (TODO: compare output decoding
 #     image to base)
 #
 # Line begin with ! should failed (should be used for bad jpeg2000 file which should be 
