@@ -2124,7 +2124,7 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                 opj_mutex_lock(p_manager_mutex);
             }
             opj_event_msg(p_manager, EVT_WARNING,
-                          "PTERM check failure: %d synthetized 0xFF markers read\n",
+                          "PTERM check failure: %d synthesized 0xFF markers read\n",
                           mqc->end_of_byte_stream_counter);
             if (p_manager_mutex) {
                 opj_mutex_unlock(p_manager_mutex);

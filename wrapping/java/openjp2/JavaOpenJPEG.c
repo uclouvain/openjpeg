@@ -663,7 +663,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
         /* ----------------------------------------------------- */
 
 
-        case 'r': {         /* rates rates/distorsion */
+        case 'r': {         /* rates rates/distortion */
             char *s = opj_optarg;
             while (sscanf(s, "%f", &parameters->tcp_rates[parameters->tcp_numlayers]) ==
                     1) {
@@ -1452,7 +1452,7 @@ static char* create_index_into_byte_array(opj_codestream_info_t *cstr_info,
         + (10 /* image_w until decomposition */
            + (cstr_info->numdecompos[0] + 1) * 2 /* pdx size for each tile */
            + 2 /* main_head_end + codestream_size */
-           + cstr_info->tw * cstr_info->th * 4 /* tile info, without distorsion info */
+           + cstr_info->tw * cstr_info->th * 4 /* tile info, without distortion info */
            + cstr_info->tw * cstr_info->th * cstr_info->numlayers *
            (cstr_info->numdecompos[0] + 1) * cstr_info->numcomps * prec_max * 8
           ) * sizeof(int);

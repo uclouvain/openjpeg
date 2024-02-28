@@ -47,7 +47,7 @@ typedef struct boxheader_param {
 /**
  * generate a box header at the given offset
  *
- * @param[in] fd     file discriptor of the JP2 file
+ * @param[in] fd     file descriptor of the JP2 file
  * @param[in] offset Box offset
  * @return           pointer to the structure of generate box header parameters
  */
