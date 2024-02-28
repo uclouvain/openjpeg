@@ -51,9 +51,9 @@ typedef int SOCKET;
 SOCKET open_listeningsocket(uint16_t port);
 
 /**
- * accept a new connection to the listenning socket
+ * accept a new connection to the listening socket
  *
- * @param listening_socket listenning socket
+ * @param listening_socket listening socket
  * @return                 connected socket (-1 if error occurs)
  */
 SOCKET accept_socket(SOCKET listening_socket);

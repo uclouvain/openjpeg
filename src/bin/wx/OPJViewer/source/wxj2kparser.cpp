@@ -845,7 +845,7 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 				);
 
 			if (cbstyle & 0x04)
-				text = wxT("Termination on each coding passs");
+				text = wxT("Termination on each coding pass");
 			else
 				text = wxT("No termination on each coding pass");
 			subcurrid4 = m_tree->AppendItem(subcurrid3,
@@ -1064,7 +1064,7 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 				);
 
 			if (cbstyle & 0x04)
-				text = wxT("Termination on each coding passs");
+				text = wxT("Termination on each coding pass");
 			else
 				text = wxT("No termination on each coding pass");
 			subcurrid4 = m_tree->AppendItem(subcurrid3,

@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 {
 #define NUMJP2 32
   int i, c = 0;
-  long offets[NUMJP2];
+  long offsets[NUMJP2];
   char buffer[512];
 #define BUFLEN 4096
   int cont = 1;
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
       const ptrdiff_t diff = ret - haystack;
       assert( diff >= 0 );
       /*fprintf( stdout, "Found it: %lx\n", (ptrdiff_t)cpos - (ptrdiff_t)hlen + diff);*/
-      offets[c++] = (ptrdiff_t)cpos - (ptrdiff_t)hlen + diff;
+      offsets[c++] = (ptrdiff_t)cpos - (ptrdiff_t)hlen + diff;
       }
     cont = (nread == flen);
     memcpy( haystack, haystack + nread, nlen );
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     {
     int s, len = 0;
     char *r;
-    const int ret = fseek(f, offets[i], SEEK_SET);
+    const int ret = fseek(f, offsets[i], SEEK_SET);
     assert( ret == 0 );
     r = fgets(buffer, sizeof(buffer), f);
     assert( r );
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     s = sscanf(r, "JPXDecode]/Length  %d/Width %*d/BitsPerComponent %*d/Height %*d", &len);
     if( s == 0 )
       { // try again harder
-      const int ret = fseek(f, offets[i] - 40, SEEK_SET); // 40 is magic number
+      const int ret = fseek(f, offsets[i] - 40, SEEK_SET); // 40 is magic number
       assert( ret == 0 );
       r = fgets(buffer, sizeof(buffer), f);
       assert( r );

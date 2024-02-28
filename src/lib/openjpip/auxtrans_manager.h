@@ -38,8 +38,8 @@
 typedef struct auxtrans_param {
     int tcpauxport;       /**< tcp port*/
     int udpauxport;       /**< udp port*/
-    SOCKET tcplistensock; /**< listenning socket for aux tcp (-1 if not open)*/
-    SOCKET udplistensock; /**< listenning socket for aux udp (-1 if not open)*/
+    SOCKET tcplistensock; /**< listening socket for aux tcp (-1 if not open)*/
+    SOCKET udplistensock; /**< listening socket for aux udp (-1 if not open)*/
 } auxtrans_param_t;
 
 /**

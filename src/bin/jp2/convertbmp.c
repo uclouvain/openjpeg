@@ -604,7 +604,7 @@ static OPJ_BOOL bmp_read_rle8_data(FILE* IN, OPJ_UINT8* pData,
     }/* while() */
 
     if (written != width * height) {
-        fprintf(stderr, "warning, image's actual size does not match advertized one\n");
+        fprintf(stderr, "warning, image's actual size does not match advertised one\n");
         return OPJ_FALSE;
     }
 
@@ -693,7 +693,7 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData,
         }
     }  /* while(y < height) */
     if (written != width * height) {
-        fprintf(stderr, "warning, image's actual size does not match advertized one\n");
+        fprintf(stderr, "warning, image's actual size does not match advertised one\n");
         return OPJ_FALSE;
     }
     return OPJ_TRUE;
