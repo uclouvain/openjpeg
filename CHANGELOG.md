@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.5.2](https://github.com/uclouvain/openjpeg/releases/v2.5.2) (2024-02-28)
+
+[Full Changelog](https://github.com/uclouvain/openjpeg/compare/v2.5.1...v2.5.2)
+
+**Closed issues:**
+
+- API breakage in 2.5.1 / openjpeg version no longer detected \(openjpeg.h no longer includes opj\_config.h\) [\#1514](https://github.com/uclouvain/openjpeg/issues/1514)
+
+**Merged pull requests:**
+
+- openjpeg.h: make sure to include opj\_config.h \(fixes \#1514\) [\#1515](https://github.com/uclouvain/openjpeg/pull/1515) ([rouault](https://github.com/rouault))
+
 ## [v2.5.1](https://github.com/uclouvain/openjpeg/releases/v2.5.1) (2024-02-26)
 
 [Full Changelog](https://github.com/uclouvain/openjpeg/compare/v2.5.0...v2.5.1)
