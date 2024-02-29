@@ -52,14 +52,14 @@ set(LOCAL_SRCS
   )
 
 # Build the library
+add_library(openjpip ${OPENJPIP_SRCS} ${LOCAL_SRCS})
 if(WIN32)
   if(BUILD_SHARED_LIBS)
-    add_definitions(-DOPJ_EXPORTS)
+    target_compile_definitions(openjpip PRIVATE OPJ_EXPORTS)
   else()
-    add_definitions(-DOPJ_STATIC)
+    target_compile_definitions(openjpip PUBLIC OPJ_STATIC)
   endif()
 endif()
-add_library(openjpip ${OPENJPIP_SRCS} ${LOCAL_SRCS})
 set_target_properties(openjpip
   PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 target_compile_options(openjpip PRIVATE ${OPENJPEG_LIBRARY_COMPILE_OPTIONS})
