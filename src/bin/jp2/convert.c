@@ -664,7 +664,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 
 #ifdef OPJ_BIG_ENDIAN
 
-static INLINE OPJ_UINT16 swap16(OPJ_UINT16 x)
+static INLINE OPJ_UINT16 opj_swap16(OPJ_UINT16 x)
 {
     return (OPJ_UINT16)(((x & 0x00ffU) <<  8) | ((x & 0xff00U) >>  8));
 }
@@ -733,8 +733,8 @@ static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
         goto fails;
     }
 #else
-    image_w = swap16(image_w);
-    image_h = swap16(image_h);
+    image_w = opj_swap16(image_w);
+    image_h = opj_swap16(image_h);
     if (fwrite(&image_w, 2, 1, fp) != 1) {
         goto fails;
     }
