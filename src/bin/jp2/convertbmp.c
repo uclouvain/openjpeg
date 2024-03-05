@@ -40,7 +40,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include <math.h>
 
 #include "openjpeg.h"
 #include "convert.h"
@@ -908,12 +908,8 @@ int imagetobmp(opj_image_t * image, const char *outfile)
     int i, pad;
     FILE *fdest = NULL;
     int adjustR, adjustG, adjustB;
+    float lumaPctR = -1, lumaPctG = -1, lumaPctB = -1;
 
-    if (image->comps[0].prec < 8) {
-        fprintf(stderr, "imagetobmp: Unsupported precision: %d\n",
-                image->comps[0].prec);
-        return 1;
-    }
     if (image->numcomps >= 3 && image->comps[0].dx == image->comps[1].dx
             && image->comps[1].dx == image->comps[2].dx
             && image->comps[0].dy == image->comps[1].dy
@@ -979,26 +975,17 @@ int imagetobmp(opj_image_t * image, const char *outfile)
         fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff,
                 ((0) >> 24) & 0xff);
 
-        if (image->comps[0].prec > 8) {
-            adjustR = (int)image->comps[0].prec - 8;
-            printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n",
-                   image->comps[0].prec);
-        } else {
-            adjustR = 0;
+        adjustR = (int)image->comps[0].prec - 8;
+        if (adjustR < 0) {
+            lumaPctR = 1 + (float) pow(2, image->comps[0].prec) / (float) 255;
         }
-        if (image->comps[1].prec > 8) {
-            adjustG = (int)image->comps[1].prec - 8;
-            printf("BMP CONVERSION: Truncating component 1 from %d bits to 8 bits\n",
-                   image->comps[1].prec);
-        } else {
-            adjustG = 0;
+        adjustG = (int)image->comps[1].prec - 8;
+        if (adjustG < 0) {
+            lumaPctG = 1 + (float) pow(2, image->comps[1].prec) / (float) 255;
         }
-        if (image->comps[2].prec > 8) {
-            adjustB = (int)image->comps[2].prec - 8;
-            printf("BMP CONVERSION: Truncating component 2 from %d bits to 8 bits\n",
-                   image->comps[2].prec);
-        } else {
-            adjustB = 0;
+        adjustB = (int)image->comps[2].prec - 8;
+        if (adjustB < 0) {
+            lumaPctB = 1 + (float) pow(2, image->comps[2].prec) / (float) 255;
         }
 
         for (i = 0; i < w * h; i++) {
@@ -1007,8 +994,13 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+            if (lumaPctR > 0) {
+                r = (int) lroundf((float) r * lumaPctR);
+            }
             if (adjustR > 0) {
                 r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            } else if (adjustR < 0) {
+                r = ((r << abs(adjustR)) + ((r << (abs(adjustR) - 1)) % 2));
             }
             if (r > 255) {
                 r = 255;
@@ -1019,8 +1011,13 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             g = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+            if (lumaPctG > 0) {
+                g = (int) lroundf((float) g * lumaPctG);
+            }
             if (adjustG > 0) {
                 g = ((g >> adjustG) + ((g >> (adjustG - 1)) % 2));
+            } else if (adjustG < 0) {
+                g = ((g << abs(adjustR)) + ((g << (abs(adjustG) - 1)) % 2));
             }
             if (g > 255) {
                 g = 255;
@@ -1031,8 +1028,13 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             b = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+            if (lumaPctB > 0) {
+                b = (int) lroundf((float) b * lumaPctB);
+            }
             if (adjustB > 0) {
                 b = ((b >> adjustB) + ((b >> (adjustB - 1)) % 2));
+            } else if (adjustB < 0) {
+                b = ((b << abs(adjustB)) + ((b << (abs(adjustB) - 1)) % 2));
             }
             if (b > 255) {
                 b = 255;
@@ -1111,12 +1113,13 @@ int imagetobmp(opj_image_t * image, const char *outfile)
         fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff,
                 ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
 
-        if (image->comps[0].prec > 8) {
-            adjustR = (int)image->comps[0].prec - 8;
-            printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n",
-                   image->comps[0].prec);
-        } else {
-            adjustR = 0;
+        adjustR = (int)image->comps[0].prec - 8;
+        if (adjustR < 0) {
+            // TODO: without this, 2-bit input images come out too dark
+            if (adjustR == -6) {
+                adjustR--;
+            }
+            lumaPctR = 1 + (float) pow(2, image->comps[0].prec) / (float) 255;
         }
 
         for (i = 0; i < 256; i++) {
@@ -1128,8 +1131,13 @@ int imagetobmp(opj_image_t * image, const char *outfile)
 
             r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
             r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+            if (lumaPctR > 0) {
+                r = (int) lroundf((float) r * lumaPctR);
+            }
             if (adjustR > 0) {
                 r = ((r >> adjustR) + ((r >> (adjustR - 1)) % 2));
+            } else if (adjustR < 0) {
+                r = ((r << abs(adjustR)) + ((r << (abs(adjustR) - 1)) % 2));
             }
             if (r > 255) {
                 r = 255;
