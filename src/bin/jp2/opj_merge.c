@@ -62,7 +62,11 @@ int main(int argc, char **argv) {
 
     // Use extra options to specify the list of files to be merged into the jpx file.
     {
-        const char* options[2] = { "img/2024_03_27__13_21_29_129__SDO_AIA_AIA_304.jp2", NULL };
+        const char* options[2] = {
+            "img/2024_03_27__13_21_29_129__SDO_AIA_AIA_304.jp2",
+            "img/2023_08_04__00_01_04_843__SDO_AIA_AIA_193.jp2",
+            NULL
+        };
         if (!opj_encoder_set_extra_options(codec, options)) {
             fprintf(stderr, "Failed to set list of jp2 files to include: opj_encoder_set_extra_options\n");
             goto fin;

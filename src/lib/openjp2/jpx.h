@@ -32,6 +32,9 @@
 #define JPX_JPX  0x6a707820 /**< JPX ftyp brand */
 #define JPX_JPXB 0x6a707862 /**< JPX baseline   */
 #define JPX_RREQ 0x72726571 /**< Reader Requirements box */
+#define JPX_FTBL 0x6674626c /**< Fragment table box */
+#define JPX_FLST 0x666c7374 /**< Fragment list box */
+
 
 /** ----------- Feature Flags ----------- **/
 #define RREQ_FLAG_MULTILAYERED 2
@@ -43,8 +46,12 @@ typedef struct opj_jpx {
     opj_jp2_t* jp2;
     /** List of files to be embedded/linked in the jpx file */
     const char *const *files;
+    /** Number of files to be linked */
+    OPJ_UINT32 file_count;
     /** list of execution procedures */
     struct opj_procedure_list * m_procedure_list;
+    /** The current file being processed */
+    OPJ_UINT32 current_file_index;
 } opj_jpx_t;
 
 /**
@@ -131,6 +138,19 @@ opj_jpx_t* opj_jpx_create(void);
  * @param jpx JPX handle to destroy
  */
 void opj_jpx_destroy(opj_jpx_t *jpx);
+
+/**
+ * Writes an RREQ box - Reader Requirements box
+ *
+ * @param   cio         the stream to write data to.
+ * @param   jp2         the jpeg2000 file codec.
+ * @param   p_manager   the user event manager.
+ *
+ * @return  true if writing was successful.
+ */
+OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
+                            opj_stream_private_t *cio,
+                            opj_event_mgr_t * p_manager);
 
 /**
  * Writes an RREQ box - Reader Requirements box

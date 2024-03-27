@@ -32,25 +32,77 @@
 #include "opj_includes.h"
 
 /**
- * Executes the given procedures on the given codec.
+ * Writes out a fragment table.
  *
- * @param   p_procedure_list    the list of procedures to execute
- * @param   jpx                 the jpeg2000 file codec to execute the procedures on.
- * @param   stream                  the stream to execute the procedures on.
- * @param   p_manager           the user manager.
+ * @param   jp2file     Path to jp2 file being embedded
+ * @param   cio         the stream to write data to.
+ * @param   jpx         the jpx file codec.
+ * @param   p_manager   user event manager.
  *
- * @return  true                if all the procedures were successfully executed.
- */
-static OPJ_BOOL opj_jpx_exec(opj_jpx_t * jpx,
-                             opj_procedure_list_t * p_procedure_list,
-                             opj_stream_private_t *stream,
-                             opj_event_mgr_t * p_manager);
+ * @return true if writing was successful.
+*/
+static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
+                                   opj_jpx_t *jpx,
+                                   opj_stream_private_t *cio,
+                                   opj_event_mgr_t * p_manager);
 
+/**
+ * Searches a given jp2 file for codestream information.
+ *
+ * @param[in]  jp2file JPEG2000 file to search through for codestream info.
+ * @param[in]  p_manager user event manager.
+ * @param[out] codestream_offset Byte offset from start of file where the codestream is located
+ * @param[out] codestream_length Length of the codestream
+ * @returns OPJ_TRUE if successful
+ */
+static OPJ_BOOL opj_jpx_find_codestream(const char* jp2file,
+                                        opj_event_mgr_t * p_manager,
+                                        OPJ_UINT32* codestream_offset,
+                                        OPJ_UINT32* codestream_length);
+
+/** Write out fragment tables for the linked jp2 files */
 OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
                         opj_stream_private_t *stream,
                         opj_event_mgr_t * p_manager)
 {
-    puts("Called opj_jpx_encode");
+    OPJ_UINT32 index = 0;
+
+    assert(jpx != 00);
+    assert(jpx->files != 00);
+    assert(stream != 00);
+    assert(p_manager != 00);
+
+    /**
+     * Iterate over each jp2 file that we're linking to, and add a fragment
+     * table box for each one.
+     */
+    for (index = 0; index < jpx->file_count; index += 1) {
+        const char* jp2_fname = jpx->files[index];
+        // Current file index is 1-based.
+        jpx->current_file_index = index + 1;
+        // Write out the fragment table for this jp2 file.
+        if (!opj_jpx_write_ftbl(jp2_fname, jpx, stream, p_manager)) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to write fragment tables\n");
+            return OPJ_FALSE;
+        }
+    }
+    puts("Added fragment tables");
+
+    // /**
+    //  * Iterate over each file again, this time inserting any
+    //  * associations (xml boxes)
+    //  */
+    // for (index = 0; index < jpx->file_count; index += 1) {
+    //     const char* jp2_fname = jpx->files[index];
+    //     opj_jpx_write_ftbl(jp2_fname, jpx, stream, p_manager);
+    // }
+
+    /** Flush data to output stream */
+    if (! opj_stream_flush(stream, p_manager)) {
+        return OPJ_FALSE;
+    }
+
     return OPJ_TRUE;
 }
 
@@ -108,11 +160,11 @@ OPJ_BOOL opj_jpx_start_compress(opj_jpx_t *jpx,
         return OPJ_FALSE;
     }
 
+    /** Flush header to output stream */
     if (! opj_stream_flush(stream, p_manager)) {
         return OPJ_FALSE;
     }
 
-    puts("Called opj_jpx_start_compress. execced");
     return OPJ_TRUE;
 }
 
@@ -121,10 +173,10 @@ OPJ_BOOL opj_jpx_setup_encoder(opj_jpx_t *jpx,
                                opj_image_t *image,
                                opj_event_mgr_t * p_manager)
 {
-    puts("Called opj_jpx_setup_encoder");
     assert(jpx != 00);
     assert(parameters != 00);
     assert(p_manager != 00);
+
     // Need to set brand in ftyp box to "jpx "
     jpx->jp2->brand = JPX_JPX;
     // JPX compatibility list should contain "jpx ", "jp2 ", and "jpxb"
@@ -149,9 +201,14 @@ OPJ_BOOL opj_jpx_encoder_set_extra_options(
     const char* const* p_options,
     opj_event_mgr_t * p_manager)
 {
-    puts("Called opj_jpx_encoder_set_extra_options");
+    OPJ_UINT32 i = 0;
+    assert(p_jpx != 00);
+    assert(p_options != 00);
+    assert(p_manager != 00);
     p_jpx->files = p_options;
-    puts("Set the list of files to be processed");
+    // Count the number of files given in the null terminated list.
+    while (p_jpx->files[i] != NULL) { i++; }
+    p_jpx->file_count = i;
     return OPJ_TRUE;
 }
 
@@ -306,5 +363,119 @@ OPJ_BOOL opj_jpx_write_tile(opj_jpx_t *p_jpx,
     assert(p_manager != 00);
     opj_event_msg(p_manager, EVT_WARNING,
                       "JPX encoder does not support write tile. Ignoring write tile request.\n");
+    return OPJ_TRUE;
+}
+
+static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
+                                   opj_jpx_t *jpx,
+                                   opj_stream_private_t *cio,
+                                   opj_event_mgr_t * p_manager)
+{
+    /** A fragment table consists of a fragment table box + a fragment list box. */
+    /** A 1-length fragment list box is 24 bytes */
+    /** So the whole table box should be 32 bytes */
+    OPJ_BYTE ftbl[32];
+    OPJ_BYTE* ftbl_ptr = &ftbl[0];
+    // FIXME: the specification states offset can be a uint64.
+    //        opj_write_bytes only writes uint32s.
+    OPJ_UINT32 codestream_offset;
+    OPJ_UINT32 codestream_length;
+    OPJ_UINT16 file_index = jpx->current_file_index;
+    OPJ_BOOL bSuccess = opj_jpx_find_codestream(jp2file, p_manager, &codestream_offset, &codestream_length);
+    if (!bSuccess) {
+        opj_event_msg(p_manager, EVT_ERROR, "Failed to find codestream information in %s\n", jp2file);
+        return OPJ_FALSE;
+    }
+
+    /** Write box size */
+    opj_write_bytes(ftbl_ptr, 32, 4);
+    ftbl_ptr += 4;
+    /** Write box type */
+    opj_write_bytes(ftbl_ptr, JPX_FTBL, 4);
+    ftbl_ptr += 4;
+    /** Write out fragment list */
+    /** Fragment list box size */
+    opj_write_bytes(ftbl_ptr, 24, 4);
+    ftbl_ptr += 4;
+    /** Fragment list box type */
+    opj_write_bytes(ftbl_ptr, JPX_FLST, 4);
+    ftbl_ptr += 4;
+    /** Fragment list contents */
+    // Number of fragments
+    opj_write_bytes(ftbl_ptr, 1, 2);
+    ftbl_ptr += 2;
+    /* Codestream offset */
+    opj_write_bytes(ftbl_ptr, 0, 4);
+    ftbl_ptr += 4;
+    opj_write_bytes(ftbl_ptr, codestream_offset, 4);
+    ftbl_ptr += 4;
+    /* Codestream length */
+    opj_write_bytes(ftbl_ptr, codestream_length, 4);
+    ftbl_ptr += 4;
+    /* Data Reference index */
+    opj_write_bytes(ftbl_ptr, file_index, 2);
+
+    if (opj_stream_write_data(cio, ftbl, 32, p_manager) != 32) {
+        return OPJ_FALSE;
+    }
+
+    return OPJ_TRUE;
+}
+
+static OPJ_BOOL opj_jpx_find_codestream(const char* jp2file,
+                                        opj_event_mgr_t * p_manager,
+                                        OPJ_UINT32* codestream_offset,
+                                        OPJ_UINT32* codestream_length)
+{
+    OPJ_BYTE l_data_header [8];
+    OPJ_UINT32 box_length = UINT32_MAX;
+    OPJ_UINT32 box_type = 0;
+    OPJ_OFF_T stream_position = 0;
+    assert(jp2file != 00);
+    assert(codestream_offset != 00);
+    assert(codestream_length != 00);
+
+    // Create read stream for the jp2 file.
+    opj_stream_t* stream = opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
+    if (!stream) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to open %s for reading\n", jp2file);
+        return OPJ_FALSE;
+    }
+
+    /* Iterate over the boxes in the jp2 file until we find the codestream */
+    /* Search for box_length 0, this indicates the codestream location. */
+    while (box_length != 0 && box_type != JP2_JP2C) {
+        // Seek to the next box in the stream.
+        if (!opj_stream_seek(stream, stream_position, p_manager)) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                        "Failed to seek while reading %s\n", jp2file);
+            opj_stream_destroy(stream);
+            return OPJ_FALSE;
+        }
+
+        // Read the box header.
+        if (opj_stream_read_data(stream, l_data_header, 8, p_manager) != 8) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                        "Failed to read box information from %s\n", jp2file);
+            opj_stream_destroy(stream);
+            return OPJ_FALSE;
+        }
+
+        // Parse the box header
+        opj_read_bytes(l_data_header, &box_length, 4);
+        opj_read_bytes(l_data_header + 4, &box_type, 4);
+
+        // Update the stream location
+        stream_position += box_length;
+    }
+
+    // If the loop exists, then the stream should be at the codestream position.
+
+    *codestream_offset = opj_stream_tell(stream);
+    // Assume the codestream runs until the end of the file.
+    *codestream_length = opj_stream_get_number_byte_left(stream);
+
+    opj_stream_destroy(stream);
     return OPJ_TRUE;
 }
