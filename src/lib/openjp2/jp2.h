@@ -10,6 +10,7 @@
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2024, Daniel Garcia Briseno, ADNET Systems Inc, NASA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -512,6 +513,47 @@ opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2);
  */
 opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_t* p_jp2);
 
+/**
+ * Writes a jpeg2000 file signature box.
+ *
+ * @param cio the stream to write data to.
+ * @param   jp2         the jpeg2000 file codec.
+ * @param p_manager the user event manager.
+ *
+ * @return true if writing was successful.
+ */
+OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
+                                 opj_stream_private_t *cio,
+                                 opj_event_mgr_t * p_manager);
+
+/**
+ * Writes a FTYP box - File type box
+ *
+ * @param   cio         the stream to write data to.
+ * @param   jp2         the jpeg2000 file codec.
+ * @param   p_manager   the user event manager.
+ *
+ * @return  true if writing was successful.
+ */
+OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
+                                   opj_stream_private_t *cio,
+                                   opj_event_mgr_t * p_manager);
+
+
+/**
+ * Executes the given procedures on the given codec.
+ *
+ * @param   p_procedure_list    the list of procedures to execute
+ * @param   jp2                 the jpeg2000 file codec to execute the procedures on.
+ * @param   stream                  the stream to execute the procedures on.
+ * @param   p_manager           the user manager.
+ *
+ * @return  true                if all the procedures were successfully executed.
+ */
+OPJ_BOOL opj_jp2_exec(opj_jp2_t * jp2,
+                             opj_procedure_list_t * p_procedure_list,
+                             opj_stream_private_t *stream,
+                             opj_event_mgr_t * p_manager);
 
 /*@}*/
 

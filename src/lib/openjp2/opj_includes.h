@@ -7,6 +7,7 @@
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2024, Daniel Garcia Briseno, ADNET Systems Inc, NASA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -234,6 +235,7 @@ typedef unsigned int OPJ_BITFIELD;
 #include "invert.h"
 #include "j2k.h"
 #include "jp2.h"
+#include "jpx.h"
 
 #include "mqc.h"
 #include "bio.h"
