@@ -32,6 +32,15 @@
 #include "opj_includes.h"
 
 /**
+ * Container for a box.
+ */
+typedef struct box {
+    OPJ_UINT32 length;
+    OPJ_UINT32 type;
+    OPJ_BYTE* contents;
+} box_t;
+
+/**
  * Writes out a fragment table.
  *
  * @param   jp2file     Path to jp2 file being embedded
@@ -45,6 +54,44 @@ static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
                                    opj_jpx_t *jpx,
                                    opj_stream_private_t *cio,
                                    opj_event_mgr_t * p_manager);
+
+/**
+ * Writes out an association table.
+ *
+ * @param   jp2file     Path to jp2 file being embedded
+ * @param   cio         the stream to write data to.
+ * @param   jpx         the jpx file codec.
+ * @param   p_manager   user event manager.
+ *
+ * @return true if writing was successful.
+*/
+static OPJ_BOOL opj_jpx_write_asoc(const char* jp2file,
+                                   opj_jpx_t *jpx,
+                                   opj_stream_private_t *cio,
+                                   opj_event_mgr_t * p_manager);
+
+/**
+ * Reads a box from the given stream.
+ * Assumes that the stream is currently pointing to a box header.
+ * The resulting box must be destroyed with opj_jpx_destroy_box.
+ * @param[in] l_stream stream to read from
+ * @param[in] p_manager user event manager
+ * @param[out] box Box struct to store box data.
+ */
+static OPJ_BOOL opj_jpx_read_box(opj_stream_private_t *l_stream,
+                                 opj_event_mgr_t * p_manager,
+                                 box_t* box);
+
+/** Frees memory allocated for the given box */
+static void opj_jpx_destroy_box(box_t box);
+
+/**
+ * Writes data via a cursor.
+ * Each call, cursor will be moved forward by the number of bytes written.
+ */
+static void opj_jpx_cursor_write(OPJ_BYTE** p_cursor,
+                                 OPJ_UINT32 p_value,
+                                 OPJ_UINT32 p_nb_bytes);
 
 /**
  * Searches a given jp2 file for codestream information.
@@ -83,26 +130,34 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
         // Write out the fragment table for this jp2 file.
         if (!opj_jpx_write_ftbl(jp2_fname, jpx, stream, p_manager)) {
             opj_event_msg(p_manager, EVT_ERROR,
-                      "Failed to write fragment tables\n");
+                      "Failed to write fragment table boxes\n");
             return OPJ_FALSE;
         }
     }
-    puts("Added fragment tables");
 
-    // /**
-    //  * Iterate over each file again, this time inserting any
-    //  * associations (xml boxes)
-    //  */
-    // for (index = 0; index < jpx->file_count; index += 1) {
-    //     const char* jp2_fname = jpx->files[index];
-    //     opj_jpx_write_ftbl(jp2_fname, jpx, stream, p_manager);
-    // }
+    /**
+     * Iterate over each file again, this time inserting any
+     * associations (xml boxes)
+     */
+    for (index = 0; index < jpx->file_count; index += 1) {
+        const char* jp2_fname = jpx->files[index];
+        // Current file index is 1-based.
+        jpx->current_file_index = index + 1;
+
+        // Write out associations for this jp2 file.
+        if (!opj_jpx_write_asoc(jp2_fname, jpx, stream, p_manager)) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to write association boxes\n");
+            return OPJ_FALSE;
+        }
+    }
 
     /** Flush data to output stream */
     if (! opj_stream_flush(stream, p_manager)) {
         return OPJ_FALSE;
     }
 
+    puts("Encode successful!");
     return OPJ_TRUE;
 }
 
@@ -288,7 +343,7 @@ OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
     // Above adds up to 13 bytes. Add 8 bytes for box length and box type.
     OPJ_UINT32 box_length = 21;
     OPJ_BYTE rreq_data[box_length];
-    OPJ_BYTE * rreq_data_ptr = &rreq_data[0];
+    OPJ_BYTE * cursor = &rreq_data[0];
     OPJ_UINT32 i;
 
     /* preconditions */
@@ -299,41 +354,32 @@ OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
     OPJ_UNUSED(jp2);
 
     /* write box length */
-    opj_write_bytes(rreq_data_ptr, box_length, 4);
-    rreq_data_ptr += 4;
+    opj_jpx_cursor_write(&cursor, box_length, 4);
 
     /* writes box type */
-    opj_write_bytes(rreq_data_ptr, JPX_RREQ, 4);
-    rreq_data_ptr += 4;
+    opj_jpx_cursor_write(&cursor, JPX_RREQ, 4);
 
     /* write reader requirements */
     /* mask length */
-    opj_write_bytes(rreq_data_ptr, mask_length, 1);
-    rreq_data_ptr += 1;
+    opj_jpx_cursor_write(&cursor, mask_length, 1);
 
     /* fully understand aspects mask */
-    opj_write_bytes(rreq_data_ptr, fully_understand, 1);
-    rreq_data_ptr += 1;
+    opj_jpx_cursor_write(&cursor, fully_understand, 1);
 
     /* display contents mask */
-    opj_write_bytes(rreq_data_ptr, display_mask, 1);
-    rreq_data_ptr += 1;
+    opj_jpx_cursor_write(&cursor, display_mask, 1);
 
     /* number of flags */
-    opj_write_bytes(rreq_data_ptr, num_flags, 2);
-    rreq_data_ptr += 2;
+    opj_jpx_cursor_write(&cursor, num_flags, 2);
 
     /* Write out each flag followed by its mask */
     for (i = 0; i < num_flags; i++) {
-        opj_write_bytes(rreq_data_ptr, flags[i], 2);
-        rreq_data_ptr += 2;
-        opj_write_bytes(rreq_data_ptr, flag_masks[i], 1);
-        rreq_data_ptr += 1;
+        opj_jpx_cursor_write(&cursor, flags[i], 2);
+        opj_jpx_cursor_write(&cursor, flag_masks[i], 1);
     }
 
     /* Write out vendor features */
-    opj_write_bytes(rreq_data_ptr, num_vendor_features, 2);
-    rreq_data_ptr += 2;
+    opj_jpx_cursor_write(&cursor, num_vendor_features, 2);
 
     if (opj_stream_write_data(cio, rreq_data, box_length, p_manager) != box_length) {
         return OPJ_FALSE;
@@ -375,7 +421,7 @@ static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
     /** A 1-length fragment list box is 24 bytes */
     /** So the whole table box should be 32 bytes */
     OPJ_BYTE ftbl[32];
-    OPJ_BYTE* ftbl_ptr = &ftbl[0];
+    OPJ_BYTE* cursor = &ftbl[0];
     // FIXME: the specification states offset can be a uint64.
     //        opj_write_bytes only writes uint32s.
     OPJ_UINT32 codestream_offset;
@@ -388,32 +434,24 @@ static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
     }
 
     /** Write box size */
-    opj_write_bytes(ftbl_ptr, 32, 4);
-    ftbl_ptr += 4;
+    opj_jpx_cursor_write(&cursor, 32, 4);
     /** Write box type */
-    opj_write_bytes(ftbl_ptr, JPX_FTBL, 4);
-    ftbl_ptr += 4;
+    opj_jpx_cursor_write(&cursor, JPX_FTBL, 4);
     /** Write out fragment list */
     /** Fragment list box size */
-    opj_write_bytes(ftbl_ptr, 24, 4);
-    ftbl_ptr += 4;
+    opj_jpx_cursor_write(&cursor, 24, 4);
     /** Fragment list box type */
-    opj_write_bytes(ftbl_ptr, JPX_FLST, 4);
-    ftbl_ptr += 4;
+    opj_jpx_cursor_write(&cursor, JPX_FLST, 4);
     /** Fragment list contents */
     // Number of fragments
-    opj_write_bytes(ftbl_ptr, 1, 2);
-    ftbl_ptr += 2;
+    opj_jpx_cursor_write(&cursor, 1, 2);
     /* Codestream offset */
-    opj_write_bytes(ftbl_ptr, 0, 4);
-    ftbl_ptr += 4;
-    opj_write_bytes(ftbl_ptr, codestream_offset, 4);
-    ftbl_ptr += 4;
+    opj_jpx_cursor_write(&cursor, 0, 4);
+    opj_jpx_cursor_write(&cursor, codestream_offset, 4);
     /* Codestream length */
-    opj_write_bytes(ftbl_ptr, codestream_length, 4);
-    ftbl_ptr += 4;
+    opj_jpx_cursor_write(&cursor, codestream_length, 4);
     /* Data Reference index */
-    opj_write_bytes(ftbl_ptr, file_index, 2);
+    opj_jpx_cursor_write(&cursor, file_index, 2);
 
     if (opj_stream_write_data(cio, ftbl, 32, p_manager) != 32) {
         return OPJ_FALSE;
@@ -422,60 +460,248 @@ static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
     return OPJ_TRUE;
 }
 
+/**
+ * Does a forward search for the given box type and
+ * sets the stream position to the header of that box.
+ * On success, the stream will be pointing to the box length.
+ *
+ * If the box is not found, then the stream position is
+ * undefined. If this function returns false, you should use
+ * opj_stream_seek to place the stream position back to a known location.
+ *
+ * @param p_stream The stream to read
+ * @param p_manager user event manager
+ * @param box_type The box type to search for within the stream
+ * @returns OPJ_TRUE if the box is found.
+ */
+static OPJ_BOOL opj_jpx_find_box(opj_stream_t* p_stream,
+                                 opj_event_mgr_t * p_manager,
+                                 OPJ_UINT32 box_type)
+{
+    OPJ_BYTE l_data_header [8];
+    OPJ_OFF_T stream_position = 0;
+    OPJ_UINT32 lbox = 0;
+    OPJ_UINT32 tbox = 0;
+    opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+
+
+    /* Iterate over the boxes in the jp2 file until we find the desired box */
+    while (tbox != JP2_JP2C) {
+        // Seek to the next box in the stream.
+        if (!opj_stream_seek(l_stream, stream_position, p_manager)) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                        "Failed to seek while reading stream\n");
+            return OPJ_FALSE;
+        }
+
+        // Read the box header.
+        if (opj_stream_read_data(l_stream, l_data_header, 8, p_manager) != 8) {
+            // This probably means we reached the end of the file without
+            // finding the desired box.
+            opj_event_msg(p_manager, EVT_WARNING,
+                        "Failed to read box information\n");
+            return OPJ_FALSE;
+        }
+
+        // Parse the box header
+        opj_read_bytes(l_data_header, &lbox, 4);
+        opj_read_bytes(l_data_header + 4, &tbox, 4);
+
+        // If we found the box
+        if (tbox == box_type) {
+            // Set the stream back to the top of the box
+            if (!opj_stream_seek(l_stream, stream_position, p_manager)) {
+                // If the seek fails, return false.
+                opj_event_msg(p_manager, EVT_ERROR,
+                            "Failed to seek while reading stream\n");
+                return OPJ_FALSE;
+            }
+
+            // And return success
+            return OPJ_TRUE;
+        }
+
+        // Update the stream location
+        stream_position += lbox;
+    }
+
+    // We reached the codestream without finding the box.
+    return OPJ_FALSE;
+}
+
 static OPJ_BOOL opj_jpx_find_codestream(const char* jp2file,
                                         opj_event_mgr_t * p_manager,
                                         OPJ_UINT32* codestream_offset,
                                         OPJ_UINT32* codestream_length)
 {
-    OPJ_BYTE l_data_header [8];
-    OPJ_UINT32 box_length = UINT32_MAX;
-    OPJ_UINT32 box_type = 0;
+    OPJ_BOOL b_found_codestream = OPJ_FALSE;
     OPJ_OFF_T stream_position = 0;
+
     assert(jp2file != 00);
     assert(codestream_offset != 00);
     assert(codestream_length != 00);
 
     // Create read stream for the jp2 file.
-    opj_stream_t* stream = opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
+    const opj_stream_private_t* stream = (const opj_stream_private_t*) opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
     if (!stream) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to open %s for reading\n", jp2file);
+        opj_stream_destroy((opj_stream_t*) stream);
+        return OPJ_FALSE;
+    }
+
+    // Find the codestream section of the file.
+    b_found_codestream = opj_jpx_find_box((opj_stream_t*) stream, p_manager, JP2_JP2C);
+    if (!b_found_codestream) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Couldn't find jp2 codestream in %s\n", jp2file);
+        opj_stream_destroy((opj_stream_t*) stream);
+        return OPJ_FALSE;
+    }
+
+    // If the codestream was found, then the stream is pointing to the codestream header.
+    // The actual codestream starts at stream position + 8 and the length of the codestream
+    // is the remaining bytes - 8.
+    stream_position = opj_stream_tell(stream);
+
+    *codestream_offset = stream_position + 8;
+    // Assume the codestream runs until the end of the file.
+    *codestream_length = opj_stream_get_number_byte_left(stream) - 8;
+
+    opj_stream_destroy((opj_stream_t*) stream);
+    return OPJ_TRUE;
+}
+
+static OPJ_BOOL opj_jpx_write_asoc(const char* jp2file,
+                                   opj_jpx_t *jpx,
+                                   opj_stream_private_t *cio,
+                                   opj_event_mgr_t * p_manager)
+{
+    // For the current implementation, only xml boxes are associated with the
+    // embedded jp2 files. If there's no xml box, then the association is
+    // skipped
+    OPJ_BOOL b_has_xml_box = OPJ_FALSE;
+
+    // Create read stream for the jp2 file.
+    opj_stream_t* p_stream = opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
+    opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+    if (!p_stream) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Failed to open %s for reading\n", jp2file);
         return OPJ_FALSE;
     }
 
-    /* Iterate over the boxes in the jp2 file until we find the codestream */
-    /* Search for box_length 0, this indicates the codestream location. */
-    while (box_length != 0 && box_type != JP2_JP2C) {
-        // Seek to the next box in the stream.
-        if (!opj_stream_seek(stream, stream_position, p_manager)) {
-            opj_event_msg(p_manager, EVT_ERROR,
-                        "Failed to seek while reading %s\n", jp2file);
-            opj_stream_destroy(stream);
-            return OPJ_FALSE;
+    b_has_xml_box = opj_jpx_find_box(p_stream, p_manager, JP2_XML);
+    // If there is an xml box, then embed it in an association table.
+    if (b_has_xml_box) {
+        // Read the xml box into memory
+        box_t xmlbox;
+        if (opj_jpx_read_box(l_stream, p_manager, &xmlbox)) {
+            // Association will contain the xmlbox (xmlbox.length), a number list box (16), and the asoc box header (8)
+            OPJ_UINT32 asoc_length = xmlbox.length + 16 + 8;
+            // Allocate memory for the asoc box
+            OPJ_BYTE* asoc = opj_malloc(asoc_length);
+            OPJ_BYTE* cursor = asoc;
+            OPJ_UINT32 associate_number;
+            OPJ_UINT64 i = 0;
+            if (asoc) {
+                /* Write asoc header */
+                opj_jpx_cursor_write(&cursor, asoc_length, 4);
+                /* Write asoc box type */
+                opj_jpx_cursor_write(&cursor, JPX_ASOC, 4);
+                /* Write number list box length */
+                opj_jpx_cursor_write(&cursor, 16, 4);
+                /* Write number list type */
+                opj_jpx_cursor_write(&cursor, JPX_NLST, 4);
+                /* Write codestream association */
+                associate_number = 0x01000000;
+                // current_file_index is 1-based, so need to subtract one since
+                // associate numbers are 0 based, not 1 based like others.
+                associate_number |= (jpx->current_file_index - 1);
+                opj_jpx_cursor_write(&cursor, associate_number, 4);
+                /* Write compositing layer association */
+                associate_number = 0x02000000;
+                associate_number |= (jpx->current_file_index - 1);
+                opj_jpx_cursor_write(&cursor, associate_number, 4);
+                /* Write xml box header */
+                opj_jpx_cursor_write(&cursor, xmlbox.length, 4);
+                opj_jpx_cursor_write(&cursor, JP2_XML, 4);
+                /* Write xml box contents */
+                /* FIXME: is there a better way to dump the buffer than 1 byte at a time?) */
+                for (i = 0; i < (xmlbox.length - 8); i++) {
+                    opj_jpx_cursor_write(&cursor, xmlbox.contents[i], 1);
+                }
+
+                /* Dump contents to stream */
+                if (opj_stream_write_data(cio, asoc, asoc_length, p_manager) != asoc_length) {
+                    opj_event_msg(p_manager, EVT_WARNING,
+                        "Failed to write association contents to stream. Stream may be corrupted.\n");
+                } else {
+                    puts("Association written successfully.");
+                }
+
+                opj_free(asoc);
+            } else {
+                opj_event_msg(p_manager, EVT_WARNING,
+                          "Failed to allocate memory for association box. Skipping.\n", jp2file);
+            }
+
+            opj_jpx_destroy_box(xmlbox);
+        } else {
+            opj_event_msg(p_manager, EVT_WARNING,
+                          "Failed to read xmlbox from %s. Skipping.\n", jp2file);
         }
-
-        // Read the box header.
-        if (opj_stream_read_data(stream, l_data_header, 8, p_manager) != 8) {
-            opj_event_msg(p_manager, EVT_ERROR,
-                        "Failed to read box information from %s\n", jp2file);
-            opj_stream_destroy(stream);
-            return OPJ_FALSE;
-        }
-
-        // Parse the box header
-        opj_read_bytes(l_data_header, &box_length, 4);
-        opj_read_bytes(l_data_header + 4, &box_type, 4);
-
-        // Update the stream location
-        stream_position += box_length;
     }
 
-    // If the loop exists, then the stream should be at the codestream position.
-
-    *codestream_offset = opj_stream_tell(stream);
-    // Assume the codestream runs until the end of the file.
-    *codestream_length = opj_stream_get_number_byte_left(stream);
-
-    opj_stream_destroy(stream);
+    opj_stream_destroy(p_stream);
     return OPJ_TRUE;
+}
+
+static OPJ_BOOL opj_jpx_read_box(opj_stream_private_t *l_stream,
+                                 opj_event_mgr_t * p_manager,
+                                 box_t* box)
+{
+    OPJ_BYTE box_header[8];
+
+    assert(l_stream != 00);
+    assert(p_manager != 00);
+
+    if (opj_stream_read_data(l_stream, box_header, 8, p_manager) != 8) {
+        opj_event_msg(p_manager, EVT_ERROR, "Failed to read box header\n");
+        return OPJ_FALSE;
+    }
+
+    opj_read_bytes(box_header, &box->length, 4);
+    opj_read_bytes(box_header + 4, &box->type, 4);
+
+    box->contents = opj_malloc(box->length);
+    if (!box->contents) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                     "Failed to allocate memory for the box\n");
+        return OPJ_FALSE;
+    }
+
+    if (opj_stream_read_data(l_stream, box->contents, box->length, p_manager) != box->length) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                     "Failed to read all the box contents into memory\n");
+        opj_free(box->contents);
+        return OPJ_FALSE;
+    }
+
+    return OPJ_TRUE;
+}
+
+static void opj_jpx_destroy_box(box_t box)
+{
+    if (box.contents) {
+        opj_free(box.contents);
+    }
+}
+
+static void opj_jpx_cursor_write(OPJ_BYTE** p_cursor,
+                                 OPJ_UINT32 p_value,
+                                 OPJ_UINT32 p_nb_bytes)
+{
+    opj_write_bytes(*p_cursor, p_value, p_nb_bytes);
+    *p_cursor += p_nb_bytes;
 }

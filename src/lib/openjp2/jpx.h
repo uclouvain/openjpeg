@@ -34,6 +34,9 @@
 #define JPX_RREQ 0x72726571 /**< Reader Requirements box */
 #define JPX_FTBL 0x6674626c /**< Fragment table box */
 #define JPX_FLST 0x666c7374 /**< Fragment list box */
+#define JPX_ASOC 0x61736f63 /**< Association box */
+#define JPX_ASOC 0x61736f63 /**< Association box */
+#define JPX_NLST 0x6e6c7374 /**< Number List box */
 
 
 /** ----------- Feature Flags ----------- **/

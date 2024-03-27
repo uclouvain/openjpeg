@@ -60,11 +60,11 @@
 #define     JP2_DTBL 0x6474626c    /**< Data Reference box */
 #define     JP2_BPCC 0x62706363    /**< Bits per component box */
 #define     JP2_JP2  0x6a703220    /**< File type fields */
+#define     JP2_XML  0x786d6c20    /**< XML box */
 
 /* For the future */
 /* #define JP2_RES 0x72657320 */  /**< Resolution box (super-box) */
 /* #define JP2_JP2I 0x6a703269 */  /**< Intellectual property box */
-/* #define JP2_XML  0x786d6c20 */  /**< XML box */
 /* #define JP2_UUID 0x75756994 */  /**< UUID box */
 /* #define JP2_UINF 0x75696e66 */  /**< UUID info box (super-box) */
 /* #define JP2_ULST 0x756c7374 */  /**< UUID list box */
