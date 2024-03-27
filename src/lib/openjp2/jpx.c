@@ -29,6 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <limits.h>
+#include <stdlib.h>
 #include "opj_includes.h"
 
 /**
@@ -69,6 +71,30 @@ static OPJ_BOOL opj_jpx_write_asoc(const char* jp2file,
                                    opj_jpx_t *jpx,
                                    opj_stream_private_t *cio,
                                    opj_event_mgr_t * p_manager);
+
+/**
+ * Writes out the data reference table.
+ *
+ * @param   jp2file     Path to jp2 file being embedded
+ * @param   cio         the stream to write data to.
+ * @param   jpx         the jpx file codec.
+ * @param   p_manager   user event manager.
+ *
+ * @return true if writing was successful.
+ */
+static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
+                                   opj_stream_private_t *cio,
+                                   opj_event_mgr_t * p_manager);
+
+/**
+ * Computes the size of the Data Reference box based on the jpx encoder parameters.
+ */
+static OPJ_UINT32 opj_jpx_compute_dtbl_size(opj_jpx_t *jpx);
+
+/**
+ * Computes the size of the url box to hold the given file path
+ */
+static OPJ_UINT32 opj_jpx_compute_urlbox_size(const char* filepath);
 
 /**
  * Reads a box from the given stream.
@@ -150,6 +176,15 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
                       "Failed to write association boxes\n");
             return OPJ_FALSE;
         }
+    }
+
+    /**
+     * Final step. Create the data reference table for the jp2 files.
+     */
+    if (!opj_jpx_write_dtbl(jpx, stream, p_manager)) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                    "Failed to write data reference table\n");
+        return OPJ_FALSE;
     }
 
     /** Flush data to output stream */
@@ -704,4 +739,108 @@ static void opj_jpx_cursor_write(OPJ_BYTE** p_cursor,
 {
     opj_write_bytes(*p_cursor, p_value, p_nb_bytes);
     *p_cursor += p_nb_bytes;
+}
+
+static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
+                                   opj_stream_private_t *cio,
+                                   opj_event_mgr_t * p_manager)
+{
+    OPJ_UINT64 i = 0;
+    OPJ_BYTE* dtbl = 00;
+    OPJ_BYTE* cursor = 00;
+    // Compute the size of the data table.
+    OPJ_UINT32 dtbl_size = opj_jpx_compute_dtbl_size(jpx);
+    if (dtbl_size == UINT32_MAX) {
+        opj_event_msg(p_manager, EVT_ERROR, "Failed to compute the data reference table size\n");
+        return OPJ_FALSE;
+    }
+
+    dtbl = opj_malloc(dtbl_size);
+    if (!dtbl) {
+        opj_event_msg(p_manager, EVT_ERROR, "Failed to allocate memory for the data reference table\n");
+        return OPJ_FALSE;
+    }
+
+    cursor = dtbl;
+    /* Write box header */
+    opj_jpx_cursor_write(&cursor, dtbl_size, 4);
+    opj_jpx_cursor_write(&cursor, JPX_DTBL, 4);
+    /* Write number of references */
+    opj_jpx_cursor_write(&cursor, jpx->file_count, 2);
+    /* Write data reference boxes */
+    for (i = 0; i < jpx->file_count; i++) {
+        /* Write box header */
+        const char* jp2file = jpx->files[i];
+        char path_buf[PATH_MAX];
+        if (realpath(jp2file, path_buf) == NULL) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Failed to get absolute path of file %s\n", jp2file);
+            opj_free(dtbl);
+            return OPJ_FALSE;
+        }
+
+        OPJ_UINT32 box_size = opj_jpx_compute_urlbox_size(jpx->files[i]);
+        opj_jpx_cursor_write(&cursor, box_size, 4);
+        opj_jpx_cursor_write(&cursor, JPX_URL, 4);
+        /** Version and Flags are defined to be 0. */
+        opj_jpx_cursor_write(&cursor, 0, 4);
+        /** Write the local file path url */
+        strcpy((char*) cursor, "file://");
+        cursor += strlen("file://");
+        strcpy((char*) cursor, path_buf);
+        cursor += strlen(path_buf);
+        /* write null terminator */
+        opj_jpx_cursor_write(&cursor, 0, 1);
+    }
+
+    if (opj_stream_write_data(cio, dtbl, dtbl_size, p_manager) != dtbl_size) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                          "Failed to write data reference table to output stream\n");
+        opj_free(dtbl);
+        return OPJ_FALSE;
+    }
+
+    opj_free(dtbl);
+    return OPJ_TRUE;
+}
+
+static OPJ_UINT32 opj_jpx_compute_dtbl_size(opj_jpx_t *jpx)
+{
+    OPJ_UINT32 counter = 0;
+    // The data reference table is made up of a data reference box
+    // followed by a number of data entry url boxes.
+    // Each data entry url box is the size of a box header + 4 bytes of 0
+    // + the length of a null terminated utf8 string.
+    // To compute the size of the dtbl, we have to compute the length of
+    // all the strings that will be embedded.
+    OPJ_UINT32 i = 0;
+    for (i = 0; i < jpx->file_count; i++) {
+        const char* jp2file = jpx->files[i];
+        OPJ_UINT32 urlbox_size = opj_jpx_compute_urlbox_size(jp2file);
+        if (urlbox_size == UINT32_MAX) {
+            return UINT32_MAX;
+        }
+        counter += urlbox_size;
+    }
+
+    /* Add the data reference box size */
+    // header size (8) + num_reference (2)
+    counter += 8 + 2;
+    return counter;
+}
+
+static OPJ_UINT32 opj_jpx_compute_urlbox_size(const char* filepath)
+{
+    OPJ_UINT32 counter = 0;
+    char path_buf[PATH_MAX];
+    // FIXME: Need realpath equivalent for windows.
+    if (realpath(filepath, path_buf) == NULL) {
+        return UINT32_MAX;
+    }
+    /* Count the size of a data url box */
+    // header size (8) + version size (1) + flag size (3)
+    counter += 8 + 1 + 3;
+    // + variable string size
+    counter += strlen(path_buf) + strlen("file://") + 1;
+    return counter;
 }

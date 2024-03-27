@@ -37,6 +37,8 @@
 #define JPX_ASOC 0x61736f63 /**< Association box */
 #define JPX_ASOC 0x61736f63 /**< Association box */
 #define JPX_NLST 0x6e6c7374 /**< Number List box */
+#define JPX_URL  0x75726c20 /**< URL Box */
+#define JPX_DTBL 0x6474626c /**< Data Reference Box */
 
 
 /** ----------- Feature Flags ----------- **/
