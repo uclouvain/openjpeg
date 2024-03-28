@@ -293,26 +293,6 @@ OPJ_BOOL opj_jpx_setup_encoder(opj_jpx_t *jpx,
     assert(jpx != 00);
     assert(parameters != 00);
     assert(p_manager != 00);
-
-    OPJ_UNUSED(image);
-
-    // Need to set brand in ftyp box to "jpx "
-    jpx->jp2->brand = JPX_JPX;
-    // JPX compatibility list should contain "jpx ", "jp2 ", and "jpxb"
-    jpx->jp2->numcl = 3;
-    // Allocate memory for the compatibility list.
-    jpx->jp2->cl = (OPJ_UINT32*) opj_malloc(jpx->jp2->numcl * sizeof(OPJ_UINT32));
-    // Return failure if we couldn't allocate memory for the cl
-    if (!jpx->jp2->cl) {
-        opj_event_msg(p_manager, EVT_ERROR,
-                      "Not enough memory when setting up the JPX encoder\n");
-        return OPJ_FALSE;
-    }
-    // Assign the cl values
-    jpx->jp2->cl[0] = JPX_JPX;
-    jpx->jp2->cl[1] = JP2_JP2;
-    jpx->jp2->cl[2] = JPX_JPXB;
-
     return OPJ_TRUE;
 }
 
@@ -927,6 +907,27 @@ static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx, opj_event_mgr_t* p_mana
                       "Failed to read header from %s\n", jpx->files[0]);
         return OPJ_FALSE;
     }
+
+    /* Replace jp2 header with jpx information */
+    /* Need to set brand in ftyp box to "jpx " */
+    jpx->jp2->brand = JPX_JPX;
+    /* JPX compatibility list should contain "jpx ", "jp2 ", and "jpxb" */
+    jpx->jp2->numcl = 3;
+    /* Allocate memory for the compatibility list. */
+    if (jpx->jp2->cl) {
+        opj_free(jpx->jp2->cl);
+    }
+    jpx->jp2->cl = (OPJ_UINT32*) opj_malloc(jpx->jp2->numcl * sizeof(OPJ_UINT32));
+    /* Return failure if we couldn't allocate memory for the cl */
+    if (!jpx->jp2->cl) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Not enough memory when setting up the JPX encoder\n");
+        return OPJ_FALSE;
+    }
+    // Assign the cl values
+    jpx->jp2->cl[0] = JPX_JPX;
+    jpx->jp2->cl[1] = JP2_JP2;
+    jpx->jp2->cl[2] = JPX_JPXB;
 
     opj_image_destroy(tmp_img);
     return OPJ_TRUE;
