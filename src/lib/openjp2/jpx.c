@@ -32,6 +32,9 @@
 #include <limits.h>
 #include <stdlib.h>
 #include "opj_includes.h"
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 /**
  * Container for a box.
@@ -56,6 +59,13 @@ static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
                                    opj_jpx_t *jpx,
                                    opj_stream_private_t *cio,
                                    opj_event_mgr_t * p_manager);
+
+/**
+ * Returns the absolute path for the given file
+ * The buffer returned must be free'd with opj_free
+ * @returns NULL on failure, else the absolute path
+ */
+static char* opj_jpx_get_absolute_path(const char* relative_path);
 
 /**
  * Writes out an association table.
@@ -92,7 +102,8 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
 static OPJ_UINT32 opj_jpx_compute_dtbl_size(opj_jpx_t *jpx);
 
 /**
- * Computes the size of the url box to hold the given file path
+ * Computes the size of the url box to hold the given file path.
+ * @returns UINT32_MAX on failure, else the url box size
  */
 static OPJ_UINT32 opj_jpx_compute_urlbox_size(const char* filepath);
 
@@ -384,12 +395,12 @@ OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
     OPJ_UINT16 num_flags = 2;
     OPJ_UINT16 flags[2] = {RREQ_FLAG_MULTILAYERED,
                            RREQ_FLAG_REFERENCE_LOCAL_FILES};
-    OPJ_UINT8 flag_masks[2] = {0b00000001,  // mask for multilayered
-                               0b00000010}; // mask for local files
+    OPJ_UINT8 flag_masks[2] = {0b00000001,  /* mask for multilayered */
+                               0b00000010}; /* mask for local files */
     OPJ_UINT16 num_vendor_features = 0;
-    // Above adds up to 13 bytes. Add 8 bytes for box length and box type.
+    /* Above adds up to 13 bytes.Add 8 bytes for box length and box type. */
     OPJ_UINT32 box_length = 21;
-    OPJ_BYTE rreq_data[box_length];
+    OPJ_BYTE rreq_data[21];
     OPJ_BYTE * cursor = &rreq_data[0];
     OPJ_UINT32 i;
 
@@ -428,11 +439,15 @@ OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
     /* Write out vendor features */
     opj_jpx_cursor_write(&cursor, num_vendor_features, 2);
 
+    /* Assert there was no overflow. */
+    puts("Checking rreq table");
+    assert((cursor - rreq_data) == 21);
+    puts("rreq table is good");
+
     if (opj_stream_write_data(cio, rreq_data, box_length, p_manager) != box_length) {
         return OPJ_FALSE;
     }
 
-    puts("All good writing header");
     return OPJ_TRUE;
 }
 
@@ -693,8 +708,6 @@ static OPJ_BOOL opj_jpx_write_asoc(const char* jp2file,
                 if (opj_stream_write_data(cio, asoc, asoc_length, p_manager) != asoc_length) {
                     opj_event_msg(p_manager, EVT_WARNING,
                         "Failed to write association contents to stream. Stream may be corrupted.\n");
-                } else {
-                    puts("Association written successfully.");
                 }
 
                 opj_free(asoc);
@@ -793,8 +806,8 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
     for (i = 0; i < jpx->file_count; i++) {
         /* Write box header */
         const char* jp2file = jpx->files[i];
-        char path_buf[PATH_MAX];
-        if (realpath(jp2file, path_buf) == NULL) {
+        char* absolute_path = opj_jpx_get_absolute_path(jp2file);
+        if (absolute_path == NULL) {
             opj_event_msg(p_manager, EVT_ERROR,
                           "Failed to get absolute path of file %s\n", jp2file);
             opj_free(dtbl);
@@ -810,17 +823,21 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
             /** Write the local file path url */
             strcpy((char*) cursor, "file://");
             cursor += strlen("file://");
-            strcpy((char*) cursor, path_buf);
-            cursor += strlen(path_buf);
+            strcpy((char*) cursor, absolute_path);
+            cursor += strlen(absolute_path);
             /* write null terminator */
             opj_jpx_cursor_write(&cursor, 0, 1);
         }
+
+        opj_free(absolute_path);
     }
 
     /* Assert that there was no heap buffer overflow on dtbl memory. */
     /* The cursor should be exactly the computed size away from the  */
     /* start of the reference table. */
+    puts("Writing data reference table");
     assert((cursor - dtbl) == dtbl_size);
+    puts("Data reference table is good");
 
     if (opj_stream_write_data(cio, dtbl, dtbl_size, p_manager) != dtbl_size) {
         opj_event_msg(p_manager, EVT_ERROR,
@@ -860,18 +877,60 @@ static OPJ_UINT32 opj_jpx_compute_dtbl_size(opj_jpx_t *jpx)
 
 static OPJ_UINT32 opj_jpx_compute_urlbox_size(const char* filepath)
 {
-    size_t counter = 0;
-    char path_buf[PATH_MAX];
-    // FIXME: Need realpath equivalent for windows.
-    if (realpath(filepath, path_buf) == NULL) {
+    OPJ_SIZE_T counter = 0;
+    char* absolute_path = opj_jpx_get_absolute_path(filepath);
+    if (!absolute_path) {
         return UINT32_MAX;
     }
+
     /* Count the size of a data url box */
     /* header size (8) + version size (1) + flag size (3) */
     counter += 8 + 1 + 3;
     /* + variable string size */
-    counter += strlen(path_buf) + strlen("file://") + 1;
+    counter += strlen(absolute_path) + strlen("file://") + 1;
 
     assert(counter <= UINT32_MAX);
+    opj_free(absolute_path);
     return (OPJ_UINT32)counter;
 }
+
+#ifdef WIN32
+static char* opj_jpx_get_absolute_path(const char* relative_path)
+{
+    /* Maximum path length for windows */
+    DWORD buffer_size = 32767;
+    DWORD result = 0;
+    char* outbuf = opj_calloc(buffer_size, 1);
+    if (!outbuf) {
+        return NULL;
+    }
+
+    result = GetFullPathName(relative_path, buffer_size, outbuf, NULL);
+    /* On failure, GetFullPathName will return either 0 */
+    /* Or if the buffer is too small, then it returns the required buffer size. */
+    if ((result == 0) || (result > buffer_size)) {
+        opj_free(outbuf);
+        return NULL;
+    }
+
+    return outbuf;
+}
+#else
+static char* opj_jpx_get_absolute_path(const char* relative_path)
+{
+    char* outbuf = NULL;
+    char path_buf[PATH_MAX];
+    OPJ_SIZE_T path_length;
+    if (realpath(relative_path, path_buf) == NULL) {
+        return NULL;
+    }
+
+    outbuf = opj_malloc(strlen(path_buf) + 1);
+    if (!outbuf) {
+        return NULL;
+    }
+
+    strcpy(outbuf, path_buf);
+    return outbuf;
+}
+#endif
