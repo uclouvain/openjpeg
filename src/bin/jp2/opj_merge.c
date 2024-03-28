@@ -17,13 +17,13 @@ void merge_help_display(void)
 {
     fprintf(stdout,
             "\nThis is the opj_merge utility from the OpenJPEG project.\n"
-            "It provides limited support for creating a jpx file with"
+            "It provides limited support for creating a jpx file with\n"
             "references to multiple local jp2 files.\n"
             "It has been compiled against openjp2 library v%s.\n\n", opj_version());
     fprintf(stdout,
-            "At this time, this utility can only insert references into jpx files\n"
-            "it does not include all jp2 codestreams. All jp2 files must being\n"
-            "merged must be of the same resolution and color format.\n\n");
+            "At this time, this utility can only insert references into jpx files.\n"
+            "It does not include all jp2 codestreams. All jp2 files being\n"
+            "merged must have the same resolution and color format.\n\n");
     fprintf(stdout, "Parameters:\n");
     fprintf(stdout, "-----------\n");
     fprintf(stdout, "Required Parameters (except with -h):\n");
