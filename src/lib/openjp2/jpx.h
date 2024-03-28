@@ -56,7 +56,7 @@ typedef struct opj_jpx {
     /** list of execution procedures */
     struct opj_procedure_list * m_procedure_list;
     /** The current file being processed */
-    OPJ_UINT32 current_file_index;
+    OPJ_UINT16 current_file_index;
 } opj_jpx_t;
 
 /**

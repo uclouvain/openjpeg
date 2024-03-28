@@ -145,14 +145,18 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
     assert(stream != 00);
     assert(p_manager != 00);
 
-    /**
+    /*
      * Iterate over each jp2 file that we're linking to, and add a fragment
      * table box for each one.
      */
+    /* The jpx spec only allows a u16 for the number of references. */
+    /* We should never have more than that. */
+    assert(jpx->file_count < UINT16_MAX);
     for (index = 0; index < jpx->file_count; index += 1) {
         const char* jp2_fname = jpx->files[index];
+
         // Current file index is 1-based.
-        jpx->current_file_index = index + 1;
+        jpx->current_file_index = ((OPJ_UINT16)index) + 1;
         // Write out the fragment table for this jp2 file.
         if (!opj_jpx_write_ftbl(jp2_fname, jpx, stream, p_manager)) {
             opj_event_msg(p_manager, EVT_ERROR,
@@ -168,7 +172,7 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
     for (index = 0; index < jpx->file_count; index += 1) {
         const char* jp2_fname = jpx->files[index];
         // Current file index is 1-based.
-        jpx->current_file_index = index + 1;
+        jpx->current_file_index = (OPJ_UINT16)index + 1;
 
         // Write out associations for this jp2 file.
         if (!opj_jpx_write_asoc(jp2_fname, jpx, stream, p_manager)) {
@@ -201,7 +205,9 @@ OPJ_BOOL opj_jpx_end_compress(opj_jpx_t *jpx,
                               opj_event_mgr_t * p_manager
                              )
 {
-    puts("Called opj_jpx_end_compress");
+    OPJ_UNUSED(jpx);
+    OPJ_UNUSED(cio);
+    OPJ_UNUSED(p_manager);
     return OPJ_TRUE;
 }
 
@@ -241,6 +247,8 @@ OPJ_BOOL opj_jpx_start_compress(opj_jpx_t *jpx,
     assert(stream != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(p_image);
+
     if (! opj_jpx_setup_header_writing(jpx, p_manager)) {
         return OPJ_FALSE;
     }
@@ -267,6 +275,8 @@ OPJ_BOOL opj_jpx_setup_encoder(opj_jpx_t *jpx,
     assert(parameters != 00);
     assert(p_manager != 00);
 
+    OPJ_UNUSED(image);
+
     // Need to set brand in ftyp box to "jpx "
     jpx->jp2->brand = JPX_JPX;
     // JPX compatibility list should contain "jpx ", "jp2 ", and "jpxb"
@@ -292,6 +302,7 @@ OPJ_BOOL opj_jpx_encoder_set_extra_options(
     opj_event_mgr_t * p_manager)
 {
     OPJ_UINT32 i = 0;
+    OPJ_UNUSED(p_manager);
     assert(p_jpx != 00);
     assert(p_options != 00);
     assert(p_manager != 00);
@@ -304,7 +315,8 @@ OPJ_BOOL opj_jpx_encoder_set_extra_options(
 
 OPJ_BOOL opj_jpx_set_threads(opj_jpx_t *jpx, OPJ_UINT32 num_threads)
 {
-    puts("Called opj_jpx_set_threads");
+    OPJ_UNUSED(jpx);
+    OPJ_UNUSED(num_threads);
     return OPJ_TRUE;
 }
 
@@ -442,6 +454,11 @@ OPJ_BOOL opj_jpx_write_tile(opj_jpx_t *p_jpx,
                             opj_event_mgr_t * p_manager)
 {
     assert(p_manager != 00);
+    OPJ_UNUSED(p_jpx);
+    OPJ_UNUSED(p_tile_index);
+    OPJ_UNUSED(p_data);
+    OPJ_UNUSED(p_data_size);
+    OPJ_UNUSED(p_stream);
     opj_event_msg(p_manager, EVT_WARNING,
                       "JPX encoder does not support write tile. Ignoring write tile request.\n");
     return OPJ_TRUE;
@@ -571,13 +588,15 @@ static OPJ_BOOL opj_jpx_find_codestream(const char* jp2file,
 {
     OPJ_BOOL b_found_codestream = OPJ_FALSE;
     OPJ_OFF_T stream_position = 0;
+    OPJ_OFF_T bytes_remaining = 0;
+    opj_stream_private_t* stream;
 
     assert(jp2file != 00);
     assert(codestream_offset != 00);
     assert(codestream_length != 00);
 
-    // Create read stream for the jp2 file.
-    const opj_stream_private_t* stream = (const opj_stream_private_t*) opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
+    /* Create read stream for the jp2 file. */
+    stream = (opj_stream_private_t*) opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
     if (!stream) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Failed to open %s for reading\n", jp2file);
@@ -594,14 +613,17 @@ static OPJ_BOOL opj_jpx_find_codestream(const char* jp2file,
         return OPJ_FALSE;
     }
 
-    // If the codestream was found, then the stream is pointing to the codestream header.
-    // The actual codestream starts at stream position + 8 and the length of the codestream
-    // is the remaining bytes - 8.
+    /* If the codestream was found, then the stream is pointing to the codestream header. */
+    /* The actual codestream starts at stream position + 8 and the length of the codestream */
+    /* is the remaining bytes - 8. */
     stream_position = opj_stream_tell(stream);
 
-    *codestream_offset = stream_position + 8;
-    // Assume the codestream runs until the end of the file.
-    *codestream_length = opj_stream_get_number_byte_left(stream) - 8;
+    assert(stream_position < (UINT32_MAX - 8));
+    *codestream_offset = (OPJ_UINT32)stream_position + 8;
+    /* Assume the codestream runs until the end of the file. */
+    bytes_remaining = opj_stream_get_number_byte_left(stream);
+    assert(bytes_remaining < UINT32_MAX);
+    *codestream_length = (OPJ_UINT32)bytes_remaining - 8;
 
     opj_stream_destroy((opj_stream_t*) stream);
     return OPJ_TRUE;
@@ -779,18 +801,20 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
             return OPJ_FALSE;
         }
 
-        OPJ_UINT32 box_size = opj_jpx_compute_urlbox_size(jpx->files[i]);
-        opj_jpx_cursor_write(&cursor, box_size, 4);
-        opj_jpx_cursor_write(&cursor, JPX_URL, 4);
-        /** Version and Flags are defined to be 0. */
-        opj_jpx_cursor_write(&cursor, 0, 4);
-        /** Write the local file path url */
-        strcpy((char*) cursor, "file://");
-        cursor += strlen("file://");
-        strcpy((char*) cursor, path_buf);
-        cursor += strlen(path_buf);
-        /* write null terminator */
-        opj_jpx_cursor_write(&cursor, 0, 1);
+        {
+            OPJ_UINT32 box_size = opj_jpx_compute_urlbox_size(jpx->files[i]);
+            opj_jpx_cursor_write(&cursor, box_size, 4);
+            opj_jpx_cursor_write(&cursor, JPX_URL, 4);
+            /** Version and Flags are defined to be 0. */
+            opj_jpx_cursor_write(&cursor, 0, 4);
+            /** Write the local file path url */
+            strcpy((char*) cursor, "file://");
+            cursor += strlen("file://");
+            strcpy((char*) cursor, path_buf);
+            cursor += strlen(path_buf);
+            /* write null terminator */
+            opj_jpx_cursor_write(&cursor, 0, 1);
+        }
     }
 
     if (opj_stream_write_data(cio, dtbl, dtbl_size, p_manager) != dtbl_size) {
@@ -831,16 +855,18 @@ static OPJ_UINT32 opj_jpx_compute_dtbl_size(opj_jpx_t *jpx)
 
 static OPJ_UINT32 opj_jpx_compute_urlbox_size(const char* filepath)
 {
-    OPJ_UINT32 counter = 0;
+    size_t counter = 0;
     char path_buf[PATH_MAX];
     // FIXME: Need realpath equivalent for windows.
     if (realpath(filepath, path_buf) == NULL) {
         return UINT32_MAX;
     }
     /* Count the size of a data url box */
-    // header size (8) + version size (1) + flag size (3)
+    /* header size (8) + version size (1) + flag size (3) */
     counter += 8 + 1 + 3;
-    // + variable string size
+    /* + variable string size */
     counter += strlen(path_buf) + strlen("file://") + 1;
-    return counter;
+
+    assert(counter <= UINT32_MAX);
+    return (OPJ_UINT32)counter;
 }

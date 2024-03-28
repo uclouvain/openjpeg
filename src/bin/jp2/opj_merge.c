@@ -39,7 +39,12 @@
 #include "opj_getopt.h"
 #include "format_defs.h"
 
-void merge_help_display()
+/**
+ * Prints usage information for opj_merge.
+ */
+void merge_help_display(void);
+
+void merge_help_display(void)
 {
     fprintf(stdout,
             "\nThis is the opj_merge utility from the OpenJPEG project.\n"
