@@ -17,8 +17,13 @@ void merge_help_display(void)
 {
     fprintf(stdout,
             "\nThis is the opj_merge utility from the OpenJPEG project.\n"
-            "It creates a jpx with references to multiple local jp2 files.\n"
+            "It provides limited support for creating a jpx file with"
+            "references to multiple local jp2 files.\n"
             "It has been compiled against openjp2 library v%s.\n\n", opj_version());
+    fprintf(stdout,
+            "At this time, this utility can only insert references into jpx files\n"
+            "it does not include all jp2 codestreams. All jp2 files must being\n"
+            "merged must be of the same resolution and color format.\n\n");
     fprintf(stdout, "Parameters:\n");
     fprintf(stdout, "-----------\n");
     fprintf(stdout, "Required Parameters (except with -h):\n");
@@ -68,7 +73,7 @@ static void parse_cmdline(int argc,
                          const char** input_file_list,
                          OPJ_UINT32* infile_count)
 {
-    const char optlist[] = "i:o:";
+    const char optlist[] = "i:o:h";
     OPJ_UINT32 num_files = 0;
     int c;
     while ((c = opj_getopt(argc, argv, optlist)) != -1) {

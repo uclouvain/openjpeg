@@ -169,19 +169,6 @@ static OPJ_BOOL opj_jp2_read_jp2h(opj_jp2_t *jp2,
                                   opj_event_mgr_t * p_manager);
 
 /**
- * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
- *
- * @param  jp2      the jpeg2000 file codec.
- * @param  stream      the stream to write data to.
- * @param  p_manager  user event manager.
- *
- * @return true if writing was successful.
- */
-static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
-                                   opj_stream_private_t *stream,
-                                   opj_event_mgr_t * p_manager);
-
-/**
  * Writes the Jpeg2000 codestream Header box - JP2C Header box. This function must be called AFTER the coding has been done.
  *
  * @param   cio         the stream to write data to.
@@ -1608,10 +1595,10 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
     return opj_jp2_apply_color_postprocessing(jp2, p_image, p_manager);
 }
 
-static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
-                                   opj_stream_private_t *stream,
-                                   opj_event_mgr_t * p_manager
-                                  )
+OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
+                            opj_stream_private_t *stream,
+                            opj_event_mgr_t * p_manager
+                           )
 {
     opj_jp2_img_header_writer_handler_t l_writers [4];
     opj_jp2_img_header_writer_handler_t * l_current_writer;

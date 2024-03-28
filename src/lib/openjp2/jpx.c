@@ -122,6 +122,9 @@ static OPJ_BOOL opj_jpx_read_box(opj_stream_private_t *l_stream,
 /** Frees memory allocated for the given box */
 static void opj_jpx_destroy_box(box_t box);
 
+/** Initializes options for the jp2 encoder. */
+static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx, opj_event_mgr_t * p_manager);
+
 /**
  * Writes data via a cursor.
  * Each call, cursor will be moved forward by the number of bytes written.
@@ -243,6 +246,11 @@ static OPJ_BOOL opj_jpx_setup_header_writing(opj_jpx_t *jpx,
         return OPJ_FALSE;
     }
 
+    if (! opj_procedure_list_add_procedure(jpx->jp2->m_procedure_list,
+                                           (opj_procedure)opj_jp2_write_jp2h, p_manager)) {
+        return OPJ_FALSE;
+    }
+
     /* DEVELOPER CORNER, insert your custom procedures */
 
     return OPJ_TRUE;
@@ -304,6 +312,7 @@ OPJ_BOOL opj_jpx_setup_encoder(opj_jpx_t *jpx,
     jpx->jp2->cl[0] = JPX_JPX;
     jpx->jp2->cl[1] = JP2_JP2;
     jpx->jp2->cl[2] = JPX_JPXB;
+
     return OPJ_TRUE;
 }
 
@@ -313,7 +322,6 @@ OPJ_BOOL opj_jpx_encoder_set_extra_options(
     opj_event_mgr_t * p_manager)
 {
     OPJ_UINT32 i = 0;
-    OPJ_UNUSED(p_manager);
     assert(p_jpx != 00);
     assert(p_options != 00);
     assert(p_manager != 00);
@@ -321,6 +329,11 @@ OPJ_BOOL opj_jpx_encoder_set_extra_options(
     // Count the number of files given in the null terminated list.
     while (p_jpx->files[i] != NULL) { i++; }
     p_jpx->file_count = i;
+
+    // Read the first jp2 file to set the remaining jp2 parameters
+    if (!opj_jpx_init_jp2_options(p_jpx, p_manager)) {
+        return OPJ_FALSE;
+    }
     return OPJ_TRUE;
 }
 
@@ -341,7 +354,7 @@ opj_jpx_t* opj_jpx_create(void)
         return 00;
     }
 
-    jpx->jp2 = opj_jp2_create(OPJ_FALSE);
+    jpx->jp2 = opj_jp2_create(OPJ_TRUE);
     if (!jpx->jp2) {
         opj_jpx_destroy(jpx);
         return 00;
@@ -440,9 +453,7 @@ OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
     opj_jpx_cursor_write(&cursor, num_vendor_features, 2);
 
     /* Assert there was no overflow. */
-    puts("Checking rreq table");
     assert((cursor - rreq_data) == 21);
-    puts("rreq table is good");
 
     if (opj_stream_write_data(cio, rreq_data, box_length, p_manager) != box_length) {
         return OPJ_FALSE;
@@ -835,9 +846,7 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
     /* Assert that there was no heap buffer overflow on dtbl memory. */
     /* The cursor should be exactly the computed size away from the  */
     /* start of the reference table. */
-    puts("Writing data reference table");
     assert((cursor - dtbl) == dtbl_size);
-    puts("Data reference table is good");
 
     if (opj_stream_write_data(cio, dtbl, dtbl_size, p_manager) != dtbl_size) {
         opj_event_msg(p_manager, EVT_ERROR,
@@ -894,7 +903,36 @@ static OPJ_UINT32 opj_jpx_compute_urlbox_size(const char* filepath)
     return (OPJ_UINT32)counter;
 }
 
-#ifdef WIN32
+static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx, opj_event_mgr_t* p_manager)
+{
+    opj_stream_t* p_stream = NULL;
+    opj_image_t* tmp_img = opj_image_create0();
+    if (!tmp_img) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to create temporary image buffer\n", jpx->files[0]);
+        return OPJ_FALSE;
+    }
+
+    // Read the header options from the first jp2 file
+    assert(jpx->file_count > 0);
+
+    p_stream = opj_stream_create_default_file_stream(jpx->files[0], OPJ_TRUE);
+    if (!p_stream) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to open %s for reading\n", jpx->files[0]);
+        return OPJ_FALSE;
+    }
+    if (!opj_jp2_read_header((opj_stream_private_t*) p_stream, jpx->jp2, &tmp_img, p_manager)) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to read header from %s\n", jpx->files[0]);
+        return OPJ_FALSE;
+    }
+
+    opj_image_destroy(tmp_img);
+    return OPJ_TRUE;
+}
+
+#ifdef _WIN32
 static char* opj_jpx_get_absolute_path(const char* relative_path)
 {
     /* Maximum path length for windows */

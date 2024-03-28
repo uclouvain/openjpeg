@@ -541,6 +541,19 @@ OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
 
 
 /**
+ * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
+ *
+ * @param  jp2      the jpeg2000 file codec.
+ * @param  stream      the stream to write data to.
+ * @param  p_manager  user event manager.
+ *
+ * @return true if writing was successful.
+ */
+OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
+                            opj_stream_private_t *stream,
+                            opj_event_mgr_t * p_manager);
+
+/**
  * Executes the given procedures on the given codec.
  *
  * @param   p_procedure_list    the list of procedures to execute
