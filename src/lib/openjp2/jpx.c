@@ -817,6 +817,11 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
         }
     }
 
+    /* Assert that there was no heap buffer overflow on dtbl memory. */
+    /* The cursor should be exactly the computed size away from the  */
+    /* start of the reference table. */
+    assert((cursor - dtbl) == dtbl_size);
+
     if (opj_stream_write_data(cio, dtbl, dtbl_size, p_manager) != dtbl_size) {
         opj_event_msg(p_manager, EVT_ERROR,
                           "Failed to write data reference table to output stream\n");
