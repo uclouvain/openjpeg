@@ -123,7 +123,8 @@ static OPJ_BOOL opj_jpx_read_box(opj_stream_private_t *l_stream,
 static void opj_jpx_destroy_box(box_t box);
 
 /** Initializes options for the jp2 encoder. */
-static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx, opj_event_mgr_t * p_manager);
+static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx,
+        opj_event_mgr_t * p_manager);
 
 /**
  * Writes data via a cursor.
@@ -174,7 +175,7 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
         // Write out the fragment table for this jp2 file.
         if (!opj_jpx_write_ftbl(jp2_fname, jpx, stream, p_manager)) {
             opj_event_msg(p_manager, EVT_ERROR,
-                      "Failed to write fragment table boxes\n");
+                          "Failed to write fragment table boxes\n");
             return OPJ_FALSE;
         }
     }
@@ -191,7 +192,7 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
         // Write out associations for this jp2 file.
         if (!opj_jpx_write_asoc(jp2_fname, jpx, stream, p_manager)) {
             opj_event_msg(p_manager, EVT_ERROR,
-                      "Failed to write association boxes\n");
+                          "Failed to write association boxes\n");
             return OPJ_FALSE;
         }
     }
@@ -201,7 +202,7 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
      */
     if (!opj_jpx_write_dtbl(jpx, stream, p_manager)) {
         opj_event_msg(p_manager, EVT_ERROR,
-                    "Failed to write data reference table\n");
+                      "Failed to write data reference table\n");
         return OPJ_FALSE;
     }
 
@@ -307,7 +308,9 @@ OPJ_BOOL opj_jpx_encoder_set_extra_options(
     assert(p_manager != 00);
     p_jpx->files = p_options;
     // Count the number of files given in the null terminated list.
-    while (p_jpx->files[i] != NULL) { i++; }
+    while (p_jpx->files[i] != NULL) {
+        i++;
+    }
     p_jpx->file_count = i;
 
     // Read the first jp2 file to set the remaining jp2 parameters
@@ -387,9 +390,11 @@ OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
     OPJ_UINT8 display_mask     = 0b00000011;
     OPJ_UINT16 num_flags = 2;
     OPJ_UINT16 flags[2] = {RREQ_FLAG_MULTILAYERED,
-                           RREQ_FLAG_REFERENCE_LOCAL_FILES};
+                           RREQ_FLAG_REFERENCE_LOCAL_FILES
+                          };
     OPJ_UINT8 flag_masks[2] = {0b00000001,  /* mask for multilayered */
-                               0b00000010}; /* mask for local files */
+                               0b00000010
+                              }; /* mask for local files */
     OPJ_UINT16 num_vendor_features = 0;
     /* Above adds up to 13 bytes.Add 8 bytes for box length and box type. */
     OPJ_UINT32 box_length = 21;
@@ -435,7 +440,8 @@ OPJ_BOOL opj_jpx_write_rreq(opj_jp2_t *jp2,
     /* Assert there was no overflow. */
     assert((cursor - rreq_data) == 21);
 
-    if (opj_stream_write_data(cio, rreq_data, box_length, p_manager) != box_length) {
+    if (opj_stream_write_data(cio, rreq_data, box_length,
+                              p_manager) != box_length) {
         return OPJ_FALSE;
     }
 
@@ -466,7 +472,7 @@ OPJ_BOOL opj_jpx_write_tile(opj_jpx_t *p_jpx,
     OPJ_UNUSED(p_data_size);
     OPJ_UNUSED(p_stream);
     opj_event_msg(p_manager, EVT_WARNING,
-                      "JPX encoder does not support write tile. Ignoring write tile request.\n");
+                  "JPX encoder does not support write tile. Ignoring write tile request.\n");
     return OPJ_TRUE;
 }
 
@@ -485,9 +491,11 @@ static OPJ_BOOL opj_jpx_write_ftbl(const char* jp2file,
     OPJ_UINT32 codestream_offset;
     OPJ_UINT32 codestream_length;
     OPJ_UINT16 file_index = jpx->current_file_index;
-    OPJ_BOOL bSuccess = opj_jpx_find_codestream(jp2file, p_manager, &codestream_offset, &codestream_length);
+    OPJ_BOOL bSuccess = opj_jpx_find_codestream(jp2file, p_manager,
+                        &codestream_offset, &codestream_length);
     if (!bSuccess) {
-        opj_event_msg(p_manager, EVT_ERROR, "Failed to find codestream information in %s\n", jp2file);
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to find codestream information in %s\n", jp2file);
         return OPJ_FALSE;
     }
 
@@ -548,7 +556,7 @@ static OPJ_BOOL opj_jpx_find_box(opj_stream_t* p_stream,
         // Seek to the next box in the stream.
         if (!opj_stream_seek(l_stream, stream_position, p_manager)) {
             opj_event_msg(p_manager, EVT_ERROR,
-                        "Failed to seek while reading stream\n");
+                          "Failed to seek while reading stream\n");
             return OPJ_FALSE;
         }
 
@@ -557,7 +565,7 @@ static OPJ_BOOL opj_jpx_find_box(opj_stream_t* p_stream,
             // This probably means we reached the end of the file without
             // finding the desired box.
             opj_event_msg(p_manager, EVT_WARNING,
-                        "Failed to read box information\n");
+                          "Failed to read box information\n");
             return OPJ_FALSE;
         }
 
@@ -571,7 +579,7 @@ static OPJ_BOOL opj_jpx_find_box(opj_stream_t* p_stream,
             if (!opj_stream_seek(l_stream, stream_position, p_manager)) {
                 // If the seek fails, return false.
                 opj_event_msg(p_manager, EVT_ERROR,
-                            "Failed to seek while reading stream\n");
+                              "Failed to seek while reading stream\n");
                 return OPJ_FALSE;
             }
 
@@ -602,7 +610,8 @@ static OPJ_BOOL opj_jpx_find_codestream(const char* jp2file,
     assert(codestream_length != 00);
 
     /* Create read stream for the jp2 file. */
-    stream = (opj_stream_private_t*) opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
+    stream = (opj_stream_private_t*) opj_stream_create_default_file_stream(jp2file,
+             OPJ_TRUE);
     if (!stream) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Failed to open %s for reading\n", jp2file);
@@ -611,7 +620,8 @@ static OPJ_BOOL opj_jpx_find_codestream(const char* jp2file,
     }
 
     // Find the codestream section of the file.
-    b_found_codestream = opj_jpx_find_box((opj_stream_t*) stream, p_manager, JP2_JP2C);
+    b_found_codestream = opj_jpx_find_box((opj_stream_t*) stream, p_manager,
+                                          JP2_JP2C);
     if (!b_found_codestream) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Couldn't find jp2 codestream in %s\n", jp2file);
@@ -646,7 +656,8 @@ static OPJ_BOOL opj_jpx_write_asoc(const char* jp2file,
     OPJ_BOOL b_has_xml_box = OPJ_FALSE;
 
     // Create read stream for the jp2 file.
-    opj_stream_t* p_stream = opj_stream_create_default_file_stream(jp2file, OPJ_TRUE);
+    opj_stream_t* p_stream = opj_stream_create_default_file_stream(jp2file,
+                             OPJ_TRUE);
     opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
     if (!p_stream) {
         opj_event_msg(p_manager, EVT_ERROR,
@@ -698,13 +709,13 @@ static OPJ_BOOL opj_jpx_write_asoc(const char* jp2file,
                 /* Dump contents to stream */
                 if (opj_stream_write_data(cio, asoc, asoc_length, p_manager) != asoc_length) {
                     opj_event_msg(p_manager, EVT_WARNING,
-                        "Failed to write association contents to stream. Stream may be corrupted.\n");
+                                  "Failed to write association contents to stream. Stream may be corrupted.\n");
                 }
 
                 opj_free(asoc);
             } else {
                 opj_event_msg(p_manager, EVT_WARNING,
-                          "Failed to allocate memory for association box. Skipping.\n", jp2file);
+                              "Failed to allocate memory for association box. Skipping.\n", jp2file);
             }
 
             opj_jpx_destroy_box(xmlbox);
@@ -738,13 +749,14 @@ static OPJ_BOOL opj_jpx_read_box(opj_stream_private_t *l_stream,
     box->contents = opj_malloc(box->length);
     if (!box->contents) {
         opj_event_msg(p_manager, EVT_ERROR,
-                     "Failed to allocate memory for the box\n");
+                      "Failed to allocate memory for the box\n");
         return OPJ_FALSE;
     }
 
-    if (opj_stream_read_data(l_stream, box->contents, box->length, p_manager) != box->length) {
+    if (opj_stream_read_data(l_stream, box->contents, box->length,
+                             p_manager) != box->length) {
         opj_event_msg(p_manager, EVT_ERROR,
-                     "Failed to read all the box contents into memory\n");
+                      "Failed to read all the box contents into memory\n");
         opj_free(box->contents);
         return OPJ_FALSE;
     }
@@ -777,13 +789,15 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
     // Compute the size of the data table.
     OPJ_UINT32 dtbl_size = opj_jpx_compute_dtbl_size(jpx);
     if (dtbl_size == UINT32_MAX) {
-        opj_event_msg(p_manager, EVT_ERROR, "Failed to compute the data reference table size\n");
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to compute the data reference table size\n");
         return OPJ_FALSE;
     }
 
     dtbl = opj_malloc(dtbl_size);
     if (!dtbl) {
-        opj_event_msg(p_manager, EVT_ERROR, "Failed to allocate memory for the data reference table\n");
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Failed to allocate memory for the data reference table\n");
         return OPJ_FALSE;
     }
 
@@ -830,7 +844,7 @@ static OPJ_BOOL opj_jpx_write_dtbl(opj_jpx_t *jpx,
 
     if (opj_stream_write_data(cio, dtbl, dtbl_size, p_manager) != dtbl_size) {
         opj_event_msg(p_manager, EVT_ERROR,
-                          "Failed to write data reference table to output stream\n");
+                      "Failed to write data reference table to output stream\n");
         opj_free(dtbl);
         return OPJ_FALSE;
     }
@@ -883,7 +897,8 @@ static OPJ_UINT32 opj_jpx_compute_urlbox_size(const char* filepath)
     return (OPJ_UINT32)counter;
 }
 
-static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx, opj_event_mgr_t* p_manager)
+static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx,
+        opj_event_mgr_t* p_manager)
 {
     opj_stream_t* p_stream = NULL;
     opj_image_t* tmp_img = opj_image_create0();
@@ -902,7 +917,8 @@ static OPJ_BOOL opj_jpx_init_jp2_options(opj_jpx_t* jpx, opj_event_mgr_t* p_mana
                       "Failed to open %s for reading\n", jpx->files[0]);
         return OPJ_FALSE;
     }
-    if (!opj_jp2_read_header((opj_stream_private_t*) p_stream, jpx->jp2, &tmp_img, p_manager)) {
+    if (!opj_jp2_read_header((opj_stream_private_t*) p_stream, jpx->jp2, &tmp_img,
+                             p_manager)) {
         opj_event_msg(p_manager, EVT_ERROR,
                       "Failed to read header from %s\n", jpx->files[0]);
         return OPJ_FALSE;
