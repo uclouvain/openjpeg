@@ -1,43 +1,12 @@
-/*
- * The copyright in this software is being made available under the 2-clauses
- * BSD License, included below. This software may be subject to other third
- * party and contributor rights, including patent rights, and no such rights
- * are granted under this license.
- *
- * Copyright (c) 2010, Mathieu Malaterre, GDCM
- * Copyright (c) 2011-2012, Centre National d'Etudes Spatiales (CNES), France
- * Copyright (c) 2012, CS Systemes d'Information, France
- * Copyright (c) 2024, Daniel Garcia Briseno, ADNET Systems Inc, NASA
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS `AS IS'
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "openjpeg.h"
 #include "opj_getopt.h"
 #include "format_defs.h"
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
 
 /**
  * Prints usage information for opj_merge.
@@ -148,10 +117,14 @@ int main(int argc, char **argv) {
     /** Creation status */
     OPJ_BOOL bSuccess = OPJ_FALSE;
     OPJ_UINT32 file_count;
-    const char* input_files[argc];
+    const char** input_files = calloc(argc, sizeof(const char*));
     char* output_file;
     /** Program return code */
     int ret = 1;
+    if (!input_files) {
+        fprintf(stderr, "Failed to allocate memory for input file list\n");
+        exit(1);
+    }
 
     parse_cmdline(argc, argv, &output_file, input_files, &file_count);
     printf("Merging\n");
@@ -215,5 +188,6 @@ fin:
     if (outfile) {
         opj_stream_destroy(outfile);
     }
+    free(input_files);
     return ret;
 }
