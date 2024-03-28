@@ -211,7 +211,6 @@ OPJ_BOOL opj_jpx_encode(opj_jpx_t *jpx,
         return OPJ_FALSE;
     }
 
-    puts("Encode successful!");
     return OPJ_TRUE;
 }
 
@@ -342,7 +341,6 @@ opj_jpx_t* opj_jpx_create(void)
         opj_jpx_destroy(jpx);
         return 00;
     }
-    puts("Created opj_jpx_t instance with a procedure list");
     return jpx;
 }
 
