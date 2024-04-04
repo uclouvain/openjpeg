@@ -25,20 +25,20 @@ binVersion: 2.5.2
 gitURL: https://github.com/uclouvain/openjpeg
 issuesURL: https://github.com/uclouvain/openjpeg/issues
 testDataURL: https://github.com/uclouvain/openjpeg/openjpeg-data
-uclURL: http://www.uclouvain.be/en-index.html
+uclURL: https://www.uclouvain.be/en-index.html
 icteamURL: https://www.uclouvain.be/en-icteam.html
-intopixURL: http://www.intopix.com/
+intopixURL: https://www.intopix.com/
 latestReleaseURL: https://github.com/uclouvain/openjpeg/releases/latest
 allReleasesURL: https://github.com/uclouvain/openjpeg/releases/
 docInstallURL: https://github.com/uclouvain/openjpeg/wiki/Installation
 docUsageURL: https://github.com/uclouvain/openjpeg/wiki/DocJ2KCodec
-docAPIURL: http://www.openjpeg.org/libdoc/index.html
-ciURL: http://my.cdash.org/index.php?project=OPENJPEG
+docAPIURL: https://www.openjpeg.org/libdoc/index.html
+ciURL: https://my.cdash.org/index.php?project=OPENJPEG
 dataURL: https://github.com/uclouvain/openjpeg-data
 newIssueURL: https://github.com/uclouvain/openjpeg/issues/new
 mlURL: 'https://groups.google.com/forum/#!forum/openjpeg'
 mlsubURL: 'https://groups.google.com/forum/#!forum/openjpeg/join'
-refSoftURL: http://www.jpeg.org/jpeg2000/software.html
+refSoftURL: https://www.jpeg.org/jpeg2000/software.html
 openjpipURL: https://github.com/uclouvain/openjpeg/wiki/OpenJPIP
 
 # The production_url is only used when full-domain names are needed
@@ -49,7 +49,7 @@ openjpipURL: https://github.com/uclouvain/openjpeg/wiki/OpenJPIP
 # Else if you are pushing to username.github.io, replace with your username.
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
-production_url : http://uclouvain.github.io/openjpeg
+production_url : https://uclouvain.github.io/openjpeg
 
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
@@ -79,7 +79,7 @@ JB :
   #   - When setting BASE_PATH it must be a valid url.
   #     This means always setting the protocol (http|https) or prefixing with "/"
   #BASE_PATH : false
-  BASE_PATH : http://www.openjpeg.org
+  BASE_PATH : https://www.openjpeg.org
 
   # By default, the asset_path is automatically defined relative to BASE_PATH plus the enabled theme.
   # ex: [BASE_PATH]/assets/themes/[THEME-NAME]
