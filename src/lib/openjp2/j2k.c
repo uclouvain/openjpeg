@@ -11698,8 +11698,9 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
             return OPJ_FALSE;
         }
 
-        if (! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
-                                  p_stream, p_manager)) {
+        if (!l_go_on ||
+                ! opj_j2k_decode_tile(p_j2k, l_current_tile_no, NULL, 0,
+                                      p_stream, p_manager)) {
             opj_event_msg(p_manager, EVT_ERROR, "Failed to decode tile 1/1\n");
             return OPJ_FALSE;
         }
