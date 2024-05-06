@@ -1353,6 +1353,9 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
     l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
     JAS_FPRINTF(stderr, "hdrlen=%d \n", l_header_length);
+    if (!l_header_length) {
+        return OPJ_FALSE;
+    }
     JAS_FPRINTF(stderr, "packet body\n");
     *l_modified_length_ptr -= l_header_length;
     *l_header_data_start += l_header_length;
