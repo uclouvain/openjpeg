@@ -1995,6 +1995,10 @@ OPJ_BOOL opj_jp2_setup_encoder(opj_jp2_t *jp2,
             jp2->enumcs = 17;    /* greyscale */
         } else if (image->color_space == 3) {
             jp2->enumcs = 18;    /* YUV */
+        } else if (image->color_space == 4) {
+            jp2->enumcs = 24;    /* EYCC */
+        } else if (image->color_space == 5) {
+            jp2->enumcs = 12;    /* CMYK */
         }
     }
 
