@@ -9611,6 +9611,11 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
 
             /* Why this condition? FIXME */
             if (p_j2k->m_specific_param.m_decoder.m_state & J2K_STATE_TPH) {
+                if (p_j2k->m_specific_param.m_decoder.m_sot_length < l_marker_size + 2) {
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Sot length is less than marker size + marker ID\n");
+                    return OPJ_FALSE;
+                }
                 p_j2k->m_specific_param.m_decoder.m_sot_length -= (l_marker_size + 2);
             }
             l_marker_size -= 2; /* Subtract the size of the marker ID already read */
