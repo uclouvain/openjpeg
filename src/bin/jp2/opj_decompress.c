@@ -578,11 +578,16 @@ static int infile_format(const char *fname)
     }
 
     s = fname + strlen(fname) - 4;
-
-    fputs("\n===========================================\n", stderr);
+    while(*s) {
+        if(*s == '.') {
+            break;
+        }
+        ++s;
+    }
+    fputs("\n===============================================\n", stderr);
     fprintf(stderr, "The extension of this file is incorrect.\n"
-            "FOUND %s. SHOULD BE %s\n", s, magic_s);
-    fputs("===========================================\n", stderr);
+            "    FOUND '%s'. SHOULD BE '%s'", s, magic_s);
+    fputs("\n===============================================\n", stderr);
 
     return magic_format;
 }
