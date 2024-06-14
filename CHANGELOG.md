@@ -38,7 +38,7 @@
 - Cannot determine library version at compile time [\#1428](https://github.com/uclouvain/openjpeg/issues/1428)
 - ARM builds on Windows unsupported with Version 2.5.0 [\#1422](https://github.com/uclouvain/openjpeg/issues/1422)
 - opj\_decompress heap overflow Denial of Service issue [\#1413](https://github.com/uclouvain/openjpeg/issues/1413)
-- Color chanel swapping for some JPEG2000 pictures [\#1382](https://github.com/uclouvain/openjpeg/issues/1382)
+- Color channel swapping for some JPEG2000 pictures [\#1382](https://github.com/uclouvain/openjpeg/issues/1382)
 - Heap-buffer-overflow in color.c:379:42 in sycc420\_to\_rgb [\#1347](https://github.com/uclouvain/openjpeg/issues/1347)
 - No colorspace information after opj\_read\_header [\#570](https://github.com/uclouvain/openjpeg/issues/570)
 
@@ -297,7 +297,7 @@
 - LINUX install doesn't work when building shared libraries is disabled [\#1155](https://github.com/uclouvain/openjpeg/issues/1155)
 - OPENJPEG null ptr dereference in openjpeg-2.3.0/src/bin/jp2/convert.c:2243 [\#1152](https://github.com/uclouvain/openjpeg/issues/1152)
 - How to drop certain subbands/layers in DWT [\#1147](https://github.com/uclouvain/openjpeg/issues/1147)
-- where is the MQ-Coder ouput stream in t2.c? [\#1146](https://github.com/uclouvain/openjpeg/issues/1146)
+- where is the MQ-Coder output stream in t2.c? [\#1146](https://github.com/uclouvain/openjpeg/issues/1146)
 - OpenJPEG 2.3 \(and 2.2?\) multi component image fails to decode with KDU v7.10 [\#1132](https://github.com/uclouvain/openjpeg/issues/1132)
 - Missing checks for header\_info.height and header\_info.width in function pnmtoimage in src/bin/jpwl/convert.c, which can lead to heap buffer overflow [\#1126](https://github.com/uclouvain/openjpeg/issues/1126)
 - Assertion Failure in jp2.c [\#1125](https://github.com/uclouvain/openjpeg/issues/1125)
