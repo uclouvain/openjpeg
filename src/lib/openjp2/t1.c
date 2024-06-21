@@ -1786,6 +1786,34 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
                 }
             }
 #endif
+
+#ifdef __loongarch_asx
+            {
+                asm volatile
+                (
+                    "srli.w        $t0,     %[cblk],   4      \n\t"
+                    "xvldrepl.w    $xr0,    %[step],   0      \n\t"
+                    "beqz          $t0,     999f              \n\t"
+                    "16:                                      \n\t"
+                    "xvld          $xr1,    %[data],   0      \n\t"
+                    "xvld          $xr2,    %[data],   32     \n\t"
+                    "xvffint.s.w   $xr1,    $xr1              \n\t"
+                    "xvffint.s.w   $xr2,    $xr2              \n\t"
+                    "xvfmul.s      $xr1,    $xr1,      $xr0   \n\t"
+                    "xvfmul.s      $xr2,    $xr2,      $xr0   \n\t"
+                    "xvst          $xr1,    %[data],   0      \n\t"
+                    "xvst          $xr2,    %[data],   32     \n\t"
+                    "addi.d        %[data], %[data],   64     \n\t"
+                    "addi.w        $t0,     $t0,       -1     \n\t"
+                    "bnez          $t0,     16b               \n\t"
+                    "999:                                     \n\t"
+                    : [data]"+r"(datap)
+                    : [step]"r"(&stepsize), [cblk]"r"(cblk_size)
+                    : "$t0", "$xr0", "$xr1", "$xr2", "memory"
+                );
+                i = cblk_size & ~15U;
+            }
+#endif
             for (; i < cblk_size; ++i) {
                 OPJ_FLOAT32 tmp = ((OPJ_FLOAT32)(*datap)) * stepsize;
                 memcpy(datap, &tmp, sizeof(tmp));
@@ -1797,6 +1825,34 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
                                                        (OPJ_SIZE_T)x];
         for (j = 0; j < cblk_h; ++j) {
             i = 0;
+#ifdef __loongarch_asx
+            {
+                OPJ_INT32* ptr1 = datap  + j * cblk_w;
+                OPJ_INT32* ptr2 = tiledp + j * (OPJ_SIZE_T)tile_w;
+                OPJ_UINT32 step_size = 0;
+                asm volatile
+                (
+                    "srli.w      $t0,        %[cblk],    3           \n\t"
+                    "xvxor.v     $xr1,       $xr1,       $xr1        \n\t"
+                    "xvaddi.wu   $xr1,       $xr1,       2           \n\t"
+                    "beqz        $t0,        999f                    \n\t"
+                    "8:                                              \n\t"
+                    "xvldx       $xr0,       %[ptr1],    %[step]     \n\t"
+                    "xvdiv.w     $xr0,       $xr0,       $xr1        \n\t"
+                    "xvstx       $xr0,       %[ptr2],    %[step]     \n\t"
+                    "addi.w      %[step],    %[step],    32          \n\t"
+                    "addi.w      $t0,        $t0,        -1          \n\t"
+                    "bnez        $t0,        8b                      \n\t"
+                    "999:                                            \n\t"
+                    : [step]"+r"(step_size)
+                    : [ptr1]"r"(ptr1),
+                      [ptr2]"r"(ptr2),
+                      [cblk]"r"(cblk_w)
+                    : "$t0", "$xr0", "memory"
+                );
+                i = cblk_w & ~7U;
+            }
+#endif
             for (; i < (cblk_w & ~(OPJ_UINT32)3U); i += 4U) {
                 OPJ_INT32 tmp0 = datap[(j * cblk_w) + i + 0U];
                 OPJ_INT32 tmp1 = datap[(j * cblk_w) + i + 1U];
@@ -1807,6 +1863,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
                 ((OPJ_INT32*)tiledp)[(j * (OPJ_SIZE_T)tile_w) + i + 2U] = tmp2 / 2;
                 ((OPJ_INT32*)tiledp)[(j * (OPJ_SIZE_T)tile_w) + i + 3U] = tmp3 / 2;
             }
+
             for (; i < cblk_w; ++i) {
                 OPJ_INT32 tmp = datap[(j * cblk_w) + i];
                 ((OPJ_INT32*)tiledp)[(j * (OPJ_SIZE_T)tile_w) + i] = tmp / 2;

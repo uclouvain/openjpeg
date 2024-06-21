@@ -124,6 +124,13 @@ if (APPLE)
 	option(OPJ_USE_DSYMUTIL "Call dsymutil on binaries after build." OFF)
 endif()
 
+if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "loongarch64")
+    # Add -mlsx -mlasx flags to use simd optimizations on loongarch platform.
+    # Add -fno-expensive-optimizations option to avoid below three unit tests failure on Release version:
+    # (NR-C1P1-p1_05.j2k-compare2base (Failed), NR-JP2-file2.jp2-compare2base (Failed), NR-DEC-issue205.jp2-253-decode-md5 (Failed))
+    list (APPEND CMAKE_C_FLAGS ${CMAKE_C_FLAGS} " -mlsx -mlasx -fno-expensive-optimizations" )
+endif()
+
 #-----------------------------------------------------------------------------
 # Big endian test:
 if (NOT EMSCRIPTEN)
