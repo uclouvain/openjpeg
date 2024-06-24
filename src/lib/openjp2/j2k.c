@@ -5059,6 +5059,11 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
     }
 
     if (l_current_read_size != p_j2k->m_specific_param.m_decoder.m_sot_length) {
+        if (l_current_read_size == (OPJ_SIZE_T)(-1)) {
+            /* Avoid issue of https://github.com/uclouvain/openjpeg/issues/1533 */
+            opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+            return OPJ_FALSE;
+        }
         p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
     } else {
         p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
