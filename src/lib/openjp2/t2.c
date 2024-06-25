@@ -1407,18 +1407,21 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
         l_nb_code_blocks = l_prc->cw * l_prc->ch;
         l_cblk = l_prc->cblks.dec;
 
-        for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
+        for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno, ++l_cblk) {
             opj_tcd_seg_t *l_seg = 00;
-
-            // if we have a partial data stream, set numchunks to zero
-            // since we have no data to actually decode.
-            if (partial_buffer) {
-                l_cblk->numchunks = 0;
-            }
 
             if (!l_cblk->numnewpasses) {
                 /* nothing to do */
-                ++l_cblk;
+                continue;
+            }
+
+            if (partial_buffer || l_cblk->corrupted) {
+                /* if a previous segment in this packet couldn't be decoded,
+                 * or if this code block was corrupted in a previous layer,
+                 * then mark it as corrupted.
+                 */
+                l_cblk->numchunks = 0;
+                l_cblk->corrupted = OPJ_TRUE;
                 continue;
             }
 
@@ -1451,18 +1454,13 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
                                       "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                       l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
                                       p_pi->compno);
-                        // skip this codeblock since it is a partial read
+                        /* skip this codeblock (and following ones in this
+                         * packet) since it is a partial read
+                         */
                         partial_buffer = OPJ_TRUE;
+                        l_cblk->corrupted = OPJ_TRUE;
                         l_cblk->numchunks = 0;
-
-                        l_seg->numpasses += l_seg->numnewpasses;
-                        l_cblk->numnewpasses -= l_seg->numnewpasses;
-                        if (l_cblk->numnewpasses > 0) {
-                            ++l_seg;
-                            ++l_cblk->numsegs;
-                            break;
-                        }
-                        continue;
+                        break;
                     }
                 }
 
@@ -1519,7 +1517,7 @@ static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
             } while (l_cblk->numnewpasses > 0);
 
             l_cblk->real_num_segs = l_cblk->numsegs;
-            ++l_cblk;
+
         } /* next code_block */
 
         ++l_band;
@@ -1603,6 +1601,8 @@ static OPJ_BOOL opj_t2_skip_packet_data(opj_t2_t* p_t2,
                                       "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                       l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno,
                                       p_pi->compno);
+
+                        *p_data_read = p_max_length;
                         return OPJ_TRUE;
                     }
                 }
