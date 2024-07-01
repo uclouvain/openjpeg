@@ -9366,6 +9366,9 @@ void opj_j2k_destroy(opj_j2k_t *p_j2k)
         opj_free(p_j2k->m_specific_param.m_decoder.m_tlm.m_tile_part_infos);
         p_j2k->m_specific_param.m_decoder.m_tlm.m_tile_part_infos = NULL;
 
+        opj_free(p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset);
+        p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset = NULL;
+
     } else {
 
         if (p_j2k->m_specific_param.m_encoder.m_encoded_tile_data) {
@@ -9715,6 +9718,39 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
     /* Read into the codestream until reach the EOC or ! can_decode ??? FIXME */
     while ((!p_j2k->m_specific_param.m_decoder.m_can_decode) &&
             (l_current_marker != J2K_MS_EOC)) {
+
+        if (p_j2k->m_specific_param.m_decoder.m_num_intersecting_tile_parts > 0 &&
+                p_j2k->m_specific_param.m_decoder.m_idx_intersecting_tile_parts <
+                p_j2k->m_specific_param.m_decoder.m_num_intersecting_tile_parts) {
+            OPJ_OFF_T next_tp_sot_pos;
+
+            next_tp_sot_pos =
+                p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset[p_j2k->m_specific_param.m_decoder.m_idx_intersecting_tile_parts];
+            ++p_j2k->m_specific_param.m_decoder.m_idx_intersecting_tile_parts;
+            if (!(opj_stream_read_seek(p_stream,
+                                       next_tp_sot_pos,
+                                       p_manager))) {
+                opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
+                return OPJ_FALSE;
+            }
+
+            /* Try to read 2 bytes (the marker ID) from stream and copy them into the buffer */
+            if (opj_stream_read_data(p_stream,
+                                     p_j2k->m_specific_param.m_decoder.m_header_data, 2, p_manager) != 2) {
+                opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                return OPJ_FALSE;
+            }
+
+            /* Read 2 bytes from the buffer as the marker ID */
+            opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,
+                           &l_current_marker,
+                           2);
+
+            if (l_current_marker != J2K_MS_SOT) {
+                opj_event_msg(p_manager, EVT_ERROR, "Did not get expected SOT marker\n");
+                return OPJ_FALSE;
+            }
+        }
 
         /* Try to read until the Start Of Data is detected */
         while (l_current_marker != J2K_MS_SOD) {
@@ -11875,6 +11911,18 @@ static OPJ_BOOL opj_j2k_are_all_used_components_decoded(opj_j2k_t *p_j2k,
     return OPJ_TRUE;
 }
 
+static int CompareOffT(const void* a, const void* b)
+{
+    const OPJ_OFF_T offA = *(const OPJ_OFF_T*)a;
+    const OPJ_OFF_T offB = *(const OPJ_OFF_T*)b;
+    if (offA < offB) {
+        return -1;
+    }
+    if (offA == offB) {
+        return 0;
+    }
+    return 1;
+}
 
 static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
                                      opj_stream_private_t *p_stream,
@@ -11885,6 +11933,7 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
     OPJ_INT32 l_tile_x0, l_tile_y0, l_tile_x1, l_tile_y1;
     OPJ_UINT32 l_nb_comps;
     OPJ_UINT32 nr_tiles = 0;
+    OPJ_OFF_T end_pos = 0;
 
     /* Particular case for whole single tile decoding */
     /* We can avoid allocating intermediate tile buffers */
@@ -11925,6 +11974,77 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
         }
 
         return OPJ_TRUE;
+    }
+
+    p_j2k->m_specific_param.m_decoder.m_num_intersecting_tile_parts = 0;
+    p_j2k->m_specific_param.m_decoder.m_idx_intersecting_tile_parts = 0;
+    opj_free(p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset);
+    p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset = NULL;
+
+    /* If the area to decode only intersects a subset of tiles, and we have
+     * valid TLM information, then use it to plan the tilepart offsets to
+     * seek to.
+     */
+    if (!(p_j2k->m_specific_param.m_decoder.m_start_tile_x == 0 &&
+            p_j2k->m_specific_param.m_decoder.m_start_tile_y == 0 &&
+            p_j2k->m_specific_param.m_decoder.m_end_tile_x == p_j2k->m_cp.tw &&
+            p_j2k->m_specific_param.m_decoder.m_end_tile_y == p_j2k->m_cp.th) &&
+            !p_j2k->m_specific_param.m_decoder.m_tlm.m_is_invalid &&
+            opj_stream_has_seek(p_stream)) {
+        OPJ_UINT32 m_num_intersecting_tile_parts = 0;
+
+        OPJ_UINT32 j;
+        for (j = 0; j < p_j2k->m_cp.tw * p_j2k->m_cp.th; ++j) {
+            if (p_j2k->cstr_index->tile_index[j].nb_tps > 0 &&
+                    p_j2k->cstr_index->tile_index[j].tp_index[
+                        p_j2k->cstr_index->tile_index[j].nb_tps - 1].end_pos > end_pos) {
+                end_pos = p_j2k->cstr_index->tile_index[j].tp_index[
+                              p_j2k->cstr_index->tile_index[j].nb_tps - 1].end_pos;
+            }
+        }
+
+        for (j = p_j2k->m_specific_param.m_decoder.m_start_tile_y;
+                j < p_j2k->m_specific_param.m_decoder.m_end_tile_y; ++j) {
+            OPJ_UINT32 i;
+            for (i = p_j2k->m_specific_param.m_decoder.m_start_tile_x;
+                    i < p_j2k->m_specific_param.m_decoder.m_end_tile_x; ++i) {
+                const OPJ_UINT32 tile_number = j * p_j2k->m_cp.tw + i;
+                m_num_intersecting_tile_parts +=
+                    p_j2k->cstr_index->tile_index[tile_number].nb_tps;
+            }
+        }
+
+        p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset =
+            (OPJ_OFF_T*)
+            opj_malloc(m_num_intersecting_tile_parts * sizeof(OPJ_OFF_T));
+        if (m_num_intersecting_tile_parts > 0 &&
+                p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset) {
+            OPJ_UINT32 idx = 0;
+            for (j = p_j2k->m_specific_param.m_decoder.m_start_tile_y;
+                    j < p_j2k->m_specific_param.m_decoder.m_end_tile_y; ++j) {
+                OPJ_UINT32 i;
+                for (i = p_j2k->m_specific_param.m_decoder.m_start_tile_x;
+                        i < p_j2k->m_specific_param.m_decoder.m_end_tile_x; ++i) {
+                    const OPJ_UINT32 tile_number = j * p_j2k->m_cp.tw + i;
+                    OPJ_UINT32 k;
+                    for (k = 0; k < p_j2k->cstr_index->tile_index[tile_number].nb_tps; ++k) {
+                        const OPJ_OFF_T next_tp_sot_pos =
+                            p_j2k->cstr_index->tile_index[tile_number].tp_index[k].start_pos;
+                        p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset[idx] =
+                            next_tp_sot_pos;
+                        ++idx;
+                    }
+                }
+            }
+
+            p_j2k->m_specific_param.m_decoder.m_num_intersecting_tile_parts = idx;
+
+            /* Sort by increasing offset */
+            qsort(p_j2k->m_specific_param.m_decoder.m_intersecting_tile_parts_offset,
+                  p_j2k->m_specific_param.m_decoder.m_num_intersecting_tile_parts,
+                  sizeof(OPJ_OFF_T),
+                  CompareOffT);
+        }
     }
 
     for (;;) {
@@ -11984,6 +12104,12 @@ static OPJ_BOOL opj_j2k_decode_tiles(opj_j2k_t *p_j2k,
             break;
         }
         if (++nr_tiles ==  p_j2k->m_cp.th * p_j2k->m_cp.tw) {
+            break;
+        }
+        if (p_j2k->m_specific_param.m_decoder.m_num_intersecting_tile_parts > 0 &&
+                p_j2k->m_specific_param.m_decoder.m_idx_intersecting_tile_parts ==
+                p_j2k->m_specific_param.m_decoder.m_num_intersecting_tile_parts) {
+            opj_stream_seek(p_stream, end_pos + 2, p_manager);
             break;
         }
     }

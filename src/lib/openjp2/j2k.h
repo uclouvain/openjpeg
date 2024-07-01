@@ -519,6 +519,16 @@ typedef struct opj_j2k_dec {
 
     opj_j2k_tlm_info_t m_tlm;
 
+    /** Below if used when there's TLM information available and we use
+     * opj_set_decoded_area() to a subset of all tiles.
+     */
+    /* Current index in m_intersecting_tile_parts_offset[] to seek to */
+    OPJ_UINT32  m_idx_intersecting_tile_parts;
+    /* Number of elements of m_intersecting_tile_parts_offset[] */
+    OPJ_UINT32  m_num_intersecting_tile_parts;
+    /* Start offset of contributing tile parts */
+    OPJ_OFF_T*  m_intersecting_tile_parts_offset;
+
     /** to tell that a tile can be decoded. */
     OPJ_BITFIELD m_can_decode : 1;
     OPJ_BITFIELD m_discard_tiles : 1;
