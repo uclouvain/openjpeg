@@ -399,3 +399,6 @@ c34637a0f218e4074936e0c89534c5b5  byte.jph.png
 c34637a0f218e4074936e0c89534c5b5  byte_causal.jhc.png
 bc4f704c723329147bf6601a8b113bb2  huge-tile-size.png
 922d2a15b57d7f0e628d00cf17e1d25d  small_world_non_consecutive_tilepart_tlm-t0.png
+922d2a15b57d7f0e628d00cf17e1d25d  small_world_non_consecutive_tilepart_tlm-t0-d.png
+e3294b452af3ad2bf27146e04e8856dc  small_world_non_consecutive_tilepart_tlm-t1.png
+e3294b452af3ad2bf27146e04e8856dc  small_world_non_consecutive_tilepart_tlm-t1-d.png
