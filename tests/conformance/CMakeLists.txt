@@ -637,6 +637,9 @@ foreach(numFileP0 RANGE 1 16)
      -o ${TEMP}/${filenameInput}.txt
      )
 
+  set_tests_properties(NR-${filenameInput}-dump
+                       PROPERTIES ENVIRONMENT OJP_DO_NOT_DISPLAY_TILE_INDEX_IF_TLM=YES)
+
   add_test(NAME NR-${filenameInput}-compare_dump2base
       COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_v2_${filenameRefSub}.txt
@@ -666,6 +669,9 @@ foreach(numFileP1 RANGE 1 7)
      -o ${TEMP}/${filenameInput}.txt
      )
 
+  set_tests_properties(NR-${filenameInput}-dump
+                       PROPERTIES ENVIRONMENT OJP_DO_NOT_DISPLAY_TILE_INDEX_IF_TLM=YES)
+
   add_test(NAME NR-${filenameInput}-compare_dump2base
       COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_v2_${filenameInputSub}.txt
@@ -694,6 +700,9 @@ foreach(numFileJP2 RANGE 1 9)
      -i ${INPUT_CONF}/${filenameInput}
      -o ${TEMP}/${filenameInput}.txt
      )
+
+  set_tests_properties(NR-${filenameInput}-dump
+                       PROPERTIES ENVIRONMENT OJP_DO_NOT_DISPLAY_TILE_INDEX_IF_TLM=YES)
 
   add_test(NAME NR-${filenameInput}-compare_dump2base
       COMMAND compare_dump_files

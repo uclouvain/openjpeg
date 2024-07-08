@@ -664,3 +664,8 @@ opj_decompress -i @INPUT_NR_PATH@/huge-tile-size.jp2 -o @TEMP_PATH@/huge-tile-si
 
 # decompress a single tile, where tile-parts are not consecutive, and with a TLM index
 opj_decompress -t 0 -i @INPUT_NR_PATH@/small_world_non_consecutive_tilepart_tlm.jp2 -o @TEMP_PATH@/small_world_non_consecutive_tilepart_tlm-t0.png
+opj_decompress -t 1 -i @INPUT_NR_PATH@/small_world_non_consecutive_tilepart_tlm.jp2 -o @TEMP_PATH@/small_world_non_consecutive_tilepart_tlm-t1.png
+
+# decompress a subset of tiles, where tile-parts are not consecutive, and with a TLM index
+opj_decompress -i @INPUT_NR_PATH@/small_world_non_consecutive_tilepart_tlm.jp2 -o @TEMP_PATH@/small_world_non_consecutive_tilepart_tlm-t0-d.png -d 0,0,256,200
+opj_decompress -i @INPUT_NR_PATH@/small_world_non_consecutive_tilepart_tlm.jp2 -o @TEMP_PATH@/small_world_non_consecutive_tilepart_tlm-t1-d.png -d 256,0,400,200
