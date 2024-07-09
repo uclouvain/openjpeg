@@ -1,5 +1,8 @@
 project(libpng C)
 
+string(REPLACE "-Wconversion" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+string(REPLACE "-Wsign-conversion" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+
 include_directories(
   "${CMAKE_CURRENT_SOURCE_DIR}"
   ${OPENJPEG_SOURCE_DIR}/thirdparty/include
