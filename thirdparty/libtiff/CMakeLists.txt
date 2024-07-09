@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 2.6)
+set(CMAKE_C_STANDARD 99)
 project(libtiff C)
+
+string(REPLACE "-Wdeclaration-after-statement" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+string(REPLACE "-Werror=declaration-after-statement" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+string(REPLACE "-Wconversion" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+string(REPLACE "-Wsign-conversion" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+
 # This convenient copy of libtiff does not support encapsulated zlib or jpeg
 # stream. see ZIP_SUPPORT and JPEG_SUPPORT values
 
@@ -27,6 +34,8 @@ set(TARGET_FILES
   tif_fax3sm.c
   tif_flush.c
   tif_getimage.c
+  tif_hash_set.c
+  tif_hash_set.h
   tif_jbig.c
   tif_jpeg.c
   tif_luv.c
@@ -66,8 +75,8 @@ endif()
 
 include(${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
-set(HOST_BIGENDIAN ${WORDS_BIGENDIAN})
-if(HOST_BIGENDIAN)
+set(HOST_BIG_ENDIAN ${WORDS_BIGENDIAN})
+if(HOST_BIG_ENDIAN)
 set(HOST_FILLORDER "FILLORDER_MSB2LSB")
 else()
 set(HOST_FILLORDER "FILLORDER_LSB2MSB")
@@ -76,6 +85,8 @@ include(CheckIncludeFiles)
 include(CheckSymbolExists)
 include(CheckFunctionExists)
 include(CheckCSourceCompiles)
+include(TypeSizeChecks.cmake)
+include(LibraryFeatures.cmake)
 
 CHECK_INCLUDE_FILES("zlib.h" HAVE_ZLIB_H)
 CHECK_INCLUDE_FILES("jpeglib.h" HAVE_JPEGLIB_H)
@@ -115,18 +126,13 @@ CHECK_INCLUDE_FILES("ieeefp.h" HAVE_IEEEFP_H)
 if( HAVE_TIME_H AND HAVE_SYS_TIME_H )
  set(TIME_WITH_SYS_TIME 1)
 endif()
+set(LZW_SUPPORT 1)
 set(LZMA_SUPPORT 0) # ?
 set(MDI_SUPPORT 1) # ?
 set(STDC_HEADERS 1) # why not ?
-set(DEFAULT_EXTRASAMPLE_AS_ALPHA 1)
-set(CHECK_JPEG_YCBCR_SUBSAMPLING 1)
 set(CCITT_SUPPORT 1)
-set(DEFER_STRILE_LOAD 0)
-set(HAVE_JBG_NEWLEN 0) # FIXME: jbigkit stuff
-set(STRIPCHOP_DEFAULT "TIFF_STRIPCHOP")
-set(STRIP_SIZE_DEFAULT 8192)
-set(SUBIFD_SUPPORT 1)
 set(THUNDER_SUPPORT 1)
+set(HAVE_IEEEFP 1)
 
 CHECK_FUNCTION_EXISTS(getopt HAVE_GETOPT)
 CHECK_FUNCTION_EXISTS(isascii HAVE_ISASCII)
@@ -141,97 +147,8 @@ CHECK_FUNCTION_EXISTS(strtol HAVE_STRTOL)
 CHECK_FUNCTION_EXISTS(strtoul HAVE_STRTOUL)
 CHECK_FUNCTION_EXISTS(strtoull HAVE_STRTOULL)
 
-# May be inlined, so check it compiles:
-check_c_source_compiles("
-#include <stdio.h>
-int main(void) {
-  char buf[10];
-  snprintf(buf, 10, \"Test %d\", 1);
-  return 0;
-}" HAVE_SNPRINTF)
-
-if(NOT HAVE_SNPRINTF)
-  set(TARGET_FILES ${TARGET_FILES} snprintf.c)
-endif()
-
-include(CheckTypeSize)
-
-CHECK_TYPE_SIZE("signed int"         SIZEOF_SIGNED_INT)
-CHECK_TYPE_SIZE("signed long"        SIZEOF_SIGNED_LONG)
-CHECK_TYPE_SIZE("signed long long"   SIZEOF_SIGNED_LONG_LONG)
-CHECK_TYPE_SIZE("signed short"       SIZEOF_SIGNED_SHORT)
-CHECK_TYPE_SIZE("unsigned int"       SIZEOF_UNSIGNED_INT)
-CHECK_TYPE_SIZE("unsigned long"      SIZEOF_UNSIGNED_LONG)
-CHECK_TYPE_SIZE("unsigned long long" SIZEOF_UNSIGNED_LONG_LONG)
-CHECK_TYPE_SIZE("unsigned short"     SIZEOF_UNSIGNED_SHORT)
-CHECK_TYPE_SIZE("unsigned char*"     SIZEOF_UNSIGNED_CHAR_P)
-# check platform has ssize_t:
-CHECK_TYPE_SIZE(ssize_t     SSIZE_T)
-
-if(HAVE_STDINT_H)
-  set(TIFF_INT8_T    int8_t)
-  set(TIFF_INT16_T   int16_t)
-  set(TIFF_INT32_T   int32_t)
-  set(TIFF_INT64_T   int64_t)
-  set(TIFF_UINT8_T   uint8_t)
-  set(TIFF_UINT16_T  uint16_t)
-  set(TIFF_UINT32_T  uint32_t)
-  set(TIFF_UINT64_T  uint64_t)
-  set(TIFF_PTRDIFF_T ptrdiff_t)
-  if(NOT HAVE_SSIZE_T)
-    if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-      set(TIFF_SSIZE_T   int64_t)
-      set(TIFF_SSIZE_FORMAT "%lld")
-      set(TIFF_SIZE_FORMAT "%llu")
-    elseif("${CMAKE_SIZEOF_VOID_P}" EQUAL 4)
-      set(TIFF_SSIZE_T   int32_t)
-      set(TIFF_SSIZE_FORMAT "%d")
-      set(TIFF_SIZE_FORMAT "%u")
-    else()
-      message(FATAL_ERROR "unknown ssize_t")
-    endif()
-  else()
-    set(TIFF_SSIZE_T   ssize_t)
-  endif()
-  set(TIFF_INT32_FORMAT "%d")
-  set(TIFF_UINT32_FORMAT "%u")
-  set(TIFF_INT64_FORMAT "%lld")
-  set(TIFF_UINT64_FORMAT "%llu")
-  set(TIFF_PTRDIFF_FORMAT "%ld")
-else()
-  set(TIFF_INT8_T    "signed __int8")
-  set(TIFF_INT16_T   "signed __int16")
-  set(TIFF_INT32_T   "signed __int32")
-  set(TIFF_INT64_T   "signed __int64")
-  set(TIFF_UINT8_T   "unsigned __int8")
-  set(TIFF_UINT16_T  "unsigned __int16")
-  set(TIFF_UINT32_T  "unsigned __int32")
-  set(TIFF_UINT64_T  "unsigned __int64")
-  set(TIFF_PTRDIFF_T ptrdiff_t)
-  if(NOT HAVE_SSIZE_T)
-    if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-      set(TIFF_SSIZE_T   "signed __int64")
-      set(TIFF_SSIZE_FORMAT "%lld")
-      set(TIFF_SIZE_FORMAT "%llu")
-    elseif("${CMAKE_SIZEOF_VOID_P}" EQUAL 4)
-      set(TIFF_SSIZE_T   "signed __int32")
-      set(TIFF_SSIZE_FORMAT "%d")
-      set(TIFF_SIZE_FORMAT "%u")
-    else()
-      message(FATAL_ERROR "unknown ssize_t")
-    endif()
-  else()
-    set(TIFF_SSIZE_T   ssize_t)
-  endif()
-  set(TIFF_INT32_FORMAT "%d")
-  set(TIFF_UINT32_FORMAT "%u")
-  set(TIFF_INT64_FORMAT "%lld")
-  set(TIFF_UINT64_FORMAT "%llu")
-  set(TIFF_PTRDIFF_FORMAT "%ld")
-endif()
-
 #
-set(VERSION "\"4.0.6\"")
+set(VERSION "\"4.6.0\"")
 set(PACKAGE_VERSION ${VERSION})
 set(PACKAGE "\"tiff\"")
 
@@ -248,19 +165,6 @@ CHECK_SYMBOL_EXISTS(sqrt "math.h" HAVE_SQRT)
 CHECK_SYMBOL_EXISTS(pow "math.h" HAVE_POW)
 CHECK_SYMBOL_EXISTS(lfind "search.h" HAVE_LFIND)
 CHECK_SYMBOL_EXISTS(setmod "io.h" HAVE_SETMODE)
-
-# http://www.cmake.org/pipermail/cmake/2007-September/016285.html
-foreach(KEYWORD "inline" "__inline__" "__inline")
-  if(NOT DEFINED C_INLINE)
-    try_compile(C_HAS_${KEYWORD} "${CMAKE_CURRENT_BINARY_DIR}"
-       "${CMAKE_CURRENT_SOURCE_DIR}/test_inline.c"
-       COMPILE_DEFINITIONS "-Dinline=${KEYWORD}")
-    if(C_HAS_${KEYWORD})
-      set(C_INLINE TRUE)
-      set(INLINE_KEYWORD "${KEYWORD}")
-    endif(C_HAS_${KEYWORD})
-  endif(NOT DEFINED C_INLINE)
-endforeach(KEYWORD)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tiffconf.h.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/tiffconf.h @ONLY)
