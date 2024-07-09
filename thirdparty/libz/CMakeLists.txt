@@ -1,9 +1,11 @@
 #based on zlib-1.2.5/CMakeLists.txt
 #
 cmake_minimum_required(VERSION 2.6)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 project(zlib C)
+
+string(REPLACE "-Wconversion" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+string(REPLACE "-Wsign-conversion" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 
 include(CheckTypeSize)
 include(CheckFunctionExists)
@@ -73,10 +75,6 @@ set(SRCS
     compress.c
     crc32.c
     deflate.c
-    gzclose.c
-    gzlib.c
-    gzread.c
-    gzwrite.c
     inflate.c
     infback.c
     inftrees.c
