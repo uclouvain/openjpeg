@@ -364,6 +364,67 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
         tmp[len - 1] = in_odd[(len - 1) / 2] + tmp[len - 2];
     }
 #else
+#ifdef __AVX2__
+    OPJ_INT32* out_ptr = tmp;
+    int32_t prev_even = in_even[0] - ((in_odd[0] + 1) >> 1);
+
+    const __m256i reg_permutevar_mask_move_right = _mm256_setr_epi32(0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
+    const __m256i two = _mm256_set1_epi32(2);
+
+    int32_t simd_batch = (len - 2) / 16;
+    int32_t next_even;
+    __m256i even_m1, odd, unpack1_avx2, unpack2_avx2;
+
+    for (i = 0; i < simd_batch; i++) {
+        const __m256i lf_avx2 = _mm256_loadu_si256((__m256i*)(in_even + 1));
+        const __m256i hf1_avx2 = _mm256_loadu_si256((__m256i*)(in_odd));
+        const __m256i hf2_avx2 = _mm256_loadu_si256((__m256i*)(in_odd + 1));
+
+        __m256i even = _mm256_add_epi32(hf1_avx2, hf2_avx2);
+        even = _mm256_add_epi32(even, two);
+        even = _mm256_srai_epi32(even, 2);
+        even = _mm256_sub_epi32(lf_avx2, even);
+
+        next_even = _mm256_extract_epi32(even, 7);
+        even_m1 = _mm256_permutevar8x32_epi32(even, reg_permutevar_mask_move_right);
+        even_m1 = _mm256_insert_epi32(even_m1, prev_even, 0);
+
+        //out[0] + out[2]
+        odd = _mm256_add_epi32(even_m1, even);
+        odd = _mm256_srai_epi32(odd, 1);
+        odd = _mm256_add_epi32(odd, hf1_avx2);
+
+        unpack1_avx2 = _mm256_unpacklo_epi32(even_m1, odd);
+        unpack2_avx2 = _mm256_unpackhi_epi32(even_m1, odd);
+
+        _mm_storeu_si128((__m128i*)(out_ptr + 0), _mm256_castsi256_si128(unpack1_avx2));
+        _mm_storeu_si128((__m128i*)(out_ptr + 4), _mm256_castsi256_si128(unpack2_avx2));
+        _mm_storeu_si128((__m128i*)(out_ptr + 8), _mm256_extracti128_si256(unpack1_avx2, 0x1));
+        _mm_storeu_si128((__m128i*)(out_ptr + 12), _mm256_extracti128_si256(unpack2_avx2, 0x1));
+
+        prev_even = next_even;
+
+        out_ptr += 16;
+        in_even += 8;
+        in_odd += 8;
+    }
+    out_ptr[0] = prev_even;
+    for (j = simd_batch * 16 + 1; j < (len - 2); j += 2) {
+        out_ptr[2] = in_even[1] - ((in_odd[0] + in_odd[1] + 2) >> 2);
+        out_ptr[1] = in_odd[0] + ((out_ptr[0] + out_ptr[2]) >> 1);
+        in_even++;
+        in_odd++;
+        out_ptr += 2;
+    }
+
+    if (len & 1) {
+        out_ptr[2] = in_even[1] - ((in_odd[0] + 1) >> 1);
+        out_ptr[1] = in_odd[0] + ((out_ptr[0] + out_ptr[2]) >> 1);
+    }
+    else { //!(len & 1)
+        out_ptr[1] = in_odd[0] + out_ptr[0];
+    }
+#else
     OPJ_INT32 d1c, d1n, s1n, s0c, s0n;
 
     assert(len > 1);
@@ -397,6 +458,7 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
     } else {
         tmp[len - 1] = d1n + s0n;
     }
+#endif /*__AVX2__*/
 #endif
     memcpy(tiledp, tmp, (OPJ_UINT32)len * sizeof(OPJ_INT32));
 }

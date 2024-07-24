@@ -47,6 +47,9 @@
 #ifdef __SSE2__
 #include <emmintrin.h>
 #endif
+#ifdef __AVX2__
+#include <immintrin.h>
+#endif
 
 #if defined(__GNUC__)
 #pragma GCC poison malloc calloc realloc free
@@ -1796,6 +1799,25 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         OPJ_INT32* OPJ_RESTRICT tiledp = &tilec->data[(OPJ_SIZE_T)y * tile_w +
                                                        (OPJ_SIZE_T)x];
         for (j = 0; j < cblk_h; ++j) {
+#ifdef __AVX2__
+            //positive -> round down aka.  (83)/2 =  41.5 ->  41
+            //negative -> round up   aka. (-83)/2 = -41.5 -> -41
+
+            OPJ_INT32* ptr_in = datap + (j * cblk_w);
+            OPJ_INT32* ptr_out = tiledp + (j * (OPJ_SIZE_T)tile_w);
+            for (i = 0; i < cblk_w / 8; ++i) {
+                __m256i in_avx = _mm256_loadu_si256((__m256i*)(ptr_in));
+                const __m256i add_avx = _mm256_srli_epi32(in_avx, 31);
+                in_avx = _mm256_add_epi32(in_avx, add_avx);
+                _mm256_storeu_si256((__m256i*)(ptr_out), _mm256_srai_epi32(in_avx, 1));
+                ptr_in += 8;
+                ptr_out += 8;
+            }
+
+            for (i = 0; i < cblk_w % 8; ++i) {
+                ptr_out[i] = ptr_in[i] / 2;
+            }
+#else
             i = 0;
             for (; i < (cblk_w & ~(OPJ_UINT32)3U); i += 4U) {
                 OPJ_INT32 tmp0 = datap[(j * cblk_w) + i + 0U];
@@ -1811,6 +1833,7 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
                 OPJ_INT32 tmp = datap[(j * cblk_w) + i];
                 ((OPJ_INT32*)tiledp)[(j * (OPJ_SIZE_T)tile_w) + i] = tmp / 2;
             }
+#endif
         }
     } else {        /* if (tccp->qmfbid == 0) */
         const float stepsize = 0.5f * band->stepsize;
@@ -2233,6 +2256,47 @@ static void opj_t1_cblk_encode_processor(void* user_data, opj_tls_t* tls)
         OPJ_UINT32* OPJ_RESTRICT t1data = (OPJ_UINT32*) t1->data;
         /* Change from "natural" order to "zigzag" order of T1 passes */
         for (j = 0; j < (cblk_h & ~3U); j += 4) {
+#ifdef __AVX2__
+            OPJ_UINT32* ptr = tiledp_u;
+            for (i = 0; i < cblk_w / 8; ++i) {
+                //          INPUT                  OUTPUT
+                // 00 01 02 03 04 05 06 07   00 10 20 30 01 11 21 31
+                // 10 11 12 13 14 15 16 17   02 12 22 32 03 13 23 33
+                // 20 21 22 23 24 25 26 27   04 14 24 34 05 15 25 35
+                // 30 31 32 33 34 35 36 37   06 16 26 36 07 17 27 37
+                __m256i in1 = _mm256_slli_epi32(_mm256_loadu_si256((__m256i*)(ptr + (j + 0) * tile_w)), T1_NMSEDEC_FRACBITS);
+                __m256i in2 = _mm256_slli_epi32(_mm256_loadu_si256((__m256i*)(ptr + (j + 1) * tile_w)), T1_NMSEDEC_FRACBITS);
+                __m256i in3 = _mm256_slli_epi32(_mm256_loadu_si256((__m256i*)(ptr + (j + 2) * tile_w)), T1_NMSEDEC_FRACBITS);
+                __m256i in4 = _mm256_slli_epi32(_mm256_loadu_si256((__m256i*)(ptr + (j + 3) * tile_w)), T1_NMSEDEC_FRACBITS);
+
+                __m256i tmp1 = _mm256_unpacklo_epi32(in1, in2);
+                __m256i tmp2 = _mm256_unpacklo_epi32(in3, in4);
+                __m256i tmp3 = _mm256_unpackhi_epi32(in1, in2);
+                __m256i tmp4 = _mm256_unpackhi_epi32(in3, in4);
+
+                in1 = _mm256_unpacklo_epi64(tmp1, tmp2);
+                in2 = _mm256_unpacklo_epi64(tmp3, tmp4);
+                in3 = _mm256_unpackhi_epi64(tmp1, tmp2);
+                in4 = _mm256_unpackhi_epi64(tmp3, tmp4);
+
+                _mm_storeu_si128((__m128i*)(t1data + 0), _mm256_castsi256_si128(in1));
+                _mm_storeu_si128((__m128i*)(t1data + 4), _mm256_castsi256_si128(in3));
+                _mm_storeu_si128((__m128i*)(t1data + 8), _mm256_castsi256_si128(in2));
+                _mm_storeu_si128((__m128i*)(t1data + 12), _mm256_castsi256_si128(in4));
+                _mm256_storeu_si256((__m256i*)(t1data + 16), _mm256_permute2x128_si256(in1, in3, 0x31));
+                _mm256_storeu_si256((__m256i*)(t1data + 24), _mm256_permute2x128_si256(in2, in4, 0x31));
+                t1data += 32;
+                ptr += 8;
+            }
+            for (i = 0; i < cblk_w % 8; ++i) {
+                t1data[0] = ptr[(j + 0) * tile_w] << T1_NMSEDEC_FRACBITS;
+                t1data[1] = ptr[(j + 1) * tile_w] << T1_NMSEDEC_FRACBITS;
+                t1data[2] = ptr[(j + 2) * tile_w] << T1_NMSEDEC_FRACBITS;
+                t1data[3] = ptr[(j + 3) * tile_w] << T1_NMSEDEC_FRACBITS;
+                t1data += 4;
+                ptr += 1;
+            }
+#else
             for (i = 0; i < cblk_w; ++i) {
                 t1data[0] = tiledp_u[(j + 0) * tile_w + i] << T1_NMSEDEC_FRACBITS;
                 t1data[1] = tiledp_u[(j + 1) * tile_w + i] << T1_NMSEDEC_FRACBITS;
@@ -2240,6 +2304,7 @@ static void opj_t1_cblk_encode_processor(void* user_data, opj_tls_t* tls)
                 t1data[3] = tiledp_u[(j + 3) * tile_w + i] << T1_NMSEDEC_FRACBITS;
                 t1data += 4;
             }
+#endif
         }
         if (j < cblk_h) {
             for (i = 0; i < cblk_w; ++i) {
