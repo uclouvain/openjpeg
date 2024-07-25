@@ -47,7 +47,7 @@
 #ifdef __SSE2__
 #include <emmintrin.h>
 #endif
-#ifdef __AVX2__
+#if (defined(__AVX2__) || defined(__AVX512F__))
 #include <immintrin.h>
 #endif
 
@@ -1799,10 +1799,24 @@ static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
         OPJ_INT32* OPJ_RESTRICT tiledp = &tilec->data[(OPJ_SIZE_T)y * tile_w +
                                                        (OPJ_SIZE_T)x];
         for (j = 0; j < cblk_h; ++j) {
-#ifdef __AVX2__
             //positive -> round down aka.  (83)/2 =  41.5 ->  41
             //negative -> round up   aka. (-83)/2 = -41.5 -> -41
+#if defined(__AVX512F__)
+            OPJ_INT32* ptr_in = datap + (j * cblk_w);
+            OPJ_INT32* ptr_out = tiledp + (j * (OPJ_SIZE_T)tile_w);
+            for (i = 0; i < cblk_w / 16; ++i) {
+                __m512i in_avx = _mm512_loadu_si512((__m512i*)(ptr_in));
+                const __m512i add_avx = _mm512_srli_epi32(in_avx, 31);
+                in_avx = _mm512_add_epi32(in_avx, add_avx);
+                _mm512_storeu_si512((__m512i*)(ptr_out), _mm512_srai_epi32(in_avx, 1));
+                ptr_in += 16;
+                ptr_out += 16;
+            }
 
+            for (i = 0; i < cblk_w % 16; ++i) {
+                ptr_out[i] = ptr_in[i] / 2;
+            }
+#elif defined(__AVX2__)
             OPJ_INT32* ptr_in = datap + (j * cblk_w);
             OPJ_INT32* ptr_out = tiledp + (j * (OPJ_SIZE_T)tile_w);
             for (i = 0; i < cblk_w / 8; ++i) {
@@ -2256,7 +2270,57 @@ static void opj_t1_cblk_encode_processor(void* user_data, opj_tls_t* tls)
         OPJ_UINT32* OPJ_RESTRICT t1data = (OPJ_UINT32*) t1->data;
         /* Change from "natural" order to "zigzag" order of T1 passes */
         for (j = 0; j < (cblk_h & ~3U); j += 4) {
-#ifdef __AVX2__
+#if defined(__AVX512F__)
+        const __m512i perm1 = _mm512_setr_epi64(2, 3, 10, 11, 4, 5, 12, 13);
+        const __m512i perm2 = _mm512_setr_epi64(6, 7, 14, 15, 0, 0, 0, 0);
+        OPJ_UINT32* ptr = tiledp_u;
+        for (i = 0; i < cblk_w / 16; ++i) {
+            //                      INPUT                                        OUTPUT
+            // 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F   00 10 20 30 01 11 21 31 02 12 22 32 03 13 23 33
+            // 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F   04 14 24 34 05 15 25 35 06 16 26 36 07 17 27 37
+            // 20 21 22 23 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F   08 18 28 38 09 19 29 39 0A 1A 2A 3A 0B 1B 2B 3B
+            // 30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F   0C 1C 2C 3C 0D 1D 2D 3D 0E 1E 2E 3E 0F 1F 2F 3F
+            __m512i in1 = _mm512_slli_epi32(_mm512_loadu_si512((__m512i*)(ptr + (j + 0) * tile_w)), T1_NMSEDEC_FRACBITS);
+            __m512i in2 = _mm512_slli_epi32(_mm512_loadu_si512((__m512i*)(ptr + (j + 1) * tile_w)), T1_NMSEDEC_FRACBITS);
+            __m512i in3 = _mm512_slli_epi32(_mm512_loadu_si512((__m512i*)(ptr + (j + 2) * tile_w)), T1_NMSEDEC_FRACBITS);
+            __m512i in4 = _mm512_slli_epi32(_mm512_loadu_si512((__m512i*)(ptr + (j + 3) * tile_w)), T1_NMSEDEC_FRACBITS);
+
+            __m512i tmp1 = _mm512_unpacklo_epi32(in1, in2);
+            __m512i tmp2 = _mm512_unpacklo_epi32(in3, in4);
+            __m512i tmp3 = _mm512_unpackhi_epi32(in1, in2);
+            __m512i tmp4 = _mm512_unpackhi_epi32(in3, in4);
+
+            in1 = _mm512_unpacklo_epi64(tmp1, tmp2);
+            in2 = _mm512_unpacklo_epi64(tmp3, tmp4);
+            in3 = _mm512_unpackhi_epi64(tmp1, tmp2);
+            in4 = _mm512_unpackhi_epi64(tmp3, tmp4);
+
+            _mm_storeu_si128((__m128i*)(t1data + 0), _mm512_castsi512_si128(in1));
+            _mm_storeu_si128((__m128i*)(t1data + 4), _mm512_castsi512_si128(in3));
+            _mm_storeu_si128((__m128i*)(t1data + 8), _mm512_castsi512_si128(in2));
+            _mm_storeu_si128((__m128i*)(t1data + 12), _mm512_castsi512_si128(in4));
+
+            tmp1 = _mm512_permutex2var_epi64(in1, perm1, in3);
+            tmp2 = _mm512_permutex2var_epi64(in2, perm1, in4);
+
+            _mm256_storeu_si256((__m256i*)(t1data + 16), _mm512_castsi512_si256(tmp1));
+            _mm256_storeu_si256((__m256i*)(t1data + 24), _mm512_castsi512_si256(tmp2));
+            _mm256_storeu_si256((__m256i*)(t1data + 32), _mm512_extracti64x4_epi64(tmp1, 0x1));
+            _mm256_storeu_si256((__m256i*)(t1data + 40), _mm512_extracti64x4_epi64(tmp2, 0x1));
+            _mm256_storeu_si256((__m256i*)(t1data + 48), _mm512_castsi512_si256(_mm512_permutex2var_epi64(in1, perm2, in3)));
+            _mm256_storeu_si256((__m256i*)(t1data + 56), _mm512_castsi512_si256(_mm512_permutex2var_epi64(in2, perm2, in4)));
+            t1data += 64;
+            ptr += 16;
+        }
+        for (i = 0; i < cblk_w % 16; ++i) {
+            t1data[0] = ptr[(j + 0) * tile_w] << T1_NMSEDEC_FRACBITS;
+            t1data[1] = ptr[(j + 1) * tile_w] << T1_NMSEDEC_FRACBITS;
+            t1data[2] = ptr[(j + 2) * tile_w] << T1_NMSEDEC_FRACBITS;
+            t1data[3] = ptr[(j + 3) * tile_w] << T1_NMSEDEC_FRACBITS;
+            t1data += 4;
+            ptr += 1;
+        }
+#elif defined(__AVX2__)
             OPJ_UINT32* ptr = tiledp_u;
             for (i = 0; i < cblk_w / 8; ++i) {
                 //          INPUT                  OUTPUT
