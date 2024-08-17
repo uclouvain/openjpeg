@@ -70,7 +70,7 @@ make check &> /dev/null
 make install &> /dev/null
 cd ..
 export PATH=${PWD}/tools/wdiff/bin:$PATH
-wget https://tools.ietf.org/tools/rfcdiff/rfcdiff
+wget https://github.com/ietf-tools/rfcdiff/raw/ee3048e5934508946507776441fb265231b6bc44/rfcdiff
 chmod +x rfcdiff
 mv rfcdiff ${PWD}/tools
 export PATH=${PWD}/tools:$PATH
@@ -80,7 +80,7 @@ make -C installer-0.10 install prefix=${PWD}/tools/abi-tracker target=abi-tracke
 export PATH=${PWD}/tools/abi-tracker/bin:$PATH
 
 # This will print configuration
-# travis-ci doesn't dump cmake version in system info, let's print it 
+# travis-ci doesn't dump cmake version in system info, let's print it
 cmake --version
 
 # RUN THE ABI-CHECK SCRIPTS
@@ -141,7 +141,7 @@ fi
 
 rm -rf src/openjpeg/current
 rm -rf build_logs
-	
+
 if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
 	git config user.name "OpenJPEG Travis CI"
 	git config user.email "info@openjpeg.org"
