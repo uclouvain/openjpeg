@@ -28,7 +28,7 @@ jobs:
             OPJ_NONCOMMERCIAL: 1
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: build/openjpeg-*.tar.gz
@@ -121,7 +121,7 @@ jobs:
             #OPJ_NONCOMMERCIAL: 1
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: build/openjpeg-*.zip
@@ -183,7 +183,7 @@ jobs:
         shell: bash
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{startsWith(github.ref, 'refs/tags/') && env.OPJ_CI_INCLUDE_IF_DEPLOY == 1}}
         with:
           files: build/openjpeg-*.zip
