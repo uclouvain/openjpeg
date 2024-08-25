@@ -669,3 +669,6 @@ opj_decompress -t 1 -i @INPUT_NR_PATH@/small_world_non_consecutive_tilepart_tlm.
 # decompress a subset of tiles, where tile-parts are not consecutive, and with a TLM index
 opj_decompress -i @INPUT_NR_PATH@/small_world_non_consecutive_tilepart_tlm.jp2 -o @TEMP_PATH@/small_world_non_consecutive_tilepart_tlm-t0-d.png -d 0,0,256,200
 opj_decompress -i @INPUT_NR_PATH@/small_world_non_consecutive_tilepart_tlm.jp2 -o @TEMP_PATH@/small_world_non_consecutive_tilepart_tlm-t1-d.png -d 256,0,400,200
+
+# missing EPH Marker
+!opj_decompress -i @INPUT_NR_PATH@/issue1472-bigloop.j2k -o @TEMP_PATH@/issue1472-bigloop.raw

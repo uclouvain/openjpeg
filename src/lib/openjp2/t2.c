@@ -1111,6 +1111,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
     /* SOP markers */
 
     if (p_tcp->csty & J2K_CP_CSTY_SOP) {
+        /* SOP markers are allowed (i.e. optional), just warn */
         if (p_max_length < 6) {
             opj_event_msg(p_manager, EVT_WARNING,
                           "Not enough space for expected SOP marker\n");
@@ -1163,12 +1164,15 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
         /* EPH markers */
         if (p_tcp->csty & J2K_CP_CSTY_EPH) {
+            /* EPH markers are required */
             if ((*l_modified_length_ptr - (OPJ_UINT32)(l_header_data -
                     *l_header_data_start)) < 2U) {
-                opj_event_msg(p_manager, EVT_WARNING,
-                              "Not enough space for expected EPH marker\n");
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Not enough space for required EPH marker\n");
+                return OPJ_FALSE;
             } else if ((*l_header_data) != 0xff || (*(l_header_data + 1) != 0x92)) {
-                opj_event_msg(p_manager, EVT_WARNING, "Expected EPH marker\n");
+                opj_event_msg(p_manager, EVT_ERROR, "Expected EPH marker\n");
+                return OPJ_FALSE;
             } else {
                 l_header_data += 2;
             }
@@ -1340,12 +1344,15 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
     /* EPH markers */
     if (p_tcp->csty & J2K_CP_CSTY_EPH) {
+        /* EPH markers are required */
         if ((*l_modified_length_ptr - (OPJ_UINT32)(l_header_data -
                 *l_header_data_start)) < 2U) {
-            opj_event_msg(p_manager, EVT_WARNING,
-                          "Not enough space for expected EPH marker\n");
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Not enough space for required EPH marker\n");
+            return OPJ_FALSE;
         } else if ((*l_header_data) != 0xff || (*(l_header_data + 1) != 0x92)) {
-            opj_event_msg(p_manager, EVT_WARNING, "Expected EPH marker\n");
+            opj_event_msg(p_manager, EVT_ERROR, "Expected EPH marker\n");
+            return OPJ_FALSE;
         } else {
             l_header_data += 2;
         }
