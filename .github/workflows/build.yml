@@ -103,7 +103,7 @@ jobs:
             OPJ_CI_BUILD_CONFIGURATION: Release
             OPJ_NONCOMMERCIAL: 1
 
-  macos:
+  macos_x86_64:
     runs-on: macos-13
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
@@ -115,7 +115,32 @@ jobs:
             ./tools/travis-ci/install.sh
             ./tools/travis-ci/run.sh
         env:
+            CMAKE_OSX_ARCHITECTURES: x86_64
             OPJ_CI_ARCH: x86_64
+            OPJ_CI_BUILD_CONFIGURATION: Release
+            OPJ_CI_INCLUDE_IF_DEPLOY: 1
+            #OPJ_NONCOMMERCIAL: 1
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: build/openjpeg-*.zip
+
+  macos_arm64:
+    runs-on: macos-14
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and run tests
+        run: |
+            ./tools/travis-ci/install.sh
+            ./tools/travis-ci/run.sh
+        env:
+            CMAKE_OSX_ARCHITECTURES: arm64
+            OPJ_CI_ARCH: arm64
             OPJ_CI_BUILD_CONFIGURATION: Release
             OPJ_CI_INCLUDE_IF_DEPLOY: 1
             #OPJ_NONCOMMERCIAL: 1
@@ -174,7 +199,7 @@ jobs:
       - name: Install wget
         shell: cmd
         run: |
-            choco install wget --no-progress 
+            choco install wget --no-progress
 
       - name: Build and run tests
         run: |

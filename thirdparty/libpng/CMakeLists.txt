@@ -23,6 +23,7 @@ if(MSVC)
   set_target_properties(${LIBTARGET} PROPERTIES PREFIX "lib")
 endif(MSVC)
 #
+target_compile_definitions(${LIBTARGET} PRIVATE PNG_ARM_NEON_OPT=0)
 target_link_libraries(${LIBTARGET} ${Z_LIBNAME} ${M_LIBRARY})
 #
 set_target_properties(${LIBTARGET}
