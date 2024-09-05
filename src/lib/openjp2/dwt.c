@@ -336,8 +336,9 @@ static void opj_dwt_decode_1(const opj_dwt_t *v)
 
 #if defined(__AVX512F__)
 static int32_t loop_short_sse(int32_t len, const int32_t** lf_ptr,
-                               const int32_t** hf_ptr, int32_t** out_ptr,
-                               int32_t* prev_even) {
+                              const int32_t** hf_ptr, int32_t** out_ptr,
+                              int32_t* prev_even)
+{
     int32_t next_even;
     __m128i odd, even_m1, unpack1, unpack2;
     const int32_t batch = (len - 2) / 8;
@@ -416,9 +417,12 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
     int32_t prev_even = in_even[0] - ((in_odd[0] + 1) >> 1);
 
     const __m512i permutevar_mask = _mm512_setr_epi32(
-        0x10, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e);
-    const __m512i store1_perm = _mm512_setr_epi64(0x00, 0x01, 0x08, 0x09, 0x02, 0x03, 0x0a, 0x0b);
-    const __m512i store2_perm = _mm512_setr_epi64(0x04, 0x05, 0x0c, 0x0d, 0x06, 0x07, 0x0e, 0x0f);
+                                        0x10, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+                                        0x0c, 0x0d, 0x0e);
+    const __m512i store1_perm = _mm512_setr_epi64(0x00, 0x01, 0x08, 0x09, 0x02,
+                                0x03, 0x0a, 0x0b);
+    const __m512i store2_perm = _mm512_setr_epi64(0x04, 0x05, 0x0c, 0x0d, 0x06,
+                                0x07, 0x0e, 0x0f);
 
     const __m512i two = _mm512_set1_epi32(2);
 
@@ -465,7 +469,8 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
 
     leftover = len - simd_batch_512 * 32;
     if (leftover > 8) {
-        leftover -= 8 * loop_short_sse(leftover, &in_even, &in_odd, &out_ptr, &prev_even);
+        leftover -= 8 * loop_short_sse(leftover, &in_even, &in_odd, &out_ptr,
+                                       &prev_even);
     }
     out_ptr[0] = prev_even;
 
@@ -475,20 +480,20 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
         in_even++;
         in_odd++;
         out_ptr += 2;
-}
+    }
 
     if (len & 1) {
         out_ptr[2] = in_even[1] - ((in_odd[0] + 1) >> 1);
         out_ptr[1] = in_odd[0] + ((out_ptr[0] + out_ptr[2]) >> 1);
-    }
-    else { //!(len & 1)
+    } else { //!(len & 1)
         out_ptr[1] = in_odd[0] + out_ptr[0];
     }
 #elif  defined(__AVX2__)
     OPJ_INT32* out_ptr = tmp;
     int32_t prev_even = in_even[0] - ((in_odd[0] + 1) >> 1);
 
-    const __m256i reg_permutevar_mask_move_right = _mm256_setr_epi32(0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
+    const __m256i reg_permutevar_mask_move_right = _mm256_setr_epi32(0x00, 0x00,
+            0x01, 0x02, 0x03, 0x04, 0x05, 0x06);
     const __m256i two = _mm256_set1_epi32(2);
 
     int32_t simd_batch = (len - 2) / 16;
@@ -519,8 +524,10 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
 
         _mm_storeu_si128((__m128i*)(out_ptr + 0), _mm256_castsi256_si128(unpack1_avx2));
         _mm_storeu_si128((__m128i*)(out_ptr + 4), _mm256_castsi256_si128(unpack2_avx2));
-        _mm_storeu_si128((__m128i*)(out_ptr + 8), _mm256_extracti128_si256(unpack1_avx2, 0x1));
-        _mm_storeu_si128((__m128i*)(out_ptr + 12), _mm256_extracti128_si256(unpack2_avx2, 0x1));
+        _mm_storeu_si128((__m128i*)(out_ptr + 8), _mm256_extracti128_si256(unpack1_avx2,
+                         0x1));
+        _mm_storeu_si128((__m128i*)(out_ptr + 12),
+                         _mm256_extracti128_si256(unpack2_avx2, 0x1));
 
         prev_even = next_even;
 
@@ -540,8 +547,7 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
     if (len & 1) {
         out_ptr[2] = in_even[1] - ((in_odd[0] + 1) >> 1);
         out_ptr[1] = in_odd[0] + ((out_ptr[0] + out_ptr[2]) >> 1);
-    }
-    else { //!(len & 1)
+    } else { //!(len & 1)
         out_ptr[1] = in_odd[0] + out_ptr[0];
     }
 #else
