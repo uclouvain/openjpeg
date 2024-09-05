@@ -505,9 +505,9 @@ static void  opj_idwt53_h_cas0(OPJ_INT32* tmp,
         even = _mm256_srai_epi32(even, 2);
         even = _mm256_sub_epi32(lf_avx2, even);
 
-        next_even = _mm256_extract_epi32(even, 7);
+        next_even = _mm_extract_epi32(_mm256_extracti128_si256(even, 1), 3);
         even_m1 = _mm256_permutevar8x32_epi32(even, reg_permutevar_mask_move_right);
-        even_m1 = _mm256_insert_epi32(even_m1, prev_even, 0);
+        even_m1 = _mm256_blend_epi32(even_m1, _mm256_set1_epi32(prev_even), (1 << 0));
 
         //out[0] + out[2]
         odd = _mm256_add_epi32(even_m1, even);
