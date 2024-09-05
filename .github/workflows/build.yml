@@ -33,6 +33,33 @@ jobs:
         with:
           files: build/openjpeg-*.tar.gz
 
+  arch_native:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Requirements
+        run: |
+          sudo apt update
+          sudo apt install -y gcc g++ libtiff-dev libwebp-dev libzstd-dev
+
+      - name: Show architecture flags
+        run: |
+          cat /proc/cpuinfo | grep flags | head -n 1
+
+      - name: Build and run tests
+        run: |
+            ./tools/travis-ci/install.sh
+            ./tools/travis-ci/run.sh
+        env:
+            OPJ_CI_ARCH: x86_64
+            OPJ_CI_BUILD_CONFIGURATION: Release
+            OPJ_CI_INSTRUCTION_SETS: "-march=native"
+            OPJ_NUM_THREADS: 2
+            OPJ_NONCOMMERCIAL: 1
+
   asan:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
