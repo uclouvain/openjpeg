@@ -7,6 +7,7 @@
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2024, Daniel Garcia Briseno, ADNET Systems Inc, NASA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -750,6 +751,51 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
             (OPJ_BOOL(*)(void * p_codec, OPJ_UINT32 num_threads)) opj_jp2_set_threads;
 
         l_codec->m_codec = opj_jp2_create(OPJ_FALSE);
+        if (! l_codec->m_codec) {
+            opj_free(l_codec);
+            return 00;
+        }
+
+        break;
+    case OPJ_CODEC_JPX:
+        /* get a JP2 decoder handle */
+        l_codec->m_codec_data.m_compression.opj_encode = (OPJ_BOOL(*)(void *,
+                struct opj_stream_private *,
+                struct opj_event_mgr *)) opj_jpx_encode;
+
+        l_codec->m_codec_data.m_compression.opj_end_compress = (OPJ_BOOL(*)(void *,
+                struct opj_stream_private *,
+                struct opj_event_mgr *)) opj_jpx_end_compress;
+
+        l_codec->m_codec_data.m_compression.opj_start_compress = (OPJ_BOOL(*)(void *,
+                struct opj_stream_private *,
+                struct opj_image *,
+                struct opj_event_mgr *))  opj_jpx_start_compress;
+
+        l_codec->m_codec_data.m_compression.opj_write_tile = (OPJ_BOOL(*)(void *,
+                OPJ_UINT32,
+                OPJ_BYTE*,
+                OPJ_UINT32,
+                struct opj_stream_private *,
+                struct opj_event_mgr *)) opj_jpx_write_tile;
+
+        l_codec->m_codec_data.m_compression.opj_destroy = (void (*)(
+                    void *)) opj_jpx_destroy;
+
+        l_codec->m_codec_data.m_compression.opj_setup_encoder = (OPJ_BOOL(*)(void *,
+                opj_cparameters_t *,
+                struct opj_image *,
+                struct opj_event_mgr *)) opj_jpx_setup_encoder;
+
+        l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options = (OPJ_BOOL(
+                    *)(void *,
+                       const char* const*,
+                       struct opj_event_mgr *)) opj_jpx_encoder_set_extra_options;
+
+        l_codec->opj_set_threads =
+            (OPJ_BOOL(*)(void * p_codec, OPJ_UINT32 num_threads)) opj_jpx_set_threads;
+
+        l_codec->m_codec = opj_jpx_create();
         if (! l_codec->m_codec) {
             opj_free(l_codec);
             return 00;
