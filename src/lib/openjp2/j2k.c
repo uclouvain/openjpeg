@@ -6764,6 +6764,9 @@ void opj_j2k_decoder_set_strict_mode(opj_j2k_t *j2k, OPJ_BOOL strict)
 {
     if (j2k) {
         j2k->m_cp.strict = strict;
+        if (strict) {
+            j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
+        }
     }
 }
 
@@ -9965,11 +9968,21 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
             if (p_j2k->m_specific_param.m_decoder.m_can_decode &&
                     !p_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked) {
                 /* Issue 254 */
-                OPJ_BOOL l_correction_needed;
+                OPJ_BOOL l_correction_needed = OPJ_FALSE;
 
                 p_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
-                if (!opj_j2k_need_nb_tile_parts_correction(p_stream,
-                        p_j2k->m_current_tile_number, &l_correction_needed, p_manager)) {
+                if (p_j2k->m_cp.tcps[p_j2k->m_current_tile_number].m_nb_tile_parts == 1) {
+                    /* Skip opj_j2k_need_nb_tile_parts_correction() if there is
+                     * only a single tile part declared. The
+                     * opj_j2k_need_nb_tile_parts_correction() hack was needed
+                     * for files with 5 declared tileparts (where they were
+                     * actually 6).
+                     * Doing it systematically hurts performance when reading
+                     * Sentinel2 L1C JPEG2000 files as explained in
+                     * https://lists.osgeo.org/pipermail/gdal-dev/2024-November/059805.html
+                     */
+                } else if (!opj_j2k_need_nb_tile_parts_correction(p_stream,
+                           p_j2k->m_current_tile_number, &l_correction_needed, p_manager)) {
                     opj_event_msg(p_manager, EVT_ERROR,
                                   "opj_j2k_apply_nb_tile_parts_correction error\n");
                     return OPJ_FALSE;
