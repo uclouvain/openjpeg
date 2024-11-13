@@ -6752,9 +6752,6 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
         j2k->m_cp.m_specific_param.m_dec.m_reduce = parameters->cp_reduce;
 
         j2k->dump_state = (parameters->flags & OPJ_DPARAMETERS_DUMP_FLAG);
-        if (parameters->flags & OPJ_DPARAMETERS_DISABLE_TPSOT_FIX) {
-            j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
-        }
 #ifdef USE_JPWL
         j2k->m_cp.correct = parameters->jpwl_correct;
         j2k->m_cp.exp_comps = parameters->jpwl_exp_comps;
@@ -6767,6 +6764,9 @@ void opj_j2k_decoder_set_strict_mode(opj_j2k_t *j2k, OPJ_BOOL strict)
 {
     if (j2k) {
         j2k->m_cp.strict = strict;
+        if (strict) {
+            j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
+        }
     }
 }
 
