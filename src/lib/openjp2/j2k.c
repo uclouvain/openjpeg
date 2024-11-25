@@ -8459,7 +8459,8 @@ static OPJ_BOOL opj_j2k_add_tlmarker(OPJ_UINT32 tileno,
     if (type == J2K_MS_SOT) {
         OPJ_UINT32 l_current_tile_part = cstr_index->tile_index[tileno].current_tpsno;
 
-        if (cstr_index->tile_index[tileno].tp_index) {
+        if (cstr_index->tile_index[tileno].tp_index &&
+                l_current_tile_part < cstr_index->tile_index[tileno].nb_tps) {
             cstr_index->tile_index[tileno].tp_index[l_current_tile_part].start_pos = pos;
         }
 
