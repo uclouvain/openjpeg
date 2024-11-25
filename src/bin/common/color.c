@@ -158,7 +158,7 @@ static void sycc422_to_rgb(opj_image_t *img)
 {
     int *d0, *d1, *d2, *r, *g, *b;
     const int *y, *cb, *cr;
-    size_t maxw, maxh, max, offx, loopmaxw;
+    size_t maxw, maxh, max, offx, loopmaxw, comp12w;
     int offset, upb;
     size_t i;
 
@@ -167,6 +167,7 @@ static void sycc422_to_rgb(opj_image_t *img)
     upb = (1 << upb) - 1;
 
     maxw = (size_t)img->comps[0].w;
+    comp12w = (size_t)img->comps[1].w;
     maxh = (size_t)img->comps[0].h;
     max = maxw * maxh;
 
@@ -212,13 +213,19 @@ static void sycc422_to_rgb(opj_image_t *img)
             ++cr;
         }
         if (j < loopmaxw) {
-            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            if (j / 2 == comp12w) {
+                sycc_to_rgb(offset, upb, *y, 0, 0, r, g, b);
+            } else {
+                sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            }
             ++y;
             ++r;
             ++g;
             ++b;
-            ++cb;
-            ++cr;
+            if (j / 2 < comp12w) {
+                ++cb;
+                ++cr;
+            }
         }
     }
 
@@ -246,7 +253,7 @@ static void sycc420_to_rgb(opj_image_t *img)
 {
     int *d0, *d1, *d2, *r, *g, *b, *nr, *ng, *nb;
     const int *y, *cb, *cr, *ny;
-    size_t maxw, maxh, max, offx, loopmaxw, offy, loopmaxh;
+    size_t maxw, maxh, max, offx, loopmaxw, offy, loopmaxh, comp12w;
     int offset, upb;
     size_t i;
 
@@ -255,6 +262,7 @@ static void sycc420_to_rgb(opj_image_t *img)
     upb = (1 << upb) - 1;
 
     maxw = (size_t)img->comps[0].w;
+    comp12w = (size_t)img->comps[1].w;
     maxh = (size_t)img->comps[0].h;
     max = maxw * maxh;
 
@@ -336,19 +344,29 @@ static void sycc420_to_rgb(opj_image_t *img)
             ++cr;
         }
         if (j < loopmaxw) {
-            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            if (j / 2 == comp12w) {
+                sycc_to_rgb(offset, upb, *y, 0, 0, r, g, b);
+            } else {
+                sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            }
             ++y;
             ++r;
             ++g;
             ++b;
 
-            sycc_to_rgb(offset, upb, *ny, *cb, *cr, nr, ng, nb);
+            if (j / 2 == comp12w) {
+                sycc_to_rgb(offset, upb, *ny, 0, 0, nr, ng, nb);
+            } else {
+                sycc_to_rgb(offset, upb, *ny, *cb, *cr, nr, ng, nb);
+            }
             ++ny;
             ++nr;
             ++ng;
             ++nb;
-            ++cb;
-            ++cr;
+            if (j / 2 < comp12w) {
+                ++cb;
+                ++cr;
+            }
         }
         y += maxw;
         r += maxw;
@@ -384,7 +402,11 @@ static void sycc420_to_rgb(opj_image_t *img)
             ++cr;
         }
         if (j < loopmaxw) {
-            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            if (j / 2 == comp12w) {
+                sycc_to_rgb(offset, upb, *y, 0, 0, r, g, b);
+            } else {
+                sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            }
         }
     }
 
