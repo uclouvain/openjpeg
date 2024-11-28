@@ -41,6 +41,7 @@
 #define J2K_CFMT 0
 #define JP2_CFMT 1
 #define JPT_CFMT 2
+#define JPX_CFMT 3
 
 #define PXM_DFMT 10
 #define PGX_DFMT 11
