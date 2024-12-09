@@ -7,7 +7,7 @@ $VAR1 = {
                          'openjpeg.h' => 1
                        },
           'Language' => 'C',
-          'LibraryName' => 'libopenjp2.so.2.5.1',
+          'LibraryName' => 'libopenjp2.so.2.5.3',
           'LibraryVersion' => 'current',
           'NameSpaces' => {},
           'Needed' => {
@@ -18,7 +18,7 @@ $VAR1 = {
           'PublicABI' => '1',
           'Sources' => {},
           'SymbolInfo' => {
-                            '112644' => {
+                            '112670' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -27,7 +27,7 @@ $VAR1 = {
                                                               },
                                                        '1' => {
                                                                 'name' => 'cmptparms',
-                                                                'type' => '112906'
+                                                                'type' => '112932'
                                                               },
                                                        '2' => {
                                                                 'name' => 'clrspc',
@@ -39,7 +39,7 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '227'
                                         },
-                            '114647' => {
+                            '114673' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -50,9 +50,9 @@ $VAR1 = {
                                           'Return' => '1',
                                           'ShortName' => 'opj_image_destroy',
                                           'Source' => undef,
-                                          'SourceLine' => '1126'
+                                          'SourceLine' => '1128'
                                         },
-                            '114829' => {
+                            '114855' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -61,7 +61,7 @@ $VAR1 = {
                                                               },
                                                        '1' => {
                                                                 'name' => 'cmptparms',
-                                                                'type' => '112906'
+                                                                'type' => '112932'
                                                               },
                                                        '2' => {
                                                                 'name' => 'clrspc',
@@ -73,7 +73,7 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '40'
                                         },
-                            '115680' => {
+                            '115706' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -84,9 +84,9 @@ $VAR1 = {
                                           'Return' => '1',
                                           'ShortName' => 'opj_image_data_free',
                                           'Source' => undef,
-                                          'SourceLine' => '1159'
+                                          'SourceLine' => '1161'
                                         },
-                            '115751' => {
+                            '115777' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -97,7 +97,7 @@ $VAR1 = {
                                           'Return' => '130',
                                           'ShortName' => 'opj_image_data_alloc',
                                           'Source' => undef,
-                                          'SourceLine' => '1149'
+                                          'SourceLine' => '1151'
                                         },
                             '15690' => {
                                          'Header' => 'openjpeg.h',
@@ -118,7 +118,7 @@ $VAR1 = {
                                          'Return' => '1',
                                          'ShortName' => 'opj_stream_set_user_data_length',
                                          'Source' => undef,
-                                         'SourceLine' => '1244'
+                                         'SourceLine' => '1246'
                                        },
                             '15779' => {
                                          'Header' => 'openjpeg.h',
@@ -144,7 +144,7 @@ $VAR1 = {
                                          'Return' => '1',
                                          'ShortName' => 'opj_stream_set_user_data',
                                          'Source' => undef,
-                                         'SourceLine' => '1235'
+                                         'SourceLine' => '1237'
                                        },
                             '15877' => {
                                          'Header' => 'openjpeg.h',
@@ -165,7 +165,7 @@ $VAR1 = {
                                          'Return' => '1',
                                          'ShortName' => 'opj_stream_set_skip_function',
                                          'Source' => undef,
-                                         'SourceLine' => '1217'
+                                         'SourceLine' => '1219'
                                        },
                             '15956' => {
                                          'Header' => 'openjpeg.h',
@@ -186,7 +186,7 @@ $VAR1 = {
                                          'Return' => '1',
                                          'ShortName' => 'opj_stream_set_write_function',
                                          'Source' => undef,
-                                         'SourceLine' => '1209'
+                                         'SourceLine' => '1211'
                                        },
                             '16035' => {
                                          'Header' => 'openjpeg.h',
@@ -207,7 +207,7 @@ $VAR1 = {
                                          'Return' => '1',
                                          'ShortName' => 'opj_stream_set_seek_function',
                                          'Source' => undef,
-                                         'SourceLine' => '1226'
+                                         'SourceLine' => '1228'
                                        },
                             '16114' => {
                                          'Header' => 'openjpeg.h',
@@ -228,7 +228,7 @@ $VAR1 = {
                                          'Return' => '1',
                                          'ShortName' => 'opj_stream_set_read_function',
                                          'Source' => undef,
-                                         'SourceLine' => '1201'
+                                         'SourceLine' => '1203'
                                        },
                             '16193' => {
                                          'Header' => 'openjpeg.h',
@@ -271,14 +271,14 @@ $VAR1 = {
                                          'Return' => '15773',
                                          'ShortName' => 'opj_stream_create',
                                          'Source' => undef,
-                                         'SourceLine' => '1185'
+                                         'SourceLine' => '1187'
                                        },
-                            '236601' => {
+                            '239493' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'cstr_info',
-                                                                'type' => '301084'
+                                                                'type' => '304145'
                                                               }
                                                      },
                                           'Return' => '1',
@@ -286,14 +286,14 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '1046'
                                         },
-                            '236876' => {
+                            '239743' => {
                                           'Header' => 'openjpeg.h',
                                           'Return' => '162',
                                           'ShortName' => 'opj_version',
                                           'Source' => undef,
                                           'SourceLine' => '176'
                                         },
-                            '300242' => {
+                            '303303' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -314,7 +314,7 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '1089'
                                         },
-                            '300712' => {
+                            '303773' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -331,12 +331,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '1082'
                                         },
-                            '300825' => {
+                            '303886' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_cstr_index',
-                                                                'type' => '300891'
+                                                                'type' => '303952'
                                                               }
                                                      },
                                           'Return' => '1',
@@ -344,38 +344,38 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '1074'
                                         },
-                            '300897' => {
+                            '303958' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               }
                                                      },
-                                          'Return' => '128041',
+                                          'Return' => '128266',
                                           'ShortName' => 'opj_get_cstr_index',
                                           'Source' => undef,
                                           'SourceLine' => '1063'
                                         },
-                            '301090' => {
+                            '304151' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               }
                                                      },
-                                          'Return' => '130505',
+                                          'Return' => '130743',
                                           'ShortName' => 'opj_get_cstr_info',
                                           'Source' => undef,
                                           'SourceLine' => '1035'
                                         },
-                            '301186' => {
+                            '304247' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'info_flag',
@@ -391,12 +391,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '1019'
                                         },
-                            '301344' => {
+                            '304405' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               }
                                                      },
                                           'Return' => '1',
@@ -404,12 +404,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '1001'
                                         },
-                            '301444' => {
+                            '304505' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_tile_index',
@@ -433,12 +433,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '974'
                                         },
-                            '301680' => {
+                            '304741' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'parameters',
-                                                                'type' => '130493'
+                                                                'type' => '130731'
                                                               },
                                                        '1' => {
                                                                 'name' => 'pEncodingMatrix',
@@ -458,12 +458,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '944'
                                         },
-                            '302106' => {
+                            '305167' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_stream',
@@ -475,12 +475,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '924'
                                         },
-                            '302258' => {
+                            '305319' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_stream',
@@ -492,12 +492,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '907'
                                         },
-                            '302403' => {
+                            '305464' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_info',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_stream',
@@ -509,12 +509,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '890'
                                         },
-                            '302548' => {
+                            '305609' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_image',
@@ -530,16 +530,16 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '871'
                                         },
-                            '302721' => {
+                            '305782' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'options',
-                                                                'type' => '130499'
+                                                                'type' => '130737'
                                                               }
                                                      },
                                           'Return' => '2937',
@@ -547,16 +547,16 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '852'
                                         },
-                            '302845' => {
+                            '305906' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'parameters',
-                                                                'type' => '130493'
+                                                                'type' => '130731'
                                                               },
                                                        '2' => {
                                                                 'name' => 'p_image',
@@ -568,12 +568,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '832'
                                         },
-                            '302990' => {
+                            '306051' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'parameters',
-                                                                'type' => '130493'
+                                                                'type' => '130731'
                                                               }
                                                      },
                                           'Return' => '1',
@@ -581,25 +581,25 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '771'
                                         },
-                            '303149' => {
+                            '306210' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_format',
-                                                                'type' => '294986'
+                                                                'type' => '298047'
                                                               }
                                                      },
-                                          'Return' => '300993',
+                                          'Return' => '304054',
                                           'ShortName' => 'opj_create_compress',
                                           'Source' => undef,
                                           'SourceLine' => '657'
                                         },
-                            '303385' => {
+                            '306446' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'res_factor',
@@ -611,12 +611,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '639'
                                         },
-                            '303510' => {
+                            '306571' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_stream',
@@ -636,12 +636,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '615'
                                         },
-                            '303718' => {
+                            '306779' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_tile_index',
@@ -665,12 +665,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '589'
                                         },
-                            '303954' => {
+                            '307015' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_stream',
@@ -710,7 +710,7 @@ $VAR1 = {
                                                        '9' => {
                                                                 'name' => 'p_should_go_on',
                                                                 'offset' => '24',
-                                                                'type' => '25212'
+                                                                'type' => '25225'
                                                               }
                                                      },
                                           'Return' => '2937',
@@ -718,12 +718,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '558'
                                         },
-                            '304273' => {
+                            '307334' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_image',
@@ -751,12 +751,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '535'
                                         },
-                            '304507' => {
+                            '307568' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_stream',
@@ -772,12 +772,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '514'
                                         },
-                            '304687' => {
+                            '307748' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'numcomps',
@@ -785,7 +785,7 @@ $VAR1 = {
                                                               },
                                                        '2' => {
                                                                 'name' => 'comps_indices',
-                                                                'type' => '130487'
+                                                                'type' => '130725'
                                                               },
                                                        '3' => {
                                                                 'name' => 'apply_color_transforms',
@@ -797,7 +797,7 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '485'
                                         },
-                            '304957' => {
+                            '308018' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
@@ -806,11 +806,11 @@ $VAR1 = {
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '2' => {
                                                                 'name' => 'p_image',
-                                                                'type' => '130469'
+                                                                'type' => '130707'
                                                               }
                                                      },
                                           'Return' => '2937',
@@ -818,12 +818,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '461'
                                         },
-                            '305194' => {
+                            '308255' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'strict',
@@ -835,16 +835,16 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '441'
                                         },
-                            '305361' => {
+                            '308422' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'parameters',
-                                                                'type' => '130475'
+                                                                'type' => '130713'
                                                               }
                                                      },
                                           'Return' => '2937',
@@ -852,12 +852,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '421'
                                         },
-                            '305540' => {
+                            '308601' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'num_threads',
@@ -869,12 +869,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '410'
                                         },
-                            '305657' => {
+                            '308718' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'parameters',
-                                                                'type' => '130475'
+                                                                'type' => '130713'
                                                               }
                                                      },
                                           'Return' => '1',
@@ -882,25 +882,25 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '387'
                                         },
-                            '305816' => {
+                            '308877' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_format',
-                                                                'type' => '294986'
+                                                                'type' => '298047'
                                                               }
                                                      },
-                                          'Return' => '300993',
+                                          'Return' => '304054',
                                           'ShortName' => 'opj_create_decompress',
                                           'Source' => undef,
                                           'SourceLine' => '184'
                                         },
-                            '307025' => {
+                            '310086' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_callback',
@@ -921,12 +921,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '74'
                                         },
-                            '307122' => {
+                            '310183' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_callback',
@@ -947,12 +947,12 @@ $VAR1 = {
                                           'Source' => undef,
                                           'SourceLine' => '59'
                                         },
-                            '307219' => {
+                            '310280' => {
                                           'Header' => 'openjpeg.h',
                                           'Param' => {
                                                        '0' => {
                                                                 'name' => 'p_codec',
-                                                                'type' => '300993'
+                                                                'type' => '304054'
                                                               },
                                                        '1' => {
                                                                 'name' => 'p_callback',
@@ -978,14 +978,14 @@ $VAR1 = {
                                         'Return' => '87',
                                         'ShortName' => 'opj_get_num_cpus',
                                         'Source' => undef,
-                                        'SourceLine' => '1770'
+                                        'SourceLine' => '1776'
                                       },
                             '8259' => {
                                         'Header' => 'openjpeg.h',
                                         'Return' => '2937',
                                         'ShortName' => 'opj_has_thread_support',
                                         'Source' => undef,
-                                        'SourceLine' => '1767'
+                                        'SourceLine' => '1773'
                                       }
                           },
           'SymbolVersion' => {
@@ -994,7 +994,7 @@ $VAR1 = {
                                '__gmon_start__' => 'sysconf@@GLIBC_2.2.5'
                              },
           'Symbols' => {
-                         'libopenjp2.so.2.5.1' => {
+                         'libopenjp2.so.2.5.3' => {
                                                     'opj_codec_set_threads' => 1,
                                                     'opj_create_compress' => 1,
                                                     'opj_create_decompress' => 1,
@@ -1078,7 +1078,7 @@ $VAR1 = {
                                        'SourceLine' => '45',
                                        'Type' => 'Typedef'
                                      },
-                          '110644' => {
+                          '110670' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1130,19 +1130,19 @@ $VAR1 = {
                                         'Name' => 'struct opj_image_comptparm',
                                         'Size' => '36',
                                         'Source' => undef,
-                                        'SourceLine' => '734',
+                                        'SourceLine' => '736',
                                         'Type' => 'Struct'
                                       },
-                          '110777' => {
-                                        'BaseType' => '110644',
+                          '110803' => {
+                                        'BaseType' => '110670',
                                         'Name' => 'opj_image_cmptparm_t',
                                         'Size' => '36',
                                         'Source' => undef,
-                                        'SourceLine' => '753',
+                                        'SourceLine' => '755',
                                         'Type' => 'Typedef'
                                       },
-                          '112906' => {
-                                        'BaseType' => '110777',
+                          '112932' => {
+                                        'BaseType' => '110803',
                                         'Name' => 'opj_image_cmptparm_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
@@ -1192,7 +1192,7 @@ $VAR1 = {
                                        'Name' => 'opj_msg_callback',
                                        'Size' => '8',
                                        'Source' => undef,
-                                       'SourceLine' => '349',
+                                       'SourceLine' => '351',
                                        'Type' => 'Typedef'
                                      },
                           '11786' => {
@@ -1222,7 +1222,7 @@ $VAR1 = {
                                        'Name' => 'opj_stream_read_fn',
                                        'Size' => '8',
                                        'Source' => undef,
-                                       'SourceLine' => '637',
+                                       'SourceLine' => '639',
                                        'Type' => 'Typedef'
                                      },
                           '11821' => {
@@ -1247,7 +1247,7 @@ $VAR1 = {
                                        'Name' => 'opj_stream_write_fn',
                                        'Size' => '8',
                                        'Source' => undef,
-                                       'SourceLine' => '643',
+                                       'SourceLine' => '645',
                                        'Type' => 'Typedef'
                                      },
                           '11865' => {
@@ -1255,7 +1255,7 @@ $VAR1 = {
                                        'Name' => 'opj_stream_skip_fn',
                                        'Size' => '8',
                                        'Source' => undef,
-                                       'SourceLine' => '649',
+                                       'SourceLine' => '651',
                                        'Type' => 'Typedef'
                                      },
                           '11878' => {
@@ -1277,7 +1277,7 @@ $VAR1 = {
                                        'Name' => 'opj_stream_seek_fn',
                                        'Size' => '8',
                                        'Source' => undef,
-                                       'SourceLine' => '655',
+                                       'SourceLine' => '657',
                                        'Type' => 'Typedef'
                                      },
                           '11917' => {
@@ -1299,7 +1299,7 @@ $VAR1 = {
                                        'Name' => 'opj_stream_free_user_data_fn',
                                        'Size' => '8',
                                        'Source' => undef,
-                                       'SourceLine' => '661',
+                                       'SourceLine' => '663',
                                        'Type' => 'Typedef'
                                      },
                           '11973' => {
@@ -1307,10 +1307,10 @@ $VAR1 = {
                                        'Name' => 'opj_stream_t',
                                        'Size' => '8',
                                        'Source' => undef,
-                                       'SourceLine' => '666',
+                                       'SourceLine' => '668',
                                        'Type' => 'Typedef'
                                      },
-                          '120288' => {
+                          '120319' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1333,18 +1333,18 @@ $VAR1 = {
                                         'Name' => 'enum RSIZ_CAPABILITIES',
                                         'Size' => '4',
                                         'Source' => undef,
-                                        'SourceLine' => '282',
+                                        'SourceLine' => '284',
                                         'Type' => 'Enum'
                                       },
-                          '120333' => {
-                                        'BaseType' => '120288',
+                          '120364' => {
+                                        'BaseType' => '120319',
                                         'Name' => 'OPJ_RSIZ_CAPABILITIES',
                                         'Size' => '4',
                                         'Source' => undef,
-                                        'SourceLine' => '287',
+                                        'SourceLine' => '289',
                                         'Type' => 'Typedef'
                                       },
-                          '120346' => {
+                          '120377' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1367,18 +1367,18 @@ $VAR1 = {
                                         'Name' => 'enum CINEMA_MODE',
                                         'Size' => '4',
                                         'Source' => undef,
-                                        'SourceLine' => '293',
+                                        'SourceLine' => '295',
                                         'Type' => 'Enum'
                                       },
-                          '120390' => {
-                                        'BaseType' => '120346',
+                          '120421' => {
+                                        'BaseType' => '120377',
                                         'Name' => 'OPJ_CINEMA_MODE',
                                         'Size' => '4',
                                         'Source' => undef,
-                                        'SourceLine' => '298',
+                                        'SourceLine' => '300',
                                         'Type' => 'Typedef'
                                       },
-                          '121133' => {
+                          '121164' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1419,12 +1419,12 @@ $VAR1 = {
                                                     '15' => {
                                                               'name' => 'tcp_rates',
                                                               'offset' => '4800',
-                                                              'type' => '122058'
+                                                              'type' => '122089'
                                                             },
                                                     '16' => {
                                                               'name' => 'tcp_distoratio',
                                                               'offset' => '5200',
-                                                              'type' => '122058'
+                                                              'type' => '122089'
                                                             },
                                                     '17' => {
                                                               'name' => 'numresolution',
@@ -1474,22 +1474,22 @@ $VAR1 = {
                                                     '25' => {
                                                               'name' => 'prcw_init',
                                                               'offset' => '5632',
-                                                              'type' => '122074'
+                                                              'type' => '122105'
                                                             },
                                                     '26' => {
                                                               'name' => 'prch_init',
                                                               'offset' => '5764',
-                                                              'type' => '122074'
+                                                              'type' => '122105'
                                                             },
                                                     '27' => {
                                                               'name' => 'infile',
                                                               'offset' => '5896',
-                                                              'type' => '122090'
+                                                              'type' => '122121'
                                                             },
                                                     '28' => {
                                                               'name' => 'outfile',
                                                               'offset' => '9992',
-                                                              'type' => '122090'
+                                                              'type' => '122121'
                                                             },
                                                     '29' => {
                                                               'name' => 'index_on',
@@ -1504,7 +1504,7 @@ $VAR1 = {
                                                     '30' => {
                                                               'name' => 'index',
                                                               'offset' => '14092',
-                                                              'type' => '122090'
+                                                              'type' => '122121'
                                                             },
                                                     '31' => {
                                                               'name' => 'image_offset_x0',
@@ -1549,7 +1549,7 @@ $VAR1 = {
                                                     '39' => {
                                                               'name' => 'jpwl_hprot_TPH_tileno',
                                                               'offset' => '18220',
-                                                              'type' => '122107'
+                                                              'type' => '122138'
                                                             },
                                                     '4' => {
                                                              'name' => 'cp_tdy',
@@ -1559,22 +1559,22 @@ $VAR1 = {
                                                     '40' => {
                                                               'name' => 'jpwl_hprot_TPH',
                                                               'offset' => '18284',
-                                                              'type' => '122107'
+                                                              'type' => '122138'
                                                             },
                                                     '41' => {
                                                               'name' => 'jpwl_pprot_tileno',
                                                               'offset' => '18348',
-                                                              'type' => '122107'
+                                                              'type' => '122138'
                                                             },
                                                     '42' => {
                                                               'name' => 'jpwl_pprot_packno',
                                                               'offset' => '18412',
-                                                              'type' => '122107'
+                                                              'type' => '122138'
                                                             },
                                                     '43' => {
                                                               'name' => 'jpwl_pprot',
                                                               'offset' => '18476',
-                                                              'type' => '122107'
+                                                              'type' => '122138'
                                                             },
                                                     '44' => {
                                                               'name' => 'jpwl_sens_size',
@@ -1599,12 +1599,12 @@ $VAR1 = {
                                                     '48' => {
                                                               'name' => 'jpwl_sens_TPH_tileno',
                                                               'offset' => '18556',
-                                                              'type' => '122107'
+                                                              'type' => '122138'
                                                             },
                                                     '49' => {
                                                               'name' => 'jpwl_sens_TPH',
                                                               'offset' => '18620',
-                                                              'type' => '122107'
+                                                              'type' => '122138'
                                                             },
                                                     '5' => {
                                                              'name' => 'cp_disto_alloc',
@@ -1614,7 +1614,7 @@ $VAR1 = {
                                                     '50' => {
                                                               'name' => 'cp_cinema',
                                                               'offset' => '18684',
-                                                              'type' => '120390'
+                                                              'type' => '120421'
                                                             },
                                                     '51' => {
                                                               'name' => 'max_comp_size',
@@ -1624,7 +1624,7 @@ $VAR1 = {
                                                     '52' => {
                                                               'name' => 'cp_rsiz',
                                                               'offset' => '18692',
-                                                              'type' => '120333'
+                                                              'type' => '120364'
                                                             },
                                                     '53' => {
                                                               'name' => 'tp_on',
@@ -1674,7 +1674,7 @@ $VAR1 = {
                                                     '8' => {
                                                              'name' => 'cp_matrice',
                                                              'offset' => '32',
-                                                             'type' => '122036'
+                                                             'type' => '122067'
                                                            },
                                                     '9' => {
                                                              'name' => 'cp_comment',
@@ -1685,48 +1685,48 @@ $VAR1 = {
                                         'Name' => 'struct opj_cparameters',
                                         'Size' => '18720',
                                         'Source' => undef,
-                                        'SourceLine' => '393',
+                                        'SourceLine' => '395',
                                         'Type' => 'Struct'
                                       },
-                          '122036' => {
+                          '122067' => {
                                         'BaseType' => '87',
                                         'Name' => 'int*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '122058' => {
+                          '122089' => {
                                         'BaseType' => '2340',
                                         'Name' => 'float[100]',
                                         'Size' => '400',
                                         'Type' => 'Array'
                                       },
-                          '122074' => {
+                          '122105' => {
                                         'BaseType' => '87',
                                         'Name' => 'int[33]',
                                         'Size' => '132',
                                         'Type' => 'Array'
                                       },
-                          '122090' => {
+                          '122121' => {
                                         'BaseType' => '138',
                                         'Name' => 'char[4096]',
                                         'Size' => '4096',
                                         'Type' => 'Array'
                                       },
-                          '122107' => {
+                          '122138' => {
                                         'BaseType' => '87',
                                         'Name' => 'int[16]',
                                         'Size' => '64',
                                         'Type' => 'Array'
                                       },
-                          '122123' => {
-                                        'BaseType' => '121133',
+                          '122154' => {
+                                        'BaseType' => '121164',
                                         'Name' => 'opj_cparameters_t',
                                         'Size' => '18720',
                                         'Source' => undef,
-                                        'SourceLine' => '544',
+                                        'SourceLine' => '546',
                                         'Type' => 'Typedef'
                                       },
-                          '122136' => {
+                          '122167' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1777,12 +1777,12 @@ $VAR1 = {
                                                     '2' => {
                                                              'name' => 'infile',
                                                              'offset' => '8',
-                                                             'type' => '122090'
+                                                             'type' => '122121'
                                                            },
                                                     '3' => {
                                                              'name' => 'outfile',
                                                              'offset' => '4104',
-                                                             'type' => '122090'
+                                                             'type' => '122121'
                                                            },
                                                     '4' => {
                                                              'name' => 'decod_format',
@@ -1818,18 +1818,18 @@ $VAR1 = {
                                         'Name' => 'struct opj_dparameters',
                                         'Size' => '8252',
                                         'Source' => undef,
-                                        'SourceLine' => '552',
+                                        'SourceLine' => '554',
                                         'Type' => 'Struct'
                                       },
-                          '122404' => {
-                                        'BaseType' => '122136',
+                          '122435' => {
+                                        'BaseType' => '122167',
                                         'Name' => 'opj_dparameters_t',
                                         'Size' => '8252',
                                         'Source' => undef,
-                                        'SourceLine' => '612',
+                                        'SourceLine' => '614',
                                         'Type' => 'Typedef'
                                       },
-                          '122952' => {
+                          '122983' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1856,18 +1856,18 @@ $VAR1 = {
                                         'Name' => 'struct opj_packet_info',
                                         'Size' => '32',
                                         'Source' => undef,
-                                        'SourceLine' => '766',
+                                        'SourceLine' => '768',
                                         'Type' => 'Struct'
                                       },
-                          '123023' => {
-                                        'BaseType' => '122952',
+                          '123054' => {
+                                        'BaseType' => '122983',
                                         'Name' => 'opj_packet_info_t',
                                         'Size' => '32',
                                         'Source' => undef,
-                                        'SourceLine' => '775',
+                                        'SourceLine' => '777',
                                         'Type' => 'Typedef'
                                       },
-                          '123036' => {
+                          '123067' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1889,30 +1889,30 @@ $VAR1 = {
                                         'Name' => 'struct opj_marker_info',
                                         'Size' => '24',
                                         'Source' => undef,
-                                        'SourceLine' => '782',
+                                        'SourceLine' => '784',
                                         'Type' => 'Struct'
                                       },
-                          '123093' => {
-                                        'BaseType' => '123036',
+                          '123124' => {
+                                        'BaseType' => '123067',
                                         'Name' => 'opj_marker_info_t',
                                         'Size' => '24',
                                         'Source' => undef,
-                                        'SourceLine' => '789',
+                                        'SourceLine' => '791',
                                         'Type' => 'Typedef'
                                       },
-                          '123471' => {
-                                        'BaseType' => '123023',
+                          '123502' => {
+                                        'BaseType' => '123054',
                                         'Name' => 'opj_packet_info_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '123477' => {
-                                        'BaseType' => '123093',
+                          '123508' => {
+                                        'BaseType' => '123124',
                                         'Name' => 'opj_marker_info_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '123842' => {
+                          '123873' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -1978,25 +1978,19 @@ $VAR1 = {
                                                     '8' => {
                                                              'name' => 'stepsizes_mant',
                                                              'offset' => '32',
-                                                             'type' => '124059'
+                                                             'type' => '124090'
                                                            },
                                                     '9' => {
                                                              'name' => 'stepsizes_expn',
                                                              'offset' => '420',
-                                                             'type' => '124059'
+                                                             'type' => '124090'
                                                            }
                                                   },
                                         'Name' => 'struct opj_tccp_info',
                                         'Size' => '1080',
                                         'Source' => undef,
-                                        'SourceLine' => '906',
+                                        'SourceLine' => '908',
                                         'Type' => 'Struct'
-                                      },
-                          '124059' => {
-                                        'BaseType' => '9383',
-                                        'Name' => 'OPJ_UINT32[97]',
-                                        'Size' => '388',
-                                        'Type' => 'Array'
                                       },
                           '12409' => {
                                        'BaseType' => '11684',
@@ -2004,15 +1998,21 @@ $VAR1 = {
                                        'Size' => '8',
                                        'Type' => 'Pointer'
                                      },
-                          '124091' => {
-                                        'BaseType' => '123842',
+                          '124090' => {
+                                        'BaseType' => '9383',
+                                        'Name' => 'OPJ_UINT32[97]',
+                                        'Size' => '388',
+                                        'Type' => 'Array'
+                                      },
+                          '124122' => {
+                                        'BaseType' => '123873',
                                         'Name' => 'opj_tccp_info_t',
                                         'Size' => '1080',
                                         'Source' => undef,
-                                        'SourceLine' => '936',
+                                        'SourceLine' => '938',
                                         'Type' => 'Typedef'
                                       },
-                          '124104' => {
+                          '124135' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -2043,13 +2043,13 @@ $VAR1 = {
                                                     '5' => {
                                                              'name' => 'tccp_info',
                                                              'offset' => '24',
-                                                             'type' => '124203'
+                                                             'type' => '124234'
                                                            }
                                                   },
                                         'Name' => 'struct opj_tile_v2_info',
                                         'Size' => '32',
                                         'Source' => undef,
-                                        'SourceLine' => '941',
+                                        'SourceLine' => '943',
                                         'Type' => 'Struct'
                                       },
                           '12415' => {
@@ -2058,21 +2058,21 @@ $VAR1 = {
                                        'Size' => '8',
                                        'Type' => 'Pointer'
                                      },
-                          '124203' => {
-                                        'BaseType' => '124091',
+                          '124234' => {
+                                        'BaseType' => '124122',
                                         'Name' => 'opj_tccp_info_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '124209' => {
-                                        'BaseType' => '124104',
+                          '124240' => {
+                                        'BaseType' => '124135',
                                         'Name' => 'opj_tile_info_v2_t',
                                         'Size' => '32',
                                         'Source' => undef,
-                                        'SourceLine' => '957',
+                                        'SourceLine' => '959',
                                         'Type' => 'Typedef'
                                       },
-                          '124222' => {
+                          '124253' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -2113,35 +2113,35 @@ $VAR1 = {
                                                     '7' => {
                                                              'name' => 'm_default_tile_info',
                                                              'offset' => '32',
-                                                             'type' => '124209'
+                                                             'type' => '124240'
                                                            },
                                                     '8' => {
                                                              'name' => 'tile_info',
                                                              'offset' => '64',
-                                                             'type' => '124361'
+                                                             'type' => '124392'
                                                            }
                                                   },
                                         'Name' => 'struct opj_codestream_info_v2',
                                         'Size' => '72',
                                         'Source' => undef,
-                                        'SourceLine' => '962',
+                                        'SourceLine' => '964',
                                         'Type' => 'Struct'
                                       },
-                          '124361' => {
-                                        'BaseType' => '124209',
+                          '124392' => {
+                                        'BaseType' => '124240',
                                         'Name' => 'opj_tile_info_v2_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '124367' => {
-                                        'BaseType' => '124222',
+                          '124398' => {
+                                        'BaseType' => '124253',
                                         'Name' => 'opj_codestream_info_v2_t',
                                         'Size' => '72',
                                         'Source' => undef,
-                                        'SourceLine' => '986',
+                                        'SourceLine' => '988',
                                         'Type' => 'Typedef'
                                       },
-                          '124380' => {
+                          '124411' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -2163,18 +2163,18 @@ $VAR1 = {
                                         'Name' => 'struct opj_tp_index',
                                         'Size' => '24',
                                         'Source' => undef,
-                                        'SourceLine' => '992',
+                                        'SourceLine' => '994',
                                         'Type' => 'Struct'
                                       },
-                          '124437' => {
-                                        'BaseType' => '124380',
+                          '124468' => {
+                                        'BaseType' => '124411',
                                         'Name' => 'opj_tp_index_t',
                                         'Size' => '24',
                                         'Source' => undef,
-                                        'SourceLine' => '1000',
+                                        'SourceLine' => '1002',
                                         'Type' => 'Typedef'
                                       },
-                          '124450' => {
+                          '124481' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -2200,7 +2200,7 @@ $VAR1 = {
                                                     '4' => {
                                                              'name' => 'tp_index',
                                                              'offset' => '16',
-                                                             'type' => '124605'
+                                                             'type' => '124636'
                                                            },
                                                     '5' => {
                                                              'name' => 'marknum',
@@ -2210,7 +2210,7 @@ $VAR1 = {
                                                     '6' => {
                                                              'name' => 'marker',
                                                              'offset' => '32',
-                                                             'type' => '123477'
+                                                             'type' => '123508'
                                                            },
                                                     '7' => {
                                                              'name' => 'maxmarknum',
@@ -2225,30 +2225,30 @@ $VAR1 = {
                                                     '9' => {
                                                              'name' => 'packet_index',
                                                              'offset' => '48',
-                                                             'type' => '123471'
+                                                             'type' => '123502'
                                                            }
                                                   },
                                         'Name' => 'struct opj_tile_index',
                                         'Size' => '56',
                                         'Source' => undef,
-                                        'SourceLine' => '1005',
+                                        'SourceLine' => '1007',
                                         'Type' => 'Struct'
                                       },
-                          '124605' => {
-                                        'BaseType' => '124437',
+                          '124636' => {
+                                        'BaseType' => '124468',
                                         'Name' => 'opj_tp_index_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '124611' => {
-                                        'BaseType' => '124450',
+                          '124642' => {
+                                        'BaseType' => '124481',
                                         'Name' => 'opj_tile_index_t',
                                         'Size' => '56',
                                         'Source' => undef,
-                                        'SourceLine' => '1032',
+                                        'SourceLine' => '1034',
                                         'Type' => 'Typedef'
                                       },
-                          '124624' => {
+                          '124655' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -2274,7 +2274,7 @@ $VAR1 = {
                                                     '4' => {
                                                              'name' => 'marker',
                                                              'offset' => '32',
-                                                             'type' => '123477'
+                                                             'type' => '123508'
                                                            },
                                                     '5' => {
                                                              'name' => 'maxmarknum',
@@ -2289,31 +2289,31 @@ $VAR1 = {
                                                     '7' => {
                                                              'name' => 'tile_index',
                                                              'offset' => '48',
-                                                             'type' => '124751'
+                                                             'type' => '124782'
                                                            }
                                                   },
                                         'Name' => 'struct opj_codestream_index',
                                         'Size' => '56',
                                         'Source' => undef,
-                                        'SourceLine' => '1037',
+                                        'SourceLine' => '1039',
                                         'Type' => 'Struct'
                                       },
-                          '124751' => {
-                                        'BaseType' => '124611',
+                          '124782' => {
+                                        'BaseType' => '124642',
                                         'Name' => 'opj_tile_index_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '124757' => {
-                                        'BaseType' => '124624',
+                          '124788' => {
+                                        'BaseType' => '124655',
                                         'Name' => 'opj_codestream_index_t',
                                         'Size' => '56',
                                         'Source' => undef,
-                                        'SourceLine' => '1060',
+                                        'SourceLine' => '1062',
                                         'Type' => 'Typedef'
                                       },
-                          '128041' => {
-                                        'BaseType' => '124757',
+                          '128266' => {
+                                        'BaseType' => '124788',
                                         'Name' => 'opj_codestream_index_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
@@ -2324,38 +2324,38 @@ $VAR1 = {
                                      'Size' => '8',
                                      'Type' => 'Pointer'
                                    },
-                          '130469' => {
+                          '130707' => {
                                         'BaseType' => '22922',
                                         'Name' => 'opj_image_t**',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '130475' => {
-                                        'BaseType' => '122404',
+                          '130713' => {
+                                        'BaseType' => '122435',
                                         'Name' => 'opj_dparameters_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '130487' => {
+                          '130725' => {
                                         'BaseType' => '19900',
                                         'Name' => 'OPJ_UINT32 const*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '130493' => {
-                                        'BaseType' => '122123',
+                          '130731' => {
+                                        'BaseType' => '122154',
                                         'Name' => 'opj_cparameters_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '130499' => {
+                          '130737' => {
                                         'BaseType' => '168',
                                         'Name' => 'char const*const*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '130505' => {
-                                        'BaseType' => '124367',
+                          '130743' => {
+                                        'BaseType' => '124398',
                                         'Name' => 'opj_codestream_info_v2_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
@@ -2472,7 +2472,7 @@ $VAR1 = {
                                        'Name' => 'enum PROG_ORDER',
                                        'Size' => '4',
                                        'Source' => undef,
-                                       'SourceLine' => '303',
+                                       'SourceLine' => '305',
                                        'Type' => 'Enum'
                                      },
                           '19990' => {
@@ -2480,7 +2480,7 @@ $VAR1 = {
                                        'Name' => 'OPJ_PROG_ORDER',
                                        'Size' => '4',
                                        'Source' => undef,
-                                       'SourceLine' => '310',
+                                       'SourceLine' => '312',
                                        'Type' => 'Typedef'
                                      },
                           '20003' => {
@@ -2518,7 +2518,7 @@ $VAR1 = {
                                        'Name' => 'enum COLOR_SPACE',
                                        'Size' => '4',
                                        'Source' => undef,
-                                       'SourceLine' => '315',
+                                       'SourceLine' => '317',
                                        'Type' => 'Enum'
                                      },
                           '20065' => {
@@ -2526,7 +2526,7 @@ $VAR1 = {
                                        'Name' => 'OPJ_COLOR_SPACE',
                                        'Size' => '4',
                                        'Source' => undef,
-                                       'SourceLine' => '323',
+                                       'SourceLine' => '325',
                                        'Type' => 'Typedef'
                                      },
                           '20078' => {
@@ -2716,7 +2716,7 @@ $VAR1 = {
                                        'Name' => 'struct opj_poc',
                                        'Size' => '148',
                                        'Source' => undef,
-                                       'SourceLine' => '365',
+                                       'SourceLine' => '367',
                                        'Type' => 'Struct'
                                      },
                           '20595' => {
@@ -2730,7 +2730,7 @@ $VAR1 = {
                                        'Name' => 'opj_poc_t',
                                        'Size' => '148',
                                        'Source' => undef,
-                                       'SourceLine' => '388',
+                                       'SourceLine' => '390',
                                        'Type' => 'Typedef'
                                      },
                           '20624' => {
@@ -2811,7 +2811,7 @@ $VAR1 = {
                                        'Name' => 'struct opj_image_comp',
                                        'Size' => '64',
                                        'Source' => undef,
-                                       'SourceLine' => '677',
+                                       'SourceLine' => '679',
                                        'Type' => 'Struct'
                                      },
                           '20829' => {
@@ -2825,7 +2825,7 @@ $VAR1 = {
                                        'Name' => 'opj_image_comp_t',
                                        'Size' => '64',
                                        'Source' => undef,
-                                       'SourceLine' => '704',
+                                       'SourceLine' => '706',
                                        'Type' => 'Typedef'
                                      },
                           '20853' => {
@@ -2880,7 +2880,7 @@ $VAR1 = {
                                        'Name' => 'struct opj_image',
                                        'Size' => '48',
                                        'Source' => undef,
-                                       'SourceLine' => '709',
+                                       'SourceLine' => '711',
                                        'Type' => 'Struct'
                                      },
                           '20990' => {
@@ -2894,7 +2894,7 @@ $VAR1 = {
                                        'Name' => 'opj_image_t',
                                        'Size' => '48',
                                        'Source' => undef,
-                                       'SourceLine' => '728',
+                                       'SourceLine' => '730',
                                        'Type' => 'Typedef'
                                      },
                           '21015' => {
@@ -3074,7 +3074,7 @@ $VAR1 = {
                                       'SourceLine' => '49',
                                       'Type' => 'Struct'
                                     },
-                          '25212' => {
+                          '25225' => {
                                        'BaseType' => '2937',
                                        'Name' => 'OPJ_BOOL*',
                                        'Size' => '8',
@@ -3165,7 +3165,7 @@ $VAR1 = {
                                       'SourceLine' => '116',
                                       'Type' => 'Typedef'
                                     },
-                          '294930' => {
+                          '297991' => {
                                         'Header' => 'openjpeg.h',
                                         'Memb' => {
                                                     '0' => {
@@ -3196,39 +3196,39 @@ $VAR1 = {
                                         'Name' => 'enum CODEC_FORMAT',
                                         'Size' => '4',
                                         'Source' => undef,
-                                        'SourceLine' => '328',
+                                        'SourceLine' => '330',
                                         'Type' => 'Enum'
                                       },
-                          '294986' => {
-                                        'BaseType' => '294930',
+                          '298047' => {
+                                        'BaseType' => '297991',
                                         'Name' => 'OPJ_CODEC_FORMAT',
                                         'Size' => '4',
                                         'Source' => undef,
-                                        'SourceLine' => '335',
+                                        'SourceLine' => '337',
                                         'Type' => 'Typedef'
                                       },
-                          '296864' => {
+                          '299925' => {
                                         'BaseType' => '130',
                                         'Name' => 'opj_codec_t',
                                         'Size' => '8',
                                         'Source' => undef,
-                                        'SourceLine' => '618',
+                                        'SourceLine' => '620',
                                         'Type' => 'Typedef'
                                       },
-                          '300891' => {
-                                        'BaseType' => '128041',
+                          '303952' => {
+                                        'BaseType' => '128266',
                                         'Name' => 'opj_codestream_index_t**',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '300993' => {
-                                        'BaseType' => '296864',
+                          '304054' => {
+                                        'BaseType' => '299925',
                                         'Name' => 'opj_codec_t*',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
                                       },
-                          '301084' => {
-                                        'BaseType' => '130505',
+                          '304145' => {
+                                        'BaseType' => '130743',
                                         'Name' => 'opj_codestream_info_v2_t**',
                                         'Size' => '8',
                                         'Type' => 'Pointer'
@@ -3351,7 +3351,7 @@ $VAR1 = {
                                   }
                         },
           'UndefinedSymbols' => {
-                                  'libopenjp2.so.2.5.1' => {
+                                  'libopenjp2.so.2.5.3' => {
                                                              '_ITM_deregisterTMCloneTable' => 0,
                                                              '_ITM_registerTMCloneTable' => 0,
                                                              '__assert_fail@GLIBC_2.2.5' => 0,
@@ -3391,6 +3391,7 @@ $VAR1 = {
                                                              'pthread_mutex_init@GLIBC_2.2.5' => 0,
                                                              'pthread_mutex_lock@GLIBC_2.2.5' => 0,
                                                              'pthread_mutex_unlock@GLIBC_2.2.5' => 0,
+                                                             'qsort@GLIBC_2.2.5' => 0,
                                                              'realloc@GLIBC_2.2.5' => 0,
                                                              'sqrt@GLIBC_2.2.5' => 0,
                                                              'stdout@GLIBC_2.2.5' => 0,
