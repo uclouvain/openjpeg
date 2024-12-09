@@ -32,16 +32,6 @@
     "ABIDiff":        "Off"
   },
   {
-    "Number":         "2.5.2",
-    "Installed":      "installed/openjpeg/2.5.2",
-    "Source":         "src/openjpeg/2.5.2/version.-2.5.2.tar.gz",
-    "Changelog":      "Off",
-    "HeadersDiff":    "On",
-    "PkgDiff":        "Off",
-    "ABIView":        "Off",
-    "ABIDiff":        "Off"
-  },
-  {
     "Number":         "2.5.1",
     "Installed":      "installed/openjpeg/2.5.1",
     "Source":         "src/openjpeg/2.5.1/version.-2.5.1.tar.gz",
