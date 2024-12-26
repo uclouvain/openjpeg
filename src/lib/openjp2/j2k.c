@@ -5119,6 +5119,8 @@ static OPJ_BOOL opj_j2k_read_sod(opj_j2k_t *p_j2k,
             return OPJ_FALSE;
         }
         p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
+    } else if (opj_stream_get_number_byte_left(p_stream) < 2) {
+        p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
     } else {
         p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
     }
