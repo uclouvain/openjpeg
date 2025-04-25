@@ -35,6 +35,7 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/mqc_inl.h
   ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg.c
   ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg.h
+  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_clock.c
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_clock.h
   ${CMAKE_CURRENT_SOURCE_DIR}/pi.c
@@ -57,6 +58,7 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/sparse_array.c
   ${CMAKE_CURRENT_SOURCE_DIR}/sparse_array.h
 )
+# list(APPEND OPENJPEG_SRCS PUBLIC_HEADERS)
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)
   set(OPENJPEG_SRCS
@@ -90,12 +92,13 @@ if(WIN32)
   else()
     target_compile_definitions(${OPENJPEG_LIBRARY_NAME} PUBLIC OPJ_STATIC)
   endif()
-elseif(BUILD_SHARED_LIBS AND BUILD_STATIC_LIBS)
-  # Builds both static and dynamic libs
+elseif(BUILD_STATIC_LIBS)
+  message(STATUS "Building both static and dynamic libs!\n\n")
   add_library(openjp2_static STATIC ${OPENJPEG_SRCS})
   set_target_properties(openjp2_static PROPERTIES OUTPUT_NAME ${OPENJPEG_LIBRARY_NAME})
   list(APPEND INSTALL_LIBS openjp2_static)
   target_include_directories(openjp2_static PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${OPENJPEG_INSTALL_SUBDIR}>)
+  configure_opj_framework(openjp2_static)
 endif()
 
 target_include_directories(${OPENJPEG_LIBRARY_NAME} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${OPENJPEG_INSTALL_SUBDIR}>)
@@ -104,6 +107,7 @@ if(UNIX)
 endif()
 set_target_properties(${OPENJPEG_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJP2_COMPILE_OPTIONS})
+configure_opj_framework(${OPENJPEG_LIBRARY_NAME})
 
 # Install library
 install(TARGETS ${INSTALL_LIBS}
@@ -111,6 +115,10 @@ install(TARGETS ${INSTALL_LIBS}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Applications
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Libraries
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Libraries
+  FRAMEWORK DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime OPTIONAL
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  RESOURCE DESTINATION ${OPJ_RESOURCEDIR}
 )
 
 # Install includes files
