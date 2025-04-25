@@ -133,24 +133,24 @@ if(OPJ_FRAMEWORK)
   )
   message(STATUS "Public Headers: ${PUBLIC_HEADERS}\n")
 
-  set(OPJ_RESOURCEDIR "openjp2.framework/Resources")
+  set(OPJ_RESOURCEDIR "bin/openjp2.framework/Resources")
   message(STATUS "Resources directory: ${OPJ_RESOURCEDIR}")
   # Define resource files for Apple Framework early to ensure scope
   set(OPJ_RESOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
     "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE"
     "${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS.md"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenJPEGConfigVersion.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenJPEGConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenJPEGTargets.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenJPEGTargets-noconfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets-noconfig.cmake"
     CACHE INTERNAL "Resource files for frameworks"
   )
   message(STATUS "Resource files: ${OPJ_RESOURCES}\n")
 endif()
 
 function(configure_opj_framework libname)
-  message(STATUS "configure_opj_framework called!\n")
+  message(STATUS "configure_opj_framework called for ${libname}!\n")
   if(OPJ_FRAMEWORK)
     set_target_properties(${libname} PROPERTIES
       FRAMEWORK TRUE
@@ -165,16 +165,15 @@ function(configure_opj_framework libname)
       MACOSX_FRAMEWORK_BUNDLE_VERSION "${OPENJPEG_VERSION}"
       MACOSX_FRAMEWORK_SHORT_VERSION_STRING "${OPJ_SHORT_VERSION}"
       MACOSX_RPATH TRUE
-      # RESOURCE "${OPJ_RESOURCES}"
     )
 
-    # Manual approach...
-    # set(RES_DEST_DIR "$<TARGET_FILE_DIR:${libname}>/Resources")
-    # add_custom_command(TARGET ${libname} POST_BUILD
-    #   COMMAND ${CMAKE_COMMAND} -E make_directory "${RES_DEST_DIR}"
-    #   COMMAND ${CMAKE_COMMAND} -E copy ${imath_resource_files} "${RES_DEST_DIR}/"
-    #   COMMENT "Copying resource files to ${libname}.framework/Resources"
-    # )
+    # Manual approach for copying resources
+    set(RES_DEST_DIR "$<TARGET_FILE_DIR:${libname}>/Resources")
+    add_custom_command(TARGET ${libname} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${RES_DEST_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy ${OPJ_RESOURCES} "${RES_DEST_DIR}/"
+      COMMENT "Copying resource files to ${libname}.framework/Resources"
+    )
   endif()
 endfunction()
 
@@ -293,6 +292,18 @@ if(UNIX)
 option(BUILD_UNIT_TESTS "Build unit tests (bench_dwt, test_sparse_array, etc..)" OFF)
 endif()
 
+# Generate export files after library is defined
+if(OPJ_FRAMEWORK)
+  export(EXPORT OpenJPEGTargets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets.cmake
+    NAMESPACE ${OPENJPEG_NAMESPACE}::
+  )
+  export(EXPORT OpenJPEGTargets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets-noconfig.cmake
+    NAMESPACE ${OPENJPEG_NAMESPACE}::
+  )
+endif()
+
 #-----------------------------------------------------------------------------
 # Build Applications
 option(BUILD_CODEC "Build the CODEC executables" ON)
@@ -346,7 +357,12 @@ endif()
 
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets (relocatable with CMake 3.0+)
-install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
+install(EXPORT OpenJPEGTargets
+  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+  FILE OpenJPEGTargets.cmake
+  NAMESPACE ${OPENJPEG_NAMESPACE}::
+  COMPONENT Libraries
+)
 include(CMakePackageConfigHelpers)
 configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/OpenJPEGConfig.cmake.in
   ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
@@ -360,7 +376,18 @@ install(
   FILES
     ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
     ${OPENJPEG_BINARY_DIR}/OpenJPEGConfigVersion.cmake
-  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
+    ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets-noconfig.cmake
+  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+  COMPONENT Libraries
+)
+# Install resources to the framework's Resources directory
+if(OPJ_FRAMEWORK)
+  install(FILES ${OPJ_RESOURCES}
+    DESTINATION ${OPJ_RESOURCEDIR}
+    COMPONENT Resources
+  )
+endif()
 
 #-----------------------------------------------------------------------------
 
