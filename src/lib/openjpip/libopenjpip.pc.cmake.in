@@ -11,6 +11,6 @@ URL: http://www.openjpeg.org/
 Version: @OPENJPEG_VERSION@
 Requires: libopenjp2
 Libs: -L${libdir} -lopenjpip
-Libs.private: -lm -lcurl -lfcgi -lpthread
+Libs.private: @deps@
 Cflags: -I${includedir}
 Cflags.private: -DOPJ_STATIC

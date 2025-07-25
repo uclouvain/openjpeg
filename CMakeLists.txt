@@ -328,6 +328,19 @@ set_variable_from_rel_or_absolute_path("docdir" "\\\${prefix}" "${CMAKE_INSTALL_
 set_variable_from_rel_or_absolute_path("libdir" "\\\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
 set_variable_from_rel_or_absolute_path("includedir" "\\\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}/${OPENJPEG_INSTALL_SUBDIR}")
 
+function(get_pkgconfig_deps NAME OUT)
+  get_target_property(link_libs ${NAME} LINK_LIBRARIES)
+  if(NOT link_libs STREQUAL "link_libs-NOTFOUND")
+    foreach(lib ${link_libs})
+      # omit -lopenjp2 from Libs.private because libopenjp2 is in Requires
+      if(NOT ${lib} STREQUAL ${OPENJPEG_LIBRARY_NAME})
+        string(APPEND deps "-l${lib} ")
+      endif()
+    endforeach()
+  endif()
+  set(${OUT} ${deps} PARENT_SCOPE)
+endfunction()
+get_pkgconfig_deps(${OPENJPEG_LIBRARY_NAME} deps)
 # install in lib and not share (CMAKE_INSTALL_LIBDIR takes care of it for multi-arch)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/libopenjp2.pc.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc @ONLY)
@@ -335,6 +348,7 @@ install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc DESTINATION
   ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
 #
 if(BUILD_JPIP)
+  get_pkgconfig_deps(openjpip deps)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjpip/libopenjpip.pc.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjpip.pc @ONLY)
   install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpip.pc DESTINATION
