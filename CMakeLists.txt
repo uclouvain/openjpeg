@@ -29,8 +29,8 @@ set(OPENJPEG_VERSION_MINOR 5)
 set(OPENJPEG_VERSION_BUILD 4)
 set(OPENJPEG_VERSION
   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
-set(PACKAGE_VERSION
-  "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
+set(PACKAGE_VERSION "${OPENJPEG_VERSION}")
+set(OPJ_SHORT_VERSION "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
 
 # Because autotools does not support X.Y notation for SOVERSION, we have to use
 # two numbering, one for the openjpeg version and one for openjpeg soversion
@@ -63,7 +63,7 @@ if(NOT OPENJPEG_SOVERSION)
   set(OPENJPEG_SOVERSION 7)
 endif(NOT OPENJPEG_SOVERSION)
 set(OPENJPEG_LIBRARY_PROPERTIES
-  VERSION   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}"
+  VERSION   "${OPENJPEG_VERSION}"
   SOVERSION "${OPENJPEG_SOVERSION}"
 )
 
@@ -108,7 +108,7 @@ include(GNUInstallDirs)
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
 
-set(OPENJPEG_INSTALL_SUBDIR "${PROJECT_NAME}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
+set(OPENJPEG_INSTALL_SUBDIR "${PROJECT_NAME}-${OPJ_SHORT_VERSION}")
 
 if(NOT OPENJPEG_INSTALL_JNI_DIR)
   if(WIN32)
@@ -122,9 +122,61 @@ if(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
   set(OPENJPEG_INSTALL_PACKAGE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${OPENJPEG_INSTALL_SUBDIR}")
 endif()
 
-if (APPLE)
-	option(OPJ_USE_DSYMUTIL "Call dsymutil on binaries after build." OFF)
+if(APPLE)
+  option(OPJ_USE_DSYMUTIL "Call dsymutil on binaries after build." OFF)
+  option(OPJ_FRAMEWORK "Build as Apple Frameworks" OFF)
 endif()
+
+if(OPJ_FRAMEWORK)
+  set(PUBLIC_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/openjpeg.h
+    ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config.h
+  )
+  message(STATUS "Public Headers: ${PUBLIC_HEADERS}\n")
+
+  set(OPJ_RESOURCEDIR "bin/openjp2.framework/Resources")
+  message(STATUS "Resources directory: ${OPJ_RESOURCEDIR}")
+  # Define resource files for Apple Framework early to ensure scope
+  set(OPJ_RESOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE"
+    "${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS.md"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets-noconfig.cmake"
+    CACHE INTERNAL "Resource files for frameworks"
+  )
+  message(STATUS "Resource files: ${OPJ_RESOURCES}\n")
+endif()
+
+function(configure_opj_framework libname)
+  message(STATUS "configure_opj_framework called for ${libname}!\n")
+  if(OPJ_FRAMEWORK)
+    set_target_properties(${libname} PROPERTIES
+      FRAMEWORK TRUE
+      FRAMEWORK_VERSION "${OPENJPEG_VERSION}"
+      PRODUCT_BUNDLE_IDENTIFIER "github.com/uclouvain/openjpeg/${libname}"
+      XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
+      PUBLIC_HEADER "${PUBLIC_HEADERS}"
+      XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
+      XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
+      XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO"
+      MACOSX_FRAMEWORK_IDENTIFIER "github.com/uclouvain/openjpeg/${libname}"
+      MACOSX_FRAMEWORK_BUNDLE_VERSION "${OPENJPEG_VERSION}"
+      MACOSX_FRAMEWORK_SHORT_VERSION_STRING "${OPJ_SHORT_VERSION}"
+      MACOSX_RPATH TRUE
+    )
+
+    # Manual approach for copying resources
+    set(RES_DEST_DIR "$<TARGET_FILE_DIR:${libname}>/Resources")
+    add_custom_command(TARGET ${libname} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${RES_DEST_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy ${OPJ_RESOURCES} "${RES_DEST_DIR}/"
+      COMMENT "Copying resource files to ${libname}.framework/Resources"
+    )
+  endif()
+endfunction()
 
 #-----------------------------------------------------------------------------
 # Big endian test:
@@ -211,6 +263,20 @@ check_symbol_exists(posix_memalign stdlib.h OPJ_HAVE_POSIX_MEMALIGN)
 unset(CMAKE_REQUIRED_DEFINITIONS)
 # memalign (obsolete)
 check_symbol_exists(memalign malloc.h OPJ_HAVE_MEMALIGN)
+
+# opj_config.h generation (2/2) - moved early to ensure availability
+configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config.h.cmake.in
+ ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config.h
+ @ONLY
+ )
+
+configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config_private.h.cmake.in
+ ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config_private.h
+ @ONLY
+ )
+
 #-----------------------------------------------------------------------------
 # Build Library
 if(BUILD_JPIP_SERVER)
@@ -225,6 +291,18 @@ add_subdirectory(src/lib)
 option(BUILD_LUTS_GENERATOR "Build utility to generate t1_luts.h" OFF)
 if(UNIX)
 option(BUILD_UNIT_TESTS "Build unit tests (bench_dwt, test_sparse_array, etc..)" OFF)
+endif()
+
+# Generate export files after library is defined
+if(OPJ_FRAMEWORK)
+  export(EXPORT OpenJPEGTargets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets.cmake
+    NAMESPACE ${OPENJPEG_NAMESPACE}::
+  )
+  export(EXPORT OpenJPEGTargets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets-noconfig.cmake
+    NAMESPACE ${OPENJPEG_NAMESPACE}::
+  )
 endif()
 
 #-----------------------------------------------------------------------------
@@ -247,20 +325,6 @@ if(BUILD_CODEC)
   add_subdirectory(src/bin)
 endif ()
 add_subdirectory(wrapping)
-
-#-----------------------------------------------------------------------------
-# opj_config.h generation (2/2)
-configure_file(
- ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config.h.cmake.in
- ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config.h
- @ONLY
- )
-
- configure_file(
- ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config_private.h.cmake.in
- ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config_private.h
- @ONLY
- )
 
 #-----------------------------------------------------------------------------
 # build documentation in doc subdir:
@@ -294,7 +358,12 @@ endif()
 
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets (relocatable with CMake 3.0+)
-install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
+install(EXPORT OpenJPEGTargets
+  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+  FILE OpenJPEGTargets.cmake
+  NAMESPACE ${OPENJPEG_NAMESPACE}::
+  COMPONENT Libraries
+)
 include(CMakePackageConfigHelpers)
 configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/OpenJPEGConfig.cmake.in
   ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
@@ -308,7 +377,18 @@ install(
   FILES
     ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
     ${OPENJPEG_BINARY_DIR}/OpenJPEGConfigVersion.cmake
-  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
+    ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/OpenJPEGTargets-noconfig.cmake
+  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+  COMPONENT Libraries
+)
+# Install resources to the framework's Resources directory
+if(OPJ_FRAMEWORK)
+  install(FILES ${OPJ_RESOURCES}
+    DESTINATION ${OPJ_RESOURCEDIR}
+    COMPONENT Resources
+  )
+endif()
 
 #-----------------------------------------------------------------------------
 
