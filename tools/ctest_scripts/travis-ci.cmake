@@ -4,7 +4,7 @@
 # Results will be available at: http://my.cdash.org/index.php?project=OPENJPEG
 # -----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.5...3.31.5)
 
 set( ENV{LANG} en_US.UTF-8)
 if($ENV{OPJ_BINARY_DIR})
