@@ -59,6 +59,7 @@
 #define     JP2_DTBL 0x6474626c    /**< Data Reference box */
 #define     JP2_BPCC 0x62706363    /**< Bits per component box */
 #define     JP2_JP2  0x6a703220    /**< File type fields */
+#define     JP2_PXFM 0x7078666d    /**< Pixel Format box */
 
 /* For the future */
 /* #define JP2_RES 0x72657320 */  /**< Resolution box (super-box) */
@@ -143,6 +144,31 @@ typedef struct opj_jp2_comps {
     OPJ_UINT32 bpcc;
 } opj_jp2_comps_t;
 
+
+typedef enum {
+    JP2_TRANSFORM_TYPE_BINARY_TWO_COMPLEMENT    = 0x0,
+    JP2_TRANSFORM_TYPE_MANTISSA_ONLY            = 0x1,
+    JP2_TRANSFORM_TYPE_EXPONENT_ONLY            = 0x2,
+    JP2_TRANSFORM_TYPE_FIXED_POINT              = 0x3,
+    JP2_TRANSFORM_TYPE_MANTISSA_EXPONENT        = 0x4,
+
+}
+JP2_TRANSFORM_TYPE;
+
+typedef struct opj_jp2_pixel_format_values_t {
+    OPJ_UINT8 exponent;
+    OPJ_UINT8 mentissa;
+    OPJ_UINT8 fractional_bits;
+} opj_jp2_pixel_format_values_t;
+
+/**
+    Non Linear Transform
+*/
+typedef struct opj_jp2_pixel_format_t {
+    OPJ_UINT8 pixel_format_type;
+    opj_jp2_pixel_format_values_t pixel_format_values;
+} opj_jp2_pixel_format_t;
+
 /**
 JPEG-2000 file format reader/writer
 */
@@ -173,6 +199,7 @@ typedef struct opj_jp2 {
     OPJ_UINT32 numcl;
     OPJ_UINT32 *cl;
     opj_jp2_comps_t *comps;
+    opj_jp2_pixel_format_t *pixel_format;
     /* FIXME: The following two variables are used to save offset
       as we write out a JP2 file to disk. This mechanism is not flexible
       as codec writers will need to extand those fields as new part
