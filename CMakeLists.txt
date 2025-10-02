@@ -243,6 +243,13 @@ if(BUILD_CODEC)
   # OFF: It will only build 3rd party libs if they are not found on the system
   # ON: 3rd party libs will ALWAYS be build, and used
   option(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
+
+  # More granualar dependency build selection
+  option(BUILD_THIRDPARTY_ZLIB "Build the thirdparty Z lib if it is needed" OFF)
+  option(BUILD_THIRDPARTY_PNG "Build the thirdparty PNG if it is needed" OFF)
+  option(BUILD_THIRDPARTY_TIFF "Build the thirdparty TIFF lib if it is needed" OFF)
+  option(BUILD_THIRDPARTY_LCMS2 "Build the thirdparty LCMS2 if it is needed" OFF)
+  
   add_subdirectory(thirdparty)
   add_subdirectory(src/bin)
 endif ()
