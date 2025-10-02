@@ -271,6 +271,7 @@ typedef size_t   OPJ_SIZE_T;
 #define OPJ_CINEMA_24_COMP   1041666    /** Maximum size per color component for 2K & 4K @ 24fps */
 #define OPJ_CINEMA_48_COMP   520833     /** Maximum size per color component for 2K @ 48fps */
 
+#define OPJ_NO_IMAGE_DATA ((opj_image_t*) 1)
 /*
 ==========================================================
    enum definitions

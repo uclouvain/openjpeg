@@ -42,7 +42,7 @@ if(WIN32)
 endif()
 
 # Loop over all executables:
-foreach(exe opj_decompress opj_compress opj_dump)
+foreach(exe opj_decompress opj_compress opj_dump opj_merge)
   add_executable(${exe} ${exe}.c ${common_SRCS})
   target_compile_options(${exe} PRIVATE ${OPENJP2_COMPILE_OPTIONS})
   target_link_libraries(${exe} ${OPENJPEG_LIBRARY_NAME}
