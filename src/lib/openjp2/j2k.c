@@ -1420,6 +1420,7 @@ static const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
     {J2K_MS_PLT, J2K_STATE_TPH, opj_j2k_read_plt},
     {J2K_MS_PPM, J2K_STATE_MH, opj_j2k_read_ppm},
     {J2K_MS_PPT, J2K_STATE_TPH, opj_j2k_read_ppt},
+    {J2K_MS_EOC, J2K_STATE_EOC, 0},
     {J2K_MS_SOP, 0, 0},
     {J2K_MS_CRG, J2K_STATE_MH, opj_j2k_read_crg},
     {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_com},
