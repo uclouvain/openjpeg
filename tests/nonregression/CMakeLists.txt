@@ -1,6 +1,6 @@
 # NON-REGRESSION TESTS ON THIS DATASET LOCATED ${OPJ_DATA_ROOT}/input/nonregression
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
 
@@ -61,7 +61,7 @@ set(BLACKLIST_JPEG2000
     broken3.jp2
     broken4.jp2
     edf_c2_20.jp2 #may look ok as per kdu_jp2info, but inspection it reveals that the transformation value is out of range
-    gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2	
+    gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2
     gdal_fuzzer_check_comp_dx_dy.jp2
     gdal_fuzzer_check_number_of_tiles.jp2
     gdal_fuzzer_unchecked_numresolutions.jp2
@@ -122,7 +122,7 @@ foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
                          PROPERTIES WILL_FAIL TRUE)
 
   else()
-  	
+
     # Compare the dump output with the baseline
     add_test(NAME NR-${INPUT_FILENAME_NAME}-compare_dump2base
   	        COMMAND compare_dump_files
@@ -418,7 +418,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
               set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser PROPERTIES
                 DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
                 PASS_REGULAR_EXPRESSION "<isValidJP2>True</isValidJP2>"
-                )		
+                )
             endif()
           endif(JPYLYZER_EXECUTABLE)
 
@@ -438,7 +438,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                 )
               set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-compare PROPERTIES
                 DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
-                )	
+                )
             endif()
           endif()
       endif()
