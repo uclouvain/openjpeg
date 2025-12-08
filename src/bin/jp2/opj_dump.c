@@ -493,6 +493,7 @@ int main(int argc, char *argv[])
     opj_stream_t *l_stream = NULL;              /* Stream */
     opj_codestream_info_v2_t* cstr_info = NULL;
     opj_codestream_index_t* cstr_index = NULL;
+    opj_jp2_metadata_t *jp2_metadata = NULL;
 
     unsigned int num_images, imageno;
     img_fol_t img_fol;
@@ -639,6 +640,11 @@ int main(int argc, char *argv[])
         opj_dump_codec(l_codec, img_fol.flag, fout);
 
         cstr_info = opj_get_cstr_info(l_codec);
+
+        /* Dump associated data if there is any */
+        jp2_metadata = opj_get_jp2_metadata(l_codec);
+        opj_dump_associated_data(jp2_metadata, stdout);
+        opj_destroy_jp2_metadata(&jp2_metadata);
 
         cstr_index = opj_get_cstr_index(l_codec);
 
