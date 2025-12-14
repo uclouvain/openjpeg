@@ -709,7 +709,7 @@ static int parse_cmdline_encoder(int argc, char **argv,
         case 'O': {         /* output format */
             char outformat[50];
             char *of = opj_optarg;
-            sprintf(outformat, ".%s", of);
+            snprintf(outformat, sizeof(outformat), ".%s", of);
             img_fol->set_out_format = 1;
             parameters->cod_format = get_file_format(outformat);
             switch (parameters->cod_format) {
