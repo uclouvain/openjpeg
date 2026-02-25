@@ -175,6 +175,7 @@ jobs:
             # We do have specific failures noted in tools/travis-ci/knownfailures-windows-vs2015-x64-avx2-Release-3rdP.txt
             # not sure why that happens
             OPJ_CI_INSTRUCTION_SETS: "/arch:AVX2"
+            RUNNER_OS: windows-2022
 
     env:
         VS_VER: ${{ matrix.VS_VER }}
