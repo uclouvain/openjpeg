@@ -1158,7 +1158,10 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
     JAS_FPRINTF(stderr, "present=%d \n", l_present);
     if (!l_present) {
         /* TODO MSD: no test to control the output of this function*/
-        opj_bio_inalign(l_bio);
+        if (!opj_bio_inalign(l_bio)) {
+            opj_bio_destroy(l_bio);
+            return OPJ_FALSE;
+        }
         l_header_data += opj_bio_numbytes(l_bio);
         opj_bio_destroy(l_bio);
 
@@ -1179,6 +1182,11 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
         }
 
         l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
+        if (l_header_length == 0U) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Packet header decoding made no progress\n");
+            return OPJ_FALSE;
+        }
         *l_modified_length_ptr -= l_header_length;
         *l_header_data_start += l_header_length;
 
@@ -1361,6 +1369,8 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
     l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
     JAS_FPRINTF(stderr, "hdrlen=%d \n", l_header_length);
     if (!l_header_length) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Packet header decoding made no progress\n");
         return OPJ_FALSE;
     }
     JAS_FPRINTF(stderr, "packet body\n");

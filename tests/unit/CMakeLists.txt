@@ -9,12 +9,15 @@ set(unit_test
   testempty0
   testempty1
   testempty2
+  testissue1472_noeph
 )
 foreach(ut ${unit_test})
   add_executable(${ut} ${ut}.c)
   target_link_libraries(${ut} openjp2)
   add_test(NAME ${ut} COMMAND ${ut})
 endforeach()
+
+set_tests_properties(testissue1472_noeph PROPERTIES TIMEOUT 5)
 
 add_executable(testjp2 testjp2.c)
 target_link_libraries(testjp2 openjp2)
