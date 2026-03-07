@@ -9,6 +9,14 @@ typedef struct {
     OPJ_SIZE_T offset;
 } test_mem_stream_t;
 
+typedef enum {
+    TEST_DECODE_HEADER_FAILURE = -1,
+    TEST_DECODE_FAILURE = 0,
+    TEST_DECODE_SUCCESS = 1
+} test_decode_result_t;
+
+#define ISSUE1472_SCOD_OFFSET 52
+
 static const OPJ_BYTE issue1472_noeph[] = {
     0xff, 0x4f, 0xff, 0x51, 0x00, 0x2c, 0x00, 0x02, 0x04, 0x00, 0x00, 0x64,
     0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x09,
@@ -77,35 +85,35 @@ static OPJ_BOOL test_seek_callback(OPJ_OFF_T p_nb_bytes, void * p_user_data)
     return OPJ_TRUE;
 }
 
-int main(void)
+static test_decode_result_t test_decode_codestream(const OPJ_BYTE *data,
+        OPJ_SIZE_T data_len)
 {
     test_mem_stream_t mem_stream;
     opj_stream_t *stream = NULL;
     opj_codec_t *codec = NULL;
     opj_image_t *image = NULL;
     opj_dparameters_t parameters;
+    test_decode_result_t result = TEST_DECODE_HEADER_FAILURE;
 
-    mem_stream.data = issue1472_noeph;
-    mem_stream.data_len = sizeof(issue1472_noeph);
+    mem_stream.data = data;
+    mem_stream.data_len = data_len;
     mem_stream.offset = 0U;
 
     stream = opj_stream_create(1024, OPJ_TRUE);
     if (stream == NULL) {
-        fprintf(stderr, "Failed to create input stream\n");
-        return 1;
+        return TEST_DECODE_HEADER_FAILURE;
     }
 
     opj_stream_set_user_data(stream, &mem_stream, NULL);
-    opj_stream_set_user_data_length(stream, sizeof(issue1472_noeph));
+    opj_stream_set_user_data_length(stream, data_len);
     opj_stream_set_read_function(stream, test_read_callback);
     opj_stream_set_skip_function(stream, test_skip_callback);
     opj_stream_set_seek_function(stream, test_seek_callback);
 
     codec = opj_create_decompress(OPJ_CODEC_J2K);
     if (codec == NULL) {
-        fprintf(stderr, "Failed to create decoder\n");
         opj_stream_destroy(stream);
-        return 1;
+        return TEST_DECODE_HEADER_FAILURE;
     }
 
     opj_set_info_handler(codec, test_info_callback, NULL);
@@ -114,30 +122,42 @@ int main(void)
 
     opj_set_default_decoder_parameters(&parameters);
     if (!opj_setup_decoder(codec, &parameters)) {
-        fprintf(stderr, "Failed to setup decoder\n");
-        opj_destroy_codec(codec);
-        opj_stream_destroy(stream);
-        return 1;
+        goto cleanup;
     }
 
     if (!opj_read_header(stream, codec, &image)) {
-        fprintf(stderr, "Expected the malformed codestream to reach packet decoding\n");
-        opj_destroy_codec(codec);
-        opj_stream_destroy(stream);
-        opj_image_destroy(image);
-        return 1;
+        goto cleanup;
     }
 
-    if (opj_decode(codec, stream, image)) {
-        fprintf(stderr, "Malformed codestream unexpectedly decoded successfully\n");
-        opj_destroy_codec(codec);
-        opj_stream_destroy(stream);
-        opj_image_destroy(image);
-        return 1;
-    }
+    result = opj_decode(codec, stream, image) ? TEST_DECODE_SUCCESS :
+             TEST_DECODE_FAILURE;
 
+cleanup:
     opj_destroy_codec(codec);
     opj_stream_destroy(stream);
     opj_image_destroy(image);
+    return result;
+}
+
+int main(void)
+{
+    OPJ_BYTE issue1472_prt_only[sizeof(issue1472_noeph)];
+    test_decode_result_t result;
+
+    result = test_decode_codestream(issue1472_noeph, sizeof(issue1472_noeph));
+    if (result != TEST_DECODE_FAILURE) {
+        fprintf(stderr, "Malformed no-EPH codestream unexpectedly avoided decode failure\n");
+        return 1;
+    }
+
+    memcpy(issue1472_prt_only, issue1472_noeph, sizeof(issue1472_prt_only));
+    issue1472_prt_only[ISSUE1472_SCOD_OFFSET] = 0x01;
+
+    result = test_decode_codestream(issue1472_prt_only, sizeof(issue1472_prt_only));
+    if (result == TEST_DECODE_HEADER_FAILURE) {
+        fprintf(stderr, "Expected the PRT-only variant to reach packet decoding\n");
+        return 1;
+    }
+
     return 0;
 }
