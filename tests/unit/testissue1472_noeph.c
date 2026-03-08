@@ -85,6 +85,12 @@ static OPJ_BOOL test_seek_callback(OPJ_OFF_T p_nb_bytes, void * p_user_data)
     return OPJ_TRUE;
 }
 
+static void test_set_scod(OPJ_BYTE *dst, OPJ_BYTE scod)
+{
+    memcpy(dst, issue1472_noeph, sizeof(issue1472_noeph));
+    dst[ISSUE1472_SCOD_OFFSET] = scod;
+}
+
 static test_decode_result_t test_decode_codestream(const OPJ_BYTE *data,
         OPJ_SIZE_T data_len)
 {
@@ -142,6 +148,7 @@ cleanup:
 int main(void)
 {
     OPJ_BYTE issue1472_prt_only[sizeof(issue1472_noeph)];
+    OPJ_BYTE issue1472_eph_required[sizeof(issue1472_noeph)];
     test_decode_result_t result;
 
     result = test_decode_codestream(issue1472_noeph, sizeof(issue1472_noeph));
@@ -150,12 +157,20 @@ int main(void)
         return 1;
     }
 
-    memcpy(issue1472_prt_only, issue1472_noeph, sizeof(issue1472_prt_only));
-    issue1472_prt_only[ISSUE1472_SCOD_OFFSET] = 0x01;
+    test_set_scod(issue1472_prt_only, 0x01);
 
     result = test_decode_codestream(issue1472_prt_only, sizeof(issue1472_prt_only));
-    if (result == TEST_DECODE_HEADER_FAILURE) {
-        fprintf(stderr, "Expected the PRT-only variant to reach packet decoding\n");
+    if (result != TEST_DECODE_FAILURE) {
+        fprintf(stderr, "PRT-only malformed codestream unexpectedly avoided decode failure\n");
+        return 1;
+    }
+
+    test_set_scod(issue1472_eph_required, 0x07);
+
+    result = test_decode_codestream(issue1472_eph_required,
+                                    sizeof(issue1472_eph_required));
+    if (result != TEST_DECODE_FAILURE) {
+        fprintf(stderr, "EPH-required malformed codestream unexpectedly avoided decode failure\n");
         return 1;
     }
 

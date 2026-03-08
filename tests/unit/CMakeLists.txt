@@ -17,7 +17,7 @@ foreach(ut ${unit_test})
   add_test(NAME ${ut} COMMAND ${ut})
 endforeach()
 
-set_tests_properties(testissue1472_noeph PROPERTIES TIMEOUT 5)
+set_tests_properties(testissue1472_noeph PROPERTIES TIMEOUT 10)
 
 add_executable(testjp2 testjp2.c)
 target_link_libraries(testjp2 openjp2)

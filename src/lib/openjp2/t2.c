@@ -59,6 +59,11 @@ Variable length code for signalling delta Zil (truncation point)
 static void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n);
 static OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio);
 
+typedef enum {
+    OPJ_PACKET_PROGRESSED = 0,
+    OPJ_PACKET_HEADERS_EXHAUSTED
+} opj_packet_progression_t;
+
 /**
 Encode a packet of a tile to a destination buffer
 @param tileno Number of the tile encoded
@@ -106,7 +111,7 @@ static OPJ_BOOL opj_t2_decode_packet(opj_t2_t* t2,
                                      OPJ_UINT32 * data_read,
                                      OPJ_UINT32 max_length,
                                      opj_packet_info_t *pack_info,
-                                     OPJ_BOOL *p_packet_headers_exhausted,
+                                     opj_packet_progression_t *p_progression,
                                      opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
@@ -117,7 +122,7 @@ static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
                                    OPJ_UINT32 * p_data_read,
                                    OPJ_UINT32 p_max_length,
                                    opj_packet_info_t *p_pack_info,
-                                   OPJ_BOOL *p_packet_headers_exhausted,
+                                   opj_packet_progression_t *p_progression,
                                    opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
@@ -129,7 +134,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
         OPJ_UINT32 * p_data_read,
         OPJ_UINT32 p_max_length,
         opj_packet_info_t *p_pack_info,
-        OPJ_BOOL *p_packet_headers_exhausted,
+        opj_packet_progression_t *p_progression,
         opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
@@ -469,7 +474,7 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
         }
         memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(OPJ_BOOL));
 
-        OPJ_BOOL packet_headers_exhausted = OPJ_FALSE;
+        opj_packet_progression_t progression = OPJ_PACKET_PROGRESSED;
 
         while (opj_pi_next(l_current_pi)) {
             OPJ_BOOL skip_packet = OPJ_FALSE;
@@ -526,12 +531,12 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
                 if (! opj_t2_decode_packet(p_t2, p_tile, l_tcp, l_current_pi,
                                            l_current_data, &l_nb_bytes_read,
                                            p_max_len, l_pack_info,
-                                           &packet_headers_exhausted, p_manager)) {
+                                           &progression, p_manager)) {
                     opj_pi_destroy(l_pi, l_nb_pocs);
                     opj_free(first_pass_failed);
                     return OPJ_FALSE;
                 }
-                if (packet_headers_exhausted) {
+                if (progression == OPJ_PACKET_HEADERS_EXHAUSTED) {
                     opj_t2_finalize_resno_decoded(l_image, p_tile);
                     break;
                 }
@@ -543,13 +548,13 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
                 l_nb_bytes_read = 0;
                 if (! opj_t2_skip_packet(p_t2, p_tile, l_tcp, l_current_pi,
                                          l_current_data, &l_nb_bytes_read, p_max_len,
-                                         l_pack_info, &packet_headers_exhausted,
+                                         l_pack_info, &progression,
                                          p_manager)) {
                     opj_pi_destroy(l_pi, l_nb_pocs);
                     opj_free(first_pass_failed);
                     return OPJ_FALSE;
                 }
-                if (packet_headers_exhausted) {
+                if (progression == OPJ_PACKET_HEADERS_EXHAUSTED) {
                     opj_t2_finalize_resno_decoded(l_image, p_tile);
                     break;
                 }
@@ -596,7 +601,7 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
             /* << INDEX */
         }
         opj_free(first_pass_failed);
-        if (packet_headers_exhausted) {
+        if (progression == OPJ_PACKET_HEADERS_EXHAUSTED) {
             break;
         }
         ++l_current_pi;
@@ -655,7 +660,7 @@ static OPJ_BOOL opj_t2_decode_packet(opj_t2_t* p_t2,
                                      OPJ_UINT32 * p_data_read,
                                      OPJ_UINT32 p_max_length,
                                      opj_packet_info_t *p_pack_info,
-                                     OPJ_BOOL *p_packet_headers_exhausted,
+                                     opj_packet_progression_t *p_progression,
                                      opj_event_mgr_t *p_manager)
 {
     OPJ_BOOL l_read_data;
@@ -663,14 +668,14 @@ static OPJ_BOOL opj_t2_decode_packet(opj_t2_t* p_t2,
     OPJ_UINT32 l_nb_total_bytes_read = 0;
 
     *p_data_read = 0;
-    *p_packet_headers_exhausted = OPJ_FALSE;
+    *p_progression = OPJ_PACKET_PROGRESSED;
 
     if (! opj_t2_read_packet_header(p_t2, p_tile, p_tcp, p_pi, &l_read_data, p_src,
                                     &l_nb_bytes_read, p_max_length, p_pack_info,
-                                    p_packet_headers_exhausted, p_manager)) {
+                                    p_progression, p_manager)) {
         return OPJ_FALSE;
     }
-    if (*p_packet_headers_exhausted) {
+    if (*p_progression == OPJ_PACKET_HEADERS_EXHAUSTED) {
         return OPJ_TRUE;
     }
 
@@ -1049,7 +1054,7 @@ static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
                                    OPJ_UINT32 * p_data_read,
                                    OPJ_UINT32 p_max_length,
                                    opj_packet_info_t *p_pack_info,
-                                   OPJ_BOOL *p_packet_headers_exhausted,
+                                   opj_packet_progression_t *p_progression,
                                    opj_event_mgr_t *p_manager)
 {
     OPJ_BOOL l_read_data;
@@ -1057,14 +1062,14 @@ static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
     OPJ_UINT32 l_nb_total_bytes_read = 0;
 
     *p_data_read = 0;
-    *p_packet_headers_exhausted = OPJ_FALSE;
+    *p_progression = OPJ_PACKET_PROGRESSED;
 
     if (! opj_t2_read_packet_header(p_t2, p_tile, p_tcp, p_pi, &l_read_data, p_src,
                                     &l_nb_bytes_read, p_max_length, p_pack_info,
-                                    p_packet_headers_exhausted, p_manager)) {
+                                    p_progression, p_manager)) {
         return OPJ_FALSE;
     }
-    if (*p_packet_headers_exhausted) {
+    if (*p_progression == OPJ_PACKET_HEADERS_EXHAUSTED) {
         return OPJ_TRUE;
     }
 
@@ -1098,7 +1103,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
         OPJ_UINT32 * p_data_read,
         OPJ_UINT32 p_max_length,
         opj_packet_info_t *p_pack_info,
-        OPJ_BOOL *p_packet_headers_exhausted,
+        opj_packet_progression_t *p_progression,
         opj_event_mgr_t *p_manager)
 
 {
@@ -1121,7 +1126,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
     OPJ_UINT32 l_present;
 
-    *p_packet_headers_exhausted = OPJ_FALSE;
+    *p_progression = OPJ_PACKET_PROGRESSED;
 
     if (p_pi->layno == 0) {
         l_band = l_res->bands;
@@ -1237,7 +1242,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
             /* Stop reading packet headers once an empty packet consumes no input at all. */
             *p_is_data_present = OPJ_FALSE;
             *p_data_read = 0U;
-            *p_packet_headers_exhausted = OPJ_TRUE;
+            *p_progression = OPJ_PACKET_HEADERS_EXHAUSTED;
             return OPJ_TRUE;
         }
         *l_modified_length_ptr -= l_header_length;
