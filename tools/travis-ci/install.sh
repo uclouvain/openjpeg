@@ -62,11 +62,16 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	if [ "${TRAVIS_OS_NAME:-}" == "osx"  -o "${RUNNER_OS:-}" == "macOS" ] || uname -s | grep -i Darwin &> /dev/null; then
         echo "Skip Retrieving jpylyzer on OSX. Related tests no longer work on CI"
 	elif [ "${APPVEYOR:-}" == "True" -o "${RUNNER_OS:-}" == "Windows" ]; then
-		wget -q https://github.com/openpreserve/jpylyzer/releases/download/${JPYLYZER_VERSION}/jpylyzer_${JPYLYZER_VERSION}_win32.zip
-		mkdir jpylyzer
-		cd jpylyzer
-		cmake -E tar -xf ../jpylyzer_${JPYLYZER_VERSION}_win32.zip
-		cd ..
+		# Skip jpylyzer for Windows ARM64 since binaries are not available
+		if [ "${OPJ_CI_ARCH:-}" == "arm64" ]; then
+			echo "Skip Retrieving jpylyzer on Windows ARM64, since binaries are not available for this architecture"
+		else
+			wget -q https://github.com/openpreserve/jpylyzer/releases/download/${JPYLYZER_VERSION}/jpylyzer_${JPYLYZER_VERSION}_win32.zip
+			mkdir jpylyzer
+			cd jpylyzer
+			cmake -E tar -xf ../jpylyzer_${JPYLYZER_VERSION}_win32.zip
+			cd ..
+		fi
 	else
 		wget -qO - https://github.com/openpreserve/jpylyzer/archive/${JPYLYZER_VERSION}.tar.gz | tar -xz
 		mv jpylyzer-${JPYLYZER_VERSION}/jpylyzer ./
@@ -79,7 +84,11 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	# so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain.
 	# Note: Binaries can only be used for non-commercial purposes.
 	if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then
-		if [ "${TRAVIS_OS_NAME:-}" == "linux" -o "${RUNNER_OS:-}" == "Linux" ] || uname -s | grep -i Linux &> /dev/null; then
+		# Skip downloading Kakadu for Windows ARM64
+		if [ "${OPJ_CI_ARCH:-}" == "arm64" ]; then
+			echo "Skipping Kakadu download for Windows ARM64 architecture, since binaries are not available for this architecture"
+			export OPJ_CI_SKIP_TESTS=1
+		elif [ "${TRAVIS_OS_NAME:-}" == "linux" -o "${RUNNER_OS:-}" == "Linux" ] || uname -s | grep -i Linux &> /dev/null; then
 			echo "Retrieving Kakadu"
 			wget -q http://kakadusoftware.com/wp-content/uploads/KDU841_Demo_Apps_for_Linux-x86-64_231117.zip
 			cmake -E tar -xf KDU841_Demo_Apps_for_Linux-x86-64_231117.zip
