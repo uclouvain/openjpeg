@@ -1412,7 +1412,6 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
     /* pointers */
     opj_pi_iterator_t *l_pi = 00;
     opj_tcp_t *l_tcp = 00;
-    const opj_tccp_t *l_tccp = 00;
     opj_pi_comp_t *l_current_comp = 00;
     opj_image_comp_t * l_img_comp = 00;
     opj_pi_iterator_t * l_current_pi = 00;
@@ -1490,7 +1489,6 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
     /* special treatment for the first packet iterator */
     l_current_comp = l_current_pi->comps;
     l_img_comp = p_image->comps;
-    l_tccp = l_tcp->tccps;
 
     l_current_pi->tx0 = l_tx0;
     l_current_pi->ty0 = l_ty0;
@@ -1524,14 +1522,12 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
         }
         ++l_current_comp;
         ++l_img_comp;
-        ++l_tccp;
     }
     ++l_current_pi;
 
     for (pino = 1 ; pino < l_bound ; ++pino) {
         l_current_comp = l_current_pi->comps;
         l_img_comp = p_image->comps;
-        l_tccp = l_tcp->tccps;
 
         l_current_pi->tx0 = l_tx0;
         l_current_pi->ty0 = l_ty0;
@@ -1563,7 +1559,6 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
             }
             ++l_current_comp;
             ++l_img_comp;
-            ++l_tccp;
         }
         /* special treatment*/
         l_current_pi->include = (l_current_pi - 1)->include;
