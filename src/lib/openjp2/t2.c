@@ -1233,12 +1233,6 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
 
         l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
         if (l_header_length == 0U && l_current_data == p_src_data) {
-            if ((p_tcp->csty & J2K_CP_CSTY_SOP) != 0U) {
-                opj_event_msg(p_manager, EVT_ERROR,
-                              "Packet header decoding made no progress\n");
-                return OPJ_FALSE;
-            }
-
             /* Stop reading packet headers once an empty packet consumes no input at all. */
             *p_is_data_present = OPJ_FALSE;
             *p_data_read = 0U;
