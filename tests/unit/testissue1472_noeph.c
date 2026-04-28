@@ -205,18 +205,13 @@ static OPJ_BOOL test_enable_sop_csty(OPJ_BYTE *data, OPJ_SIZE_T data_len)
     return OPJ_FALSE;
 }
 
-static int test_sop_optional_tolerated_eof(const char *data_root)
+static int test_sop_optional_tolerated_eof_fixture(const char *data_root,
+        const char *relative_filename)
 {
-    const char *relative_filename =
-        "/input/nonregression/dwt_interleave_h.gsr105.jp2";
     char filename[4096];
     OPJ_SIZE_T data_len;
     OPJ_BYTE *data;
     test_decode_result_t result;
-
-    if (data_root == NULL || strstr(data_root, "OPJ_DATA_ROOT-NOTFOUND") != NULL) {
-        return 0;
-    }
 
     if (snprintf(filename, sizeof(filename), "%s%s", data_root,
                  relative_filename) >= (int)sizeof(filename)) {
@@ -240,8 +235,30 @@ static int test_sop_optional_tolerated_eof(const char *data_root)
     free(data);
 
     if (result != TEST_DECODE_SUCCESS) {
-        fprintf(stderr, "SOP-bit/no-SOP tolerated EOF fixture failed to decode\n");
+        fprintf(stderr, "SOP-bit/no-SOP tolerated EOF fixture failed to decode: %s\n",
+                filename);
         return 1;
+    }
+
+    return 0;
+}
+
+static int test_sop_optional_tolerated_eof(const char *data_root)
+{
+    static const char *fixtures[] = {
+        "/input/nonregression/Marrin.jp2",
+        "/input/nonregression/dwt_interleave_h.gsr105.jp2"
+    };
+    size_t i;
+
+    if (data_root == NULL || strstr(data_root, "OPJ_DATA_ROOT-NOTFOUND") != NULL) {
+        return 0;
+    }
+
+    for (i = 0U; i < sizeof(fixtures) / sizeof(fixtures[0]); ++i) {
+        if (test_sop_optional_tolerated_eof_fixture(data_root, fixtures[i]) != 0) {
+            return 1;
+        }
     }
 
     return 0;
