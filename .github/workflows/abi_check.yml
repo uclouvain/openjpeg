@@ -2,13 +2,15 @@ name: ABI check
 
 on: [push, pull_request, workflow_dispatch]
 
+permissions: read-all
+
 jobs:
   abi_check:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Install Requirements
         run: |

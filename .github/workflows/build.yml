@@ -2,13 +2,15 @@ name: Build
 
 on: [push, pull_request, workflow_dispatch]
 
+permissions: read-all
+
 jobs:
   regular:
     runs-on: ubuntu-22.04
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Install Requirements
         run: |
@@ -28,7 +30,7 @@ jobs:
             OPJ_NONCOMMERCIAL: 1
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: build/openjpeg-*.tar.gz
@@ -38,7 +40,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Install Requirements
         run: |
@@ -60,7 +62,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Install Requirements
         run: |
@@ -85,7 +87,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Install Requirements
         run: |
@@ -108,7 +110,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Build and run tests
         run: |
@@ -122,7 +124,7 @@ jobs:
             #OPJ_NONCOMMERCIAL: 1
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: build/openjpeg-*.zip
@@ -132,7 +134,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Build and run tests
         run: |
@@ -146,7 +148,7 @@ jobs:
             #OPJ_NONCOMMERCIAL: 1
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: build/openjpeg-*.zip
@@ -192,7 +194,7 @@ jobs:
           git config --system core.longpaths true
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
 
       - name: Set compiler environment
         shell: cmd
@@ -215,7 +217,7 @@ jobs:
         shell: bash
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2
         if: ${{startsWith(github.ref, 'refs/tags/') && env.OPJ_CI_INCLUDE_IF_DEPLOY == 1}}
         with:
           files: build/openjpeg-*.zip
