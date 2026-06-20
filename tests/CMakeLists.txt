@@ -40,6 +40,9 @@ add_executable(compare_dump_files ${compare_dump_files_SRCS})
 add_executable(j2k_random_tile_access j2k_random_tile_access.c)
 target_link_libraries(j2k_random_tile_access ${OPENJPEG_LIBRARY_NAME})
 
+add_executable(test_tile_part_interleaved test_tile_part_interleaved.c)
+target_link_libraries(test_tile_part_interleaved ${OPENJPEG_LIBRARY_NAME})
+
 add_executable(compare_raw_files ${compare_raw_files_SRCS})
 
 add_executable(test_tile_encoder test_tile_encoder.c)
@@ -82,6 +85,10 @@ add_test(NAME rta4 COMMAND j2k_random_tile_access tte4.j2k)
 set_property(TEST rta4 APPEND PROPERTY DEPENDS tte4)
 add_test(NAME rta5 COMMAND j2k_random_tile_access tte5.j2k)
 set_property(TEST rta5 APPEND PROPERTY DEPENDS tte5)
+
+# Non-regression test for issue #1558: tile-by-tile decoding of a codestream
+# whose tile-parts are interleaved across tiles (self-contained, no test data).
+add_test(NAME rta_interleaved_tile_parts COMMAND test_tile_part_interleaved)
 
 add_test(NAME tda_prep_reversible_no_precinct COMMAND test_tile_encoder 1 256 256 32 32 8 0 reversible_no_precinct.j2k 4 4 3 0 0 1)
 add_test(NAME tda_reversible_no_precinct COMMAND test_decode_area -q reversible_no_precinct.j2k)
