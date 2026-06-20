@@ -877,7 +877,8 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
         /*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/
 
         l_tilec->numresolutions = l_tccp->numresolutions;
-        if (l_tccp->numresolutions < l_cp->m_specific_param.m_dec.m_reduce) {
+        /* Use <= to prevent minimum_num_resolutions from underflowing to 0. */
+        if (l_tccp->numresolutions <= l_cp->m_specific_param.m_dec.m_reduce) {
             l_tilec->minimum_num_resolutions = 1;
         } else {
             l_tilec->minimum_num_resolutions = l_tccp->numresolutions -
