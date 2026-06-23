@@ -112,6 +112,11 @@ static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color,
                                opj_event_mgr_t *);
 
 /**
+ * Destroy list of ASOC entities
+ */
+static void opj_jp2_asoc_destroy(opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num);
+
+/**
  * Writes the Channel Definition box.
  *
  * @param jp2                   jpeg2000 file codec.
@@ -157,6 +162,22 @@ static OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
  * @return true if the FTYP box is valid.
  */
 static OPJ_BOOL opj_jp2_read_ftyp(opj_jp2_t *jp2,
+                                  OPJ_BYTE * p_header_data,
+                                  OPJ_UINT32 p_header_size,
+                                  opj_event_mgr_t * p_manager);
+
+/**
+ * Reads a ASOC box - Associated data box.
+ * Also reads contained label (LBL) and XML boxes
+ *
+ * @param   p_header_data   the data contained in the ASOC box.
+ * @param   jp2             the jpeg2000 file codec.
+ * @param   p_header_size   the size of the data contained in the ASOC box.
+ * @param   p_manager       the user event manager.
+ *
+ * @return true if the ASOC box is valid.
+ */
+static OPJ_BOOL opj_jp2_read_asoc(opj_jp2_t *jp2,
                                   OPJ_BYTE * p_header_data,
                                   OPJ_UINT32 p_header_size,
                                   opj_event_mgr_t * p_manager);
@@ -425,7 +446,8 @@ static const opj_jp2_header_handler_t * opj_jp2_find_handler(OPJ_UINT32 p_id);
 static const opj_jp2_header_handler_t jp2_header [] = {
     {JP2_JP, opj_jp2_read_jp},
     {JP2_FTYP, opj_jp2_read_ftyp},
-    {JP2_JP2H, opj_jp2_read_jp2h}
+    {JP2_JP2H, opj_jp2_read_jp2h},
+    {JP2_ASOC, opj_jp2_read_asoc}
 };
 
 static const opj_jp2_header_handler_t jp2_img_header [] = {
@@ -966,7 +988,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color,
         for (i = 0; i < nr_channels; i++) {
             OPJ_BYTE mtyp = cmap[i].mtyp;
             OPJ_BYTE pcol = cmap[i].pcol;
-            /* See ISO 15444-1 Table I.14 â€“ MTYPi field values */
+            /* See ISO 15444-1 Table I.14 – MTYPi field values */
             if (mtyp != 0 && mtyp != 1) {
                 opj_event_msg(p_manager, EVT_ERROR,
                               "Invalid value for cmap[%d].mtyp = %d.\n", i,
@@ -2642,6 +2664,129 @@ static OPJ_BOOL opj_jp2_read_ftyp(opj_jp2_t *jp2,
     return OPJ_TRUE;
 }
 
+static OPJ_BOOL opj_jp2_read_asoc(opj_jp2_t *jp2,
+                                  OPJ_BYTE * p_header_data,
+                                  OPJ_UINT32 p_header_size,
+                                  opj_event_mgr_t * p_manager)
+{
+    OPJ_UINT32 label_tag;
+    OPJ_UINT32 asoc_tag;
+    OPJ_UINT32 asoc_size;
+    opj_jp2_asoc_t *asoc;
+
+    /* preconditions */
+    assert(jp2 != 00);
+    assert(p_header_data != 00);
+    assert(p_manager != 00);
+
+    if (p_header_size < 8) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Cannot handle ASOC box of less than 8 bytes\n");
+        return OPJ_FALSE;
+    }
+
+    opj_read_bytes(p_header_data, &asoc_size, 4);
+    p_header_data += 4;
+    p_header_size -= 4;
+
+    if (p_header_size < asoc_size) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "ASOC super box is smaller than containing sub box\n");
+        return OPJ_FALSE;
+    }
+
+    opj_read_bytes(p_header_data, &label_tag, 4);
+    p_header_data += 4;
+    p_header_size -= 4;
+    asoc_size -= 4;
+
+    if (label_tag != JP2_LBL) {
+        /* TODO: Verify that ASOC must have a following label ? */
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "ASOC data does not have a label (LBL)\n");
+        return OPJ_TRUE; // No error if we could not parse
+    }
+
+    if (jp2->numasoc == 0) {
+        /* Create a first asoc */
+        jp2->numasoc = 1;
+        jp2->asoc = opj_malloc(sizeof(opj_jp2_asoc_t));
+    } else {
+        /* Add an asoc to existing ones */
+        (jp2->numasoc)++;
+        jp2->asoc = opj_realloc(jp2->asoc, jp2->numasoc * sizeof(opj_jp2_asoc_t));
+    }
+
+    asoc = &(jp2->asoc[jp2->numasoc - 1]);
+
+    /* TODO: This is not correct if a parent asoc contains multiple child asocs! */
+    asoc->level = jp2->numasoc - 1; 
+    asoc->label_length = asoc_size + 1;
+    asoc->label = opj_malloc(asoc->label_length);
+    memcpy(asoc->label, p_header_data, asoc_size);
+    asoc->label[asoc->label_length - 1] = '\0'; /* NULL terminated label string */
+    asoc->xml_buf = 00;
+    asoc->xml_len = 0;
+
+    p_header_data += asoc_size;
+    p_header_size -= asoc_size;
+
+    if (p_header_size < 4) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Cannot handle ASOC sub box of less than 4 bytes\n");
+        return OPJ_FALSE;
+    }
+
+    opj_read_bytes(p_header_data, &asoc_tag, 4);
+    p_header_data += 4;
+    p_header_size -= 4;
+
+    switch (asoc_tag) {
+    case JP2_ASOC: {
+        /* Start of nested ASOC tags. Parse this level. */
+        if (!opj_jp2_read_asoc(jp2, p_header_data, p_header_size, p_manager)) {
+            return OPJ_FALSE;
+        }
+    }
+    break;
+
+    case JP2_XML: {
+        asoc->xml_len = p_header_size + 1;
+        asoc->xml_buf  = opj_malloc(asoc->xml_len);
+        memcpy(asoc->xml_buf, p_header_data, p_header_size);
+        asoc->xml_buf[asoc->xml_len - 1] = '\0';
+    }
+    break;
+
+    default: {
+        /* Copy the unknown data for external handling.
+        NOTE: This is not tested, but does the same as if an XML tag was found.*/
+        asoc->xml_len = p_header_size + 1;
+        asoc->xml_buf  = opj_malloc(asoc->xml_len);
+        memcpy(asoc->xml_buf, p_header_data, p_header_size);
+        asoc->xml_buf[asoc->xml_len - 1] = '\0';
+    }
+    }
+
+    return OPJ_TRUE;
+}
+
+static void opj_jp2_asoc_destroy(opj_jp2_asoc_t *p_asoc, OPJ_UINT32 num)
+{
+    OPJ_UINT32 i;
+    opj_jp2_asoc_t *asoc;
+    for (i = 0; i < num; i++) {
+        asoc = &(p_asoc[i]);
+        opj_free(asoc->label);
+        asoc->label = 00;
+        asoc->label_length = 0;
+
+        opj_free(asoc->xml_buf);
+        asoc->xml_buf = 00;
+        asoc->xml_len = 0;
+    }
+}
+
 static OPJ_BOOL opj_jp2_skip_jp2c(opj_jp2_t *jp2,
                                   opj_stream_private_t *stream,
                                   opj_event_mgr_t * p_manager)
@@ -3100,6 +3245,12 @@ void opj_jp2_destroy(opj_jp2_t *jp2)
             jp2->m_procedure_list = 00;
         }
 
+        if (jp2->numasoc) {
+            opj_jp2_asoc_destroy(jp2->asoc, jp2->numasoc);
+            jp2->asoc = 00;
+            jp2->numasoc = 0;
+        }
+
         opj_free(jp2);
     }
 }
@@ -3189,6 +3340,11 @@ opj_jp2_t* opj_jp2_create(OPJ_BOOL p_is_decoder)
             opj_jp2_destroy(jp2);
             return 00;
         }
+
+        /* Association data */
+        jp2->asoc = 00;
+        jp2->numasoc = 0;
+
     }
 
     return jp2;
@@ -3211,7 +3367,45 @@ opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_t* p_jp2)
 
 opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2)
 {
-    return j2k_get_cstr_info(p_jp2->j2k);
+    opj_codestream_info_v2_t* p_info = j2k_get_cstr_info(p_jp2->j2k);
+    return p_info;
+}
+
+opj_jp2_metadata_t* jp2_get_metadata( opj_jp2_t* p_jp2 )
+{
+    opj_jp2_metadata_t* p_metadata = opj_malloc(sizeof(opj_jp2_metadata_t));
+    jp2_copy_asoc_data(p_jp2, p_metadata);
+    return p_metadata;
+}
+
+OPJ_BOOL jp2_copy_asoc_data( opj_jp2_t* p_jp2, opj_jp2_metadata_t* p_jp2_metadata )
+{
+    OPJ_UINT32 i;
+    opj_jp2_asoc_t *asoc, *to_asoc;
+
+    p_jp2_metadata->nbasoc = p_jp2->numasoc;
+    p_jp2_metadata->asoc_info = opj_malloc(p_jp2_metadata->nbasoc * sizeof(opj_jp2_asoc_t));
+    for (i=0; i<p_jp2_metadata->nbasoc; i++) {
+        asoc = &(p_jp2->asoc[i]);
+        to_asoc = &(p_jp2_metadata->asoc_info[i]);
+        to_asoc->level = asoc->level;
+        to_asoc->label_length = asoc->label_length;
+        to_asoc->xml_len = asoc->xml_len;
+        if (asoc->label_length && asoc->label) {
+            to_asoc->label = opj_malloc(to_asoc->label_length);
+            memcpy(to_asoc->label, asoc->label, to_asoc->label_length);
+        } else {
+            to_asoc->label = 00;
+        }
+        if (asoc->xml_len && asoc->xml_buf) {
+            to_asoc->xml_buf = opj_malloc( to_asoc->xml_len);
+            memcpy(to_asoc->xml_buf, asoc->xml_buf, to_asoc->xml_len);
+        } else {
+            to_asoc->xml_buf = 00;
+        }
+    }
+
+    return OPJ_TRUE;
 }
 
 OPJ_BOOL opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
