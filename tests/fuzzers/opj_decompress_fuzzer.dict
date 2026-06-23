@@ -1,0 +1,79 @@
+# JPEG 2000 dictionary for fuzzing
+# Magic bytes and markers
+
+# J2K codestream markers
+"\xff\x4f"  # SOC - Start of codestream
+"\xff\x51"  # SIZ - Image and tile size
+"\xff\x52"  # COD - Coding style default
+"\xff\x53"  # COC - Coding style component
+"\xff\x55"  # TLM - Tile-part lengths
+"\xff\x57"  # PLM - Packet length, main header
+"\xff\x58"  # PLT - Packet length, tile-part header
+"\xff\x5c"  # QCD - Quantization default
+"\xff\x5d"  # QCC - Quantization component
+"\xff\x5e"  # RGN - Region of interest
+"\xff\x5f"  # POC - Progression order change
+"\xff\x60"  # PPM - Packed packet headers, main header
+"\xff\x61"  # PPT - Packed packet headers, tile-part header
+"\xff\x63"  # CRG - Component registration
+"\xff\x64"  # COM - Comment
+"\xff\x90"  # SOT - Start of tile-part
+"\xff\x91"  # SOP - Start of packet
+"\xff\x92"  # EPH - End of packet header
+"\xff\x93"  # SOD - Start of data
+"\xff\xd9"  # EOC - End of codestream
+
+# JP2 file format boxes
+"\x6a\x50\x20\x20"  # JP2 signature 'jP  '
+"\x6a\x50\x32\x20"  # JP2 signature alt
+"\x66\x74\x79\x70"  # ftyp - File type box
+"\x6a\x70\x32\x68"  # jp2h - JP2 header box
+"\x69\x68\x64\x72"  # ihdr - Image header box
+"\x63\x6f\x6c\x72"  # colr - Color specification box
+"\x6a\x70\x32\x63"  # jp2c - Contiguous codestream box
+"\x75\x75\x69\x64"  # uuid - UUID box
+"\x72\x65\x73\x20"  # res  - Resolution box
+"\x72\x65\x73\x63"  # resc - Capture resolution box
+"\x72\x65\x73\x64"  # resd - Default display resolution box
+"\x62\x70\x63\x63"  # bpcc - Bits per component box
+"\x70\x63\x6c\x72"  # pclr - Palette box
+"\x63\x6d\x61\x70"  # cmap - Component mapping box
+"\x63\x64\x65\x66"  # cdef - Channel definition box
+"\x78\x6d\x6c\x20"  # xml  - XML box
+"\x6a\x70\x32\x69"  # jp2i - Intellectual property box
+
+# JPH/HTJ2K markers
+"\xff\x59"  # CAP - Extended capabilities
+
+# Common integer values
+"\x00\x00\x00\x00"
+"\x00\x00\x00\x01"
+"\x00\x00\x00\x02"
+"\x00\x00\x00\x04"
+"\x00\x00\x00\x08"
+"\x00\x00\x00\x10"
+"\x00\x00\x00\x20"
+"\x00\x00\x00\x40"
+"\x00\x00\x00\x80"
+"\xff\xff\xff\xff"
+
+# Size values (16-bit)
+"\x00\x01"
+"\x00\x02"
+"\x00\x04"
+"\x00\x08"
+"\x00\x10"
+"\x00\x20"
+"\x00\x40"
+"\x00\x80"
+"\x01\x00"
+"\x02\x00"
+"\x04\x00"
+"\x08\x00"
+
+# Progression orders
+"\x00"  # LRCP
+"\x01"  # RLCP
+"\x02"  # RPCL
+"\x03"  # PCRL
+"\x04"  # CPRL
