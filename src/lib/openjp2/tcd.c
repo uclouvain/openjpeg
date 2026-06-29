@@ -1317,9 +1317,13 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data(opj_tcd_cblk_enc_t *
     /* and +33 for https://github.com/uclouvain/openjpeg/issues/1283 (-M 4) */
     /* and +63 for https://github.com/uclouvain/openjpeg/issues/1283 (-M 4 -IMF 2K) */
     /* and +74 for https://github.com/uclouvain/openjpeg/issues/1283 (-M 4 -n 8 -s 7,7 -I) */
-    /* TODO: is there a theoretical upper-bound for the compressed code */
-    /* block size ? */
-    l_data_size = 74 + (OPJ_UINT32)((p_code_block->x1 - p_code_block->x0) *
+    /* The above were hand-tuned constants; instead, bound the slack by the   */
+    /* maximum number of TERMINATED coding passes (cf. #539 / #1283). There    */
+    /* are at most 3 passes per magnitude bit-plane and at most 31 bit-planes; */
+    /* with TERMALL/RESTART each pass flushes the MQ coder, emitting a few      */
+    /* extra bytes. 3*31 passes * 8 bytes/termination bounds it for any         */
+    /* supported bit depth (the old constant 74 overflowed on 16-bit -M 4).     */
+    l_data_size = (3U * 31U * 8U) + (OPJ_UINT32)((p_code_block->x1 - p_code_block->x0) *
                                     (p_code_block->y1 - p_code_block->y0) * (OPJ_INT32)sizeof(OPJ_UINT32));
 
     if (l_data_size > p_code_block->data_size) {
