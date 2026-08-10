@@ -1157,6 +1157,14 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                     l_current_precinct->ch = (OPJ_UINT32)((brcblkyend - tlcblkystart) >>
                                                           cblkheightexpn);
 
+                    /* Guard against cw*ch overflow before allocating code-block array */
+                    if (l_current_precinct->cw != 0 &&
+                            l_current_precinct->ch > ((OPJ_UINT32) - 1) / l_current_precinct->cw) {
+                        opj_event_msg(manager, EVT_ERROR,
+                                      "Code block count overflow for precinct %u (cw=%u, ch=%u)\n",
+                                      precno, l_current_precinct->cw, l_current_precinct->ch);
+                        return OPJ_FALSE;
+                    }
                     l_nb_code_blocks = l_current_precinct->cw * l_current_precinct->ch;
                     /*fprintf(stderr, "\t\t\t\t precinct_cw = %d x recinct_ch = %d\n",l_current_precinct->cw, l_current_precinct->ch);      */
                     if ((((OPJ_UINT32) - 1) / (OPJ_UINT32)sizeof_block) <
