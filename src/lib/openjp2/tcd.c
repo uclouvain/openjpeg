@@ -1215,6 +1215,15 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                                                        l_current_precinct->cw, l_current_precinct->ch, manager);
                     }
 
+                    if (!l_current_precinct->incltree ||
+                            !l_current_precinct->imsbtree) {
+                        opj_event_msg(manager, EVT_ERROR,
+                                      "Not enough memory for precinct tag trees"
+                                      " (precinct %u)\n",
+                                      (OPJ_UINT32)precno);
+                        return OPJ_FALSE;
+                    }
+
                     for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
                         OPJ_INT32 cblkxstart = tlcblkxstart + (OPJ_INT32)(cblkno %
                                                l_current_precinct->cw) * (1 << cblkwidthexpn);
