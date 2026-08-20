@@ -375,9 +375,11 @@ OPJ_BOOL OPJ_CALLCONV fread_jpip(const char fname[], jpip_dec_param_t *dec)
     return OPJ_TRUE;
 }
 
-void OPJ_CALLCONV decode_jpip(jpip_dec_param_t *dec)
+OPJ_BOOL OPJ_CALLCONV decode_jpip(jpip_dec_param_t *dec)
 {
-    parse_JPIPstream(dec->jpipstream, dec->jpiplen, 0, dec->msgqueue);
+    if (!(parse_JPIPstream(dec->jpipstream, dec->jpiplen, 0, dec->msgqueue))) {
+        return OPJ_FALSE;
+    }
 
     if (dec->metadatalist) { /* JP2 encoding*/
         parse_metamsg(dec->msgqueue, dec->jpipstream, dec->jpiplen, dec->metadatalist);
@@ -385,12 +387,12 @@ void OPJ_CALLCONV decode_jpip(jpip_dec_param_t *dec)
 
         dec->jp2kstream = recons_jp2(dec->msgqueue, dec->jpipstream,
                                      dec->msgqueue->first->csn, &dec->jp2klen);
-    } else /* J2k encoding  */
+    } else { /* J2k encoding  */
         /* Notice: arguments fw, fh need to be set for LRCP, PCRL, CPRL*/
-    {
         dec->jp2kstream = recons_j2k(dec->msgqueue, dec->jpipstream,
                                      dec->msgqueue->first->csn, 0, 0, &dec->jp2klen);
     }
+    return OPJ_TRUE;
 }
 
 OPJ_BOOL OPJ_CALLCONV fwrite_jp2k(const char fname[], jpip_dec_param_t *dec)

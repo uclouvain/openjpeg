@@ -53,9 +53,7 @@ static int jpip_to_jp2(char *argv[])
         return 1;
     }
 
-    decode_jpip(dec);
-
-    if (!(fwrite_jp2k(argv[2], dec))) {
+    if (!(decode_jpip(dec)) || !(fwrite_jp2k(argv[2], dec))) {
         destroy_jpipdecoder(&dec);
         return 1;
     }
@@ -89,9 +87,7 @@ static int jpip_to_j2k(char *argv[])
         return 1;
     }
 
-    decode_jpip(dec);
-
-    if (!(fwrite_jp2k(argv[2], dec))) {
+    if (!(decode_jpip(dec)) || !(fwrite_jp2k(argv[2], dec))) {
         destroy_jpipdecoder(&dec);
         return 1;
     }

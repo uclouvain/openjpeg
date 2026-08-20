@@ -624,44 +624,88 @@ void print_binarycode(Byte8_t n, int segmentlen)
     printf("\n");
 }
 
-Byte_t * parse_bin_id_vbas(Byte_t *streamptr, Byte_t *bb, Byte_t *c,
-                           Byte8_t *in_class_id);
-Byte_t * parse_vbas(Byte_t *streamptr, Byte8_t *elem);
+static void rollback_parsed_messages(msgqueue_param_t *msgqueue,
+                                     message_param_t *rollback_last);
+static Byte_t *parse_bin_id_vbas(Byte_t *streamptr, const Byte_t *streamend,
+                                 Byte_t *bb, Byte_t *c,
+                                 Byte8_t *in_class_id);
+static Byte_t *parse_vbas(Byte_t *streamptr, const Byte_t *streamend,
+                          Byte8_t *elem);
 
-void parse_JPIPstream(Byte_t *JPIPstream, Byte8_t streamlen, OPJ_OFF_T offset,
-                      msgqueue_param_t *msgqueue)
+OPJ_BOOL parse_JPIPstream(Byte_t *JPIPstream, Byte8_t streamlen,
+                          OPJ_OFF_T offset, msgqueue_param_t *msgqueue)
 {
     Byte_t *ptr;  /* stream pointer*/
+    const Byte_t *streamend;
     message_param_t *msg;
+    message_param_t *rollback_last;
     Byte_t bb, c;
     Byte8_t class_id, csn;
 
     class_id = (Byte8_t) - 1; /* dummy*/
     csn = (Byte8_t) - 1;
     ptr = JPIPstream;
-    while ((Byte8_t)(ptr - JPIPstream) < streamlen) {
+    streamend = JPIPstream + streamlen;
+    rollback_last = msgqueue->last;
+    while (ptr < streamend) {
         msg = (message_param_t *)opj_malloc(sizeof(message_param_t));
 
-        ptr = parse_bin_id_vbas(ptr, &bb, &c, &msg->in_class_id);
+        ptr = parse_bin_id_vbas(ptr, streamend, &bb, &c, &msg->in_class_id);
+        if (ptr == NULL) {
+            fprintf(stderr, "truncated JPIP VBAS field\n");
+            opj_free(msg);
+            rollback_parsed_messages(msgqueue, rollback_last);
+            return OPJ_FALSE;
+        }
 
         msg->last_byte   = c == 1 ? OPJ_TRUE : OPJ_FALSE;
 
         if (bb >= 2) {
-            ptr = parse_vbas(ptr, &class_id);
+            ptr = parse_vbas(ptr, streamend, &class_id);
+            if (ptr == NULL) {
+                fprintf(stderr, "truncated JPIP VBAS field\n");
+                opj_free(msg);
+                rollback_parsed_messages(msgqueue, rollback_last);
+                return OPJ_FALSE;
+            }
         }
 
         msg->class_id = class_id;
 
         if (bb == 3) {
-            ptr = parse_vbas(ptr, &csn);
+            ptr = parse_vbas(ptr, streamend, &csn);
+            if (ptr == NULL) {
+                fprintf(stderr, "truncated JPIP VBAS field\n");
+                opj_free(msg);
+                rollback_parsed_messages(msgqueue, rollback_last);
+                return OPJ_FALSE;
+            }
         }
         msg->csn = csn;
 
-        ptr = parse_vbas(ptr, &msg->bin_offset);
-        ptr = parse_vbas(ptr, &msg->length);
+        ptr = parse_vbas(ptr, streamend, &msg->bin_offset);
+        if (ptr == NULL) {
+            fprintf(stderr, "truncated JPIP VBAS field\n");
+            opj_free(msg);
+            rollback_parsed_messages(msgqueue, rollback_last);
+            return OPJ_FALSE;
+        }
+        ptr = parse_vbas(ptr, streamend, &msg->length);
+        if (ptr == NULL) {
+            fprintf(stderr, "truncated JPIP VBAS field\n");
+            opj_free(msg);
+            rollback_parsed_messages(msgqueue, rollback_last);
+            return OPJ_FALSE;
+        }
 
         if (msg->class_id % 2) { /* Aux is present only if the id is odd*/
-            ptr = parse_vbas(ptr, &msg->aux);
+            ptr = parse_vbas(ptr, streamend, &msg->aux);
+            if (ptr == NULL) {
+                fprintf(stderr, "truncated JPIP VBAS field\n");
+                opj_free(msg);
+                rollback_parsed_messages(msgqueue, rollback_last);
+                return OPJ_FALSE;
+            }
         } else {
             msg->aux = 0;
         }
@@ -679,6 +723,7 @@ void parse_JPIPstream(Byte_t *JPIPstream, Byte8_t streamlen, OPJ_OFF_T offset,
 
         ptr += msg->length;
     }
+    return OPJ_TRUE;
 }
 
 void parse_metadata(metadata_param_t *metadata, message_param_t *msg,
@@ -756,11 +801,39 @@ placeholder_param_t * parse_phld(Byte_t *datastream, Byte8_t metalength)
     return phld;
 }
 
-Byte_t * parse_bin_id_vbas(Byte_t *streamptr, Byte_t *bb, Byte_t *c,
-                           Byte8_t *in_class_id)
+static void rollback_parsed_messages(msgqueue_param_t *msgqueue,
+                                     message_param_t *rollback_last)
+{
+    message_param_t *ptr;
+    message_param_t *next;
+
+    if (rollback_last != NULL) {
+        ptr = rollback_last->next;
+        rollback_last->next = NULL;
+    } else {
+        ptr = msgqueue->first;
+        msgqueue->first = NULL;
+    }
+
+    while (ptr != NULL) {
+        next = ptr->next;
+        opj_free(ptr);
+        ptr = next;
+    }
+
+    msgqueue->last = rollback_last;
+}
+
+static Byte_t *parse_bin_id_vbas(Byte_t *streamptr, const Byte_t *streamend,
+                                 Byte_t *bb, Byte_t *c,
+                                 Byte8_t *in_class_id)
 {
     Byte_t code;
     Byte_t *ptr;
+
+    if (streamptr >= streamend) {
+        return NULL;
+    }
 
     ptr = streamptr;
     code = *(ptr++);
@@ -771,13 +844,17 @@ Byte_t * parse_bin_id_vbas(Byte_t *streamptr, Byte_t *bb, Byte_t *c,
     *in_class_id = code & 15;
 
     while (code >> 7) {
+        if (ptr >= streamend) {
+            return NULL;
+        }
         code = *(ptr++);
         *in_class_id = (*in_class_id << 7) | (code & 0x7f);
     }
     return ptr;
 }
 
-Byte_t * parse_vbas(Byte_t *streamptr, Byte8_t *elem)
+static Byte_t *parse_vbas(Byte_t *streamptr, const Byte_t *streamend,
+                          Byte8_t *elem)
 {
     Byte_t code;
     Byte_t *ptr;
@@ -785,6 +862,9 @@ Byte_t * parse_vbas(Byte_t *streamptr, Byte8_t *elem)
     *elem = 0;
     ptr = streamptr;
     do {
+        if (ptr >= streamend) {
+            return NULL;
+        }
         code = *(ptr++);
         *elem = (*elem << 7) | (code & 0x7f);
     } while (code >> 7);

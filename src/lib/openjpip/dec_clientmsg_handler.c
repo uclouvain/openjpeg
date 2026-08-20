@@ -39,13 +39,15 @@
 #include "jpipstream_manager.h"
 #include "jp2k_encoder.h"
 
-void handle_JPIPstreamMSG(SOCKET connected_socket, cachelist_param_t *cachelist,
-                          Byte_t **jpipstream, OPJ_SIZE_T *streamlen, msgqueue_param_t *msgqueue)
+OPJ_BOOL handle_JPIPstreamMSG(SOCKET connected_socket,
+                              cachelist_param_t *cachelist,
+                              Byte_t **jpipstream, OPJ_SIZE_T *streamlen,
+                              msgqueue_param_t *msgqueue)
 {
     Byte_t *newjpipstream;
     OPJ_SIZE_T newstreamlen = 0;
     cache_param_t *cache;
-    char *target, *tid, *cid;
+    char *target = NULL, *tid = NULL, *cid = NULL;
     metadatalist_param_t *metadatalist;
 
     newjpipstream = receive_JPIPstream(connected_socket, &target, &tid, &cid,
@@ -53,7 +55,21 @@ void handle_JPIPstreamMSG(SOCKET connected_socket, cachelist_param_t *cachelist,
 
     fprintf(stderr, "newjpipstream length: %" PRIu64 "\n", newstreamlen);
 
-    parse_JPIPstream(newjpipstream, newstreamlen, (OPJ_OFF_T)*streamlen, msgqueue);
+    if (!(parse_JPIPstream(newjpipstream, newstreamlen, (OPJ_OFF_T)*streamlen,
+                           msgqueue))) {
+        if (target) {
+            opj_free(target);
+        }
+        if (tid) {
+            opj_free(tid);
+        }
+        if (cid) {
+            opj_free(cid);
+        }
+        opj_free(newjpipstream);
+        response_signal(connected_socket, OPJ_FALSE);
+        return OPJ_FALSE;
+    }
 
     *jpipstream = update_JPIPstream(newjpipstream, newstreamlen, *jpipstream,
                                     streamlen);
@@ -97,6 +113,7 @@ void handle_JPIPstreamMSG(SOCKET connected_socket, cachelist_param_t *cachelist,
     }
 
     response_signal(connected_socket, OPJ_TRUE);
+    return OPJ_TRUE;
 }
 
 void handle_PNMreqMSG(SOCKET connected_socket, Byte_t *jpipstream,
