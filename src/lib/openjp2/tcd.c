@@ -1215,8 +1215,13 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                                                        l_current_precinct->cw, l_current_precinct->ch, manager);
                     }
 
-                    if (!l_current_precinct->incltree ||
-                            !l_current_precinct->imsbtree) {
+                    /* opj_tgt_create()/opj_tgt_init() return NULL for a
+                     * precinct with no code-blocks, which is legal; the tag
+                     * trees are simply unused there.  Only a precinct that
+                     * does have code-blocks can have failed to allocate. */
+                    if (l_nb_code_blocks != 0 &&
+                            (!l_current_precinct->incltree ||
+                             !l_current_precinct->imsbtree)) {
                         opj_event_msg(manager, EVT_ERROR,
                                       "Not enough memory for precinct tag trees"
                                       " (precinct %u)\n",
