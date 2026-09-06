@@ -567,8 +567,13 @@ void color_apply_icc_profile(opj_image_t *image)
             cmsCloseProfile(in_prof);
             return;
         }
-        in_type = TYPE_YCbCr_16;
-        out_type = TYPE_RGB_16;
+        if (prec <= 8) {
+            in_type = TYPE_YCbCr_8;
+            out_type = TYPE_RGB_8;
+        } else {
+            in_type = TYPE_YCbCr_16;
+            out_type = TYPE_RGB_16;
+        }
         out_prof = cmsCreate_sRGBProfile();
         new_space = OPJ_CLRSPC_SRGB;
     } else {
