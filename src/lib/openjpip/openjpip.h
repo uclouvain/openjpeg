@@ -253,8 +253,9 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV fread_jpip(const char fname[],
  * Decode jpip codestream
  *
  * @param[in]  dec   JPIP decoding parameters pointer
+ * @return           true if succeed
  */
-OPJ_API void OPJ_CALLCONV decode_jpip(jpip_dec_param_t *dec);
+OPJ_API OPJ_BOOL OPJ_CALLCONV decode_jpip(jpip_dec_param_t *dec);
 
 /**
  * Write J2K/JP2 codestream to a file
