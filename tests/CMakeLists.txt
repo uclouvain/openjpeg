@@ -10,6 +10,8 @@ include_directories(
   ${TIFF_INCLUDE_DIRNAME}
   )
 
+string(REPEAT "A" 49 OPJ_COMPRESS_OUTFOR_TOO_LONG)
+
 # First thing define the common source:
 set(compare_images_SRCS compare_images.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c
@@ -113,6 +115,11 @@ set_property(TEST tda_irreversible_203_201_17_19_no_precinct APPEND PROPERTY DEP
 add_test(NAME tda_prep_strip COMMAND test_tile_encoder 1 256 256 256 256 8 0 tda_single_tile.j2k)
 add_test(NAME tda_strip COMMAND test_decode_area -q -strip_height 3 -strip_check tda_single_tile.j2k)
 set_property(TEST tda_strip APPEND PROPERTY DEPENDS tda_prep_strip)
+add_test(NAME opj_compress_outfor_too_long
+  COMMAND ${CMAKE_COMMAND}
+    -DOPJ_COMPRESS=$<TARGET_FILE:opj_compress>
+    -DOUTFOR_ARG=${OPJ_COMPRESS_OUTFOR_TOO_LONG}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/check_opj_compress_outfor_too_long.cmake)
 
 add_executable(include_openjpeg include_openjpeg.c)
 
