@@ -39,7 +39,6 @@
 #endif
 
 #include <stdio.h>
-#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -84,6 +83,22 @@ void parse_comps(char *field, query_param_t *query_param);
 
 /** maximum length of field value*/
 #define MAX_LENOFFIELDVAL 128
+
+static OPJ_BOOL copy_query_field(char *dst, size_t dst_size, const char *src,
+                                 size_t src_size, const char *field_description)
+{
+    if (src_size >= dst_size) {
+        fprintf(stderr, "%s too long\n", field_description);
+        if (dst_size > 0) {
+            dst[0] = '\0';
+        }
+        return OPJ_FALSE;
+    }
+
+    memcpy(dst, src, src_size);
+    dst[src_size] = '\0';
+    return OPJ_TRUE;
+}
 
 query_param_t * parse_query(const char *query_string)
 {
@@ -211,6 +226,7 @@ query_param_t * get_initquery(void)
 char * get_fieldparam(const char *stringptr, char *fieldname, char *fieldval)
 {
     char *eqp, *andp, *nexfieldptr;
+    size_t fieldname_len, fieldval_len;
 
     if ((eqp = strchr(stringptr, '=')) == NULL) {
         fprintf(stderr, "= not found\n");
@@ -225,12 +241,24 @@ char * get_fieldparam(const char *stringptr, char *fieldname, char *fieldval)
         nexfieldptr = andp + 1;
     }
 
-    assert((size_t)(eqp - stringptr));
-    strncpy(fieldname, stringptr, (size_t)(eqp - stringptr));
-    fieldname[eqp - stringptr] = '\0';
-    assert(andp - eqp - 1 >= 0);
-    strncpy(fieldval, eqp + 1, (size_t)(andp - eqp - 1));
-    fieldval[andp - eqp - 1] = '\0';
+    if (andp < eqp) {
+        fprintf(stderr, "& found before =\n");
+        strcpy(fieldname, "");
+        strcpy(fieldval, "");
+        return NULL;
+    }
+
+    fieldname_len = (size_t)(eqp - stringptr);
+    fieldval_len = (size_t)(andp - eqp - 1);
+
+    if (!copy_query_field(fieldname, MAX_LENOFFIELDNAME, stringptr, fieldname_len,
+                          "query field name") ||
+            !copy_query_field(fieldval, MAX_LENOFFIELDVAL, eqp + 1, fieldval_len,
+                              "query field value")) {
+        strcpy(fieldname, "");
+        strcpy(fieldval, "");
+        return NULL;
+    }
 
     return nexfieldptr;
 }
@@ -328,12 +356,29 @@ void parse_metareq(char *field, query_param_t *query_param)
 
     /* req-box-prop*/
     ptr = strchr(field, '[');
+    if (ptr == NULL) {
+        return;
+    }
     ptr++;
     src = ptr;
-    while (*ptr != ']') {
+
+    numofboxreq = 1;
+    while (*ptr != '\0' && *ptr != ']') {
+        if (*ptr == ';' && ++numofboxreq > MAX_NUMOFBOX) {
+            fprintf(stderr, "too many metareq box properties\n");
+            return;
+        }
+        ptr++;
+    }
+
+    ptr = src;
+    numofboxreq = 0;
+    while (*ptr != '\0' && *ptr != ']') {
         if (*ptr == ';') {
-            assert(ptr - src >= 0);
-            strncpy(req_box_prop, src, (size_t)(ptr - src));
+            if (!copy_query_field(req_box_prop, sizeof(req_box_prop), src,
+                                  (size_t)(ptr - src), "metareq box property")) {
+                return;
+            }
             parse_req_box_prop(req_box_prop, numofboxreq++, query_param);
             ptr++;
             src = ptr;
@@ -341,8 +386,13 @@ void parse_metareq(char *field, query_param_t *query_param)
         }
         ptr++;
     }
-    assert(ptr - src >= 0);
-    strncpy(req_box_prop, src, (size_t)(ptr - src));
+    if (*ptr != ']') {
+        return;
+    }
+    if (!copy_query_field(req_box_prop, sizeof(req_box_prop), src,
+                          (size_t)(ptr - src), "metareq box property")) {
+        return;
+    }
 
     parse_req_box_prop(req_box_prop, numofboxreq++, query_param);
 
