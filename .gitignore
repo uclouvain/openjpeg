@@ -1,4 +1,5 @@
 # Ignore files and directories made by `cmake .`.
+build*/
 CMakeFiles/
 Makefile
 cmake_install.cmake

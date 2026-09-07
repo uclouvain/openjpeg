@@ -97,4 +97,5 @@ set_target_properties(${LIBTARGET}
     OUTPUT_NAME "${LIBTARGET}"
     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/thirdparty/lib
 )
+configure_opj_framework(${LIBTARGET})
 #
