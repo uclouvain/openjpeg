@@ -709,7 +709,14 @@ static int parse_cmdline_encoder(int argc, char **argv,
         case 'O': {         /* output format */
             char outformat[50];
             char *of = opj_optarg;
-            sprintf(outformat, ".%s", of);
+            /* Reject over-long values to avoid overflowing outformat.
+             * The leading '.' plus terminating NUL leave room for at
+             * most sizeof(outformat) - 2 characters from 'of'. */
+            if (opj_strnlen_s(of, sizeof(outformat)) >= sizeof(outformat) - 1) {
+                fprintf(stderr, "Unknown output format image [only j2k, j2c, jp2]!! \n");
+                return 1;
+            }
+            (void)snprintf(outformat, sizeof(outformat), ".%s", of);
             img_fol->set_out_format = 1;
             parameters->cod_format = get_file_format(outformat);
             switch (parameters->cod_format) {
