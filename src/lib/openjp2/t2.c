@@ -106,6 +106,7 @@ static OPJ_BOOL opj_t2_decode_packet(opj_t2_t* t2,
                                      OPJ_UINT32 * data_read,
                                      OPJ_UINT32 max_length,
                                      opj_packet_info_t *pack_info,
+                                     OPJ_BOOL *p_headers_exhausted,
                                      opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
@@ -116,6 +117,7 @@ static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
                                    OPJ_UINT32 * p_data_read,
                                    OPJ_UINT32 p_max_length,
                                    opj_packet_info_t *p_pack_info,
+                                   OPJ_BOOL *p_headers_exhausted,
                                    opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
@@ -127,6 +129,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
         OPJ_UINT32 * p_data_read,
         OPJ_UINT32 p_max_length,
         opj_packet_info_t *p_pack_info,
+        OPJ_BOOL *p_headers_exhausted,
         opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_t2_read_packet_data(opj_t2_t* p_t2,
@@ -390,6 +393,23 @@ static void opj_null_jas_fprintf(FILE* file, const char * format, ...)
 #define JAS_FPRINTF opj_null_jas_fprintf
 #endif
 
+static void opj_t2_finalize_resno_decoded(opj_image_t *p_image,
+        opj_tcd_tile_t *p_tile)
+{
+    OPJ_UINT32 compno;
+
+    /* Match where the tolerant truncated-stream iteration used to converge:
+     * every component ends at minimum_num_resolutions - 1. Decoded packets
+     * never exceed that resolution (see the skip condition on
+     * minimum_num_resolutions in opj_t2_decode_packets), so this never
+     * lowers a value, and it keeps resno_decoded equal across components,
+     * which the MCT stage requires. */
+    for (compno = 0; compno < p_image->numcomps; ++compno) {
+        p_image->comps[compno].resno_decoded =
+            p_tile->comps[compno].minimum_num_resolutions - 1;
+    }
+}
+
 OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
                                opj_t2_t *p_t2,
                                OPJ_UINT32 p_tile_no,
@@ -441,6 +461,7 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
          * and no l_img_comp->resno_decoded are computed
          */
         OPJ_BOOL* first_pass_failed = NULL;
+        OPJ_BOOL l_headers_exhausted = OPJ_FALSE;
 
         if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
             /* TODO ADE : add an error */
@@ -507,11 +528,16 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
 
                 first_pass_failed[l_current_pi->compno] = OPJ_FALSE;
 
-                if (! opj_t2_decode_packet(p_t2, p_tile, l_tcp, l_current_pi, l_current_data,
-                                           &l_nb_bytes_read, p_max_len, l_pack_info, p_manager)) {
+                if (! opj_t2_decode_packet(p_t2, p_tile, l_tcp, l_current_pi,
+                                           l_current_data, &l_nb_bytes_read,
+                                           p_max_len, l_pack_info,
+                                           &l_headers_exhausted, p_manager)) {
                     opj_pi_destroy(l_pi, l_nb_pocs);
                     opj_free(first_pass_failed);
                     return OPJ_FALSE;
+                }
+                if (l_headers_exhausted) {
+                    break;
                 }
 
                 l_img_comp = &(l_image->comps[l_current_pi->compno]);
@@ -519,11 +545,16 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
                                             l_img_comp->resno_decoded);
             } else {
                 l_nb_bytes_read = 0;
-                if (! opj_t2_skip_packet(p_t2, p_tile, l_tcp, l_current_pi, l_current_data,
-                                         &l_nb_bytes_read, p_max_len, l_pack_info, p_manager)) {
+                if (! opj_t2_skip_packet(p_t2, p_tile, l_tcp, l_current_pi,
+                                         l_current_data, &l_nb_bytes_read, p_max_len,
+                                         l_pack_info, &l_headers_exhausted,
+                                         p_manager)) {
                     opj_pi_destroy(l_pi, l_nb_pocs);
                     opj_free(first_pass_failed);
                     return OPJ_FALSE;
+                }
+                if (l_headers_exhausted) {
+                    break;
                 }
             }
 
@@ -567,9 +598,12 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
 #endif
             /* << INDEX */
         }
-        ++l_current_pi;
-
         opj_free(first_pass_failed);
+        if (l_headers_exhausted) {
+            opj_t2_finalize_resno_decoded(l_image, p_tile);
+            break;
+        }
+        ++l_current_pi;
     }
     /* INDEX >> */
 #ifdef TODO_MSD
@@ -625,6 +659,7 @@ static OPJ_BOOL opj_t2_decode_packet(opj_t2_t* p_t2,
                                      OPJ_UINT32 * p_data_read,
                                      OPJ_UINT32 p_max_length,
                                      opj_packet_info_t *p_pack_info,
+                                     OPJ_BOOL *p_headers_exhausted,
                                      opj_event_mgr_t *p_manager)
 {
     OPJ_BOOL l_read_data;
@@ -634,7 +669,8 @@ static OPJ_BOOL opj_t2_decode_packet(opj_t2_t* p_t2,
     *p_data_read = 0;
 
     if (! opj_t2_read_packet_header(p_t2, p_tile, p_tcp, p_pi, &l_read_data, p_src,
-                                    &l_nb_bytes_read, p_max_length, p_pack_info, p_manager)) {
+                                    &l_nb_bytes_read, p_max_length, p_pack_info,
+                                    p_headers_exhausted, p_manager)) {
         return OPJ_FALSE;
     }
 
@@ -1013,6 +1049,7 @@ static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
                                    OPJ_UINT32 * p_data_read,
                                    OPJ_UINT32 p_max_length,
                                    opj_packet_info_t *p_pack_info,
+                                   OPJ_BOOL *p_headers_exhausted,
                                    opj_event_mgr_t *p_manager)
 {
     OPJ_BOOL l_read_data;
@@ -1022,7 +1059,8 @@ static OPJ_BOOL opj_t2_skip_packet(opj_t2_t* p_t2,
     *p_data_read = 0;
 
     if (! opj_t2_read_packet_header(p_t2, p_tile, p_tcp, p_pi, &l_read_data, p_src,
-                                    &l_nb_bytes_read, p_max_length, p_pack_info, p_manager)) {
+                                    &l_nb_bytes_read, p_max_length, p_pack_info,
+                                    p_headers_exhausted, p_manager)) {
         return OPJ_FALSE;
     }
 
@@ -1056,6 +1094,7 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
         OPJ_UINT32 * p_data_read,
         OPJ_UINT32 p_max_length,
         opj_packet_info_t *p_pack_info,
+        OPJ_BOOL *p_headers_exhausted,
         opj_event_mgr_t *p_manager)
 
 {
@@ -1077,6 +1116,8 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
     OPJ_BYTE **l_header_data_start = 00;
 
     OPJ_UINT32 l_present;
+
+    *p_headers_exhausted = OPJ_FALSE;
 
     if (p_pi->layno == 0) {
         l_band = l_res->bands;
@@ -1158,7 +1199,10 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
     JAS_FPRINTF(stderr, "present=%d \n", l_present);
     if (!l_present) {
         /* TODO MSD: no test to control the output of this function*/
-        opj_bio_inalign(l_bio);
+        if (!opj_bio_inalign(l_bio)) {
+            opj_bio_destroy(l_bio);
+            return OPJ_FALSE;
+        }
         l_header_data += opj_bio_numbytes(l_bio);
         opj_bio_destroy(l_bio);
 
@@ -1179,6 +1223,12 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
         }
 
         l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
+        if (l_header_length == 0U) {
+            /* An empty packet whose header consumed no byte can only occur
+             * when the packet header source (codestream remainder, or the
+             * PPM/PPT buffer) is exhausted: stop reading packet headers. */
+            *p_headers_exhausted = OPJ_TRUE;
+        }
         *l_modified_length_ptr -= l_header_length;
         *l_header_data_start += l_header_length;
 
@@ -1361,6 +1411,8 @@ static OPJ_BOOL opj_t2_read_packet_header(opj_t2_t* p_t2,
     l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
     JAS_FPRINTF(stderr, "hdrlen=%d \n", l_header_length);
     if (!l_header_length) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Packet header decoding made no progress\n");
         return OPJ_FALSE;
     }
     JAS_FPRINTF(stderr, "packet body\n");
