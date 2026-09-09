@@ -1361,7 +1361,7 @@ void opj_dwt_encode_and_deinterleave_h_one_row(void* rowIn,
     } else {
         if (width == 1) {
             row[0] *= 2;
-        } else {
+        } else if (width > 1) {
             OPJ_INT32 i;
             tmp[sn + 0] = row[0] - row[1];
             for (i = 1; i < sn; i++) {
@@ -1393,7 +1393,7 @@ void opj_dwt_encode_and_deinterleave_h_one_row_real(void* rowIn,
     OPJ_FLOAT32* OPJ_RESTRICT tmp = (OPJ_FLOAT32*)tmpIn;
     const OPJ_INT32 sn = (OPJ_INT32)((width + (even ? 1 : 0)) >> 1);
     const OPJ_INT32 dn = (OPJ_INT32)(width - (OPJ_UINT32)sn);
-    if (width == 1) {
+    if (width <= 1) {
         return;
     }
     memcpy(tmp, row, width * sizeof(OPJ_FLOAT32));
