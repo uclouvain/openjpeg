@@ -567,8 +567,17 @@ void color_apply_icc_profile(opj_image_t *image)
             cmsCloseProfile(in_prof);
             return;
         }
-        in_type = TYPE_YCbCr_16;
-        out_type = TYPE_RGB_16;
+        /* Match the lcms formatter width to the work-buffer width chosen below */
+        /* (which keys off prec): the prec<=8 path allocates 1-byte-per-sample  */
+        /* buffers, so forcing TYPE_*_16 here makes cmsDoTransform read/write    */
+        /* 2 bytes per sample and overflow them. */
+        if (prec <= 8) {
+            in_type = TYPE_YCbCr_8;
+            out_type = TYPE_RGB_8;
+        } else {
+            in_type = TYPE_YCbCr_16;
+            out_type = TYPE_RGB_16;
+        }
         out_prof = cmsCreate_sRGBProfile();
         new_space = OPJ_CLRSPC_SRGB;
     } else {
