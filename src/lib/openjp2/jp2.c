@@ -14,6 +14,7 @@
  * Copyright (c) 2010-2011, Kaori Hagihara
  * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
+ * Copyright (c) 2024, Daniel Garcia Briseno, ADNET Systems Inc, NASA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -134,19 +135,6 @@ static OPJ_BYTE * opj_jp2_write_colr(opj_jp2_t *jp2,
                                      OPJ_UINT32 * p_nb_bytes_written);
 
 /**
- * Writes a FTYP box - File type box
- *
- * @param   cio         the stream to write data to.
- * @param   jp2         the jpeg2000 file codec.
- * @param   p_manager   the user event manager.
- *
- * @return  true if writing was successful.
- */
-static OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
-                                   opj_stream_private_t *cio,
-                                   opj_event_mgr_t * p_manager);
-
-/**
  * Reads a a FTYP box - File type box
  *
  * @param   p_header_data   the data contained in the FTYP box.
@@ -179,19 +167,6 @@ static OPJ_BOOL opj_jp2_read_jp2h(opj_jp2_t *jp2,
                                   OPJ_BYTE *p_header_data,
                                   OPJ_UINT32 p_header_size,
                                   opj_event_mgr_t * p_manager);
-
-/**
- * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
- *
- * @param  jp2      the jpeg2000 file codec.
- * @param  stream      the stream to write data to.
- * @param  p_manager  user event manager.
- *
- * @return true if writing was successful.
- */
-static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
-                                   opj_stream_private_t *stream,
-                                   opj_event_mgr_t * p_manager);
 
 /**
  * Writes the Jpeg2000 codestream Header box - JP2C Header box. This function must be called AFTER the coding has been done.
@@ -252,19 +227,6 @@ static OPJ_BOOL opj_jp2_read_jp(opj_jp2_t *jp2,
                                 OPJ_BYTE * p_header_data,
                                 OPJ_UINT32 p_header_size,
                                 opj_event_mgr_t * p_manager);
-
-/**
- * Writes a jpeg2000 file signature box.
- *
- * @param cio the stream to write data to.
- * @param   jp2         the jpeg2000 file codec.
- * @param p_manager the user event manager.
- *
- * @return true if writing was successful.
- */
-static OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
-                                 opj_stream_private_t *cio,
-                                 opj_event_mgr_t * p_manager);
 
 /**
 Apply collected palette data
@@ -356,20 +318,6 @@ static OPJ_BOOL opj_jp2_read_header_procedure(opj_jp2_t *jp2,
         opj_stream_private_t *stream,
         opj_event_mgr_t * p_manager);
 
-/**
- * Executes the given procedures on the given codec.
- *
- * @param   p_procedure_list    the list of procedures to execute
- * @param   jp2                 the jpeg2000 file codec to execute the procedures on.
- * @param   stream                  the stream to execute the procedures on.
- * @param   p_manager           the user manager.
- *
- * @return  true                if all the procedures were successfully executed.
- */
-static OPJ_BOOL opj_jp2_exec(opj_jp2_t * jp2,
-                             opj_procedure_list_t * p_procedure_list,
-                             opj_stream_private_t *stream,
-                             opj_event_mgr_t * p_manager);
 
 /**
  * Reads a box header. The box is the way data is packed inside a jpeg2000 file structure.
@@ -1647,10 +1595,10 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
     return opj_jp2_apply_color_postprocessing(jp2, p_image, p_manager);
 }
 
-static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
-                                   opj_stream_private_t *stream,
-                                   opj_event_mgr_t * p_manager
-                                  )
+OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
+                            opj_stream_private_t *stream,
+                            opj_event_mgr_t * p_manager
+                           )
 {
     opj_jp2_img_header_writer_handler_t l_writers [4];
     opj_jp2_img_header_writer_handler_t * l_current_writer;
@@ -1754,9 +1702,9 @@ static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
     return l_result;
 }
 
-static OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
-                                   opj_stream_private_t *cio,
-                                   opj_event_mgr_t * p_manager)
+OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
+                            opj_stream_private_t *cio,
+                            opj_event_mgr_t * p_manager)
 {
     OPJ_UINT32 i;
     OPJ_UINT32 l_ftyp_size;
@@ -1792,6 +1740,7 @@ static OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
 
     for (i = 0; i < jp2->numcl; i++)  {
         opj_write_bytes(l_current_data_ptr, jp2->cl[i], 4); /* CL */
+        l_current_data_ptr += 4;
     }
 
     l_result = (opj_stream_write_data(cio, l_ftyp_data, l_ftyp_size,
@@ -1844,9 +1793,9 @@ static OPJ_BOOL opj_jp2_write_jp2c(opj_jp2_t *jp2,
     return OPJ_TRUE;
 }
 
-static OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
-                                 opj_stream_private_t *cio,
-                                 opj_event_mgr_t * p_manager)
+OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
+                          opj_stream_private_t *cio,
+                          opj_event_mgr_t * p_manager)
 {
     /* 12 bytes will be read */
     OPJ_BYTE l_signature_data [12];
@@ -2424,11 +2373,11 @@ static OPJ_BOOL opj_jp2_read_header_procedure(opj_jp2_t *jp2,
  *
  * @return  true                if all the procedures were successfully executed.
  */
-static OPJ_BOOL opj_jp2_exec(opj_jp2_t * jp2,
-                             opj_procedure_list_t * p_procedure_list,
-                             opj_stream_private_t *stream,
-                             opj_event_mgr_t * p_manager
-                            )
+OPJ_BOOL opj_jp2_exec(opj_jp2_t * jp2,
+                      opj_procedure_list_t * p_procedure_list,
+                      opj_stream_private_t *stream,
+                      opj_event_mgr_t * p_manager
+                     )
 
 {
     OPJ_BOOL(** l_procedure)(opj_jp2_t * jp2, opj_stream_private_t *,
