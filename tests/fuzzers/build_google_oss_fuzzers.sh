@@ -37,3 +37,6 @@ for F in $fuzzerFiles; do
     build_fuzzer $fuzzerName $F
 done
 
+# Build plain-C fuzzers (compiled as C++ to satisfy link requirements)
+build_fuzzer fuzz_jp2_metadata $(dirname $0)/fuzz_jp2_metadata.c
+
