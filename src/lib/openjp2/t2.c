@@ -441,6 +441,8 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
          * and no l_img_comp->resno_decoded are computed
          */
         OPJ_BOOL* first_pass_failed = NULL;
+        OPJ_UINT32 l_packet_count = 0;
+        OPJ_UINT32 l_max_packets = 100000;
 
         if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
             /* TODO ADE : add an error */
@@ -457,6 +459,17 @@ OPJ_BOOL opj_t2_decode_packets(opj_tcd_t* tcd,
 
         while (opj_pi_next(l_current_pi)) {
             OPJ_BOOL skip_packet = OPJ_FALSE;
+            
+            /* CVE-2023-39327: Check for excessive packet iterations */
+            if (++l_packet_count > l_max_packets) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Excessive packet iterations detected (>%u). Possible malformed stream.\n",
+                              l_max_packets);
+                opj_pi_destroy(l_pi, l_nb_pocs);
+                opj_free(first_pass_failed);
+                return OPJ_FALSE;
+            }
+            
             JAS_FPRINTF(stderr,
                         "packet offset=00000166 prg=%d cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d\n\n",
                         l_current_pi->poc.prg1, l_current_pi->compno, l_current_pi->resno,
