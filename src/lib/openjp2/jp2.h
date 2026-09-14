@@ -59,6 +59,9 @@
 #define     JP2_DTBL 0x6474626c    /**< Data Reference box */
 #define     JP2_BPCC 0x62706363    /**< Bits per component box */
 #define     JP2_JP2  0x6a703220    /**< File type fields */
+#define     JP2_ASOC 0x61736f63    /**< Associated data */
+#define     JP2_LBL  0x6c626c20    /**< Association label */
+#define     JP2_XML  0x786d6c20    /**< XML data */
 
 /* For the future */
 /* #define JP2_RES 0x72657320 */  /**< Resolution box (super-box) */
@@ -185,6 +188,9 @@ typedef struct opj_jp2 {
     OPJ_UINT32 jp2_img_state;
 
     opj_jp2_color_t color;
+
+    opj_jp2_asoc_t *asoc;
+    OPJ_UINT32 numasoc;
 
     OPJ_BOOL ignore_pclr_cmap_cdef;
     OPJ_BYTE has_jp2h;
@@ -502,6 +508,20 @@ void jp2_dump(opj_jp2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
  *@return  the codestream information extract from the jpg2000 codec
  */
 opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2);
+
+/**
+ * Get the metadata from a JPEG2000 codec.
+ *
+ *@param  p_jp2        jp2 codec.
+ *
+ *@return  the metadata extract from the jpg2000 codec
+ */
+ opj_jp2_metadata_t* jp2_get_metadata( opj_jp2_t* p_jp2 );
+
+/**
+ * Copy associated data
+ */
+OPJ_BOOL jp2_copy_asoc_data(opj_jp2_t* p_jp2, opj_jp2_metadata_t* p_jp2_metadata);
 
 /**
  * Get the codestream index from a JPEG2000 codec.
