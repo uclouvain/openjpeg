@@ -19,3 +19,14 @@ endforeach()
 add_executable(testjp2 testjp2.c)
 target_link_libraries(testjp2 openjp2)
 add_test(NAME testjp2 COMMAND testjp2 ${OPJ_DATA_ROOT})
+
+# The JPIP query parser takes its input straight from QUERY_STRING, so it must
+# tolerate arbitrary field names and values without overflowing its buffers.
+if(BUILD_JPIP)
+  include_directories(
+    ${OPENJPEG_SOURCE_DIR}/src/lib/openjpip
+  )
+  add_executable(testjpipquery testjpipquery.c)
+  target_link_libraries(testjpipquery openjpip)
+  add_test(NAME testjpipquery COMMAND testjpipquery)
+endif()
