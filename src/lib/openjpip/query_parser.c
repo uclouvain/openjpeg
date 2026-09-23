@@ -70,7 +70,9 @@ query_param_t * get_initquery(void);
  * @param[out] fieldval string to copy the field value, if not found, NULL
  * @return pointer to the next field string, if there is none, NULL
  */
-char * get_fieldparam(const char *stringptr, char *fieldname, char *fieldval);
+char * get_fieldparam(const char *stringptr, char *fieldname,
+                      size_t fieldname_size, char *fieldval,
+                      size_t fieldval_size);
 
 void parse_cclose(char *src, query_param_t *query_param);
 void parse_metareq(char *field, query_param_t *query_param);
@@ -97,7 +99,8 @@ query_param_t * parse_query(const char *query_string)
 
     while (pquery != NULL) {
 
-        pquery = get_fieldparam(pquery, fieldname, fieldval);
+        pquery = get_fieldparam(pquery, fieldname, sizeof(fieldname),
+                                fieldval, sizeof(fieldval));
 
         if (fieldname[0] != '\0') {
             if (strcasecmp(fieldname, "target") == 0) {
@@ -208,9 +211,12 @@ query_param_t * get_initquery(void)
 }
 
 
-char * get_fieldparam(const char *stringptr, char *fieldname, char *fieldval)
+char * get_fieldparam(const char *stringptr, char *fieldname,
+                      size_t fieldname_size, char *fieldval,
+                      size_t fieldval_size)
 {
     char *eqp, *andp, *nexfieldptr;
+    size_t namelen, vallen;
 
     if ((eqp = strchr(stringptr, '=')) == NULL) {
         fprintf(stderr, "= not found\n");
@@ -225,12 +231,31 @@ char * get_fieldparam(const char *stringptr, char *fieldname, char *fieldval)
         nexfieldptr = andp + 1;
     }
 
-    assert((size_t)(eqp - stringptr));
-    strncpy(fieldname, stringptr, (size_t)(eqp - stringptr));
-    fieldname[eqp - stringptr] = '\0';
-    assert(andp - eqp - 1 >= 0);
-    strncpy(fieldval, eqp + 1, (size_t)(andp - eqp - 1));
-    fieldval[andp - eqp - 1] = '\0';
+    /* The copy lengths are delimited by = and &, both chosen by whoever
+     * wrote the query string, so they must be checked against the fixed
+     * buffers handed in by the caller.  A field that does not fit is dropped
+     * instead of truncated, so a malformed query can neither overflow the
+     * buffers nor leave a partially copied field behind.  The previous code
+     * relied on assert(), which is compiled out under NDEBUG, and on
+     * strncpy(), which never bounds the terminator it writes. */
+    namelen = (size_t)(eqp - stringptr);
+    if (namelen == 0 || namelen >= fieldname_size) {
+        fieldname[0] = '\0';
+        fieldval[0] = '\0';
+        return nexfieldptr;
+    }
+    memcpy(fieldname, stringptr, namelen);
+    fieldname[namelen] = '\0';
+
+    /* & may precede =, which would make the subtraction underflow. */
+    vallen = (andp > eqp + 1) ? (size_t)(andp - eqp - 1) : 0;
+    if (vallen >= fieldval_size) {
+        fieldname[0] = '\0';
+        fieldval[0] = '\0';
+        return nexfieldptr;
+    }
+    memcpy(fieldval, eqp + 1, vallen);
+    fieldval[vallen] = '\0';
 
     return nexfieldptr;
 }
