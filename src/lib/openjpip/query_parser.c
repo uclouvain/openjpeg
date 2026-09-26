@@ -411,31 +411,54 @@ void parse_req_box_prop(char *req_box_prop, int idx, query_param_t *query_param)
 
 void parse_comps(char *field, query_param_t *query_param)
 {
-    int i, start, stop, aux = -1;
+    int i, start = -1, stop = -1, aux = -1;
     char *ptr1, *ptr2;
 
     ptr1 = strchr(field, '-');
     ptr2 = strchr(field, ',');
 
-    if (ptr1 && ptr2)
+    if (ptr1 && ptr2) {
         if (ptr1 > ptr2) {
-            sscanf(field, "%d,%d-%d", &aux, &start, &stop);
+            if (sscanf(field, "%d,%d-%d", &aux, &start, &stop) != 3) {
+                return;
+            }
         } else {
-            sscanf(field, "%d-%d,%d", &start, &stop, &aux);
-        } else if (ptr1) {
-        sscanf(field, "%d-%d", &start, &stop);
+            if (sscanf(field, "%d-%d,%d", &start, &stop, &aux) != 3) {
+                return;
+            }
+        }
+    } else if (ptr1) {
+        if (sscanf(field, "%d-%d", &start, &stop) != 2) {
+            return;
+        }
     } else if (ptr2) {
-        sscanf(field, "%d,%d", &start, &stop);
+        if (sscanf(field, "%d,%d", &start, &stop) != 2) {
+            return;
+        }
         aux = start;
         start = stop;
     } else {
-        sscanf(field, "%d", &stop);
+        if (sscanf(field, "%d", &stop) != 1) {
+            return;
+        }
         start = stop;
     }
 
+    /* component indexes are 16-bit in the codestream (Csiz); negative or
+       oversized values have no meaning and would index outside the array */
+    if (start < 0 || stop < start || stop > 16383 ||
+            (aux != -1 && (aux < 0 || aux > 16383))) {
+        return;
+    }
+
     query_param->lastcomp = stop > aux ? stop : aux;
+    opj_free(query_param->comps);
     query_param->comps = (OPJ_BOOL *)opj_calloc(1,
                          (OPJ_SIZE_T)(query_param->lastcomp + 1) * sizeof(OPJ_BOOL));
+    if (query_param->comps == NULL) {
+        query_param->lastcomp = -1;
+        return;
+    }
 
     for (i = start; i <= stop; i++) {
         query_param->comps[i] = OPJ_TRUE;
