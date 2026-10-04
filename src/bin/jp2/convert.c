@@ -2476,13 +2476,10 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
         numcomps = 4;
     }
 
+    /* Components are written planar, each with its own dimensions, so
+     * subsampled components (e.g. 4:2:0 YUV) are supported; this matches the
+     * -F ...@dxxdy input accepted by opj_compress. */
     for (compno = 1; compno < numcomps; ++compno) {
-        if (image->comps[0].dx != image->comps[compno].dx) {
-            break;
-        }
-        if (image->comps[0].dy != image->comps[compno].dy) {
-            break;
-        }
         if (image->comps[0].prec != image->comps[compno].prec) {
             break;
         }
@@ -2492,7 +2489,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile,
     }
     if (compno != numcomps) {
         fprintf(stderr,
-                "imagetoraw_common: All components shall have the same subsampling, same bit depth, same sign.\n");
+                "imagetoraw_common: All components shall have the same bit depth and the same sign.\n");
         fprintf(stderr, "\tAborting\n");
         return 1;
     }

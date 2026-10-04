@@ -145,6 +145,8 @@ typedef struct opj_decompress_params {
 
     /* force output colorspace to RGB */
     int force_rgb;
+    /* keep decoded components in their coded colorspace (no conversion) */
+    int keep_colorspace;
     /* upsample components according to their dx/dy values */
     int upsample;
     /* split output components to different files */
@@ -242,6 +244,12 @@ static void decode_help_display(void)
             "    Force output image colorspace to RGB\n"
             "  -upsample\n"
             "    Downsampled components will be upsampled to image size\n"
+            "  -keep-colorspace\n"
+            "    Output the decoded components as coded: no conversion from sYCC,\n"
+            "    e-sYCC, CMYK or an ICC profile to RGB, and no guessing of sYCC for\n"
+            "    codestreams without a colour specification. Subsampled components\n"
+            "    keep their own dimensions (use PGX, RAW or YUV output).\n"
+            "    Cannot be combined with -force-rgb.\n"
             "  -split-pnm\n"
             "    Split output components to different files when writing to PNM\n");
     if (opj_has_thread_support()) {
@@ -606,6 +614,7 @@ int parse_cmdline_decoder(int argc, char **argv,
         {"threads",   REQ_ARG, NULL, 'T'},
         {"quiet", NO_ARG,  NULL, 1},
         {"allow-partial", NO_ARG,  NULL, 1},
+        {"keep-colorspace", NO_ARG,  NULL, 1},
     };
 
     const char optlist[] = "i:o:r:l:x:d:t:p:c:"
@@ -622,6 +631,7 @@ int parse_cmdline_decoder(int argc, char **argv,
     long_option[4].flag = &(parameters->split_pnm);
     long_option[6].flag = &(parameters->quiet);
     long_option[7].flag = &(parameters->allow_partial);
+    long_option[8].flag = &(parameters->keep_colorspace);
     totlen = sizeof(long_option);
     opj_reset_options_reading();
     img_fol->set_out_format = 0;
@@ -928,6 +938,11 @@ int parse_cmdline_decoder(int argc, char **argv,
     } while (c != -1);
 
     /* check for possible errors */
+    if (parameters->keep_colorspace && parameters->force_rgb) {
+        fprintf(stderr,
+                "[ERROR] options -keep-colorspace and -force-rgb cannot be used together.\n");
+        return 1;
+    }
     if (img_fol->set_imgdir == 1) {
         if (!(parameters->infile[0] == 0)) {
             fprintf(stderr, "[ERROR] options -ImgDir and -i cannot be used together.\n");
@@ -1617,29 +1632,33 @@ int main(int argc, char **argv)
         /* Close the byte stream */
         opj_stream_destroy(l_stream);
 
-        if (image->color_space != OPJ_CLRSPC_SYCC
-                && image->numcomps == 3 && image->comps[0].dx == image->comps[0].dy
-                && image->comps[1].dx != 1) {
-            image->color_space = OPJ_CLRSPC_SYCC;
-        } else if (image->numcomps <= 2) {
-            image->color_space = OPJ_CLRSPC_GRAY;
-        }
+        if (!parameters.keep_colorspace) {
+            if (image->color_space != OPJ_CLRSPC_SYCC
+                    && image->numcomps == 3 && image->comps[0].dx == image->comps[0].dy
+                    && image->comps[1].dx != 1) {
+                image->color_space = OPJ_CLRSPC_SYCC;
+            } else if (image->numcomps <= 2) {
+                image->color_space = OPJ_CLRSPC_GRAY;
+            }
 
-        if (image->color_space == OPJ_CLRSPC_SYCC) {
-            color_sycc_to_rgb(image);
-        } else if ((image->color_space == OPJ_CLRSPC_CMYK) &&
-                   (parameters.cod_format != TIF_DFMT)) {
-            color_cmyk_to_rgb(image);
-        } else if (image->color_space == OPJ_CLRSPC_EYCC) {
-            color_esycc_to_rgb(image);
+            if (image->color_space == OPJ_CLRSPC_SYCC) {
+                color_sycc_to_rgb(image);
+            } else if ((image->color_space == OPJ_CLRSPC_CMYK) &&
+                       (parameters.cod_format != TIF_DFMT)) {
+                color_cmyk_to_rgb(image);
+            } else if (image->color_space == OPJ_CLRSPC_EYCC) {
+                color_esycc_to_rgb(image);
+            }
         }
 
         if (image->icc_profile_buf) {
 #if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
-            if (image->icc_profile_len) {
-                color_apply_icc_profile(image);
-            } else {
-                color_cielab_to_rgb(image);
+            if (!parameters.keep_colorspace) {
+                if (image->icc_profile_len) {
+                    color_apply_icc_profile(image);
+                } else {
+                    color_cielab_to_rgb(image);
+                }
             }
 #endif
             free(image->icc_profile_buf);
