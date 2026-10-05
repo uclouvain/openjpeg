@@ -1573,6 +1573,10 @@ static void opj_dwt_encode_and_deinterleave_v(
     const OPJ_UINT32 sn = (height + (even ? 1 : 0)) >> 1;
     const OPJ_UINT32 dn = height - sn;
 
+    if (height == 0) {
+        return;
+    }
+
     opj_dwt_fetch_cols_vertical_pass(arrayIn, tmpIn, height, stride_width, cols);
 
 #define OPJ_Sc(i) tmp[(i)*2* NB_ELTS_V8 + c]
