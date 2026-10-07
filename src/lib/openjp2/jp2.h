@@ -59,9 +59,11 @@
 #define     JP2_DTBL 0x6474626c    /**< Data Reference box */
 #define     JP2_BPCC 0x62706363    /**< Bits per component box */
 #define     JP2_JP2  0x6a703220    /**< File type fields */
+#define     JP2_RES  0x72657320    /**< Resolution Information box */
+#define     JP2_RESC 0x72657363    /**< Capture Resolution box ('resc') */
+#define     JP2_RESD 0x72657364    /**< Default Display Resolution box ('resd') */
 
 /* For the future */
-/* #define JP2_RES 0x72657320 */  /**< Resolution box (super-box) */
 /* #define JP2_JP2I 0x6a703269 */  /**< Intellectual property box */
 /* #define JP2_XML  0x786d6c20 */  /**< XML box */
 /* #define JP2_UUID 0x75756994 */  /**< UUID box */
@@ -189,6 +191,12 @@ typedef struct opj_jp2 {
     OPJ_BOOL ignore_pclr_cmap_cdef;
     OPJ_BYTE has_jp2h;
     OPJ_BYTE has_ihdr;
+    /** 'Resolution Information Box' ('res ') present */
+    OPJ_BYTE has_res;
+    /** 'res ' box: horizontal resolution in pixels per inch */
+    OPJ_FLOAT64 res_x;
+    /** 'res ' box: vertical resolution in pixels per inch */
+    OPJ_FLOAT64 res_y;
 }
 opj_jp2_t;
 
