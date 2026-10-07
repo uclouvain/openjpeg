@@ -729,6 +729,10 @@ typedef struct opj_image {
     OPJ_BYTE *icc_profile_buf;
     /** size of ICC profile */
     OPJ_UINT32 icc_profile_len;
+    /** 'Resolution Information Box' ('res '): horizontal resolution (pixels per inch); 0 if not present */
+    OPJ_FLOAT64 res_x;
+    /** 'Resolution Information Box' ('res '): vertical resolution (pixels per inch); 0 if not present */
+    OPJ_FLOAT64 res_y;
 } opj_image_t;
 
 
