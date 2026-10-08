@@ -108,6 +108,18 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image)
             opj_free(image->icc_profile_buf);
         }
 
+        if (image->xmp_buf) {
+            opj_free(image->xmp_buf);
+        }
+
+        if (image->exif_buf) {
+            opj_free(image->exif_buf);
+        }
+
+        if (image->metadata_boxes) {
+            opj_free(image->metadata_boxes);
+        }
+
         opj_free(image);
     }
 }
