@@ -108,6 +108,18 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image)
             opj_free(image->icc_profile_buf);
         }
 
+        if (image->xmp_buf) {
+            opj_free(image->xmp_buf);
+        }
+
+        if (image->exif_buf) {
+            opj_free(image->exif_buf);
+        }
+
+        if (image->metadata_boxes) {
+            opj_free(image->metadata_boxes);
+        }
+
         opj_free(image);
     }
 }
@@ -204,6 +216,8 @@ void opj_copy_image_header(const opj_image_t* p_image_src,
     }
 
     p_image_dest->color_space = p_image_src->color_space;
+    p_image_dest->res_x = p_image_src->res_x;
+    p_image_dest->res_y = p_image_src->res_y;
     p_image_dest->icc_profile_len = p_image_src->icc_profile_len;
 
     if (p_image_dest->icc_profile_len) {

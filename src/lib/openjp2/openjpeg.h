@@ -729,6 +729,24 @@ typedef struct opj_image {
     OPJ_BYTE *icc_profile_buf;
     /** size of ICC profile */
     OPJ_UINT32 icc_profile_len;
+    /** 'Resolution Information Box' ('res '): horizontal resolution (pixels per inch); 0 if not present */
+    OPJ_FLOAT64 res_x;
+    /** 'Resolution Information Box' ('res '): vertical resolution (pixels per inch); 0 if not present */
+    OPJ_FLOAT64 res_y;
+    /** 'uuid' box with XMP data (raw XMP packet); NULL if not present */
+    OPJ_BYTE *xmp_buf;
+    /** size in bytes of xmp_buf */
+    OPJ_UINT32 xmp_len;
+    /** 'uuid' box with EXIF data (raw TIFF); NULL if not present */
+    OPJ_BYTE *exif_buf;
+    /** size in bytes of exif_buf */
+    OPJ_UINT32 exif_len;
+    /** all other 'uuid'/'xml ' boxes, preserved as-is on read
+     *  (concatenation of complete boxes, header + payload);
+     *  re-emitted unchanged on encode; NULL if not present */
+    OPJ_BYTE *metadata_boxes;
+    /** size in bytes of metadata_boxes */
+    OPJ_UINT32 metadata_boxes_size;
 } opj_image_t;
 
 

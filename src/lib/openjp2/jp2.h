@@ -59,12 +59,14 @@
 #define     JP2_DTBL 0x6474626c    /**< Data Reference box */
 #define     JP2_BPCC 0x62706363    /**< Bits per component box */
 #define     JP2_JP2  0x6a703220    /**< File type fields */
+#define     JP2_RES  0x72657320    /**< Resolution Information box */
+#define     JP2_RESC 0x72657363    /**< Capture Resolution box ('resc') */
+#define     JP2_RESD 0x72657364    /**< Default Display Resolution box ('resd') */
+#define     JP2_XML  0x786d6c20    /**< XML box */
+#define     JP2_UUID 0x75756964    /**< UUID box */
 
 /* For the future */
-/* #define JP2_RES 0x72657320 */  /**< Resolution box (super-box) */
 /* #define JP2_JP2I 0x6a703269 */  /**< Intellectual property box */
-/* #define JP2_XML  0x786d6c20 */  /**< XML box */
-/* #define JP2_UUID 0x75756994 */  /**< UUID box */
 /* #define JP2_UINF 0x75696e66 */  /**< UUID info box (super-box) */
 /* #define JP2_ULST 0x756c7374 */  /**< UUID list box */
 
@@ -189,6 +191,28 @@ typedef struct opj_jp2 {
     OPJ_BOOL ignore_pclr_cmap_cdef;
     OPJ_BYTE has_jp2h;
     OPJ_BYTE has_ihdr;
+    /** 'Resolution Information Box' ('res ') present */
+    OPJ_BYTE has_res;
+    /** 'res ' box: horizontal resolution in pixels per inch */
+    OPJ_FLOAT64 res_x;
+    /** 'res ' box: vertical resolution in pixels per inch */
+    OPJ_FLOAT64 res_y;
+    /** 'uuid'/'xml ' boxes (other than XMP/EXIF) captured as-is on read
+     *  for re-emission on write; transferred to the image in
+     *  opj_jp2_read_header on read */
+    OPJ_BYTE *metadata_boxes;
+    /** size in bytes of metadata_boxes */
+    OPJ_UINT32 metadata_boxes_size;
+    /** XMP payload captured on read or copied from the image on encode;
+     *  transferred to the image in opj_jp2_read_header on read */
+    OPJ_BYTE *xmp_buf;
+    /** size in bytes of xmp_buf */
+    OPJ_UINT32 xmp_len;
+    /** EXIF payload captured on read or copied from the image on encode;
+     *  transferred to the image in opj_jp2_read_header on read */
+    OPJ_BYTE *exif_buf;
+    /** size in bytes of exif_buf */
+    OPJ_UINT32 exif_len;
 }
 opj_jp2_t;
 

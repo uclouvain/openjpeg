@@ -46,6 +46,18 @@
 
 #define OPJ_UNUSED(x) (void)x
 
+/* UUID of the 'uuid' box holding XMP data (Adobe XMP packet) */
+static const OPJ_BYTE JP2_XMP_UUID[16] = {
+    0xBE, 0x7A, 0xCF, 0xCB, 0x97, 0xA9, 0x42, 0xE8,
+    0x9C, 0x71, 0x99, 0x94, 0x91, 0xE3, 0xAF, 0xAC
+};
+
+/* UUID of the 'uuid' box holding EXIF data (raw TIFF) */
+static const OPJ_BYTE JP2_EXIF_UUID[16] = {
+    0x05, 0x37, 0xCD, 0xAB, 0x9D, 0x0C, 0x44, 0x31,
+    0xA7, 0x2A, 0xFA, 0x56, 0x1F, 0x2A, 0x11, 0x3E
+};
+
 /** @name Local static functions */
 /*@{*/
 
@@ -76,6 +88,32 @@ static OPJ_BOOL opj_jp2_read_ihdr(opj_jp2_t *jp2,
 */
 static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
                                      OPJ_UINT32 * p_nb_bytes_written);
+
+/**
+ * Reads a Resolution Information box.
+ *
+ * @param   p_res_header_data           pointer to actual data (already read from file)
+ * @param   jp2                         the jpeg2000 file codec.
+ * @param   p_res_header_size           the size of the resolution header
+ * @param   p_manager                   the user event manager.
+ *
+ * @return  true if the resolution box is valid, false else.
+ */
+static OPJ_BOOL opj_jp2_read_res(opj_jp2_t *jp2,
+                                 OPJ_BYTE * p_res_header_data,
+                                 OPJ_UINT32 p_res_header_size,
+                                 opj_event_mgr_t * p_manager);
+
+/**
+ * Writes the Resolution Information box.
+ *
+ * @param jp2                   jpeg2000 file codec.
+ * @param p_nb_bytes_written    pointer to store the nb of bytes written by the function.
+ *
+ * @return  the data being copied.
+ */
+static OPJ_BYTE * opj_jp2_write_res(opj_jp2_t *jp2,
+                                    OPJ_UINT32 * p_nb_bytes_written);
 
 /**
  * Writes the Bit per Component box.
@@ -430,6 +468,7 @@ static const opj_jp2_header_handler_t jp2_header [] = {
 
 static const opj_jp2_header_handler_t jp2_img_header [] = {
     {JP2_IHDR, opj_jp2_read_ihdr},
+    {JP2_RES, opj_jp2_read_res},
     {JP2_COLR, opj_jp2_read_colr},
     {JP2_BPCC, opj_jp2_read_bpcc},
     {JP2_PCLR, opj_jp2_read_pclr},
@@ -633,6 +672,154 @@ static OPJ_BOOL opj_jp2_read_ihdr(opj_jp2_t *jp2,
     return OPJ_TRUE;
 }
 
+static OPJ_FLOAT64 opj_res_exp10(OPJ_INT32 p_exp)
+{
+    OPJ_FLOAT64 l_pow = 1.0;
+    OPJ_INT32 i;
+
+    for (i = 0; i < p_exp; ++i) {
+        l_pow *= 10.0;
+    }
+    for (i = p_exp; i < 0; ++i) {
+        l_pow /= 10.0;
+    }
+
+    return l_pow;
+}
+
+static OPJ_BOOL opj_jp2_read_res(opj_jp2_t *jp2,
+                                 OPJ_BYTE *p_res_header_data,
+                                 OPJ_UINT32 p_res_header_size,
+                                 opj_event_mgr_t *p_manager)
+{
+    OPJ_UINT32 l_raw = 0;
+    OPJ_UINT32 l_offset = 0;
+    OPJ_BOOL l_has_resc = OPJ_FALSE;
+    OPJ_BOOL l_has_resd = OPJ_FALSE;
+    OPJ_FLOAT64 l_vres_c = 0., l_hres_c = 0.;  /* capture, pixels per meter */
+    OPJ_FLOAT64 l_vres_d = 0., l_hres_d = 0.;  /* display, pixels per meter */
+
+    /* preconditions */
+    assert(p_res_header_data != 00);
+    assert(jp2 != 00);
+    assert(p_manager != 00);
+
+    /* ISO/IEC 15444-1, I.5.3.7: the 'res ' box shall occur at most once */
+    if (jp2->has_res) {
+        opj_event_msg(p_manager, EVT_INFO,
+                      "A conforming JP2 reader shall ignore all Resolution Information boxes after the first, so we ignore this one.\n");
+        return OPJ_TRUE;
+    }
+
+    /*
+     * ISO/IEC 15444-1, I.5.3.7: the 'res ' box is a superbox that contains a
+     * Capture Resolution box ('resc') and/or a Default Display Resolution
+     * box ('resd'). Each subbox stores the resolution as a rational number
+     * with a decimal exponent, in reference grid points per meter:
+     *     Vres = VresN * 10^VresE / VresD
+     *     Hres = HresN * 10^HresE / HresD
+     * where VresN/VresD/HresN/HresD are 2-byte unsigned big-endian values
+     * (1..65535) and VresE/HresE are 1-byte two's-complement signed values.
+     *
+     * For compatibility with the first edition of the standard, a 'res ' box
+     * with an 8-byte payload is also accepted, holding XRES/YRES as 16.16
+     * fixed-point values in pixels per inch.
+     */
+    if (p_res_header_size == 8) {
+        opj_read_bytes(p_res_header_data, &l_raw, 4);
+        jp2->res_x = (OPJ_FLOAT64)(OPJ_INT32) l_raw / 65536.0;
+        opj_read_bytes(p_res_header_data + 4, &l_raw, 4);
+        jp2->res_y = (OPJ_FLOAT64)(OPJ_INT32) l_raw / 65536.0;
+
+        if (jp2->res_x < 0 || jp2->res_y < 0) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                          "Bad RES header box (negative resolution value)\n");
+        }
+
+        jp2->has_res = 1;
+        return OPJ_TRUE;
+    }
+
+    /* superbox form: walk the 'resc'/'resd' subboxes */
+    while (l_offset + 8 <= p_res_header_size) {
+        OPJ_UINT32 l_sub_size;
+        OPJ_UINT32 l_sub_type;
+        OPJ_UINT32 l_vn = 0, l_vd = 0, l_hn = 0, l_hd = 0;
+        OPJ_INT32 l_ve = 0, l_he = 0;
+        OPJ_FLOAT64 l_vres, l_hres;
+
+        opj_read_bytes(p_res_header_data + l_offset, &l_sub_size, 4);
+        opj_read_bytes(p_res_header_data + l_offset + 4, &l_sub_type, 4);
+
+        if (l_sub_size < 18 || l_sub_size > p_res_header_size - l_offset) {
+            opj_event_msg(p_manager, EVT_ERROR, "Bad RES header box (bad size)\n");
+            return OPJ_FALSE;
+        }
+
+        if (l_sub_type != JP2_RESC && l_sub_type != JP2_RESD) {
+            opj_event_msg(p_manager, EVT_INFO,
+                          "Unknown subbox in RES header box, skipping\n");
+            l_offset += l_sub_size;
+            continue;
+        }
+
+        opj_read_bytes(p_res_header_data + l_offset + 8, &l_vn, 2);   /* VresN */
+        opj_read_bytes(p_res_header_data + l_offset + 10, &l_vd, 2);  /* VresD */
+        opj_read_bytes(p_res_header_data + l_offset + 12, &l_hn, 2);  /* HresN */
+        opj_read_bytes(p_res_header_data + l_offset + 14, &l_hd, 2);  /* HresD */
+        l_ve = (OPJ_INT32)(OPJ_INT8) p_res_header_data[l_offset + 16];
+        l_he = (OPJ_INT32)(OPJ_INT8) p_res_header_data[l_offset + 17];
+
+        if (l_vd == 0 || l_hd == 0) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                          "Bad RES header box (zero resolution denominator), ignoring subbox\n");
+            l_offset += l_sub_size;
+            continue;
+        }
+
+        l_vres = opj_res_exp10(l_ve) * (OPJ_FLOAT64) l_vn / (OPJ_FLOAT64) l_vd;
+        l_hres = opj_res_exp10(l_he) * (OPJ_FLOAT64) l_hn / (OPJ_FLOAT64) l_hd;
+
+        if (l_sub_type == JP2_RESC) {
+            l_vres_c = l_vres;
+            l_hres_c = l_hres;
+            l_has_resc = OPJ_TRUE;
+        } else {
+            l_vres_d = l_vres;
+            l_hres_d = l_hres;
+            l_has_resd = OPJ_TRUE;
+        }
+
+        l_offset += l_sub_size;
+    }
+
+    if (!l_has_resc && !l_has_resd) {
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "RES header box contains no resolution subbox\n");
+        return OPJ_TRUE;
+    }
+
+    /* prefer the capture resolution over the default display resolution */
+    if (l_has_resc) {
+        /* pixels per meter to pixels per inch */
+        jp2->res_x = l_hres_c * 0.0254;
+        jp2->res_y = l_vres_c * 0.0254;
+    } else {
+        /* pixels per meter to pixels per inch */
+        jp2->res_x = l_hres_d * 0.0254;
+        jp2->res_y = l_vres_d * 0.0254;
+    }
+
+    if (jp2->res_x < 0 || jp2->res_y < 0) {
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "Bad RES header box (negative resolution value)\n");
+    }
+
+    jp2->has_res = 1;
+
+    return OPJ_TRUE;
+}
+
 static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
                                      OPJ_UINT32 * p_nb_bytes_written
                                     )
@@ -683,6 +870,91 @@ static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
     *p_nb_bytes_written = 22;
 
     return l_ihdr_data;
+}
+
+static OPJ_BYTE * opj_jp2_write_res(opj_jp2_t *jp2,
+                                    OPJ_UINT32 * p_nb_bytes_written
+                                   )
+{
+    OPJ_BYTE * l_res_data, * l_current_res_ptr;
+    OPJ_UINT32 l_vn, l_hn;
+    OPJ_UINT32 l_ve = 0, l_he = 0;
+    OPJ_FLOAT64 l_vppm, l_hppm;
+
+    /* preconditions */
+    assert(jp2 != 00);
+    assert(p_nb_bytes_written != 00);
+
+    /*
+     * ISO/IEC 15444-1, I.5.3.7: the 'res ' box is a superbox containing a
+     * Capture Resolution box ('resc'). The resolution is expressed as
+     * N * 10^E / D reference grid points per meter, with 2-byte numerators
+     * and denominators and 1-byte decimal exponents.
+     * Total size: 8 ('res ' header) + 18 ('resc') = 26 bytes.
+     */
+    l_res_data = (OPJ_BYTE *) opj_calloc(1, 26);
+    if (l_res_data == 00) {
+        return 00;
+    }
+
+    l_current_res_ptr = l_res_data;
+
+    opj_write_bytes(l_current_res_ptr, 26, 4);              /* write box size */
+    l_current_res_ptr += 4;
+
+    opj_write_bytes(l_current_res_ptr, JP2_RES, 4);         /* RES */
+    l_current_res_ptr += 4;
+
+    opj_write_bytes(l_current_res_ptr, 18, 4);              /* 'resc' box size */
+    l_current_res_ptr += 4;
+
+    opj_write_bytes(l_current_res_ptr, JP2_RESC, 4);        /* RESC */
+    l_current_res_ptr += 4;
+
+    /* pixels per inch to pixels per meter */
+    l_vppm = jp2->res_y * (100.0 / 2.54);
+    l_hppm = jp2->res_x * (100.0 / 2.54);
+
+    /* scale down by powers of ten until the numerator fits in 16 bits */
+    while (l_vppm > 65535.0 && l_ve < 127) {
+        l_vppm /= 10.0;
+        ++l_ve;
+    }
+    while (l_hppm > 65535.0 && l_he < 127) {
+        l_hppm /= 10.0;
+        ++l_he;
+    }
+
+    l_vn = (l_vppm >= 65535.5) ? 65535 : (OPJ_UINT32)(l_vppm + 0.5);
+    l_hn = (l_hppm >= 65535.5) ? 65535 : (OPJ_UINT32)(l_hppm + 0.5);
+    if (l_vn == 0) {
+        l_vn = 1;
+    }
+    if (l_hn == 0) {
+        l_hn = 1;
+    }
+
+    opj_write_bytes(l_current_res_ptr, l_vn, 2);      /* VRcN */
+    l_current_res_ptr += 2;
+
+    opj_write_bytes(l_current_res_ptr, 1, 2);         /* VRcD */
+    l_current_res_ptr += 2;
+
+    opj_write_bytes(l_current_res_ptr, l_hn, 2);      /* HRcN */
+    l_current_res_ptr += 2;
+
+    opj_write_bytes(l_current_res_ptr, 1, 2);         /* HRcD */
+    l_current_res_ptr += 2;
+
+    opj_write_bytes(l_current_res_ptr, l_ve, 1);      /* VRcE */
+    ++l_current_res_ptr;
+
+    opj_write_bytes(l_current_res_ptr, l_he, 1);      /* HRcE */
+    ++l_current_res_ptr;
+
+    *p_nb_bytes_written = 26;
+
+    return l_res_data;
 }
 
 static OPJ_BYTE * opj_jp2_write_bpcc(opj_jp2_t *jp2,
@@ -1652,7 +1924,7 @@ static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
                                    opj_event_mgr_t * p_manager
                                   )
 {
-    opj_jp2_img_header_writer_handler_t l_writers [4];
+    opj_jp2_img_header_writer_handler_t l_writers [5];
     opj_jp2_img_header_writer_handler_t * l_current_writer;
 
     OPJ_INT32 i, l_nb_pass;
@@ -1670,19 +1942,27 @@ static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
 
     memset(l_writers, 0, sizeof(l_writers));
 
+    l_nb_pass = 1;
+    l_writers[0].handler = opj_jp2_write_ihdr;
+
     if (jp2->bpc == 255) {
-        l_nb_pass = 3;
-        l_writers[0].handler = opj_jp2_write_ihdr;
-        l_writers[1].handler = opj_jp2_write_bpcc;
-        l_writers[2].handler = opj_jp2_write_colr;
-    } else {
-        l_nb_pass = 2;
-        l_writers[0].handler = opj_jp2_write_ihdr;
-        l_writers[1].handler = opj_jp2_write_colr;
+        l_writers[l_nb_pass].handler = opj_jp2_write_bpcc;
+        l_nb_pass++;
     }
+
+    l_writers[l_nb_pass].handler = opj_jp2_write_colr;
+    l_nb_pass++;
 
     if (jp2->color.jp2_cdef != NULL) {
         l_writers[l_nb_pass].handler = opj_jp2_write_cdef;
+        l_nb_pass++;
+    }
+
+    /* the 'res ' box shall be the last one in the 'jp2h' box
+     * (ISO/IEC 15444-1, I.5.3, box order: ihdr, bpcc, colr, pclr,
+     * cmap, cdef, res) */
+    if (jp2->has_res) {
+        l_writers[l_nb_pass].handler = opj_jp2_write_res;
         l_nb_pass++;
     }
 
@@ -1872,6 +2152,78 @@ static OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
     return OPJ_TRUE;
 }
 
+static OPJ_BOOL opj_jp2_write_metadata(opj_jp2_t *jp2,
+                                       opj_stream_private_t *cio,
+                                       opj_event_mgr_t * p_manager)
+{
+    OPJ_BYTE *l_data;
+    OPJ_UINT32 l_box_size;
+
+    /* preconditions */
+    assert(cio != 00);
+    assert(jp2 != 00);
+    assert(p_manager != 00);
+
+    if (jp2->metadata_boxes_size) {
+        /* re-emit the metadata boxes preserved as-is on read */
+        if (opj_stream_write_data(cio, jp2->metadata_boxes,
+                                  jp2->metadata_boxes_size, p_manager)
+                != jp2->metadata_boxes_size) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Failed to write preserved JPEG2000 metadata boxes\n");
+            return OPJ_FALSE;
+        }
+    }
+
+    if (jp2->xmp_len) {
+        /* 'uuid' box with XMP data */
+        l_box_size = 24U + jp2->xmp_len;
+        l_data = (OPJ_BYTE*)opj_calloc(1, l_box_size);
+        if (l_data == 00) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Not enough memory to handle XMP data\n");
+            return OPJ_FALSE;
+        }
+        opj_write_bytes(l_data, l_box_size, 4);
+        opj_write_bytes(l_data + 4, JP2_UUID, 4);
+        memcpy(l_data + 8, JP2_XMP_UUID, 16);
+        memcpy(l_data + 24, jp2->xmp_buf, jp2->xmp_len);
+        if (opj_stream_write_data(cio, l_data, l_box_size,
+                                  p_manager) != l_box_size) {
+            opj_free(l_data);
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Failed to write XMP metadata box\n");
+            return OPJ_FALSE;
+        }
+        opj_free(l_data);
+    }
+
+    if (jp2->exif_len) {
+        /* 'uuid' box with EXIF data */
+        l_box_size = 24U + jp2->exif_len;
+        l_data = (OPJ_BYTE*)opj_calloc(1, l_box_size);
+        if (l_data == 00) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Not enough memory to handle EXIF data\n");
+            return OPJ_FALSE;
+        }
+        opj_write_bytes(l_data, l_box_size, 4);
+        opj_write_bytes(l_data + 4, JP2_UUID, 4);
+        memcpy(l_data + 8, JP2_EXIF_UUID, 16);
+        memcpy(l_data + 24, jp2->exif_buf, jp2->exif_len);
+        if (opj_stream_write_data(cio, l_data, l_box_size,
+                                  p_manager) != l_box_size) {
+            opj_free(l_data);
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Failed to write EXIF metadata box\n");
+            return OPJ_FALSE;
+        }
+        opj_free(l_data);
+    }
+
+    return OPJ_TRUE;
+}
+
 /* ----------------------------------------------------------------------- */
 /* JP2 decoder interface                                             */
 /* ----------------------------------------------------------------------- */
@@ -1977,6 +2329,64 @@ OPJ_BOOL opj_jp2_setup_encoder(opj_jp2_t *jp2,
     jp2->C = 7;         /* C : Always 7 */
     jp2->UnkC = 0;      /* UnkC, colorspace specified in colr box */
     jp2->IPR = 0;       /* IPR, no intellectual property */
+
+    /* Resolution Information box */
+    if (image->res_x > 0 && image->res_y > 0 &&
+            image->res_x < 1e300 && image->res_y < 1e300) {
+        jp2->res_x = image->res_x;
+        jp2->res_y = image->res_y;
+        jp2->has_res = 1;
+    } else if ((image->res_x < 0 || image->res_x >= 1e300 ||
+                image->res_x != image->res_x) ||
+               (image->res_y < 0 || image->res_y >= 1e300 ||
+                image->res_y != image->res_y)) {
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "Invalid image resolution value, 'res ' box will not be written\n");
+    }
+
+    /* Metadata boxes ('uuid') */
+    if (image->xmp_buf && image->xmp_len) {
+        jp2->xmp_buf = (OPJ_BYTE*)opj_malloc(image->xmp_len);
+        if (!jp2->xmp_buf) {
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Not enough memory to handle XMP data\n");
+            return OPJ_FALSE;
+        }
+        memcpy(jp2->xmp_buf, image->xmp_buf, image->xmp_len);
+        jp2->xmp_len = image->xmp_len;
+    }
+
+    if (image->exif_buf && image->exif_len) {
+        jp2->exif_buf = (OPJ_BYTE*)opj_malloc(image->exif_len);
+        if (!jp2->exif_buf) {
+            opj_free(jp2->xmp_buf);
+            jp2->xmp_buf = 00;
+            jp2->xmp_len = 0;
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Not enough memory to handle EXIF data\n");
+            return OPJ_FALSE;
+        }
+        memcpy(jp2->exif_buf, image->exif_buf, image->exif_len);
+        jp2->exif_len = image->exif_len;
+    }
+
+    if (image->metadata_boxes && image->metadata_boxes_size) {
+        jp2->metadata_boxes = (OPJ_BYTE*)opj_malloc(image->metadata_boxes_size);
+        if (!jp2->metadata_boxes) {
+            opj_free(jp2->xmp_buf);
+            jp2->xmp_buf = 00;
+            jp2->xmp_len = 0;
+            opj_free(jp2->exif_buf);
+            jp2->exif_buf = 00;
+            jp2->exif_len = 0;
+            opj_event_msg(p_manager, EVT_ERROR,
+                          "Not enough memory to handle JPEG2000 metadata boxes\n");
+            return OPJ_FALSE;
+        }
+        memcpy(jp2->metadata_boxes, image->metadata_boxes,
+               image->metadata_boxes_size);
+        jp2->metadata_boxes_size = image->metadata_boxes_size;
+    }
 
     /* BitsPerComponent box */
     for (i = 0; i < image->numcomps; i++) {
@@ -2259,6 +2669,48 @@ static OPJ_BOOL opj_jp2_default_validation(opj_jp2_t * jp2,
     return l_is_valid;
 }
 
+static OPJ_BOOL opj_jp2_append_metadata_box(opj_jp2_t *jp2,
+        OPJ_UINT32 p_box_length,
+        OPJ_UINT32 p_box_type,
+        OPJ_UINT32 p_header_size,
+        OPJ_BYTE *p_payload,
+        OPJ_UINT32 p_payload_size,
+        opj_event_mgr_t * p_manager)
+{
+    OPJ_BYTE l_hdr[16];
+    OPJ_BYTE *l_new;
+
+    if (p_header_size == 16) {
+        /* XLBox header */
+        opj_write_bytes(l_hdr, 1, 4);
+        opj_write_bytes(l_hdr + 4, p_box_type, 4);
+        opj_write_bytes(l_hdr + 8, 0, 4);
+        opj_write_bytes(l_hdr + 12, p_box_length, 4);
+    } else {
+        opj_write_bytes(l_hdr, p_box_length, 4);
+        opj_write_bytes(l_hdr + 4, p_box_type, 4);
+    }
+
+    l_new = (OPJ_BYTE*)opj_realloc(jp2->metadata_boxes,
+                                   jp2->metadata_boxes_size + p_header_size + p_payload_size);
+    if (!l_new) {
+        opj_event_msg(p_manager, EVT_ERROR,
+                      "Not enough memory to handle JPEG2000 box\n");
+        return OPJ_FALSE;
+    }
+
+    memcpy(l_new + jp2->metadata_boxes_size, l_hdr, p_header_size);
+    if (p_payload_size) {
+        memcpy(l_new + jp2->metadata_boxes_size + p_header_size,
+               p_payload, p_payload_size);
+    }
+
+    jp2->metadata_boxes = l_new;
+    jp2->metadata_boxes_size += p_header_size + p_payload_size;
+
+    return OPJ_TRUE;
+}
+
 static OPJ_BOOL opj_jp2_read_header_procedure(opj_jp2_t *jp2,
         opj_stream_private_t *stream,
         opj_event_mgr_t * p_manager
@@ -2373,6 +2825,89 @@ static OPJ_BOOL opj_jp2_read_header_procedure(opj_jp2_t *jp2,
 
             if (! l_current_handler->handler(jp2, l_current_data, l_current_data_size,
                                              p_manager)) {
+                opj_free(l_current_data);
+                return OPJ_FALSE;
+            }
+        } else if (box.type == JP2_UUID || box.type == JP2_XML) {
+            /* preserve user metadata boxes ('uuid'/'xml') for re-emission */
+            OPJ_BYTE *l_meta = 00;
+            OPJ_UINT32 l_hdr_size = l_nb_bytes_read;
+
+            if ((OPJ_OFF_T)l_current_data_size >
+                    opj_stream_get_number_byte_left(stream)) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Invalid box size %d for box '%c%c%c%c'. "
+                              "Need %d bytes, %d bytes remaining \n",
+                              box.length,
+                              (OPJ_BYTE)(box.type >> 24),
+                              (OPJ_BYTE)(box.type >> 16),
+                              (OPJ_BYTE)(box.type >> 8),
+                              (OPJ_BYTE)(box.type >> 0),
+                              l_current_data_size,
+                              (OPJ_UINT32)opj_stream_get_number_byte_left(stream));
+                opj_free(l_current_data);
+                return OPJ_FALSE;
+            }
+            if (l_current_data_size > l_last_data_size) {
+                OPJ_BYTE* new_current_data = (OPJ_BYTE*)opj_realloc(
+                                                 l_current_data, l_current_data_size);
+                if (!new_current_data) {
+                    opj_free(l_current_data);
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Not enough memory to handle jpeg2000 box\n");
+                    return OPJ_FALSE;
+                }
+                l_current_data = new_current_data;
+                l_last_data_size = l_current_data_size;
+            }
+
+            l_nb_bytes_read = (OPJ_UINT32)opj_stream_read_data(stream,
+                              l_current_data, l_current_data_size, p_manager);
+            if (l_nb_bytes_read != l_current_data_size) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Problem with reading JPEG2000 box, stream error\n");
+                opj_free(l_current_data);
+                return OPJ_FALSE;
+            }
+
+            /* XMP/EXIF payloads are exposed through the public API,
+             * any other 'uuid' box and every 'xml' box is preserved as-is */
+            if (box.type == JP2_UUID && l_current_data_size > 16U) {
+                if (memcmp(l_current_data, JP2_XMP_UUID, 16) == 0 &&
+                        !jp2->xmp_buf) {
+                    l_meta = (OPJ_BYTE*)opj_malloc(l_current_data_size - 16U);
+                    if (l_meta == 00) {
+                        opj_event_msg(p_manager, EVT_ERROR,
+                                      "Not enough memory to handle XMP data\n");
+                        opj_free(l_current_data);
+                        return OPJ_FALSE;
+                    }
+                    memcpy(l_meta, l_current_data + 16,
+                           l_current_data_size - 16U);
+                    jp2->xmp_buf = l_meta;
+                    jp2->xmp_len = l_current_data_size - 16U;
+                } else if (memcmp(l_current_data, JP2_EXIF_UUID, 16) == 0 &&
+                           !jp2->exif_buf) {
+                    l_meta = (OPJ_BYTE*)opj_malloc(l_current_data_size - 16U);
+                    if (l_meta == 00) {
+                        opj_event_msg(p_manager, EVT_ERROR,
+                                      "Not enough memory to handle EXIF data\n");
+                        opj_free(l_current_data);
+                        return OPJ_FALSE;
+                    }
+                    memcpy(l_meta, l_current_data + 16,
+                           l_current_data_size - 16U);
+                    jp2->exif_buf = l_meta;
+                    jp2->exif_len = l_current_data_size - 16U;
+                }
+            }
+
+            if (l_meta == 00 &&
+                    !opj_jp2_append_metadata_box(jp2, box.length, box.type,
+                                                 l_hdr_size,
+                                                 l_current_data,
+                                                 l_current_data_size,
+                                                 p_manager)) {
                 opj_free(l_current_data);
                 return OPJ_FALSE;
             }
@@ -2900,6 +3435,29 @@ OPJ_BOOL opj_jp2_read_header(opj_stream_private_t *p_stream,
             (*p_image)->icc_profile_len = jp2->color.icc_profile_len;
             jp2->color.icc_profile_buf = NULL;
         }
+
+        if (jp2->has_res) {
+            (*p_image)->res_x = jp2->res_x;
+            (*p_image)->res_y = jp2->res_y;
+        }
+
+        if (jp2->xmp_buf) {
+            (*p_image)->xmp_buf = jp2->xmp_buf;
+            (*p_image)->xmp_len = jp2->xmp_len;
+            jp2->xmp_buf = NULL;
+        }
+
+        if (jp2->exif_buf) {
+            (*p_image)->exif_buf = jp2->exif_buf;
+            (*p_image)->exif_len = jp2->exif_len;
+            jp2->exif_buf = NULL;
+        }
+
+        if (jp2->metadata_boxes) {
+            (*p_image)->metadata_boxes = jp2->metadata_boxes;
+            (*p_image)->metadata_boxes_size = jp2->metadata_boxes_size;
+            jp2->metadata_boxes = NULL;
+        }
     }
     return ret;
 }
@@ -2952,6 +3510,11 @@ static OPJ_BOOL opj_jp2_setup_header_writing(opj_jp2_t *jp2,
     }
     if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,
                                            (opj_procedure)opj_jp2_write_jp2h, p_manager)) {
+        return OPJ_FALSE;
+    }
+    if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,
+                                           (opj_procedure)opj_jp2_write_metadata,
+                                           p_manager)) {
         return OPJ_FALSE;
     }
     if (jp2->jpip_on) {
@@ -3056,6 +3619,21 @@ void opj_jp2_destroy(opj_jp2_t *jp2)
         if (jp2->color.icc_profile_buf) {
             opj_free(jp2->color.icc_profile_buf);
             jp2->color.icc_profile_buf = 00;
+        }
+
+        if (jp2->metadata_boxes) {
+            opj_free(jp2->metadata_boxes);
+            jp2->metadata_boxes = 00;
+        }
+
+        if (jp2->xmp_buf) {
+            opj_free(jp2->xmp_buf);
+            jp2->xmp_buf = 00;
+        }
+
+        if (jp2->exif_buf) {
+            opj_free(jp2->exif_buf);
+            jp2->exif_buf = 00;
         }
 
         if (jp2->color.jp2_cdef) {
