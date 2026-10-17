@@ -62,6 +62,12 @@ foreach(exe opj_decompress opj_compress opj_dump)
       target_link_libraries(${exe} rt)
     endif()
   endif()
+  if(APPLE AND BUILD_SHARED_LIBS)
+    file(RELATIVE_PATH OPENJPEG_CLI_LIBDIR
+      "${CMAKE_INSTALL_FULL_BINDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    set_property(TARGET ${exe} APPEND PROPERTY INSTALL_RPATH
+      "@loader_path/${OPENJPEG_CLI_LIBDIR}")
+  endif()
   # Install exe
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets
