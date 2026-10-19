@@ -10391,11 +10391,19 @@ static OPJ_BOOL opj_j2k_update_image_data(opj_tcd_t * p_tcd,
             OPJ_SIZE_T l_width = l_img_comp_dest->w;
             OPJ_SIZE_T l_height = l_img_comp_dest->h;
 
-            if ((l_height == 0U) || (l_width > (SIZE_MAX / l_height)) ||
-                    l_width * l_height > SIZE_MAX / sizeof(OPJ_INT32)) {
-                /* would overflow */
+            if (l_height == 0U) {
                 return OPJ_FALSE;
             }
+
+            #define MAX_IMAGE_SIZE (256 * 1024 * 1024) /* 256 MiB */
+            assert(MAX_IMAGE_SIZE <= SIZE_MAX);
+
+            if((l_width > (MAX_IMAGE_SIZE / l_height)) ||
+                    l_width * l_height > MAX_IMAGE_SIZE / sizeof(OPJ_INT32)) {
+                // Image is too large to allocate, return an error.
+                return OPJ_FALSE;
+            }
+
             l_img_comp_dest->data = (OPJ_INT32*) opj_image_data_alloc(l_width * l_height *
                                     sizeof(OPJ_INT32));
             if (! l_img_comp_dest->data) {
