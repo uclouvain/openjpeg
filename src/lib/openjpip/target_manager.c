@@ -265,17 +265,21 @@ int open_jp2file(const char filepath[], char tmpfname[])
     int fd;
     char *data;
 
-    /* download remote target file to local storage*/
-    if (strncmp(filepath, "http://", 7) == 0) {
-        if ((fd = open_remotefile(filepath, tmpfname)) == -1) {
-            return -1;
-        }
-    } else {
-        tmpfname[0] = 0;
-        if ((fd = open(filepath, O_RDONLY)) == -1) {
-            fprintf(FCGI_stdout, "Reason: Target %s not found\r\n", filepath);
-            return -1;
-        }
+    tmpfname[0] = 0;
+
+    /* Reject remote URLs to prevent server-side request forgery (CWE-918).
+       The target= parameter is attacker-controlled; allowing it to fetch
+       arbitrary URLs lets unauthenticated clients force outbound requests. */
+    if (strncmp(filepath, "http://", 7) == 0 ||
+            strncmp(filepath, "https://", 8) == 0) {
+        fprintf(FCGI_stdout,
+                "Reason: Remote URLs are not supported as target values\r\n");
+        return -1;
+    }
+
+    if ((fd = open(filepath, O_RDONLY)) == -1) {
+        fprintf(FCGI_stdout, "Reason: Target %s not found\r\n", filepath);
+        return -1;
     }
     /* Check resource is a JP family file.*/
     if (lseek(fd, 0, SEEK_SET) == -1) {
