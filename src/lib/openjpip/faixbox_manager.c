@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <inttypes.h>
 #include "faixbox_manager.h"
 
@@ -62,6 +63,8 @@ faixbox_param_t * gene_faixbox(box_param_t *box)
     if (faix->version % 2) {
         subfaixbox8_param_t *subfaixbox;
         size_t i;
+        OPJ_SIZE_T dboxlen = get_DBoxlen(box);
+        size_t elem_size;
 
         faix->subfaixbox.byte8_params = (subfaixbox8_param_t *)malloc(sizeof(
                                             subfaixbox8_param_t));
@@ -70,7 +73,29 @@ faixbox_param_t * gene_faixbox(box_param_t *box)
         subfaixbox->nmax = fetch_DBox8bytebigendian(box, (pos += 8) - 8);
         subfaixbox->m    = fetch_DBox8bytebigendian(box, (pos += 8) - 8);
 
-        numOfelem = subfaixbox->nmax * subfaixbox->m;
+        if (subfaixbox->nmax != 0 &&
+                (size_t)subfaixbox->m > SIZE_MAX / (size_t)subfaixbox->nmax) {
+            fprintf(FCGI_stderr, "Error: integer overflow in faix box nmax*m\n");
+            free(subfaixbox);
+            free(faix);
+            return NULL;
+        }
+        numOfelem = (size_t)subfaixbox->nmax * (size_t)subfaixbox->m;
+
+        /* version 1: 16 bytes/elem, version 3: 20 bytes/elem (+ 4-byte aux) */
+        elem_size = sizeof(faixelem8_param_t);
+        if (faix->version == 3) {
+            elem_size += sizeof(Byte4_t);
+        }
+        /* 17 = 1 (version) + 8 (nmax) + 8 (m) */
+        if (dboxlen < 17 || numOfelem > (dboxlen - 17) / elem_size) {
+            fprintf(FCGI_stderr,
+                    "Error: faix box nmax*m (%" PRIu64 "*%" PRIu64 ") exceeds box content\n",
+                    subfaixbox->nmax, subfaixbox->m);
+            free(subfaixbox);
+            free(faix);
+            return NULL;
+        }
 
         subfaixbox->elem = (faixelem8_param_t *)malloc(numOfelem * sizeof(
                                faixelem8_param_t));
@@ -89,6 +114,8 @@ faixbox_param_t * gene_faixbox(box_param_t *box)
     } else {
         subfaixbox4_param_t *subfaixbox;
         size_t i;
+        OPJ_SIZE_T dboxlen = get_DBoxlen(box);
+        size_t elem_size;
 
         faix->subfaixbox.byte4_params = (subfaixbox4_param_t *)malloc(sizeof(
                                             subfaixbox4_param_t));
@@ -97,7 +124,29 @@ faixbox_param_t * gene_faixbox(box_param_t *box)
         subfaixbox->nmax = fetch_DBox4bytebigendian(box, (pos += 4) - 4);
         subfaixbox->m    = fetch_DBox4bytebigendian(box, (pos += 4) - 4);
 
-        numOfelem = subfaixbox->nmax * subfaixbox->m;
+        if (subfaixbox->nmax != 0 &&
+                (size_t)subfaixbox->m > SIZE_MAX / (size_t)subfaixbox->nmax) {
+            fprintf(FCGI_stderr, "Error: integer overflow in faix box nmax*m\n");
+            free(subfaixbox);
+            free(faix);
+            return NULL;
+        }
+        numOfelem = (size_t)subfaixbox->nmax * (size_t)subfaixbox->m;
+
+        /* version 0: 8 bytes/elem, version 2: 12 bytes/elem (+ 4-byte aux) */
+        elem_size = sizeof(faixelem4_param_t);
+        if (faix->version == 2) {
+            elem_size += sizeof(Byte4_t);
+        }
+        /* 9 = 1 (version) + 4 (nmax) + 4 (m) */
+        if (dboxlen < 9 || numOfelem > (dboxlen - 9) / elem_size) {
+            fprintf(FCGI_stderr,
+                    "Error: faix box nmax*m (%u*%u) exceeds box content\n",
+                    subfaixbox->nmax, subfaixbox->m);
+            free(subfaixbox);
+            free(faix);
+            return NULL;
+        }
 
         subfaixbox->elem = (faixelem4_param_t *)malloc(numOfelem * sizeof(
                                faixelem4_param_t));
