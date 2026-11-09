@@ -1365,30 +1365,44 @@ int imagetopgx(opj_image_t * image, const char *outfile)
         int nbytes = 0;
         size_t res;
         const size_t olen = strlen(outfile);
-        const size_t dotpos = olen - 4;
-        const size_t total = dotpos + 1 + 1 + 4; /* '-' + '[1-3]' + '.pgx' */
+        char suffix[sizeof("_4294967295.pgx")];
+        int suffix_len;
+        size_t dotpos, total;
+
+        if (olen < 4) {
+            fprintf(stderr, "imagetopgx: invalid output filename\n");
+            goto fin;
+        }
+        dotpos = olen - 4;
+        suffix_len = snprintf(suffix, sizeof(suffix), "_%u.pgx", compno);
+        if (suffix_len < 0 || (size_t)suffix_len >= sizeof(suffix) ||
+                dotpos > (size_t)-1 - (size_t)suffix_len - 1) {
+            fprintf(stderr, "imagetopgx: output filename too long\n");
+            goto fin;
+        }
+        total = dotpos + (size_t)suffix_len + 1;
 
         if (outfile[dotpos] != '.') {
             /* `pgx` was recognized but there is no dot at expected position */
             fprintf(stderr, "ERROR -> Impossible happen.");
             goto fin;
         }
-        if (total > 256) {
-            name = (char*)malloc(total + 1);
+        if (total > sizeof(bname)) {
+            name = (char*)malloc(total);
             if (name == NULL) {
                 fprintf(stderr, "imagetopgx: memory out\n");
                 goto fin;
             }
         }
         memcpy(name, outfile, dotpos);
-        sprintf(name + dotpos, "_%u.pgx", compno);
+        memcpy(name + dotpos, suffix, (size_t)suffix_len + 1);
         fdest = fopen(name, "wb");
         /* don't need name anymore */
 
         if (!fdest) {
 
             fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
-            if (total > 256) {
+            if (total > sizeof(bname)) {
                 free(name);
             }
             goto fin;
@@ -1412,7 +1426,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
             unsigned char* line_buffer = malloc((size_t)w);
             if (line_buffer == NULL) {
                 fprintf(stderr, "Out of memory");
-                if (total > 256) {
+                if (total > sizeof(bname)) {
                     free(name);
                 }
                 goto fin;
@@ -1433,7 +1447,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
                 res = fwrite(line_buffer, 1, (size_t)w, fdest);
                 if (res != (size_t)w) {
                     fprintf(stderr, "failed to write %d bytes for %s\n", w, name);
-                    if (total > 256) {
+                    if (total > sizeof(bname)) {
                         free(name);
                     }
                     free(line_buffer);
@@ -1455,7 +1469,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
 
                     if (res < 1) {
                         fprintf(stderr, "failed to write 1 byte for %s\n", name);
-                        if (total > 256) {
+                        if (total > sizeof(bname)) {
                             free(name);
                         }
                         goto fin;
@@ -1464,7 +1478,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
             }
         }
 
-        if (total > 256) {
+        if (total > sizeof(bname)) {
             free(name);
         }
         fclose(fdest);
