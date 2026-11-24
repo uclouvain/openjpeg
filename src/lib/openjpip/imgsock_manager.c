@@ -46,7 +46,7 @@ msgtype_t identify_clientmsg(SOCKET connected_socket)
                                    };
     int i;
 
-    receive_size = receive_line(connected_socket, buf);
+    receive_size = receive_line(connected_socket, buf, sizeof(buf));
 
     if (receive_size == 0) {
         fprintf(stderr, "Error to receive the header of client message\n");
@@ -75,7 +75,7 @@ Byte_t * receive_JPIPstream(SOCKET connected_socket, char **target, char **tid,
 
     *target = *cid = *tid = NULL;
 
-    if ((linelen = receive_line(connected_socket, buf)) == 0) {
+    if ((linelen = receive_line(connected_socket, buf, sizeof(buf))) == 0) {
         return NULL;
     }
     if (strncmp(versionstring, buf, strlen(versionstring)) != 0) {
@@ -83,7 +83,7 @@ Byte_t * receive_JPIPstream(SOCKET connected_socket, char **target, char **tid,
         return NULL;
     }
 
-    if ((linelen = receive_line(connected_socket, buf)) == 0) {
+    if ((linelen = receive_line(connected_socket, buf, sizeof(buf))) == 0) {
         return NULL;
     }
 
@@ -91,21 +91,21 @@ Byte_t * receive_JPIPstream(SOCKET connected_socket, char **target, char **tid,
         /* register cid option*/
         *target = strdup(buf);
 
-        if ((linelen = receive_line(connected_socket, buf)) == 0) {
+        if ((linelen = receive_line(connected_socket, buf, sizeof(buf))) == 0) {
             return NULL;
         }
         if (strcmp(buf, "0") != 0) {
             *tid = strdup(buf);
         }
 
-        if ((linelen = receive_line(connected_socket, buf)) == 0) {
+        if ((linelen = receive_line(connected_socket, buf, sizeof(buf))) == 0) {
             return NULL;
         }
         if (strcmp(buf, "0") != 0) {
             *cid = strdup(buf);
         }
 
-        if ((linelen = receive_line(connected_socket, buf)) == 0) {
+        if ((linelen = receive_line(connected_socket, buf, sizeof(buf))) == 0) {
             return NULL;
         }
     }

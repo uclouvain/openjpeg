@@ -63,10 +63,13 @@ SOCKET accept_socket(SOCKET listening_socket);
  * receive a string line (ending with '\n') from client
  *
  * @param [in]  connected_socket file descriptor of the connected socket
- * @param [out] buf              string to be stored
- * @return                       red size
+ * @param [out] buf              string to be stored (always NUL-terminated)
+ * @param [in]  buflen           capacity of buf in bytes, including the NUL
+ * @return                       red size, 0 on error (including a line that
+ *                               does not fit in buflen, in which case buf is
+ *                               set to the empty string)
  */
-OPJ_SIZE_T receive_line(SOCKET connected_socket, char *buf);
+OPJ_SIZE_T receive_line(SOCKET connected_socket, char *buf, OPJ_SIZE_T buflen);
 
 /**
  * receive a string line (ending with '\n') from client, return malloc string
