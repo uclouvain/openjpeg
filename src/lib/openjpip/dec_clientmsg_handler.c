@@ -119,10 +119,10 @@ void handle_PNMreqMSG(SOCKET connected_socket, Byte_t *jpipstream,
 
     opj_free(CIDorTID);
 
-    receive_line(connected_socket, tmp);
+    receive_line(connected_socket, tmp, sizeof(tmp));
     fw = atoi(tmp);
 
-    receive_line(connected_socket, tmp);
+    receive_line(connected_socket, tmp, sizeof(tmp));
     fh = atoi(tmp);
 
     ihdrbox = NULL;

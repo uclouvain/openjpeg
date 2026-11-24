@@ -139,9 +139,14 @@ void * receive_stream(SOCKET connected_socket, OPJ_SIZE_T length)
     return stream;
 }
 
-OPJ_SIZE_T receive_line(SOCKET connected_socket, char *p)
+OPJ_SIZE_T receive_line(SOCKET connected_socket, char *p, OPJ_SIZE_T buflen)
 {
     OPJ_SIZE_T len = 0;
+    char *start = p;
+
+    if (buflen == 0) {
+        return 0;
+    }
     while (1) {
         ssize_t ret;
         ret = recv(connected_socket, p, 1, 0);
@@ -153,6 +158,11 @@ OPJ_SIZE_T receive_line(SOCKET connected_socket, char *p)
         }
         if (*p == '\n') {
             break;
+        }
+        if (len + 1 >= buflen) {
+            fprintf(FCGI_stderr, "Header line too long\n");
+            *start = '\0';
+            return 0;
         }
         p++;
         len++;
@@ -170,9 +180,7 @@ char * receive_string(SOCKET connected_socket)
 {
     char buf[BUF_LEN];
 
-    /* MM FIXME: there is a nasty bug here, size of buf if BUF_LEN which is never
-    indicated to downstream receive_line */
-    receive_line(connected_socket, buf);
+    receive_line(connected_socket, buf, sizeof(buf));
 
     return strdup(buf);
 }
